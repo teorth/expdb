@@ -120,14 +120,14 @@ Here the implied constant in the $O()$ notation is understood to be uniform in $
 Letting $\delta$ go to zero, and using left-continuity of $\A$, we obtain the claim.
 \end{proof}
 
-The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, but thanks to the ability to raise to a power, we can reduce to a bouned range of $\tau$.  Here is a basic such reduction, suited for machine-assisted proofs:
+The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, but thanks to the ability to raise to a power, we can reduce to a bounded range of $\tau$.  Here is a basic such reduction, suited for machine-assisted proofs:
 
-\begin{corollary}\label{zero-large-cor-0}\uses{zero-def, lv-def, lvz-def} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
+\begin{corollary}\label{zero-large-cor-0} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
     $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV_\zeta(\sigma,\tau)/\tau, \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV(\sigma,\tau)/\tau\right)$$
     with the convention that the first supremum is $-\infty$ if it is vacuous (i.e., if $\tau_0 < 2$).
     \end{corollary}
 
-    \begin{proof}\uses{power-lemma, lvz-basic, zero-from-large}  Denote the right-hand side by $B$, thus
+    \begin{proof}  Denote the right-hand side by $B$, thus
     $$ \LV(\sigma,\tau) \leq B\tau$$
     for all $\tau_0 \leq \tau \leq 2\tau_0$, and
     \begin{equation}\label{lvz-b}
@@ -152,7 +152,7 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
 
 For machine assisted proofs, one can simply take $\tau_0$ to be a sufficiently large quantity, e.g., $\tau_0=3$ for $\sigma$ not too close to $1$, and larger for $\sigma$ approaching $1$, to recover the full power of Lemma \ref{zero-from-large}.  However, the amount of case analysis required increases with $\tau_0$.  For human written proofs, the following version of Corollary \ref{zero-large-cor-0} is more convenient:
 
-\begin{corollary}\label{zero-large-cor}\uses{zero-def, lvz-def, lv-def} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
+\begin{corollary}\label{zero-large-cor} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
 $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < 4\tau_0/3} \LV_\zeta(\sigma,\tau)/\tau, \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau\right).$$
 \end{corollary}
 
@@ -229,7 +229,7 @@ For any integer $k \geq 0$ and $k \leq \tau \leq k+1$, we see from \eqref{ap} th
 $$ \LV(\sigma,\tau) \leq (2-2\sigma)(k+1)$$
 and
 $$ \LV(\sigma,\tau) \leq \tau + (1-2\sigma)k;$$
-multiplying the first inequality by $2\sigma-1$, the second by $2-2\sigma$, and summming, we conclude that
+multiplying the first inequality by $2\sigma-1$, the second by $2-2\sigma$, and summing, we conclude that
 $$ \LV(\sigma,\tau) \leq (\tau + 2\sigma-1) (2-2\sigma);$$
 inserting this bound we have
 $$ \A(\sigma) \leq 2 + \frac{2\sigma-1}{\tau_0}.$$
@@ -323,7 +323,7 @@ with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more 
 
 {\bf Note: it appears the proof here may be optimized to go beyond the density hypothesis.  This will be a good test case of our python machinery.}
 
-\begin{proof}\uses{jutila-density, hb-density, jutila-lvt, borg-lv-simp}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
+\begin{proof}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
 
 In view of Theorem \ref{jutila-density} (or Theorem \ref{hb-density}), we may assume that $25/32 < \sigma < 11/14$.  Set $\rho \coloneqq \LV(\sigma,\tau)$. As in the proof of Theorem \ref{jutila-density}, it suffices to show that
 \begin{equation}\label{rot}
@@ -458,7 +458,7 @@ $$\LV_\zeta(\sigma,\tau) \leq \tau - 4 (\sigma-1/2)$$
 for all $1/2 \leq \sigma \leq 1$ and $\tau \geq 2$. The claim then follows from Corollary
 \ref{zero-large-cor2} with $\tau_0 \coloneqq 7\sigma-4$ after a routine calculation.  Similarly, for $10/13 \leq \sigma \leq 1$, we have
 $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, \tau + \frac{11 - 17 \sigma}{3} )$$
-for $0 \leq \tau < \frac{11\sigma-5}{3}$, hence for all $\tau \geq 0$ by Lemma \ref{montgomery-subdivide}; the claim then follows from Corollary
+for $0 \leq \tau < \frac{11\sigma-5}{3}$, hence for all $\tau \geq 0$ by Lemma \ref{lv-basic}(ii); the claim then follows from Corollary
 \ref{zero-large-cor2} with $\tau_0 \coloneqq \frac{8\sigma-2}{3}$ after a routine calculation.
 \end{proof}
 
@@ -475,7 +475,7 @@ then
 $$ \A(\sigma) \leq \max( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1-(k-1)\eta)}).$$
 \end{theorem}
 
-\begin{proof}\uses{zero-large-cor2, beta-zeta-vanish, beta-HB, montgomery-lv, vdc-opt} We apply Corollary \ref{zero-large-cor2} with
+\begin{proof} We apply Corollary \ref{zero-large-cor2} with
 \begin{equation}\label{tau0-def}
 \tau_0 \coloneqq \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} (k(1-(k-1)\eta)) ) - \eps
 \end{equation}

@@ -38,7 +38,7 @@ The upper bound then follows from the triangle inequality.
 
 For (ii), we can upper bound the indicator function of $[-1,1]$ by the Fourier transform of a non-negative bump function $\varphi$, so that the right-hand side is bounded by
 $$ \sum_{t_1,t_2,t_3,t_4 \in W} \varphi(t_1+t_2-t_3-t_4)$$
-which is then bounded by $O(E_1(W))$ by choosing the suppport of $\varphi$ appropriately.  The lower bound is established similarly (using the arguments in (i) to adjust the error tolerance $1$ in the constraint $ |t_1+t_2 - x| \leq 1$ as necessary.)
+which is then bounded by $O(E_1(W))$ by choosing the support of $\varphi$ appropriately.  The lower bound is established similarly (using the arguments in (i) to adjust the error tolerance $1$ in the constraint $ |t_1+t_2 - x| \leq 1$ as necessary.)
 
 For (iii), first observe we may remove duplicates and assume that the $W_i$ are disjoint, then we can use (ii) and the triangle inequality.
 
@@ -139,7 +139,7 @@ Also, by double counting one easily verifies the claims \eqref{v1}, \eqref{v2}. 
 
 Because the cardinality $|W|$ and additive energy $E_1(W)$ of a set $W$ are correlated with each other, as well as with the double zeta sum $S(N,W)$, we will not be able to consider them separately, and instead we will need to consider the possible joint exponents for these two quantities.  We formalize this via the following set:
 
-\begin{definition}[Large value energy region]\label{lv-edef}\uses{energy-def} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that
+\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that
     \begin{equation}\label{sig-large} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
 \end{equation}
 for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
@@ -193,7 +193,7 @@ holds for all $t \in W$, with
 
 This lemma is proven by a routine expansion of the definitions, and is omitted.
 
-\begin{lemma}[Basic properties]\label{lve-basic}\uses{lv-edef}\
+\begin{lemma}[Basic properties]\label{lve-basic}\
     \begin{itemize}
         \item[(i)] (Monotonicity in $\sigma$) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
         $(\sigma',\tau',\rho,\rho^*,s) \in \Energy$ for all $1/2 \leq \sigma' \leq \sigma$ and $\tau' \geq \tau$.
@@ -212,7 +212,7 @@ This lemma is proven by a routine expansion of the definitions, and is omitted.
 \end{proof}
 
 
-\begin{lemma}[Raising to a power]\label{power-energy}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.
+\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.
 \end{lemma}
 
 \begin{proof}
@@ -342,7 +342,7 @@ $$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
 \begin{proof} This follows from \cite[Propositions 4.6, 5.1, 6.1, 8.1, 10.1, (5.5)]{guth-maynard}.
 \end{proof}
 
-\begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+\begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
 $$ \rho^* \leq \rho + s - 2\sigma.$$
 In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that
 $$ \rho^* \leq \max(3\rho+1-2\sigma, 2\rho+2-2\sigma).$$
@@ -366,7 +366,7 @@ Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error c
 We can put this all together to prove the Guth--Maynard large values theorem (Theorem \ref{guth-maynard-lvt}):
 
 
-\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again}\uses{lv-def} One has
+\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again} One has
     $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
 
@@ -387,11 +387,3 @@ $$ S_3 \leq \max( 2\tau+3\rho/2, \tau+\rho+3-2\sigma, \tau+2\rho+3/2-\sigma, 9\t
 Inserting this and the $S_2$ bound (with $k=4$) into the bound for $\rho$ and simplifying (using $\tau=6/5$), we eventually obtain
 the desired bound $\rho \leq 18/5-4\sigma$.
 \end{proof}
-
-It was noted in \cite{guth-maynard} that some improvements are available in the $\tau < 6/5$ regime. For instance:
-
-\begin{lemma}[Improved Guth--Maynard theorem]\label{guth-maynard-lvt-improv}\uses{lv-def} \cite[Proposition 12.1]{guth-maynard} If $1 \leq \tau \leq 6/5$ and $\sigma \geq 7/10$ then for any natural number $k$ one has
-    $$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \frac{\tau}{2}+3-4\sigma, \max( \frac{k}{k+1}\tau + \frac{k}{k+1} (4-6\sigma), \frac{4k}{4k+3}(5-6\sigma) + \frac{2}{4k+3} \tau)\right).$$
-In particular, one has
-$$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \frac{\tau}{2}+3-4\sigma, \frac{30\sigma-21}{5} \tau + \frac{46-60\sigma}{5}\right).$$
-\end{lemma}
