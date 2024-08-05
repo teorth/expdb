@@ -31,3 +31,9 @@ The database aims to enumerate, as comprehensively as possible, all the various 
 Each of the facts in the database can be supported with a reference, or one or more proofs, or with executable code in Python; ideally one should have all three (and with a preference for proofs that rely as much as possible on other facts in the database).  In the future we could also expand this database to support each fact with formal proofs in proof assistant languages such as Lean.
 
 In order to facilitate the dependency tree of the python code, as well as to assist readers who wish to derive the facts in this database from first principles, the blueprint is arranged in linear order.  Thus, the statement and proof of a proposition in the blueprint is only permitted to use propositions and definitions that are located earlier in the blueprint, although we do allow forward-referencing references in the remarks.  As a consequence, the material relating to a single topic will not necessarily be located in a single chapter, but could be spread out over multiple chapters, depending on how much advanced material is needed to state or prove the required results.  Additionally, a single proposition may occur multiple times in the blueprint, if it has multiple proofs with varying prerequisites.  In the future, we plan to implement a search feature that will allow the reader to locate all propositions of relevance to a given topic (e.g., all propositions whose statement involves the concept of an exponent pair).
+
+
+Here is a sample theorem:
+
+\begin{theorem}[Test]  $a^2+b^2=c^2$.
+\end{theorem}
