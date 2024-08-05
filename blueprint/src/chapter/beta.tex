@@ -7,10 +7,10 @@ A \emph{phase function} is a (variable) smooth function $F \colon [1,2] \to \R$.
 \begin{equation}\label{fpu}
 F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma} = o(1)
 \end{equation}
-for all (variable) $u \in [1,2]$ and all fixed $p \geq 0$, where $F^{(p+1)}$ denotes the $(p+1)^{\mathrm{st}}$ derivative of $F$. 
+for all (variable) $u \in [1,2]$ and all fixed $p \geq 0$, where $F^{(p+1)}$ denotes the $(p+1)^{\mathrm{st}}$ derivative of $F$.
 \end{definition}
 
-For instance, $u \mapsto \log u$ is a model phase function (with $\sigma=1$), and for any fixed $\sigma \neq 1$, $u \mapsto u^{1-\sigma}/(1-\sigma)$ is a model phase function.  Informally, a model phase function is a function which asymptotically behaves like 
+For instance, $u \mapsto \log u$ is a model phase function (with $\sigma=1$), and for any fixed $\sigma \neq 1$, $u \mapsto u^{1-\sigma}/(1-\sigma)$ is a model phase function.  Informally, a model phase function is a function which asymptotically behaves like
 $u \mapsto \log u$ (for $\sigma = 1$) or $u \mapsto u^{1-\sigma}/(1-\sigma)$ (for $\sigma \neq 1$), up to constants.
 
 Note from Proposition \ref{auto} that the $o(1)$ decay rate in \eqref{fpu} can be made uniform, after passing to a subsequence if necessary.
@@ -62,18 +62,18 @@ We record the trivial bounds on $\beta$:
     $$ \beta(\alpha) = \alpha-1.$$
     For fixed $0 \leq \alpha \leq 1$, we have
     $$ \frac{\alpha}{2} \leq \beta(\alpha) \leq \alpha.$$
-    In particular 
+    In particular
     \begin{equation}\label{beta-0}
         \beta(0)=0.
-    \end{equation}  
+    \end{equation}
     \end{lemma}
 
 \python{bound_beta}
 \code{trivial_beta_bound_1}
 \code{trivial_beta_bound_2}
-    
+
     \begin{proof}  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
-     
+
         For $\alpha > 1$, the Euler--Maclaurin formula (see e.g. \cite[(2.1.2)]{titchmarsh_theory_1986}) gives
         \begin{equation}\label{nit}
             \left|\sum_{N \leq n \leq 2N} n^{iT}\right| = \left|\frac{2^{1+iT} - 1}{1+iT} N^{1+iT} + O(1)\right| \asymp \frac{N}{T}
@@ -82,14 +82,14 @@ We record the trivial bounds on $\beta$:
 
         The triangle inequality bound
         $$ \sum_{n \in I} e(T F(n/N)) \ll N$$
-        gives the upper bound $\beta(\alpha) \leq \alpha$.  Next, if $0 \leq \alpha \leq 1$, then from Lemma \ref{l2-int} (and the $\gg 1/N$-separated nature of the $F(n/N)$ for model phase functions $F$, after passing to a subsequence if necessary) that 
+        gives the upper bound $\beta(\alpha) \leq \alpha$.  Next, if $0 \leq \alpha \leq 1$, then from Lemma \ref{l2-int} (and the $\gg 1/N$-separated nature of the $F(n/N)$ for model phase functions $F$, after passing to a subsequence if necessary) that
         $$ \int_{T^{2T}} \left|\sum_{n \in [N,2N]} e(t F(n/N)) \right|^2\ dt \asymp T N$$
     for $N = cT^\alpha$ for $c$ a fixed small enough constant, which by the pigeonhole principle implies that
     $$\left| \sum_{n \in [N,2N]}e(t F(n/N)) \right|^2\ dt \gg N^{1/2} = T^{\alpha/2}$$
     for at least one $t \asymp T$, giving the claim.
 \end{proof}
-    
-As we shall see, the exponent pair conjecture is equivalent to the lower bound here being sharp, thus it is conjectured that 
+
+As we shall see, the exponent pair conjecture is equivalent to the lower bound here being sharp, thus it is conjectured that
 \[
 \beta(\alpha) = \begin{cases}
 \alpha/2,& 0 \leq \alpha \leq 1\\
@@ -97,10 +97,10 @@ As we shall see, the exponent pair conjecture is equivalent to the lower bound h
 \end{cases}.
 \]
 Note the discontinuity at $1$.  Despite this, we have:
-    
+
 \begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv} $\beta$ is an upper semicontinuous function.
 \end{lemma}
-    
+
 \begin{proof} Routine from the definition.
 \end{proof}
 
@@ -110,9 +110,9 @@ We record the classical bounds on $\beta$:
     $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-k\alpha}{2^k-2}, (1 - 2^{2-k})\alpha - \frac{1-\alpha}{2^k-2}\right).$$
     Thus for instance when $k=2$ we have
     $$ \beta(\alpha) \leq \max\left( \frac{1}{2}, \frac{2\alpha-1}{2} \right),$$
-    so in particular 
+    so in particular
     \begin{equation}\label{beta-1}
-        \beta(1)= \frac{1}{2}, 
+        \beta(1)= \frac{1}{2},
     \end{equation}
         by Lemma \ref{beta-triv},
     when $k=3$ one has
@@ -120,28 +120,28 @@ We record the classical bounds on $\beta$:
     and when $k=4$ one has
     $$ \beta(\alpha) \leq \max\left( \frac{10\alpha+1}{14}, \frac{29\alpha-2}{28} \right).$$
 \end{proposition}
-    
+
 This form of upper bound of $\beta(\alpha)$ - as the maximum of a finite number of linear functions of $\alpha$ - is extremely common in the literature.
-    
+
 \begin{proof} Follows from \cite[Theorem 8.20]{ik}.
 \end{proof}
-    
+
     \begin{corollary}[Optimizing the van der Corput inequality]\label{vdc-opt}\uses{beta-def}  For any $\alpha > 0$ one has
     $$\beta(\alpha) \leq \inf_{k \in \N: k \geq 2} \alpha + \frac{1-k\alpha}{2^k-2}.$$
     Thus for instance
     $$ \beta(\alpha) \leq \min\left( \frac{1}{2}, \frac{1+3\alpha}{6}, \frac{10\alpha+1}{14}\right).$$
     \end{corollary}
-    
-\begin{proof}\uses{beta-vdc} 
-Let $\beta_k(\alpha) = \alpha + (1 - k\alpha)/(2^k - 2)$ and 
+
+\begin{proof}\uses{beta-vdc}
+Let $\beta_k(\alpha) = \alpha + (1 - k\alpha)/(2^k - 2)$ and
 \[
 \alpha_k = \frac{2^k}{(k - 1)2^k + 2}.
 \]
-Via a routine computation, $\beta_{k + 1}(\alpha) \le \beta_k(\alpha)$ for $\alpha \ge \alpha_k$ and any $k \ge 2$. Thus, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 \le \alpha \le 1/2$, it suffices to just show that the same result holds for $0 \le \alpha \le \alpha_{k}$. However, for $0 \le \alpha \le \alpha_k$ and $k \ge 2$, we have 
+Via a routine computation, $\beta_{k + 1}(\alpha) \le \beta_k(\alpha)$ for $\alpha \ge \alpha_k$ and any $k \ge 2$. Thus, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 \le \alpha \le 1/2$, it suffices to just show that the same result holds for $0 \le \alpha \le \alpha_{k}$. However, for $0 \le \alpha \le \alpha_k$ and $k \ge 2$, we have
 \[
 0 \le \alpha \le \alpha_k \le \frac{2^{k + 1}}{(k - 3)2^k + 8}
 \]
-which rearranges to give 
+which rearranges to give
 \[
 \alpha + \frac{1-k\alpha}{2^k-2}\geq (1 - 2^{2-k})\alpha - \frac{1-\alpha}{2^k-2},\qquad (0 \le \alpha \le \alpha_k, k \ge 2)
 \]
@@ -164,10 +164,10 @@ under the same hypotheses. Similarly with $\alpha=1$ we can use the proof of Lem
 
     For $n \in [N,2N]$, the constraint $n \in I$ is equivalent to restricting $F(n/N)$ to an interval $J$ of length $O(1)$, which we can also smooth out by $O(1/N)$ without affecting the sum.  Applying a Fourier expansion and the triangle inequality, we can thus bound the left-hand side by
 $$ \ll T^{o(1)} + \int_{-N^{1+o(1)}}^{N^{1+o(1)}} \left|\sum_{n \in [N,2N]} e(T F(n/N) - t F(n/N)) \right| \frac{dt}{1+|t|}.$$
-Since $\alpha > 1$, we have $|t-T| \leq T/2$ for all $t$ in the integral if $T$ is large enough.  
+Since $\alpha > 1$, we have $|t-T| \leq T/2$ for all $t$ in the integral if $T$ is large enough.
 From hypothesis \eqref{three} (with $T$ replaced by $T-t$)we have
 $$ \left|\sum_{n \in [N,2N]} e(T F(n/N) - t F(n/N)) \right| \ll T^{\overline{\beta}+o(1)}$$
-for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_points_1995}. 
+for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_points_1995}.
 \end{proof}
 
 \begin{lemma}[Reflection]\label{beta-reflect}  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
@@ -175,7 +175,7 @@ for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_poi
 
 {\bf TODO: implement this in python}
 
-\begin{proof}  This is the van der Corput $B$-process. See e.g., \cite[p 370]{huxley_area_1996}. 
+\begin{proof}  This is the van der Corput $B$-process. See e.g., \cite[p 370]{huxley_area_1996}.
 \end{proof}
 
 \section{Known bounds on \texorpdfstring{$\beta$}{beta}}
@@ -183,14 +183,14 @@ for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_poi
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{python/images/van_der_corput_beta.png}
+    \includegraphics[width=0.5\linewidth]{chapter/van_der_corput_beta.png}
     \caption{The bounds in Proposition \ref{beta-vdc} for $k=2,3,4,5$, compared against the optimized bound in Corollary \ref{vdc-opt}.}
     \label{fig:vdc}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{python/images/van_der_corput_beta_vs_conjectured.png}
+    \includegraphics[width=0.5\linewidth]{chapter/van_der_corput_beta_vs_conjectured.png}
     \caption{The bound in Corollary \ref{vdc-opt}, compared against the trivial upper and lower bounds in Lemma \ref{beta-triv}.}
     \label{fig:vdc2}
 \end{figure}
@@ -200,13 +200,13 @@ We remark that this corollary also follows from Proposition \ref{vdc-class}.
 
 
 % Exponential sums and the Riemann zeta function II
-\begin{theorem}[Watt bound]\label{beta-Watt}\uses{beta-def} For any $3/7 \le \alpha \le 1/2$, one has 
+\begin{theorem}[Watt bound]\label{beta-Watt}\uses{beta-def} For any $3/7 \le \alpha \le 1/2$, one has
     \[
     \beta(\alpha) \le \frac{89}{560} + \frac{1}{2}\alpha.
     \]
     \end{theorem}
 
-    
+
 \literature
 \code{add_beta_bound_watt_1989()}
 
@@ -234,11 +234,11 @@ See \cite[Theorem~3]{huxley_exponential_1991}. Note that the paper contains an e
 
 
 % Exponential sums and the Riemann zeta function IV
-\begin{theorem}[1993 Huxley bound]\label{beta-Huxley-4}\uses{beta-def} For any $0 \le \alpha \le 49/114$, one has 
+\begin{theorem}[1993 Huxley bound]\label{beta-Huxley-4}\uses{beta-def} For any $0 \le \alpha \le 49/114$, one has
 \[
 \beta(\alpha) \le \max\left(\frac{13}{60} + \frac{7}{20}\alpha, \frac{11}{120} + \frac{13}{20}\alpha\right).
 \]
-Furthermore, for any $49/114 \le \alpha \le 1/2$, one has 
+Furthermore, for any $49/114 \le \alpha \le 1/2$, one has
 \[
 \beta(\alpha) \le \frac{89}{570} + \frac{1}{2}\alpha.
 \]
@@ -307,7 +307,7 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
     \end{align*}
     \end{theorem}
 
-    
+
 \literature
 \code{add_beta_bound_huxley_1996()}\\
 \code{add_beta_bound_huxley_1996_2()}
@@ -320,7 +320,7 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
     \begin{theorem}[2001 Huxley--Kolesnik bound]\label{beta-HK}\uses{beta-def}  For any $2/5 \le \alpha \le 1/2$ one has
         $$ \beta(\alpha) \leq \max\left(\frac{7}{80} + \frac{79}{120}\alpha, \frac{3}{32} + \frac{103}{160}\alpha, \frac{9}{40} + \frac{13}{40}\alpha\right).$$
     \end{theorem}
-         
+
 \literature
 \code{add_beta_bound_huxley_kolesnik_2001()}
 
@@ -358,7 +358,7 @@ See \cite[Theorems~3, 4]{sargos_analog_2003}.
 
 
 % Exponential sums and the Riemann zeta function VI
-\begin{theorem}[Huxley bound]\label{beta-Huxley-5}\uses{beta-def} For any $1/3 \le \alpha \le 1/2$, one has 
+\begin{theorem}[Huxley bound]\label{beta-Huxley-5}\uses{beta-def} For any $1/3 \le \alpha \le 1/2$, one has
 \[
 \beta(\alpha) \le \max\left(\frac{37 + 59\alpha}{170}, \frac{63 + 449\alpha}{690}\right).
 \]
@@ -373,7 +373,7 @@ See \cite[Proposition~1, Theorem~1]{huxley_exponential_2005}.
 
 
 % On the fourth derivative test for exponential sums
-\begin{theorem}[Robert bound]\label{beta-R}\uses{beta-def} For any $0 < \alpha \le 3/7$ one has 
+\begin{theorem}[Robert bound]\label{beta-R}\uses{beta-def} For any $0 < \alpha \le 3/7$ one has
 \[
 \beta(\alpha) \le \max\left(\alpha + \frac{1 - 4\alpha}{12}, \frac{11}{12}\alpha\right).
 \]
