@@ -151,7 +151,7 @@ which completes the proof in view of Proposition \ref{beta-vdc}.  See Figure \re
 
 We can remove the role of $I$ in the definition of $\beta$:
 
-\begin{lemma}\uses{beta-def}  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
+\begin{lemma}\label{interval-set}\uses{beta-def}  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
 \end{lemma}
 
 \begin{proof}\uses{beta-vdc}  Suppose that $\alpha, \overline{\beta}$ are fixed quantities such that the bounds in Definition \ref{beta-def} hold just for $I  = [N,2N]$, thus whenever $T>1$ is unbounded, $N = T^{\alpha+o(1)}$, and $F$ is a model phase function one has
@@ -343,7 +343,7 @@ See \cite[Theorem~1]{robert_fourth_2002}.
 
 
 % An analog of van der Corput’s A4-process for exponential sums
-\begin{theorem}[Sargos bound]\uses{beta-def}  For any $\alpha > 0$ one has
+\begin{theorem}[Sargos bound]\label{sargos-bound}\uses{beta-def}  For any $\alpha > 0$ one has
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-8\alpha}{204}, -\frac{95(1-8\alpha)}{204}\right)$$
 and
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{7(1-9\alpha)}{2640}, -\frac{1001(1-9\alpha)}{2640}\right).$$

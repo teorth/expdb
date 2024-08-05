@@ -136,7 +136,7 @@ giving the claim.
 \code{add_literature_exponent_pairs()}
 
 
-\begin{theorem}[Exponent pairs from the Bombieri--Iwaniec method]\uses{exp-pair-def}  The following pairs are exponent pairs:
+\begin{theorem}[Exponent pairs from the Bombieri--Iwaniec method]\label{exp_pair_bombieri-iwaniec}\uses{exp-pair-def}  The following pairs are exponent pairs:
 \begin{itemize}
 \item[(i)] $(\frac{2}{13}, \frac{35}{52})$ \cite{huxley_watt_exponential_1990};
 \item[(ii)] $(\frac{6299}{43860}, \frac{29507}{43860})$ \cite[Table 17.3]{huxley_area_1996};
@@ -150,7 +150,7 @@ giving the claim.
 \literature
 \code{add_literature_exponent_pairs()}
 
-\begin{theorem}[Exponent pairs from derivative tests]\uses{exp-pair-def} $(k,1-mk)$ is an exponent pair when
+\begin{theorem}[Exponent pairs from derivative tests]\label{exp_pair_deriv_test}\uses{exp-pair-def} $(k,1-mk)$ is an exponent pair when
     \begin{itemize}
 \item[(i)] $k=\frac{1}{13}$ and $m=3$ \cite[Theorem 1]{robert_fourth_2002};
 \item[(ii)] $k = \frac{1}{204}$ and $m=7$ \cite[p. 231]{sargos_analog_2003};
@@ -168,7 +168,7 @@ giving the claim.
 \code{add_literature_exponent_pairs()}
 
 
-\begin{theorem}[Huxley sequence]\cite[Table 17.3]{huxley_area_1996}\uses{exp-pair-def}  For any integer $m \geq 1$, the pair
+\begin{theorem}[Huxley sequence]\label{huxley_exp_pair}\cite[Table 17.3]{huxley_area_1996}\uses{exp-pair-def}  For any integer $m \geq 1$, the pair
     $$ \left(\frac{169}{1424 \times 2^m - 338}, 1 - \frac{169}{1424 \times 2^m - 338} \frac{712m+1577}{712}\right)$$
 is an exponent pair.
 \end{theorem}
@@ -176,14 +176,14 @@ is an exponent pair.
 \literature
 \code{add_huxley_exponent_pairs(Constants.EXP_PAIR_TRUNCATION)}
 
-\begin{theorem}[1996 Heath--Brown sequence]\cite[(6.17.4)]{titchmarsh_theory_1986}\uses{exp-pair-def}  For any integer $m \geq 3$, the pair
+\begin{theorem}[1996 Heath--Brown sequence]\label{heath-brown_exp_pair_1996}\cite[(6.17.4)]{titchmarsh_theory_1986}\uses{exp-pair-def}  For any integer $m \geq 3$, the pair
 $$ \left(\frac{1}{25m^2 (m-2) \log m}, 1 - \frac{1}{25 m^2 (m-2) \log m}\right)$$
 is an exponent pair.
 \end{theorem}
 
 (Currently not implemented in python due to the irrational exponents.)
 
-\begin{theorem}[2017 Heath--Brown sequence]\cite[Theorem 2]{heathbrown_new_2017}\uses{exp-pair-def}
+\begin{theorem}[2017 Heath--Brown sequence]\label{heath-brown_exp_pair_2017}\cite[Theorem 2]{heathbrown_new_2017}\uses{exp-pair-def}
 For any integer $m \geq 3$, the pair
 $$ \left(\frac{2}{(m-1)^2(m+2)}, 1 - \frac{3m-2}{m(m-1)(m+2)}\right)$$
 is an exponent pair.
@@ -196,7 +196,7 @@ is an exponent pair.
 \end{proof}
 
 
-\begin{theorem}[Sargos $C$-process]\cite[Theorem 5]{sargos_analog_2003}\uses{exp-pair-def}  If $(k,\ell)$ is an exponent pair, then so is
+\begin{theorem}[Sargos $C$-process]\label{sargos_C}\cite[Theorem 5]{sargos_analog_2003}\uses{exp-pair-def}  If $(k,\ell)$ is an exponent pair, then so is
     $$ \left(\frac{k}{12(1+4k)}, \frac{11(1+4k)+\ell}{12(1+4k)}\right).$$
 \end{theorem}
 
