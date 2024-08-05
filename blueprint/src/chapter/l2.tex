@@ -1,4 +1,4 @@
-\chapter{Basic \texorpdfstring{$L^2$}{L2} estimates}
+\chapter{Basic Fourier estimates}
 
 \begin{lemma}[$L^2$ integral estimate]\label{l2-int}  Let $\xi_1,\dots,\xi_R$ be real numbers that are $1/N$-separated.  Then for any interval $I$ of length $T$, and any sequence $a_1,\dots,a_R$ of complex numbers one has
 $$ \int_I |\sum_{r=1}^R a_r e(\xi_r t)|^2\ dt = (T + O(N)) \sum_{r=1}^R |a_r|^2.$$
@@ -14,12 +14,10 @@ whenever $t_0 \in \R$ and $\psi$ is a smooth function supported on $[-1/4, 1/4]$
  \int_J |\sum_{r=1}^R a_r e(\xi_r t)|^2\ dt \ll N
 \end{equation}
 whenever $J$ is an interval of length $N$.  If one integrates \eqref{art} for all $t_0 \in I$, we see that
-$$ \int_I |\sum_{r=1}^R a_r e(\xi_r t)|^2\ dt = T - \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 (\int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t))\ dt.$$
+$$ \int_I |\sum_{r=1}^R a_r e(\xi_r t)|^2\ dt = T - \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 \left(\int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t)\right)\ dt.$$
 Since $\hat \psi$ is rapidly decreasing and has $L^2$ norm $1$, one can compute
 $$ \int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t) \ll (1 + \mathrm{dist}(t, \partial I) / N)^{-10}$$
 and hence by \eqref{trap} and the triangle inequality
-$$ \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 (\int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t))\ dt \ll N$$
+$$ \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 \left(\int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t)\right)\ dt \ll N$$
 giving the claim.
 \end{proof}
-
-

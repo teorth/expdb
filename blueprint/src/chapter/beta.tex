@@ -2,7 +2,7 @@
 
 \section{Phase functions}
 
-\begin{definition}[Phase function]
+\begin{definition}[Phase function]\label{phase-def}
 A \emph{phase function} is a (variable) smooth function $F \colon [1,2] \to \R$.  A phase function $F$ will be called a \emph{model phase function} if there exists a fixed exponent $\sigma > 0$ with the property that
 \begin{equation}\label{fpu}
 F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma} = o(1)
@@ -19,7 +19,7 @@ Note from Proposition \ref{auto} that the $o(1)$ decay rate in \eqref{fpu} can b
 
 The main purpose of this chapter is to introduce and establish the basic properties of the following exponent function.
 
-\begin{definition}[Exponent sum growth exponent]\label{beta-def}  For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
+\begin{definition}[Exponent sum growth exponent]\label{beta-def}\uses{phase-def}  For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
 $$ \sum_{n \in I} e(T F(n/N)) \ll T^{\beta(\alpha)+o(1)}.$$
 \end{definition}
 
