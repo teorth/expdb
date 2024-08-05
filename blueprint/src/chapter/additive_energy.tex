@@ -2,14 +2,14 @@
 
 \section{Additive energy}
 
-\begin{definition}[Additive energy]\label{add-def}  Let $W$ be a finite set of real numbers.  The \emph{additive energy} $E_1(W)$ of such a set is defined to be the number of quadruples $(t_1,t_2,t_3,t_4) \in W$ such that
+\begin{definition}[Additive energy]\label{energy-def}  Let $W$ be a finite set of real numbers.  The \emph{additive energy} $E_1(W)$ of such a set is defined to be the number of quadruples $(t_1,t_2,t_3,t_4) \in W$ such that
 $$
 |t_1 + t_2 - t_3 - t_4| \leq 1.$$
 \end{definition}
 
 We remark that in additive combinatorics, the variant $E_0(W)$ of the additive energy is often studied, in which $t_1+t_2-t_3-t_4$ is not merely required to be $1$-bounded, but in fact vanish exactly.  However, this version of additive energy is less relevant for analytic number theory applications.
 
-\begin{lemma}[Basic properties of additive energy]\label{add-energy}\uses{add-def}
+\begin{lemma}[Basic properties of additive energy]\label{add-energy}\uses{energy-def}
 \begin{itemize}
 \item[(i)] If $W$ is a finite set of reals, then
 $$ E_1(W) \asymp \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |^2\ dx.$$

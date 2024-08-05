@@ -10,8 +10,7 @@ F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma} = o(1)
 for all (variable) $u \in [1,2]$ and all fixed $p \geq 0$, where $F^{(p+1)}$ denotes the $(p+1)^{\mathrm{st}}$ derivative of $F$.
 \end{definition}
 
-For instance, $u \mapsto \log u$ is a model phase function (with $\sigma=1$), and for any fixed $\sigma \neq 1$, $u \mapsto u^{1-\sigma}/(1-\sigma)$ is a model phase function.  Informally, a model phase function is a function which asymptotically behaves like
-$u \mapsto \log u$ (for $\sigma = 1$) or $u \mapsto u^{1-\sigma}/(1-\sigma)$ (for $\sigma \neq 1$), up to constants.
+For instance, $u \mapsto \log u$ is a model phase function (with $\sigma=1$), and for any fixed $\sigma \neq 1$, $u \mapsto u^{1-\sigma}/(1-\sigma)$ is also a model phase function.  Informally, a model phase function is a function which asymptotically behaves like $u \mapsto \log u$ (for $\sigma = 1$) or $u \mapsto u^{1-\sigma}/(1-\sigma)$ (for $\sigma \neq 1$), up to constants.  This turns out to be a good class for exponential sum estimates, as it is stable under Weyl differencing and Legendre transforms, which show up in the van der Corput A-process and B-process respectively.
 
 Note from Proposition \ref{auto} that the $o(1)$ decay rate in \eqref{fpu} can be made uniform, after passing to a subsequence if necessary.
 
@@ -40,7 +39,7 @@ The quantity $\beta(\alpha)$ can also be formulated without asymptotic notation,
 \item[(i)] $\beta(\alpha) \leq \overline{\beta}$.
 \item[(ii)] For every (fixed) $\eps>0$ and $\sigma > 0$ there exists (fixed) $\delta>0$, $P \geq 1$, $C \geq 1$ with the following property: if $T \geq C$, $T^{\alpha-\delta} \leq N \leq T^{\alpha+\delta}$ are (fixed) real numbers, $I \subset [N,2N]$ is a (fixed) interval, and $F$ is a (fixed) phase function such that
 \begin{equation}\label{fpu-bound}
-     |F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq \delta
+     \left|F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}\right| \leq \delta
 \end{equation}
 for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
 $$ |\sum_{n \in I} e(T F(n/N))| \leq C T^{\overline{\beta}+\eps}.$$
