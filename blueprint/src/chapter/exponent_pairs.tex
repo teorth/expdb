@@ -1,0 +1,207 @@
+\chapter{Exponent pairs}
+
+\begin{definition}[Exponent pair]\label{exp-pair-def}  An exponent pair is a (fixed) element $(k,\ell)$ of the triangle
+\begin{equation}\label{exp-pair-triangle} 
+    \{ (k,\ell) \in \R^2: 0 \leq k \leq 1/2 \leq \ell \leq 1, k+\ell \leq 1 \} 
+\end{equation}
+with the following property: for all model phase functions $F$, all $T \geq N \leq 1$, and all intervals $I \subset [N,2N]$, one has
+\begin{equation}\label{ntf}
+ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)}
+\end{equation}
+whenever $T \geq N \geq 1$, $I$ is an interval in $[N,2N]$, and $F \in {\mathcal U}$. 
+\end{definition}
+
+\python{exponent_pair}
+\code{Exp_pair}
+
+One can formulate the notion of an exponent pair without recourse to asymptotic notation:
+
+\begin{lemma}[Non-asymptotic definition of exponent pair]  Let $(k,\ell)$ be a fixed element of \eqref{exp-pair-triangle}.  Then the following are equivalent:
+    \begin{itemize}
+    \item[(i)] $(k,\ell)$ is an exponent pair.
+    \item[(ii)] For every (fixed) $\eps>0$ there exist (fixed) $C, P > 0$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
+    $$ |\sum_{n \in I} e(T F(n/N))| \leq C (T/N)^{k+\eps} N^{\ell+\eps}.$$
+   \end{itemize} 
+\end{lemma}
+
+The proof of this lemma is similar to that of Lemma \ref{beta-asymp} and is omitted.
+
+Exponent pairs are closely related to the function $\beta$ from the previous chapter:
+
+\begin{lemma}[Duality between exponent pairs and $\beta$]\label{beta-duality}  Let $(k,\ell)$ be in the triangle \eqref{exp-pair-triangle}.  Then the following are equivalent:
+    \begin{itemize}
+    \item[(i)] $(k,\ell)$ is an exponent pair.
+    \item[(ii)] $\beta(\alpha) \leq k + (\ell-k)\alpha$ for all $0 \leq \alpha \leq 1$.
+    \end{itemize}
+    \end{lemma}
+
+    \python{exponent_pair}
+    \code{exponent_pairs_to_beta_bounds()}
+    \code{beta_bounds_to_exponent_pairs()}
+    
+Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\beta$ is not known to be convex, so one could have bounds on $\beta$ that do not directly correspond to exponent pairs.
+    
+\begin{proof}  If (i) holds, then for any $0 < \alpha < 1$, any unbounded $T \geq 1$, any $N = T^{\alpha+o(1)}$, interval $I \subset [N,2N]$, and model phase function $F$, we have from (i) that
+$$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)} = T^{k + (\ell-k)\alpha + o(1)}.$$
+From Definition \ref{beta-def} we conclude that $\beta(\alpha) \leq k + (\ell-k) \alpha$.  Also since $(k,\ell)$ lies in \eqref{exp-pair-triangle}, we see from \eqref{beta-0}, \eqref{beta-1} that we also have $\beta(\alpha) \leq k + (\ell-k) \alpha$ for $\alpha=0,1$.  
+
+Now suppose that (ii) holds.  Let $F, T, N, I$ be as in Definition \ref{exp-pair-def}.  By underspill it suffices to show that
+$$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+\eps+o(1)} N^{\ell+\eps+o(1)}$$
+for any fixed $\eps>0$.  We may assume that $T \leq N^{1/\eps+1}$, since the claim follows from the trivial bound $\sum_{n \in I} e(T F(n/N)) \ll N$ otherwise.  We may also assume that $N$ is unbounded, since the claim is clear for $N$ bounded; this forces $T$ to be unbounded as well.  
+
+By passing to a subsequence we may assume that $N = T^{\alpha+o(1)}$ for some fixed $0 \leq \alpha \leq 1$.  By Definition \ref{beta-def} we then have
+$$ \sum_{n \in I} e(T F(n/N)) \ll T^{\beta(\alpha)+o(1)}$$
+and hence by (ii)
+$$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)}$$
+giving the claim.
+\end{proof}
+
+
+\begin{corollary}[Exponent pairs closed and convex]\label{exp-pair-closed}\uses{exp-pair-def} The set of exponent pairs is closed and convex.
+\end{corollary}
+
+\begin{proof} Immediate from Lemma \ref{beta-duality}.
+\end{proof}
+
+\begin{proposition}[Trivial exponent pairs]\label{exp-pair-trivial}\uses{exp-pair-def}  $(0,1)$ and $(1/2,1/2)$ are exponent pairs.
+\end{proposition}
+
+\begin{proof} Immediate from Lemma \ref{beta-duality} and Lemma \ref{beta-triv}.
+\end{proof}
+
+\begin{conjecture}[Exponent pairs conjecture]\label{exp-pair-conj}  $(0,1/2)$ is an exponent pair.  (Equivalently, by Corollary \ref{exp-pair-closed}, every point in the triangle \eqref{exp-pair-triangle} is an exponent pair.)
+\end{conjecture}
+
+\python{exponent_pair}
+\code{exponent_pair_conjecture}
+
+    
+\begin{lemma}\label{exp-pair-conj-beta}  The exponent pair conjecture is equivalent to $\beta(\alpha)=\alpha/2$ holding true for all $0 \leq \alpha \leq 1$.
+\end{lemma}
+
+\begin{proof} Clear from Lemma \ref{beta-duality} and Lemma \ref{beta-triv}.
+\end{proof}
+
+\begin{proposition}[Van der Corput $A$-process]\label{vdc-a}  If $(k,\ell)$ is an exponent pair, then so is
+    $$A(k,\ell) \coloneqq \left(\frac{k}{2k+2}, \frac{\ell}{2k+2} + \frac{1}{2}\right).$$
+\end{proposition}
+
+\literature
+\code{A_transform()}
+
+\begin{proof} See \cite[Lemma 2.8]{ivic}.
+\end{proof}
+
+{\bf TODO: determine the analogous $A$-process for $\beta()$ and state it as a lemma.}
+
+\begin{proposition}[Van der Corput $B$-process]\label{vdc-b}  If $(k,\ell)$ is an exponent pair, then so is
+    $$B(k,\ell) \coloneqq \left(\ell-\frac{1}{2}, k+\frac{1}{2}\right).$$
+\end{proposition}
+
+\literature
+\code{B_transform()}
+
+\begin{proof}  See \cite[Lemma 2.9]{ivic}.  Alternatively, this can be derived from Lemma \ref{beta-reflect} and Lemma \ref{beta-duality}.
+\end{proof}
+
+  
+\section{Known exponent pairs}
+
+
+\begin{proposition}[Classical van der Corput exponent pairs]\label{vdc-class} For any natural number $k \geq 2$,
+    $$ A^{k-2} B(0,1) = \left( \frac{1}{2^k-2}, 1 - \frac{k-1}{2^k-2} \right)$$
+    is an exponent pair.  In particular,
+    $$ \left(\frac{1}{2}, \frac{1}{2}\right), \left(\frac{1}{6}, \frac{2}{3}\right), \left(\frac{1}{14}, \frac{11}{14}\right)$$
+    are exponent pairs.
+    \end{proposition}    
+    
+    \begin{proof} Follows by induction from Proposition \ref{vdc-a} and Proposition \ref{exp-pair-trivial}; alternatively, follows from (and is equivalent to) Corollary \ref{vdc-opt} and Lemma \ref{beta-duality}.
+    \end{proof} 
+
+\derived
+\code{van_der_corput_pair()}
+
+\begin{theorem}[Exponent pairs on the line of symmetry]\label{line-sym} $(k,k+1/2)$ is an exponent pair for
+\begin{itemize}
+\item[(i)] $k = 9/56$ \cite[Theorem~1]{huxley_exponential_1988};
+\item[(ii)] $k=89/560$ \cite[Theorem~6]{watt_exponential_1989};
+\item[(iii)] $k=17/108$ \cite[p. 467]{huxley_exponential_1991};
+\item[(iv)] $k=89/570$ \cite[p. 40]{huxley_exponential_1993};
+\item[(v)] $k=32/205$ \cite[Theorem~1]{huxley_exponential_2005};
+\item[(vi)] $k=13/84$ \cite[p. 206]{bourgain_decoupling_2017}.
+\end{itemize}
+\end{theorem}
+
+\literature
+\code{add_literature_exponent_pairs()}
+
+
+\begin{theorem}[Exponent pairs from the Bombieri--Iwaniec method]  The following pairs are exponent pairs:
+\begin{itemize}
+\item[(i)] $(\frac{2}{13}, \frac{35}{52})$ \cite{huxley_watt_exponential_1990};
+\item[(ii)] $(\frac{6299}{43860}, \frac{29507}{43860})$ \cite[Table 17.3]{huxley_area_1996};
+\item[(iii)] $(\frac{771}{8116}, \frac{1499}{2029})$ \cite[p. 285]{sargos_points_1995};
+\item[(iv)] $(\frac{21}{232}, \frac{173}{232})$ \cite[p. 286]{sargos_points_1995};
+\item[(v)] $(\frac{1959}{21656}, \frac{16135}{21656})$ \cite[p. 286]{sargos_points_1995};
+\item[(vi)] $(\frac{516247}{6629696}, \frac{5080955}{6629696})$ \cite{huxley_exponential_2001}, \cite[Table 19.2]{huxley_area_1996}, \cite{robert_fourth_2002}.
+\end{itemize}
+\end{theorem}
+
+\literature
+\code{add_literature_exponent_pairs()}
+
+\begin{theorem}[Exponent pairs from derivative tests] $(k,1-mk)$ is an exponent pair when
+    \begin{itemize}
+\item[(i)] $k=\frac{1}{13}$ and $m=3$ \cite[Theorem 1]{robert_fourth_2002};
+\item[(ii)] $k = \frac{1}{204}$ and $m=7$ \cite[p. 231]{sargos_analog_2003};
+\item[(iii)] $k = \frac{1}{130}$ and $m=8$ \cite[(1.1)]{robert_2002};
+\item[(iv)] $k = \frac{7}{2640}$ and $m=8$ \cite[p. 231]{sargos_analog_2003};
+\item[(v)] $k = \frac{1}{716}$ and $m=9$ \cite[p. 231]{sargos_analog_2003};
+\item[(vi)] $k = \frac{1}{649}$ and $m=9$ \cite{Robert_Sargos_2001};
+\item[(vii)] $k = \frac{7}{4540}$ and $m=9$ \cite[(1.2)]{robert_2002};
+\item[(viii)] $k = \frac{1}{615}$ and $m=9$ \cite[(1.1)]{robert_2002};
+\item[(ix)] $k = \frac{1}{915}$ and $m=10$ \cite[Th\'eor\`eme 2]{robert_2002b}. 
+\end{itemize}
+\end{theorem}
+
+\literature
+\code{add_literature_exponent_pairs()}
+
+
+\begin{theorem}[Huxley sequence]\cite[Table 17.3]{huxley_area_1996}  For any integer $m \geq 1$, the pair
+    $$ \left(\frac{169}{1424 \times 2^m - 338}, 1 - \frac{169}{1424 \times 2^m - 338} \frac{712m+1577}{712}\right)$$
+is an exponent pair.
+\end{theorem}
+
+\literature
+\code{add_huxley_exponent_pairs(Constants.EXP_PAIR_TRUNCATION)}
+
+\begin{theorem}[1996 Heath--Brown sequence]\cite[(6.17.4)]{titchmarsh_theory_1986}  For any integer $m \geq 3$, the pair
+$$ \left(\frac{1}{25m^2 (m-2) \log m}, 1 - \frac{1}{25 m^2 (m-2) \log m}\right)$$
+is an exponent pair.
+\end{theorem}
+
+(Currently not implemented in python due to the irrational exponents.)
+
+\begin{theorem}[2017 Heath--Brown sequence]\cite[Theorem 2]{heathbrown_new_2017}
+For any integer $m \geq 3$, the pair
+$$ \left(\frac{2}{(m-1)^2(m+2)}, 1 - \frac{3m-2}{m(m-1)(m+2)}\right)$$
+is an exponent pair.
+\end{theorem}
+
+\literature
+\code{add_heath_brown_exponent_pairs(Constants.EXP_PAIR_TRUNCATION)}
+
+\begin{proof} This follows from Theorem \ref{beta-HB} and Lemma \ref{beta-duality}, after some computation.
+\end{proof}
+
+
+\begin{theorem}[Sargos $C$-process]\cite[Theorem 5]{sargos_analog_2003}  If $(k,\ell)$ is an exponent pair, then so is
+    $$ \left(\frac{k}{12(1+4k)}, \frac{11(1+4k)+\ell}{12(1+4k)}\right).$$
+\end{theorem}
+
+\literature
+\code{C_transform()}
+
+
+{\bf TODO: implement our new exponent pair $(1101653/15854002, 12327829,15854002)$}

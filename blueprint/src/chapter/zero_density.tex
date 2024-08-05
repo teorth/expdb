@@ -1,0 +1,505 @@
+\chapter{Zero density theorems}
+
+\begin{definition}[Zero density exponents]\label{zero-def}  For $\sigma \in \R$ and $T>0$, let $N(\sigma,T)$ denote the number of zeroes $\rho$ of the Riemann zeta function with $\mathrm{Re}(\rho) \geq \sigma$ and $|\mathrm{Im}(\rho)| \leq T$.
+    
+If $1/2 \leq \sigma < 1$ is fixed, we define the zero density exponent $\A(\sigma) \in [-\infty,\infty)$ to be the infimum of all (fixed) exponents $A$ for which one has
+    $$ N(\sigma-\delta,T) \ll T^{A (1-\sigma)+o(1)}$$
+whenever $T$ is unbounded and $\delta>0$ is infinitesimal.
+\end{definition}
+
+The shift by $\delta$ is for technical convenience, it allows for $\A(\sigma)$ to control (very slightly) the zeroes to the left of $\mathrm{Re} s = \sigma$.  In non-asymptotic terms: $\A(\sigma)$ is the infimum of all $A$ such that for every $\eps>0$ there exists $C, \delta > 0$ such that
+$$ N(\sigma-\delta, T) \leq C T^{A(1-\sigma)+\eps}$$
+whenever $T \geq C$.
+
+\begin{lemma}[Basic properties of $A$]\label{zero-basic}
+\begin{itemize}
+\item[(i)] $\sigma \mapsto (1-\sigma) \A(\sigma)$ is non-increasing and left-continuous, with $\A(1/2)=2$.
+\item[(ii)] If the Riemann hypothesis holds, then $\A(\sigma)=-\infty$ for all $1/2 < \sigma \leq 1$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof} The claim (i) is clear using the Riemann-von Mangoldt formula \cite[Theorem 1.7]{ivic} and the functional equation.  The claim (ii) is also clear.
+\end{proof}
+
+\begin{remark} One can ask what happens if one omits the $\delta$ shift.  Thus, define $\A_0(\sigma)$ to be the infimum of all fixed exponents $A$ for which  $N(\sigma,T) \ll T^{A (1-\sigma)+o(1)}$ for unbounded $T$. Then it is not difficult to see that
+$$ \lim_{\sigma' \to \sigma^+} \A(\sigma) \leq \A_0(\sigma) \leq \A(\sigma)$$
+for any fixed $1/2 < \sigma < 1$; thus $\A_0$ is basically the same exponent at $\A$, except possibly at jump discontinuities of the left-continuous function $\A$, in which case it could theoretically take on a different value.  (But we do not expect such discontinuities to actually exist.)  Thus there is not a major difference between $\A(\sigma)$ and $\A_0(\sigma)$, but the former has some very slight technical advantages (such as the aforementioned left continuity).
+\end{remark}
+
+The quantity $\|\A\|_\infty \coloneqq \sup_{1/2 \leq \sigma < 1} \A(\sigma)$ is of particular importance to the theory of primes in short intervals; see Section \ref{primes-sec}.  From Lemma \ref{zero-basic} we have $\|\A\|_\infty \geq 2$.  It is conjectured that this is an equality.
+
+\begin{conjecture}[Density hypothesis]  One has $\|\A\|_\infty=2$.  Equivalently, $\A(\sigma) \leq 2$ for all $1/2 \leq \sigma < 1$.
+\end{conjecture}
+
+Indeed, the Riemann hypothesis implies the stronger assertion that $\A(\sigma) = -\infty$ for all $12 < \sigma < 1$.  However, for many applications to the prime numbers in short intervals, the density hypothesis is almost as powerful; see Section \ref{primes-sec}.
+
+Upper bounds on $\A(\sigma)$ can be obtained from large value theorems via the following relation.
+
+\begin{lemma}[Zero density from large values]\label{zero-from-large}  Let $1/2 < \sigma < 1$.  Then
+$$ \A(\sigma)(1-\sigma) \leq \max( \sup_{\tau \geq 2} \LV_\zeta(\sigma,\tau)/\tau, \limsup_{\tau \to \infty} \LV(\sigma,\tau)/\tau ).$$
+\end{lemma}
+
+\begin{proof}
+Write the right-hand side as $B$, then $B \geq 0$ (from Lemma \ref{lv-basic}(iii)) and we have
+\begin{equation}\label{lvz-bound}
+    \LV_\zeta(\sigma,\tau) \leq B \tau
+\end{equation}
+for all $\tau \geq 1$, and
+\begin{equation}\label{lv-bound}
+    \LV(\sigma,\tau) \leq (B+\eps) \tau
+\end{equation}
+whenever $\eps>0$ and $\tau$ is sufficiently large depending on $\eps$ (and $\sigma$).  It would suffice to show, for any $\eps>0$, that $N(\sigma-o(1),T) \ll T^{B+O(\eps)+o(1)}$ as $T \to \infty$.
+
+By dyadic decomposition, it suffices to show for large $T$ that the number of zeroes with real part at least $\sigma-o(1)$ and imaginary part in  $[T,2T]$ is $\ll T^{B+O(\eps)+o(1)}$.  From the Riemann-von Mangoldt theorem, there are only $O(\log T)$ zeroes whose imaginary part is within $O(1)$ of a specified ordinate $t \in [T,2T]$, so it suffices to show that given some zeroes $\sigma_r + i t_r$, $r=1,\dots,R$ with $\sigma-o(1) \leq \sigma_r < 1$ and $t_r \in [T,2T]$ $1$-separated, that $R \ll T^{B+O(\eps)+o(1)}$.
+
+Suppose that one has a zero $\sigma_r+i t_r$ of this form.  Then by a standard approximation to the zeta function \cite[Theorem 1.8]{ivic}, one has
+$$ \sum_{n \leq T} \frac{1}{n^{\sigma_r+it_r}} \ll T^{-1/2}.$$
+Let $0 < \delta_1 < \eps$ be a small quantity (independent of $T$) to be chosen later, and let $0 < \delta_2 < \delta_1$ be sufficiently small depending on $\delta_1,\delta_2$.  By the triangle inequality, and refining the sequence $t_r$ by a factor of at most $2$, we either have
+$$ \bigg|\sum_{T^{\delta_1} \leq n \leq T} \frac{1}{n^{\sigma_r+it_r}} \bigg| \gg T^{-\delta_2}$$
+for all $r$, or
+\begin{equation}\label{td}
+ \sum_{n \leq T^{\delta_1}} \frac{1}{n^{\sigma_r+it_r}} \ll T^{-\delta_2}
+\end{equation}
+for all $r$.
+
+Suppose we are in the former (``Type I'') case, we perform a smooth partition of unity, and conclude that
+$$ \bigg|\sum_{T^{\delta_1} \leq n \leq T} \frac{\psi(n/N)}{n^{\sigma_r+it_r}} \bigg| \gg T^{-\delta_2 - o(1)}$$
+for some fixed bump function $\psi$ supported on $[1/2,1]$, and some $T^{\delta_1} \ll N \ll T$.  
+
+We divide into several cases depending on the size of $N$.  First suppose that $N \ll T^{1/2}$.  The variable $n$ is restricted to the interval $I \coloneqq [\max(N/2, T^{\delta_1}), N]$.  We have
+$$ \bigg|\sum_{n \in I} \psi(n/N) (n/N)^{-\sigma_r} n^{-it_r} \bigg| \gg N^\sigma T^{-\delta_2 - o(1)}.$$
+Performing a Fourier expansion of $\psi(n/N) (n/N)^{-\sigma_r}$ in $\log n$ and using the triangle inequality, we can bound
+$$ \sum_{n \in I} \psi(n/N) (n/N)^{-\sigma_r} n^{-it_r}  \ll_A \int_\R \bigg| \sum_{n \in I} \frac{1}{n^{it}} \bigg| (1+|t-t_r|)^{-A}\ dt$$
+for any $A>0$, so by the triangle inequality we conclude that
+$$ \bigg|\sum_{n \in I} n^{-it'_r} \bigg| \gg N^\sigma T^{-\delta_2 - o(1)}$$
+for some $t'_r = t_r + O(T^{o(1)})$.  By refining the $t_r$ by a factor of $T^{o(1)}$ if necessary, we may assume that the $t'_r$ are $1$-separated, and by passing to a subsequence we may assume that $T = N^{\tau+o(1)}$ for some $2 \leq \tau \leq 1/\delta_1$, then
+we conclude that
+$$ \bigg| \sum_{n \in I} \frac{1}{n^{it'_r}} \bigg| \gg N^{\sigma-\delta_2/\delta_1+o(1)}$$
+for all remaining $r$.  By Definition \ref{lvz-def} we then have (for $\delta_2$ small enough)
+$$ R \ll N^{\LV_\zeta(\sigma,\tau) + \eps + o(1)} \ll T^{\LV_\zeta(\sigma,\tau)/\tau + \eps + o(1)}$$
+and the claim follows in this case from \eqref{lvz-bound}.
+
+In the case $N \asymp T$, a standard summation by parts argument {\bf cite} gives
+$$ \sum_{T^{\delta_1} \leq n \leq T} \frac{\psi(n/N)}{n^{\sigma_r+it_r}} \ll T^{-\sigma_r}$$
+which leads to a contradiction.  So the only remaining case is when $T^{1/2} \ll N \ll o(T)$.  Here we can ignore the cutoffs on $n$ and write
+$$ \sum_{n} \psi(n/N) (n/N)^{\sigma_r} n^{-it_r} \gg N^{\sigma} T^{-\delta_2-o(1)}.$$
+Applying the van der Corput $B$-process {\bf give cite}, we have
+$$ \sum_{m} \psi(2\pi t_r/mN) (2\pi t_r/Nm)^{\sigma_r} m^{-it_r} \gg M^{1/2} N^{\sigma-1/2} T^{-\delta_2-o(1)};$$
+where $M := 2\pi T/N \ll N^{1/2}$.  In particular
+$$ \sum_{m \in [M/10, 10 M]} \psi(2\pi t_r/mN) (2\pi t_r/Nm)^{\sigma_r} m^{-it_r} \gg M^{\sigma} T^{-\delta_2-o(1)};$$
+since $N \gg T^{1/2}$ and $\sigma \geq 1/2$.  Performing a Fourier expansion as before, we conclude that
+$$ \sum_{m \in [M/10, 10 M]} m^{-it'_r} \ll M^{\sigma} T^{-\delta_2-o(1)}$$
+for some $t'_r = t_r + O(T^{o(1)})$, and one can argue as in the $N \ll T^{1/2}$ case (partitioning $[M/10, 10M]$ into $O(1)$ intervals each contained in some $[M',2M']$ with $M' \ll T^{1/2}$).
+
+Now suppose instead we are in the latter (``Type II'') case \eqref{td}.  We multiply both sides of \eqref{td} by the mollifier $\sum_{m \leq T^{\delta_2/2}} \frac{1}{m^{\sigma_r+it_r}}$ to obtain
+$$ \bigg| 1 + \sum_{T^{\delta_2/2} \leq n \leq T^{\delta_1+\delta_2/2}} \frac{a_n}{n^{\sigma_r+it_r}} \bigg| = o(1)$$
+where $a_n$ is some sequence with $a_n \ll T^{o(1)}$.  By dyadic decomposition and the pigeonhole principle, and refining the $t_r$ by a factor of $O(T^{o(1)})$ as needed, we can then find an interval $I$ in $[N,2N]$ with $T^{\delta_2/2} \ll N \ll T^{\delta_1+\delta_2/2}$ such that
+$$ \bigg| \sum_{n \in I} \frac{a_n}{n^{\sigma_r+it_r}} \bigg| \gg T^{-o(1)}$$
+and hence by Fourier expansion of $\frac{1}{n^{\sigma_r}}$ in $\log n$
+$$ \bigg| \sum_{n \in I} \frac{a_n}{n^{it'_r}} \bigg| \gg N^{\sigma_r} T^{-o(1)}$$
+for some $t'_r = t_r + O(T^{o(1)})$; by refining the $t_r$ by a further factor of $T^{o(1)}$ we may assume that the $t'_r$ are also $O(1)$-separated; we can also pigeonhole so that $T = N^{\tau+o(1)}$ for some $\frac{1}{\delta_1+\delta_2/2} \leq \tau \leq \frac{1}{\delta_2/2}$.  Applying Lemma \ref{lv-asymp}, we conclude that
+$$ R \ll N^{\LV(\sigma,\tau)+o(1)} = T^{\LV(\sigma,\tau)/\tau+o(1)}$$
+and the claim follows in this case from \eqref{lv-bound}.
+\end{proof}
+
+Recently, a partial converse to the above lemma was established:
+
+\begin{lemma}[Large values from zero density]\cite[Theorem 1.2]{matomaki_teravainen_2024} If $\tau > 0$ and $1/2 \leq \sigma \leq 1$ are fixed, then
+    $$ \LV_\zeta(\sigma,\tau)/\tau \leq \max( \frac{1}{2}, \sup_{\sigma \leq \sigma' \leq 1} \A(\sigma')(1-\sigma') + \frac{\sigma'-\sigma}{2} ).$$
+\end{lemma}
+
+\begin{proof}  Let $N$ go to infinity, $T = N^{\tau+o(1)}$, and $I \subset [N,2N]$ be an interval, and $t_1,\dots,t_R \in [T,2T]$ be $1$-separated with
+$$ \bigg| \sum_{n \in I} \frac{1}{n^{it_r}} \bigg| \gg N^{\sigma-o(1)}$$
+uniformly for all $r$.  By \cite[Theorem 1.2]{matomaki_teravainen_2024}, we have for any fixed $\delta>0$ that
+$$ R \ll T^\delta \sup_{\sigma-\delta \leq \sigma' \leq 1} T^{\frac{\sigma' - \sigma}{2}} N(\sigma', O(T)) + T^{\frac{1-\sigma}{2}+\delta}.$$
+Using Definition \ref{zero-def}, we conclude that
+$$ R \ll T^{\max( \frac{1}{2}, \sup_{\sigma-\delta \leq \sigma' \leq 1} \A(\sigma')(1-\sigma') + \frac{\sigma'-\sigma}{2} ) + O(\delta)}$$
+and thus
+$$ \LV_\zeta(\sigma,\tau) \leq \tau \max( \frac{1}{2}, \sup_{\sigma-\eps \leq \sigma' \leq 1} \A(\sigma')(1-\sigma') + \frac{\sigma'-\sigma}{2} ) + O(\delta).$$
+Here the implied constant in the $O()$ notation is understood to be uniform in $\delta$.
+Letting $\delta$ go to zero, and using left-continuity of $A$, we obtain the claim.
+\end{proof}
+
+The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, but thanks to the ability to raise to a power, we can reduce to a bouned range of $\tau$.  Here is a basic such reduction, suited for machine-assisted proofs:
+
+\begin{corollary}\label{zero-large-cor-0} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then 
+    $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV_\zeta(\sigma,\tau)/\tau, \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV(\sigma,\tau)/\tau\right)$$
+    with the convention that the first supremum is $-\infty$ if it is vacuous (i.e., if $\tau_0 < 2$).
+    \end{corollary}
+    
+    \begin{proof}  Denote the right-hand side by $B$, thus
+    $$ \LV(\sigma,\tau) \leq B\tau$$
+    for all $\tau_0 \leq \tau \leq 2\tau_0$, and
+    \begin{equation}\label{lvz-b}
+         \LV_\zeta(\sigma,\tau) \leq B\tau
+    \end{equation}
+    whenever $2 \leq \tau < 2\tau_0$.  From Lemma \ref{power-lemma} we then have
+    $$ \LV(\sigma,\tau) \leq B\tau$$
+    for all $k\tau_0 \leq \tau \leq 2k\tau_0$ and natural numbers $k$. Note that the intervals $[k\tau_0, 2k\tau_0]$ cover all of $[\tau_0,\infty)$, hence we have
+    $$ \LV(\sigma,\tau) \leq B\tau$$
+    for all $\tau \geq \tau_0$. In particular
+    $$ \limsup_{\tau \to \infty} \LV(\sigma,\tau)/\tau  \leq B.$$
+    Also, combining the previous estimate with \eqref{lvz-b} using Lemma \ref{lvz-basic}(iii) we have
+    \begin{equation}\label{lvzo}
+     \LV_\zeta(\sigma,\tau) \leq B\tau
+    \end{equation}
+    for all $\tau \geq 2$.  By Lemma \ref{lvz-basic}(iv), this implies that
+    $$ \LV_\zeta\bigg(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1} \bigg) \leq B \frac{\tau}{\tau-1}$$
+    for $\tau \geq 2$.  Thus
+    $$ \sup_{\tau \geq 2} \frac{\LV_\zeta(\sigma,\tau)}{\tau} \leq B.$$
+    The claim now follows from Lemma \ref{zero-from-large}.
+    \end{proof}
+
+For machine assisted proofs, one can simply take $\tau_0$ to be a sufficiently large quantity, e.g., $\tau_0=3$ for $\sigma$ not too close to $1$, and larger for $\sigma$ approaching $1$, to recover the full power of Lemma \ref{zero-from-large}.  However, the amount of case analysis required increases with $\tau_0$.  For human written proofs, the following version of Corollary \ref{zero-large-cor-0} is more convenient:
+    
+\begin{corollary}\label{zero-large-cor} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then 
+$$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < 4\tau_0/3} \LV_\zeta(\sigma,\tau)/\tau, \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau\right).$$
+\end{corollary}
+
+\begin{proof}  Applying Corollary \ref{zero-large-cor-0} with $\tau$ replaced by $4\tau_0/3$, it suffices to show that
+$$\sup_{4\tau_0/3 \leq \tau \leq 8\tau_0/3} \LV(\sigma,\tau)/\tau \leq \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau.$$
+But this follows from Lemma \ref{power-lemma}, since the intervals $[2k\tau_0/3, k\tau_0]$ for $k=2,3$ cover all of $[4\tau_0/3,8\tau_0/3]$.
+\end{proof}
+
+The following special case of the above corollary is frequently used in practice to assist with the human readability of zero density proofs:
+
+\begin{corollary}\label{zero-large-cor2} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Suppose that one has the bounds
+\begin{equation}\label{lvo}
+\LV(\sigma,\tau) \leq (3-3\sigma) \frac{\tau}{\tau_0}
+\end{equation}
+for $2\tau_0/3 \leq \tau \leq \tau_0$, and
+\begin{equation}\label{lvoz}
+ \LV_\zeta(\sigma,\tau) \leq (3-3\sigma) \frac{\tau}{\tau_0}
+\end{equation}
+for $2 \leq \tau < 4\tau_0/3$.  Then $\A(\sigma) \leq \frac{3}{\tau_0}$.
+\end{corollary}
+
+The reason why this particular special case is convenient is because the inequality
+\begin{equation}\label{obvious} 
+    2 - 2\sigma \leq (3-3\sigma) \frac{\tau}{\tau_0}
+\end{equation}
+obviously holds for $\tau \geq 2\tau_0/3$.  That is to say, we automatically verify \eqref{lvo} in regimes where the Montgomery conjecture holds. In fact, we can do a bit better, thanks to subdivision:
+
+\begin{corollary}\label{zero-large-cor3} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$. Suppose that one has the bound \eqref{lvoz}
+   for $2 \leq \tau < 4\tau_0/3$, and the Montgomery conjecture $\LV(\sigma,\tau) \leq 2-2\sigma$ whenever $0 \leq \tau \leq \tau_0+\sigma-1$.  Then $\A(\sigma) \leq \frac{3}{\tau_0}$.
+\end{corollary}
+
+\begin{proof}  We may assume that $\tau_0 \geq 3-3\sigma$, since otherwise the claim follows from the Riemann--von Mangoldt bound
+    $$ \A(\sigma)(1-\sigma) \leq \A(1/2)(1-1/2) = 1.$$
+    By Lemma \ref{lv-basic}(ii) we have
+$$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 3-3\sigma + \tau - \tau_0 )$$
+for all $\tau \geq 0$.  But both expressions on the right-hand side are bounded by $(3-3\sigma) \frac{\tau}{\tau_0}$ for $2\tau_3 \leq \tau \leq \tau_0$ and $\tau_0 \geq 3-3\sigma$, so the claim follows from Corollary \ref{zero-large-cor2}.
+\end{proof}
+    
+
+Let us see some examples of these corollaries in action.
+
+\begin{theorem} The Montgomery conjecture implies the density hypothesis.
+\end{theorem}
+
+\begin{proof} Apply Corollary \ref{zero-large-cor2} with $\tau_0=3/2$ (so that \eqref{lvoz} is vacuously true).
+\end{proof}
+
+\begin{theorem} The Lindelof hypothesis implies the density hypothesis, and also that $\A(\sigma) \leq 0$ for $3/4 < \sigma \leq 1$.
+\end{theorem}
+
+\begin{proof} The first result is proved in \cite{ingham_estimation_1940}, and the second result is due to \cite{halasz_distribution_1969}. We will apply Corollary \ref{zero-large-cor}.  From Corollary \ref{lh-vanish} we see that for any choice of $\tau_0$ we have
+$$ \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau \leq 0.$$
+From Theorem \ref{l2-mvt} and Lemma \ref{power-lemma} we have
+\begin{equation}\label{ap}
+     \LV(\sigma,\tau) \leq \max( (2-2\sigma)k, \tau + (1 - 2 \sigma)k )
+\end{equation}
+for any natural number $k$ and $\tau \geq 1$; setting $k$ to be the integer part of $\tau$ we conclude in particular that
+$$ \LV(\sigma,\tau) \leq (2-2\sigma)\tau + O(1),$$
+and hence by taking $\tau_0$ large enough, we can make
+$\sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau$ bounded by $2-2\sigma + \eps$ for any $\eps>0$.  This already gives the density hypothesis bound $\A(\sigma) \leq 2$.  For $\sigma > 3/4$, we may additionally apply Lemma \ref{htlv} to make
+$\sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau$ arbitrarily small, giving the bound $\A(\sigma) \leq 0$.
+\end{proof}
+
+There are similar results assuming weaker versions of the Lindelof hypothesis. For instance, we have
+
+\begin{theorem}[Ingham's first bound]\label{thm:ingham-first} \cite{ingham_difference_1937} (See also \cite{titchmarsh_theory_1986}) For any $1/2 < \sigma < 1$, we have
+    $$ \A(\sigma) \leq 2 + 4 \mu(1/2).$$
+\end{theorem}
+
+\begin{proof} We give here a proof (somewhat different from the original proof) that passes through Corollary \ref{zero-large-cor-0}.
+We apply Corollary \ref{zero-large-cor-0} with $\tau_0$ chosen so that $\mu(1/2) \tau_0 < \sigma-1/2$. From Corollary \ref{lvz-mu} we then have
+$$ \A(\sigma)(1-\sigma) \leq \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV(\sigma,\tau)/\tau.$$
+For any integer $k \geq 0$ and $k \leq \tau \leq k+1$, we see from \eqref{ap} that
+$$ \LV(\sigma,\tau) \leq (2-2\sigma)(k+1)$$
+and
+$$ \LV(\sigma,\tau) \leq \tau + (1-2\sigma)k;$$
+multiplying the first inequality by $2\sigma-1$, the second by $2-2\sigma$, and summming, we conclude that
+$$ \LV(\sigma,\tau) \leq (\tau + 2\sigma-1) (2-2\sigma);$$
+inserting this bound we have
+$$ \A(\sigma) \leq 2 + \frac{2\sigma-1}{\tau_0}.$$
+Optimizing in $\tau_0$, we obtain the claim.
+\end{proof} 
+
+\begin{theorem}[Ingham's second bound]\label{thm:ingham_zero_density2}\cite{ingham_estimation_1940} For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{3}{2-\sigma}$.
+\end{theorem}
+
+\begin{proof}
+We apply Corollary \ref{zero-large-cor3} with $\tau_0 \coloneqq 2-\sigma$.  Here we have $4\tau_0/3 < 2$ since $\sigma>1/2$, so the claim \eqref{lvoz} is automatic; and the Montgomery conjecture hypothesis follows from Theorem \ref{l2-mvt}.
+\end{proof}
+
+Either of Theorem \ref{thm:ingham-first} or Theorem \ref{thm:ingham_zero_density2} implies an older result of Carlson \cite{carlson_uber_1921} that $\A(\sigma) \le 4\sigma$ for $1/2 < \sigma < 1$. 
+
+\begin{theorem}[Huxley bound]\label{huxley-bound}\cite{Huxley} For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{3}{3\sigma-1}$. (In particular, the density hypothesis holds for $\sigma \geq 5/6$.)
+\end{theorem}
+
+\begin{proof} We apply Corollary \ref{zero-large-cor3} with $\tau_0 \coloneqq 3\sigma-1$.  The Montgomery conjecture hypothesis follows from Theorem \ref{huxley-lv}. So it remains to show that \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.  For $\sigma \leq 5/6$ we have $4\tau_0/3 \leq 2$, so the claim is vacuously true in this case.  For $\sigma > 5/6$ we use Corollary \ref{lvz-mu} and the bound $\mu(1/2) \leq 1/6$ from Table \ref{mu-table} to conclude that
+$\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > 1/2 + \tau/6$, but this is precisely $\tau < 6\sigma - 3$.  Since $6\sigma-3 > 4\tau_0/3$ when $\sigma > 5/6$, we obtain the claim.
+\end{proof}
+
+\begin{theorem}[Guth--Maynard bound]\label{guth-maynard-density}  For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{15}{3+5\sigma}$.
+\end{theorem}
+
+\begin{proof} We may assume that $7/10 < \sigma < 8/10$, since the bound follows from the Ingham and Huxley bounds otherwise.  We apply Corollary \ref{zero-large-cor2} with $\tau_0 \coloneqq \frac{3+5\sigma}{5}$.  We have $4\tau_0/3 < 2$, so the claim \eqref{lvoz} is vacuous and we only need to establish \eqref{lvo}.  We split into the subranges $13/5-2\sigma \leq \tau < \tau_0$ and $2\tau_0/3 \leq \tau \leq 13/5-2\sigma$. In the former range we use Theorem \ref{guth-maynard-lvt} (and \eqref{obvious}), and reduce to showing that
+$$ 18/5 - 4 \sigma \leq (3-3\sigma) \frac{\tau}{\tau_0},$$
+and
+$$ \tau + 12/5 - 4\sigma \leq (3-3\sigma) \frac{\tau}{\tau_0}$$
+for $13/5-2\sigma \leq \tau < \tau_0$.  The first inequality follows from
+\begin{equation}\label{18-5}
+ 18/5 - 4 \sigma \leq (3-3\sigma) \frac{13/5-2\sigma}{\tau_0}
+\end{equation}
+which one can numerically check holds in the range $7/10 < \sigma < 8/10$.  Finally, the third inequality is obeyed with equality when $\tau=\tau_0$ and the right-hand side has a larger slope in $\tau$ than the left (since $\tau_0 \geq 3-3\sigma$), so the claim follows as well.
+
+In the remaining region $2\tau_0/3 \leq \tau \leq 13/5-2\sigma$, we use Theorem \ref{l2-mvt} and \eqref{obvious} to reduce to showing that
+$$ \tau + 1 - 2\sigma \leq (3-3\sigma) \frac{\tau}{\tau_0}$$
+in this range.  This follows again from \eqref{18-5} which guarantees the inequality at the right endpoint $\tau = 13/5-2\sigma$.
+\end{proof}
+
+\begin{theorem}[Jutila zero density theorem]\label{jutila-density} \cite{jutila_zero_density_1977} The zero density hypothesis is true for $\sigma \geq 11/14$.
+\end{theorem}
+
+\begin{proof}
+We apply Corollary \ref{zero-large-cor} with $\tau_0 \coloneqq 3/2$, then it suffices to show that
+    $$\LV(\sigma,\tau) \leq (2-2\sigma) \tau$$
+    for all $1 \leq \tau \leq 3/2$.
+    
+    From the $k=3$ case of Theorem \ref{jutila-lvt} we have
+    $$\LV(\sigma,\tau) \leq \max \bigg(2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg).$$
+    But all terms on the right-hand side can be verified to be less than or equal to $(2-2\sigma)\tau$ when $1 \leq \tau \leq 3/2$ and $\sigma \geq 11/14$, giving the claim.
+\end{proof}
+
+In fact, we can do better:
+
+\begin{theorem}[Heath-Brown zero density theorem]\label{hb-density} \cite{heathbrown_zero_1979} For $11/14 \leq \sigma < 1$, one has $\A(\sigma) \leq \frac{9}{7\sigma - 1}$ (in particular, this recovers Theorem \ref{jutila-density} range).  For any $3/4 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \max(\frac{3}{10\sigma-7}, \frac{4}{4\sigma-1})$ (which is a superior bound when $\sigma \geq 20/23$).
+\end{theorem}
+
+\begin{proof} For the first estimate, we apply Corollary \ref{zero-large-cor2} with $\tau_0 \coloneqq \frac{7\sigma-1}{3}$.  To verify \eqref{lvo}, we apply the $k=3$ version of Theorem \ref{jutila-lvt}, which gives
+$$ \LV(\sigma,\tau) \leq \max \bigg( 2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg).$$
+When $\sigma \geq 11/14$ one has $18-24\sigma \leq \frac{10-16\sigma}{3}$, so by \eqref{obvious} we need to show that
+$$ \tau + \frac{10-16\sigma}{3} \leq (3-3\sigma) \frac{\tau}{\tau_0}$$
+for $2\tau_0/3 \leq \tau \leq \tau_0$.  This holds with equality at $\tau=\tau_0$, hence holds for $\tau \leq \tau_0$ as well since $\tau_0 \geq 3-3\sigma$.  As for \eqref{lvoz}, we invoke Theorem \ref{hb-12} and reduce to showing that
+$$ 2\tau + 6 - 12\sigma \leq (3-3\sigma) \frac{\tau}{\tau_0}$$
+for $2 \leq \tau \leq 4\tau_0/3$.  Since $6-12\sigma$ is negative, the ratio of the left-hand side and right-hand side is increasing in $\tau$, so it suffices to verify this claim at the endpoint $\tau = 4\tau_0/3$.  The claim then simplifies to $\tau_0 \leq \frac{3}{4} (4\sigma-1)$, which one can verify from the choice of $\tau_0$ and the hypothesis $\sigma \geq 11/14$.
+
+For the second estimate, we take $\tau_0 \coloneqq \min( 10\sigma-7, \frac{3}{4} (4\sigma-1))$.  To verify \eqref{lvo}, we now use Theorem \ref{hb-opt} and \eqref{obvious}, and reduce to showing that
+$$ \tau + 10-13\sigma \leq (3-3\sigma) \frac{\tau}{\tau_0}$$
+for $2\tau_0/3 \leq \tau \leq \tau_0$.  The inequality holds at $\tau=\tau_0$ since $\tau_0 \leq 10\sigma-7$, and hence for all smaller $\tau$ since $\tau_0 \geq 3-3\sigma$.  As for \eqref{lvoz}, we can repeat the previous arguments since $\tau_0 \leq \frac{3}{4} (4\sigma-1)$.
+\end{proof}
+
+With the aid of computer assistance, we were able to strengthen the second claim here.  We first need a lemma:
+
+\begin{lemma}\label{3-40} $(3/40, 31/40)$ is an exponent pair.  In particular, by Corollary \ref{exp-pair-mu}, $\mu(7/10) \leq 3/40$.
+\end{lemma}
+
+\begin{proof}  This can be derived from the Watt exponent pair $W \coloneqq (89/560, 1/2 + 89/560)$ from Theorem \ref{line-sym} as well as the $A$ and $B$ transforms and convexity (Lemmas \ref{exp-pair-closed}, \ref{vdc-a}, \ref{vdc-b}) after observing that
+$$(3/40,31/40) = xy AW + (1-x)y ABA W + (1-y) W$$
+with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more recent exponent pairs that are stronger, such as the Bourgain exponent pair $(13/84, 1/2+13/84)$.)  We remark that one could also obtain this result from Lemma \ref{beta-duality}, after observing that the required bound $\beta(\alpha) \leq 3/40 + 7\alpha/10$ can be derived from Theorem \ref{huxley-table} (as well as the classical bounds in Corollary \ref{vdc-opt}).  We also note that the corollary $\mu(7/10) \leq 3/40 = 0.075$ is immediate from \cite[Theorem 2.4]{trudgian-yang}, which in fact gives the slightly stronger bound $\mu(7/10) \leq 218/3005 = 0.07254\dots$.
+\end{proof}
+
+\begin{theorem}[Improved Heath-Brown zero density theorem]\label{hb-density2} For any $1/2 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \frac{3}{10\sigma-7}$.
+\end{theorem}
+
+\begin{proof}  We apply Corollary \ref{zero-large-cor3} with $\tau_0 \coloneqq 10\sigma-7$.  The claim \eqref{lvo} again follows from
+    Theorem \ref{hb-opt} and \eqref{obvious} as in the proof of Theorem \ref{hb-density}.  Meanwhile, from Lemma \ref{3-40} and Corollary \ref{lvz-exp} we have $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \frac{3}{40} \tau + \frac{7}{10}$, or equivalently $\tau < \frac{4}{3} (10\sigma-7)$, which then immediately gives \eqref{lvoz}.
+\end{proof}
+
+\begin{theorem}[Bourgain result on density hypothesis] The density hypothesis holds for $\sigma > 25/32$.
+\end{theorem}
+
+{\bf Note: it appears the proof here may be optimized to go beyond the density hypothesis.  This will be a good test case of our python machinery.}
+
+\begin{proof}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
+    
+In view of Theorem \ref{jutila-density} (or Theorem \ref{hb-density}), we may assume that $25/32 < \sigma < 11/14$.  Set $\rho \coloneqq \LV(\sigma,\tau)$. As in the proof of Theorem \ref{jutila-density}, it suffices to show that
+\begin{equation}\label{rot}
+    \rho \leq (2-2\sigma) \tau
+\end{equation}
+for all $1 \leq \tau \leq 3/2$.
+
+From the $k=3$ case of Theorem \ref{jutila-lvt} we have
+$$\rho \leq \max \bigg(2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg)$$
+which in the $\sigma < 11/14$ regime simplifies to
+\begin{equation}\label{r0-start}
+\rho \leq \max(2-2\sigma, \tau + 18-24\sigma)
+\end{equation}
+and this already suffices unless
+\begin{equation}\label{tau-check}
+     \tau \geq \frac{24\sigma-18}{2\sigma-1}.
+\end{equation}
+In the regime $\sigma > 25/32$ and $\tau \leq 3/2$, the bound \eqref{r0-start} certainly implies
+$$ \rho \leq 1$$
+so we may invoke Corollary \ref{borg-lv-simp} to conclude that
+\begin{equation}\label{40}
+     \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma)
+\end{equation}
+for any $\alpha_1, \alpha_2 \geq 0$.
+
+We now divide into cases.  First suppose that $\tau \leq \frac{4(1+\sigma)}{5}$.  In this case we set $\alpha_1 \coloneqq \frac{\tau}{3} - \frac{2}{3} (7\sigma-5)$ (which can be checked to be nonnegative using \eqref{tau-check} and $\sigma \geq 25/32$) and $\alpha_2=0$, and one can check that \eqref{40} implies \eqref{rot} in this case (with some room to spare).
+
+Now suppose that $\tau > \frac{4(1+\sigma)}{5}$.  In this case we choose $\alpha_1 = \frac{\tau}{8} - \frac{9\sigma-7}{2}$ and $\alpha_2 = \frac{5\tau}{4} - (1+\sigma)$, which can be checked to be nonnegative using the hypotheses on $\sigma,\tau$.  In this case
+one can again check that \eqref{40} implies \eqref{rot}.
+\end{proof}
+
+\begin{theorem}[Bourgain zero density theorem]\label{bourgain-zd}\cite[Proposition 3]{bourgain_remarks_1995}  Let $(k,\ell)$ be an exponent pair with $k < 1/5$, $\ell > 3/5$, and $15\ell + 20k > 13$.  Then, for any $\sigma > \frac{\ell+1}{2(k+1)}$, one has
+    $$ \A(\sigma) \leq \frac{4k}{2(1+k)\sigma - 1 - \ell}$$
+    assuming either that $k < \frac{11}{85}$, or that $\frac{11}{85} < k < \frac{1}{5}$ and $\sigma > \frac{144k-11\ell-11}{170\kappa-22}$.
+\end{theorem}
+
+\begin{corollary}\cite[Corollary 4]{bourgain_remarks_1995}  One has
+    $$ \A(\sigma) \leq \frac{4}{30\sigma-25}$$
+    for $\frac{15}{16} \leq \sigma \leq 1$
+    and
+    $$ \A(\sigma) \leq \frac{2}{7\sigma-5}$$
+    for $\frac{17}{19} \leq \sigma \leq \frac{15}{16}$.
+\end{corollary}
+
+\begin{proof} Apply Theorem \ref{bourgain-zd} with the classical pairs $(\frac{1}{14},\frac{11}{14})$ and $(\frac{1}{6}, \frac{1}{3})$ respectively from Proposition \ref{vdc-class}.
+\end{proof}
+
+It is remarked in \cite{bourgain_remarks_1995} that further zero density estimates could be obtained by using additional exponent pairs, such as the Huxley--Watt exponent pair $(9/56, 37/56)$ from Theorem \ref{line-sym}.
+
+\begin{lemma}\cite[Theorem 11.2]{ivic} We have
+    $$ \A(\sigma) \leq \frac{4}{2\sigma+1}$$
+    for $17/18 \leq \sigma \leq 1$, and
+    $$ \A(\sigma) \leq \frac{24}{30\sigma-11}$$
+    for $155/174 \leq \sigma \leq 17/18$.
+\end{lemma}
+
+\begin{proof}  From Lemma \ref{ivic-lvt} we have
+$$  \LV(\sigma,\tau) \leq \max( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6})$$
+for all $\tau \geq 0$.  Meanwhile, applying Lemma \ref{zeta-from-exp} with the exponent pair $(2/7,4/7)$ we have
+$$ \LV_\zeta(\sigma,\tau) \leq \max( \tau + (3-6\sigma), 3\tau + 19(1/2-\sigma)).$$ 
+We apply Corollary \ref{zero-large-cor2} with $\tau_0 \coloneqq \max( \frac{30\sigma-11}{8}, \frac{6\sigma+3}{4} )$, and reduce to showing that \eqref{lvo} for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} for $2 \leq \tau < 4\tau_0/3$.  But this follows from the preceding estimates after routine calculations.
+\end{proof}
+
+One can also use bounds on $\mu$ to obtain zero density theorems:
+
+\begin{lemma}[Zero density from $\mu$ bound]\cite[Theorem 12.3]{montgomery_topics_1971} If $1/2 \leq \alpha \leq 1$ and $\frac{\alpha+1}{2} \leq \sigma \leq 1$, then
+$$ \A(\sigma) \leq \mu(\alpha) \frac{2(3\sigma-1-2\alpha)}{(2\sigma-1-\alpha)(\sigma-\alpha)}.$$
+\end{lemma}
+
+\begin{corollary}\cite[Theorem 11.3]{ivic} For any $9/10 \leq \sigma \leq 1$ and $1/2 \leq \alpha \leq 1$ one has
+    $$ \A(\sigma)(1-\sigma) \leq \frac{7}{6} \mu(5\sigma-4).$$
+In particular, for $152/155 \leq \sigma \leq 1$, one has
+$$ \A(\sigma) \leq \min( 35/36, 1600 (1-\sigma)^{1/2} ).$$
+\end{corollary}
+
+\begin{proof} Apply the previous lemma with $\alpha = 5\sigma-4$.
+\end{proof}
+
+\begin{lemma}[Preliminary zero density estimate]\label{a-ivt-1}  If $m \geq 2$ is an integer, $3/4 < \sigma \leq 1$, and $(k,\ell)$ is an exponent pair, then
+$$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, m(2-4\sigma) + m\tau, \min( X, Y ))$$
+where
+$$ X \coloneqq 2\tau/3 + 4m(3-4\sigma)/3$$
+and
+$$ Y \coloneqq \max( \tau + 3m(3-4\sigma), (k+\ell)\tau/k + k(1+2k+2\ell)(3-4\sigma)/k).$$
+\end{lemma}
+
+\begin{proof}  See \cite[(11.74)]{ivic}.
+\end{proof}
+
+\begin{lemma}[General zero density estimate]\label{gzd}\cite[(11.76), (11.77)]{ivic} If $(k,\ell)$ is an exponent pair, and $m \geq 2$ an integer, then
+$$ \A(\sigma) \leq \frac{3m}{(3m-2)\sigma + 2 - m}$$
+whenever
+\begin{align*}
+\sigma &\geq \min\biggl( \frac{6m^2-5m+2}{8m^2-7m+2}, 
+&\quad max\left( \frac{9m^2-4m+2}{12m^2-6m+2}, \frac{3m^2(1+2k+2\ell)-(4k+2\ell)m + 2k+2\ell}{4m^2(1+2k+2\ell)-(6k+4\ell)m + 2k+2\ell} \right) \biggr).
+\end{align*}
+\end{lemma}
+
+\begin{proof} With the hypothesis on $\sigma$, one sees from Lemma \ref{a-ivt-1} that
+$$ \LV(\sigma,\tau) \leq \max( 2 - 2 \sigma, \tau - \frac{(4m-2)\sigma + 2-2m}{m} + 2-2\sigma)$$
+for $0 \leq \tau < \frac{(4m-2)\sigma + 2-2m}{m}$, and hence for all $\tau \geq 0$ by by Lemma \ref{lv-basic}(ii).  Meanwhile, from Theorem \ref{hb-12} one has 
+$$\LV_\zeta(\sigma,\tau) \leq 2\tau - 12 (\sigma-1/2)$$
+for all $\tau \geq 2$.  The claim then follows from Corollary 
+\ref{zero-large-cor2} with $\tau_0 \coloneqq \frac{(3m-2)\sigma+2-m}{m}$ after a routine calculation.
+\end{proof}
+
+\begin{corollary}\cite[Theorem 11.4]{ivic} One can bound $\A(\sigma$) by
+\begin{align*}
+ \frac{3}{2\sigma} &\hbox{ for } \frac{3831}{4791} \leq \sigma \leq 1;\\
+ \frac{9}{7\sigma-1} &\hbox{ for } \frac{41}{53} \leq \sigma \leq 1; \\
+ \frac{6}{5\sigma-1} &\hbox{ for } \frac{13}{17} \leq \sigma \leq 1; 
+\end{align*}
+\end{corollary}
+
+\begin{proof}  Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; $m=3$ and arbitrary $(k,\ell)$ for the second claim; and $m=4$ and arbitrary $(k,\ell)$ for the third claim.
+\end{proof}
+
+\begin{lemma}[Preliminary large values theorem]\label{a-ivt}  If $1/2 \leq \sigma \leq 1$ and $\tau < 8\sigma-5$, then
+    $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 6\tau/5 + (20-32\sigma)/5 ).$$
+\end{lemma}
+
+\begin{proof} See \cite[(11.95)]{ivic}.
+\end{proof}
+
+\begin{corollary}[Zero density estimates for $\sigma$ close to $3/4$]\cite[Theorem 11.5]{ivic}  One has $\A(\sigma) \leq \frac{3}{7\sigma-4}$ for $3/4 \leq \sigma \leq 10/13$, and $\A(\sigma) \leq \frac{9}{8\sigma-2}$ for $10/13 \leq \sigma \leq 1$.
+\end{corollary}
+
+\begin{proof}  For $3/4 \leq \sigma \leq 10/13$, we see from Lemma \ref{a-ivt} that the bound
+$$ \LV(\sigma,\tau) \leq \max(2-2\sigma, \tau + 7 - 10\sigma )$$
+holds for $0 \leq \tau < 8\sigma-5$, and hence for all $\tau \geq 0$ by Lemma \ref{lv-basic}(ii).  Meanwhile, from Lemma \ref{lvz-4} we have
+$$\LV_\zeta(\sigma,\tau) \leq \tau - 4 (\sigma-1/2)$$
+for all $1/2 \leq \sigma \leq 1$ and $\tau \geq 2$. The claim then follows from Corollary 
+\ref{zero-large-cor2} with $\tau_0 \coloneqq 7\sigma-4$ after a routine calculation.  Similarly, for $10/13 \leq \sigma \leq 1$, we have
+$$ \LV(\sigma,\tau) \leq \max(2-2\sigma, \tau + \frac{11 - 17 \sigma}{3} )$$
+for $0 \leq \tau < \frac{11\sigma-5}{3}$, hence for all $\tau \geq 0$ by Lemma \ref{lv-basic}(ii); the claim then follows from Corollary 
+\ref{zero-large-cor2} with $\tau_0 \coloneqq \frac{8\sigma-2}{3}$ after a routine calculation.
+\end{proof}
+
+
+\begin{theorem}[Pintz zero density theorem]\cite[Theorem 1]{pintz_density_2023}  If $k \geq 4$, $\ell \geq 3$ are integers and $\sigma = 1-\eta$ is such that
+\begin{equation}\label{eta-b}
+    \frac{1}{k(k+1)} \leq \eta \leq \frac{1}{k(k-1)}
+\end{equation}
+and
+\begin{equation}\label{eta-l}
+ \frac{1}{2\ell(\ell+1)} \leq \eta \leq \frac{1}{2\ell(\ell-1)}
+\end{equation}
+then
+$$ \A(\sigma) \leq \max( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1-(k-1)\eta)}).$$
+\end{theorem}
+
+\begin{proof} We apply Corollary \ref{zero-large-cor2} with 
+\begin{equation}\label{tau0-def} 
+\tau_0 \coloneqq \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} (k(1-(k-1)\eta)) ) - \eps
+\end{equation}
+for an arbitrarily small $\eps$.
+It then suffices to show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.  
+
+To prove \eqref{lvoz}, it suffices by Lemma \ref{beta-zeta-vanish} to show that $\sigma > \tau \beta(1/\tau)$ for all $2 \leq \tau < 4 \tau_0/3$.  By \eqref{tau0-def} one has $2 \leq \tau < k(1-(k-1)\eta)$.  Meanwhile, from Lemma \ref{beta-HB} one has
+\begin{equation}\label{taub}
+\tau \beta(1/\tau) \leq 1 + \max\left( \frac{\tau-r}{r(r-1)}, -\frac{1}{r(r-1)}, - \frac{2\tau}{r^2(r-1)}\right)
+\end{equation}
+for any $r \geq 3$.  So by \eqref{eta-b} it suffices to find $3 \leq r \leq k$ such that
+$$ \frac{r-\tau}{r(r-1)}, \frac{2\tau}{r^2(r-1)} \geq \eta$$
+or equivalently
+$$ \tau \in [\frac{r^2(r-1)\eta}{2}, r(1-(r-1)\eta)].$$
+But one can check that these intervals for $3 \leq r \leq k$ cover the entire range $2 \leq \tau < 4\tau_0/3$, as required.
+
+To prove \eqref{lvo}, it suffices by Lemma \ref{montgomery-lv} and \eqref{obvious} to show that
+$$ \sup_{1 \leq \tau \leq \tau_0} \beta(1/\tau) \tau < 2\sigma - 1 = 1 - 2 \eta.$$
+Using \eqref{taub}, \eqref{eta-l} we obtain the claim whenever
+$$ \tau \in [r^2(r-1)\eta+\eps, r(1-2(r-1)\eta)-\eps]$$
+for some $3 \leq r \leq \ell$.  These cover the range $[18\eta+\eps, \tau]$.  For the remaining range $[1, 18\eta+\eps]$ we use the van der Corput bound
+$$ \tau \beta(1/\tau) \leq \frac{\tau}{2} \leq 9 \eta$$
+from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \leq \frac{1}{12}$.
+\end{proof}
+
+
+{\bf we should be able to do better with subdivision!}

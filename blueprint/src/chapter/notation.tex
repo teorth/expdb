@@ -1,0 +1,57 @@
+\chapter{Basic notation}
+
+We freely assume the axiom of choice in this blueprint.
+
+Throughout this blueprint we adopt following notation. If $\theta$ is a real number, then we write
+$$ e(\theta) \coloneqq e^{2\pi i\theta}$$
+where $i$ is the imaginary unit. The indicator function $1_I(n)$ of a set $I$ is defined to equal $1$ when $n \in I$, and $0$ otherwise.
+
+We adopt the convention that an empty supremum is $-\infty$, and an empty infimum is $+\infty$.  Thus, for instance, $\sup_{\sigma_0 \leq \sigma \leq \sigma_1} f(\sigma)$ would equal $-\infty$ if $\sigma_1 < \sigma_0$.  Related to this, we also adopt the convention that $N^{-\infty}=0$ when $N > 1$.
+
+A sequence $a_n, n \in I$ of real or complex numbers indexed by some index set is said to be \emph{$1$-bounded} if $|a_n| \leq 1$ for all $n \in I$.  Similarly, a sequence $t_1,\dots,t_R$ of real numbers is said to be \emph{$1$-separated} if $|t_r-t_{r'}| \geq 1$ for all $1 \leq r < r' \leq R$.  One can define more general notions of $\lambda$-bounded or $\lambda$-separated for other $\lambda>0$ in the obvious fashion.
+
+\section{Asymptotic (or ``cheap nonstandard'') notation}
+
+It is convenient to use a ``cheap nonstandard analysis'' framework for asymptotic notation, in the spirit of \cite{tao-cheap}, as this will reduce the amount of ``epsilon management'' one has to do in the arguments.  This framework is inspired by nonstandard analysis, but we will avoid explicitly using such nonstandard constructions as ultraproducts in the discussion below, relying instead on the more familiar notion of sequential limits.
+
+In this framework, we assume there is some ambient index parameter $\i$, which ranges over some ambient sequence of natural numbers going to infinity.  All mathematical objects $X$ (numbers, sequences, sets, functions, etc.), will either be \emph{fixed} - i.e., independent of $\i$ - or \emph{variable} - i.e., dependent on $\i$.  (These correspond to the notions of \emph{standard} and \emph{non-standard} objects in nonstandard analysis.)  Of course, fixed objects can be considered as special cases of variable objects, in which the dependency is constant.  By default, objects should be understood to be variable if not explicitly declared to be fixed. For emphasis, we shall sometimes write $X = X_{\i}$ to explicitly indicate that an object $X$ is variable; however, to reduce clutter, we shall generally omit explicit mention of the parameter $\i$ in most of our arguments. We will often reserve the right to refine the ambient sequence to a subsequence as needed, usually in order to apply a compactness theorem such as the Bolzano--Weierstrass theorem; we refer to this process as ``passing to a subsequence if necessary''.  When we say that a statement involving variable objects is true, we mean that it is true for all $\i$ in the ambient sequence.
+For instance, a variable set $E$ of real numbers is a set $E = E_{\i}$ indexed by the ambient parameter $\i$, and by an element of such a set, we mean a variable real number $x = x_{\i}$ such that $x_{\i} \in E_{\i}$ for all $\i$ in the ambient sequence.  A variable sequence $t_1,\dots,t_R$ of real numbers of some variable length $R$ is actually a sequence of sequences $t_{1,\i},\dots,t_{R_{\i}, \i}$ of real numbers of some $\i$-dependent length $R_{\i}$.  Saying that such a sequence is $1$-separated is thus asserting that
+$$ |t_{r, \i} - t_{r', \i}| \geq 1$$
+for all $\i$ in the ambient sequence and all $1 \leq r < r' \leq R_{\i}$.
+
+We isolate some special types of variable numerical quantities $X = X_{\i}$ (which could be a natural number, real number, or complex number):
+\begin{itemize}
+\item $X$ is \emph{bounded} if there exists a fixed $C$ such that $|X| \leq C$. In this case we also write $X = O(1)$.
+\item $X$ is \emph{unbounded} if $|X_{\i}| \to \infty$ as $\i \to \infty$; equivalently, for every fixed $C$, one has $|X| \geq C$ for $\i$ sufficiently large.
+\item $X$ is \emph{infinitesimal} if $|X_{\i}| \to 0$ as $\i \to \infty$; equivalently, for every fixed $\eps>0$, one has $|X| \leq \eps$ for $\i$ sufficiently large. In this case we also write $X = o(1)$.
+\end{itemize}
+
+Note that any quantity $X$ will be either bounded or unbounded, after passing to a subsequence if necessary; similarly, by the Bolzano--Weierstrass theorem, any bounded (variable) quantity $X$ will be of the form $X_0+o(1)$ for some fixed $X_0$, after passing to a subsequence if necessary.  Thus, for instance, if $T, N > 1$ are (variable) quantities with $N = T^{O(1)}$ (or equivalently, $T^{-C} \leq N \leq T^C$ for some fixed $C$), then, after passing to a subsequence if necessary, we may write $N = T^{\alpha+o(1)}$ for some fixed real number $\alpha$.  Note that any further passage to subsequences do not these concepts; quantities that are bounded, unbounded, or infinitesimal remain so under any additional restriction to subsequences.
+
+We observe the \emph{underspill principle}: if $X,Y$ are (variable) real numbers, then the relation
+$$ X \leq Y + o(1)$$
+is equivalent to the relation
+$$ X \leq Y + \eps + o(1)$$
+holding for all fixed $\eps>0$.
+
+We can develop other standard asymptotic notation in the natural fashion: given two (variable) quantities $X,Y$, we write $X = O(Y)$, $X \ll Y$, or $Y \gg X$ if $|X| \leq CY$ for some fixed $C$, and $X = o(Y)$ if $|X| \leq cY$ for some infinitesimal $c$.  We also write $X \asymp Y$ for $X \ll Y \ll X$.
+
+A convenient property of this asymptotic formalism, analogous to the property of \emph{$\omega$-saturation} in nonstandard analysis, is that certain asymptotic bounds are automatically uniform in variable parameters.
+
+\begin{proposition}[Automatic uniformity]\label{auto}  Let $E = E_{\i}$ be a non-empty variable set, and let $f = f_{\i}: E \to \C$ be a variable function.  \begin{itemize}
+    \item[(i)] Suppose that $f(x)=O(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists a fixed $C$ such that $|f(x)| \leq C$ for all $x \in E$.
+    \item[(ii)] Suppose that $f(x)=o(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists an infitesimal $c$ such that $|f(x)| \leq c$ for all $x \in E$.
+\end{itemize}
+\end{proposition}
+
+\begin{proof} We begin with (i).  Suppoe that there is no uniform bound.  Then for any fixed natural number $n$, one can find arbitrarily large $\i_n$ in the sequence and $x_{\i_n} \in E_{\i_n}$ such that $|f_{\i_n}(x_{\i_n})| \geq n$.  Clearly one can arrange matters so that the sequence $\i_n$ is increasing.  If one then restricts to this sequence and sets $x$ to be the variable element $x_{\i_n}$ of $E$, then $f(x)$ is unbounded, a contradiction.
+    
+Now we prove (ii).  We can assume for each fixed $n$ that there exists $\i_n$ in the ambient sequence such that $|f_{\i}(x_{\i})| \leq 1/n$ for all $\i \geq \i_n$ and $x_{\i} \in E_{\i}$, since if this were not the case one can construct an $x = x_{\i} \in E$ such that $|f_{\i}(x_{\i})| \geq 1/n$ for $\i$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\i_n$ to be increasing.  Restricting to this sequence, and writing $c_{\i_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
+\end{proof}
+
+\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\i}(x) := x/\i$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\i \coloneqq \i$ is a counterexample).
+\end{remark}
+
+
+\begin{remark} There are two caveats to keep in mind when using this asymptotic formalism.  Firstly, the law of the excluded middle is only valid after passing to subsequences.  For instance, it is possible for a nonstandard natural number to neither be even or odd, since it could be even for some $\i$ and odd for others.  However, one can pass to a subsequence in which it becomes either even or odd.  Secondly, one cannot combine the ``external'' concepts of asymptotic notation with the ``internal'' framework of (variable) set theory.  For instance, one cannot view the collection of all bounded (variable) real numbers as a variable set, since the notion of boundedness is not ``pointwise'' to each index $\i$, but instead describes the ``global'' behavior of this index set.  Thus, for instance, set builder notation such as $\{ x: x = O(1) \}$ should be avoided.
+\end{remark}

@@ -1,3 +1,24 @@
-% In this file you should put all LaTeX macros to be used
-% both by the pdf version and the web version.
-% This should be most of your macros.
+% Put any macro needed for the project here. Those macros for both the web and print versions of the blueprint.
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\C}{\mathbf{C}}
+\newcommand{\N}{\mathbf{N}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\LV}{\mathrm{LV}}
+\renewcommand{\i}{{\mathrm{i}}}
+\newcommand{\A}{\mathrm{A}}
+\newcommand{\Energy}{\mathcal{E}}
+\newcommand{\Pythag}{\theta_{\mathrm{Pythag}}}
+\newcommand{\PNTALL}{\theta_{\mathrm{PNT}}}
+\newcommand{\PNTAA}{\theta_{\mathrm{PNT-AA}}}
+\newcommand{\GAPMAX}{\theta_{\mathrm{gap}}}
+\newcommand{\GAPSQUARE}{\theta_{\mathrm{gap},2}}
+
+% TODO: a nicer format for these macros
+
+\newcommand\code[1]{{\ttfamily{\lstinline|#1|}}}
+\newcommand\python[1]{\emph{Implemented at \href{https://github.com/adyang1/expdb/blob/main/python/#1.py}{\ttfamily{\lstinline|#1|.py}}} as:\\}
+\newcommand\literature{\emph{Recorded in \href{https://github.com/adyang1/expdb/blob/main/python/literature.py}{\ttfamily{literature.py}} as:\\}}
+\newcommand\derived{\emph{Derived in \href{https://github.com/adyang1/expdb/blob/main/python/derived.py}{\ttfamily{derived.py}} as:\\}}
+\newcommand\nopython{\emph{Not yet implemented in Python.}}

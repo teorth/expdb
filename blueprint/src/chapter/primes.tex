@@ -1,0 +1,133 @@
+\chapter{Applications to the primes}\label{primes-sec}
+
+Recall that $\Lambda$ is the von Mangoldt function, and that the prime number theorem asserts that
+$$ \sum_{n \leq x} \Lambda(n) = x + o(x)$$
+for unbounded $x$.  If $p_n$ denotes the $n^{\mathrm{th}}$ prime, the prime number theorem is also equivalent to
+$$ p_n = (1+o(1)) n \log n$$
+for unbounded $n$.
+
+We now consider local versions of the prime number theorem.
+
+\begin{definition}[Prime number theorem in short interval exponents]\label{pnt-ap}
+    \begin{itemize}
+        \item[(i)] We let $\PNTALL$ denote the least exponent with the following property: if $\eps > 0$ is fixed, and $x$ is unbounded, then
+        $$ \sum_{x \leq n < x+y} \Lambda(n) = y + o(y)$$
+        whenever $x^{\PNTALL + \eps} \leq y \leq x^{1-\eps}$.
+        \item[(ii)] We let $\PNTAA$ denote the least exponent with the following property: if $\eps > 0$ is fixed, and $X$ is unbounded, then we have
+        $$ \int_X^{2X} |\sum_{x \leq n < x+y} \Lambda(n)-y|\ dx = o(Xy)$$
+        whenever $X^{\PNTAA + \eps} \leq y \leq X^{1-\eps}$.
+        \item[(iii)] We let $\GAPMAX$ denote the least exponent such that, if $p_n$ denotes the $n^{\mathrm{th}}$ prime, that
+        $$ p_{n+1} - p_n \ll n^{\GAPMAX+o(1)} = p_n^{\GAPMAX+o(1)}$$
+        as $n \to \infty$.
+        \item[(iv)] We let $\GAPSQUARE$ denote the least exponent such that
+        $$ \sum_{p_n \leq x} (p_{n+1}-p_n)^2 \ll x^{\GAPSQUARE+o(1)}$$
+        as $x \to \infty$.
+    \end{itemize}
+\end{definition}
+
+\begin{lemma}[Trivial bounds]\label{pnt-triv}
+    We have
+    $$ 0 \leq \PNTAA, \GAPMAX \leq \PNTALL \leq 1$$
+    and $1 \leq \GAPSQUARE \leq 1+\GAPMAX$.
+\end{lemma}
+
+\begin{proof} These are all immediate, after noting from the prime number theorem that $\sum_{p_n \leq x} p_{n+1} - p_n = x^{1+o(1)}$.
+\end{proof}
+
+The Cram\'er random mdoel {\bf give cite} predicts
+
+\begin{conjecture}[Prime gap conjecture] $\PNTALL = 0$, and hence (by Lemma \ref{pnt-triv}) $\PNTAA = \GAPMAX=0$ and $\GAPSQUARE=1$.
+\end{conjecture}
+
+We note that the results of Maier {\bf give cite} show that there is some deviation from the prime number theorem at very small scales (of order $\log^{O(1)} x$), but this does not directly affect the exponents discussed here due to the epsilons in our definitions.
+
+A basic connection with zero density exponents is
+
+\begin{proposition}[Zero density theorems and prime gaps]\label{prime-gap}  Let 
+\begin{equation}\label{A-def}
+    \|\A\|_\infty \coloneqq \sup_{1/2 \leq \sigma \leq 1} A(\sigma).  
+\end{equation}
+Then
+    $$ \PNTALL \leq 1 - \frac{1}{\|\A\|_\infty}$$
+    and
+    $$ \PNTAA \leq 1 - \frac{2}{\|\A\|_\infty}.$$
+\end{proposition}
+
+\begin{proof} See for instance \cite[\S 13.2]{guth-maynard}.
+\end{proof}
+
+\begin{corollary}[Ingham-Huxley bound]  We have $\PNTALL \leq \frac{7}{12}$ and $\PNTAA \leq \frac{1}{6}$.
+\end{corollary}
+
+\begin{proof}  From Theorem \ref{thm:ingham_zero_density2} and Theorem \ref{huxley-bound} one as $\|\A\|_\infty \leq 12/5$, and the claim now follows from Proposition \ref{prime-gap}.
+\end{proof}
+
+\begin{corollary}[Ingham-Guth-Maynard bound]\cite{guth-maynard}  We have $\PNTALL \leq \frac{17}{30}$ and $\PNTAA \leq \frac{2}{15}$.
+\end{corollary}
+
+These are currently the best known upper bounds on $\PNTALL$ and $\PNTAA$.  
+
+\begin{proof}  From Theorem \ref{thm:ingham_zero_density2} and Theorem \ref{guth-maynard-density} one as $\|\A\|_\infty \leq 30/13$, and the claim now follows from Proposition \ref{prime-gap}.
+\end{proof}
+
+\begin{corollary}  The density hypothesis implies that $\PNTALL \leq 1/2$ and $\PNTAA = 0$.
+\end{corollary}
+
+The current unconditional best bound on $\GAPMAX$ is
+
+\begin{theorem}[Baker-Harman-Pintz theorem]\cite{baker-harman-pintz} We have $\GAPMAX \leq 0.525$.
+\end{theorem}
+
+Historical bounds on $\GAPMAX$ are summarized in the following table:
+
+\begin{table}[ht]
+    \caption{Historical upper bounds on $\GAPMAX$.}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound \\
+    \hline
+    Hoheisel (1930) \cite{hoheisel_1930} & $1 - \frac{1}{33000}$ \\
+    Heilbronn (1933) \cite{heilbronn_1933} & $1 - \frac{1}{250}$ \\
+    Ingham (1937) \cite{ingham_difference_1937} & $\frac{5}{8}$ \\
+    Montgomery (1969) \cite{montgomery_1969} & $\frac{3}{5}$ \\
+    Huxley (1972) \cite{Huxley} & $\frac{7}{12}$ \\
+    Iwaniec--Jutila (1979)\cite{iwaniec-jutila} & $\frac{13}{23}$ \\
+    Heath-Brown--Iwaniec (1979) \cite{heathbrown_iwaniec_1979} & $\frac{11}{20}$ \\
+    Pintz (1981) \cite{pintz_1981} & $\frac{17}{31}$ \\
+    Iwaniec--Pintz (1984) \cite{iwaniec-pintz} & $\frac{23}{42}$\\
+    Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40}$ \\
+    \hline
+    \end{tabular}
+    \end{table}\label{gapmax-table}
+
+
+The following general bound on $\GAPSQUARE$ is known:
+
+\begin{proposition}
+    We have
+    $$ \GAPSQUARE \leq \max( 2-\frac{2}{\|\A\|_\infty}, \sup_{1/2 \leq \sigma \leq 1} \max(\alpha(\sigma), \beta(\sigma)))$$
+    where
+    $$ \alpha(\sigma) \coloneqq 4\sigma-2 + 2 \frac{A^*(\sigma)(1-\sigma)-1}{A^*(\sigma)-A(\sigma)}$$
+    and
+    $$ \beta(\sigma) \coloneqq 4\sigma-2 + \frac{A^*(\sigma)(1-\sigma)-1}{A(\sigma)}.$$
+\end{proposition}
+
+\begin{proof} See \cite[Lemma 2]{heath_brown_consecutive_II}. We remark that this lemma allows $\sigma$ to range over $0 \leq \sigma \leq 1$ rather than $1/2 \leq \sigma \leq 1$, but it is easy to see that the contributions of the $0 \leq \sigma < 1/2$ cases are dominated by the $\sigma=1/2$ case.
+\end{proof}
+
+This proposition recovers several known bounds (both conditional and unconditional) on $\GAPSQUARE$:
+
+\begin{corollary}\ 
+    \begin{itemize}
+    \item[(i)] Assuming the Riemann hypothesis, $\GAPSQUARE = 1$.  {\bf Selberg}
+    \item[(ii)] Unconditionally, one has $\GAPSQUARE \leq 4/3$.  \cite{heath_brown_consecutive_I}
+    \item[(iii)] Assuming the Lindelof hypothesis, $\GAPSQUARE \leq 7/6$. \cite{heath_brown_consecutive_II}
+    \item[(iv)] Unconditionally, $\GAPSQUARE \leq 1 + 2 \times \frac{173}{1067}$. \cite[\S 7]{heath_brown_consecutive_II}
+    \item[(v)] Unconditionally, $\GAPSQUARE \leq 23/18$. \cite[Theorem 12.14]{ivic}.
+\end{itemize}
+\end{corollary}
+
+\begin{proof} {\bf give details}
+\end{proof}

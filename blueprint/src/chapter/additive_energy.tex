@@ -1,0 +1,391 @@
+\chapter{Large value additive energy}
+
+\section{Additive energy}
+
+\begin{definition}[Additive energy]\label{add-def}  Let $W$ be a finite set of real numbers.  The \emph{additive energy} $E_1(W)$ of such a set is defined to be the number of quadruples $(t_1,t_2,t_3,t_4) \in W$ such that
+$$
+|t_1 + t_2 - t_3 - t_4| \leq 1.$$
+\end{definition}
+
+We remark that in additive combinatorics, the variant $E_0(W)$ of the additive energy is often studied, in which $t_1+t_2-t_3-t_4$ is not merely required to be $1$-bounded, but in fact vanish exactly.  However, this version of additive energy is less relevant for analytic number theory applications.
+
+\begin{lemma}[Basic properties of additive energy]\label{add-energy}
+\begin{itemize}
+\item[(i)] If $W$ is a finite set of reals, then
+$$ E_1(W) \asymp \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |^2\ dx.$$
+More generally, for any $r>0$ we have
+$$ E_1(W) \asymp r^{O(1)} \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq r\} |^2\ dx.$$
+\item[(ii)] If $W$ is a finite set of reals, then
+$$ E_1(W) \asymp \int_{-1}^1 |\sum_{t \in W} e(t\theta)|^4\ d\theta.$$
+\item[(iii)] If $W_1,\dots,W_k$ are finite sets of reals, then
+$$ E_1(W_1 \cup \dots \cup W_k)^{1/4} \ll E_1(W_1)^{1/4} + \dots + E_1(W_k)^{1/4}.$$
+\item[(iv)]  If $W$ is $1$-separated and contained in an interval of length $T \geq 1$, then
+$$ (\# W)^2, (\# W)^4/T \ll E_1(W) \ll (\# W)^3.$$
+\item[(v)]  If $W$ is contained in an interval $I$, which is in turn split into $K$ equally sized subintervals $J_1,\dots,J_K$, then
+$$ E_1(W)^{1/3} \ll \sum_{k=1}^K E_1(W \cap J_k)^{1/3}.$$
+\end{itemize}
+\end{lemma}
+
+Note that the lower bound of $(\# W)^4 / T$ would be expected to be attained if the set $W$ is distributed ``randomly'' and is reasonably large (of size $\gg \sqrt{T}$).  So  getting upper bounds of the additive energy of similar strength to this lower bound can be viewed as a statement of ``pseudorandomness'' (or ``Gowers uniformity'') of this set.
+
+\begin{proof} For (i), we just prove the first estimate, as the second follows from the first by several applications of the triangle inequality.  The right-hand side can be expanded as
+    $$ \sum_{t_1,t_2,t_3,t_4 \in W} |\{ x: |t_1+t_2-x|, |t_3+t_4-x| \leq 1 \}|.$$
+Every quadruple contributing to $E_1(W)$ then contributes $\gg 1$ to the right-hand side, giving the upper bound.  To get the matching lower bound, note that
+$$ \sum_{t_1,t_2,t_3,t_4 \in W} |\{ x: |t_1+t_2-x|, |t_3+t_4-x| \leq 1/2 \} \leq E_1(W)$$
+and hence
+$$ E_1(W) \gg \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1/2\} |^2\ dx.$$
+The upper bound then follows from the triangle inequality.
+
+For (ii), we can upper bound the indicator function of $[-1,1]$ by the Fourier transform of a non-negative bump function $\varphi$, so that the right-hand side is bounded by
+$$ \sum_{t_1,t_2,t_3,t_4 \in W} \varphi(t_1+t_2-t_3-t_4)$$
+which is then bounded by $O(E_1(W))$ by choosing the suppport of $\varphi$ appropriately.  The lower bound is established similarly (using the arguments in (i) to adjust the error tolerance $1$ in the constraint $ |t_1+t_2 - x| \leq 1$ as necessary.)
+
+For (iii), first observe we may remove duplicates and assume that the $W_i$ are disjoint, then we can use (ii) and the triangle inequality.
+
+For (iv), the first lower bound comes from considering the diagonal case $t_1=t_3, t_2 = t_4$ and the upper bound comes from observing that once $t_1,t_2,t_3$ are fixed, there are only $O(1)$ choices for $t_4$ thanks to the $1$-separated hypothesis.  Finally, observe that
+$$ \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |\ dx = (2 \# W)^2$$
+hence by Cauchy--Schwarz
+$$ \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |^2\ dx \gg (\# W)^2/T$$
+and the claim follows from (i).
+
+For (v), write $a_k \coloneqq E_1(W \cap J_k)^{1/4}$.  Each tuple $(t_1,t_2,t_3,t_4)$ that contributes to $E_1(W)$ is associated to a tuple $J_{k_1}, J_{k_2}, J_{k_3}, J_{k_4}$ of intervals with $k_1+k_2-k_3-k_4=O(1)$.  By modifying the proof of (ii), the total contribution of such a tuple of intervals is
+$$ \ll \int_\R \prod_{j=1}^4 |\sum_{t \in W \cap J_{k_j}} e(t\theta)|\ d\theta$$
+which by Cauchy--Schwarz is bounded by
+$$ \ll a_{k_1} a_{k_2} a_{k_3} a_{k_4}.$$
+Thus we see that
+$$ E_1(W) \ll \sum_{m=O(1)} a * a * \tilde a * \tilde a(m)$$
+where $\tilde a_k \coloneqq a_{-k}$ and $*$ denotes convolution on the integers.  By Young's inequality we then have
+$$ E_1(W) \ll \|a\|_{\ell^{4/3}}^4$$
+and the claim follows.
+
+We remark that (v) can also be proven using \cite[Lemma 4.8, (4.2)]{cladek-tao}.
+\end{proof}
+
+We will also study the following related quantity.  Given a set $W$ and a scale $N>1$, let $S(N,W)$ denote the \emph{double zeta sum}
+$$ S(N,W) \coloneqq \sum_{t,t' \in W} |\sum_{n \in [N,2N]} n^{-i(t-t')}|^2.$$
+We caution that this normalization differs from the one in \cite{ivic}, where $n^{-1/2-i(t-t')}$ is used in place of $n^{-i(t-t')}$.  This sum may also be rearranged as
+$$ S(N,W) = \sum_{n,m \in [N,2N]} |R_W(n/m)|^2$$
+where $R_W$ is the exponential sum
+$$ R_W(x) \coloneqq \sum_{t \in W} x^{it}.$$
+From the first formula it is clear that $S(N,W)$ is monotone non-decreasing in $W$, and from the second formula one has the triangle inequality
+$$ S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}$$
+when the $W_i$ are disjoint, and hence also when they are not assumed to be disjoint, thanks to the monotonicity.
+
+To relate $S(N,W)$ to $E_1(W)$, we first observe the following lemma, implicit in \cite{heath_brown_consecutive_II} and made more explicit in \cite[Lemma 11.4]{guth-maynard}.
+
+\begin{lemma} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and 
+$$|\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
+for all $t \in W$ and some $V>0$, then
+$$ V^2 E_1(W) \ll T^{o(1)} \sum_{n,m \in [N,2N]} |R_W(n/m)|^3 + T^{-50}.$$
+\end{lemma}
+
+\begin{proof} By hypothesis, we have
+$$ V^2 E_1(W) \leq \sum_{t_1,t_2,t_3,t_4 \in W: |t_1+t_2-t_3-t_4| \leq 1} |\sum_{n \in [N,2N]} a_n n^{-it_4}|^2.$$
+By standard Fourier arguments (see \cite[Lemma 11.3]{guth-maynard}), we can bound
+$$ |\sum_{n \in [N,2N]} a_n n^{-it_4}| \ll T^{o(1)} \int_{t: |t-t_4| \leq T^{o(1)}} |\sum_{n \in [N,2N]} a_n n^{-it}|\ dt + T^{-100}.$$
+Since each $t_1,t_2,t_3$ generates at most $O(1)$ choices for $t_4$, we conclude that
+$$ V^2 E_1(W) \ll T^{o(1)} \sum_{t_1,t_2,t_3 \in W} \int_{s: |s| \leq T^{o(1)}}  |\sum_{n \in [N,2N]} a_n n^{-i(t_1+t_2-t_3+s)}|^2\ ds + T^{-50},$$
+The right-hand side can be rewritten as
+$$ T^{o(1)} \sum_{n,m \in [N,2N]} a_n \overline{a_m} (n/m)^{-is} \overline{R_W}(n/m)^2 R_W(n/m) + T^{-50},$$
+and the claim then follows from the triangle inequality.
+\end{proof}
+
+Thus, $S(N,W)$ involves a second moment of $R_W$, while the energy $E_1(W)$ is related to the third moment.  Using the trivial bound $|R_W(x)| \leq |W|$ we can then obtain the trivial bound
+\begin{equation}\label{energy-triv}
+V^2 E_1(W) \ll T^{o(1)} |W| S(N,W) + T^{-50}
+\end{equation}
+It is then natural to introduce the fourth moment
+$$ S_4(N,W) \coloneqq \sum_{n,m \in [N,2N]} |R_W(n/m)|^4$$
+since from H\"older's inequality one now has
+\begin{equation}\label{v1w}
+    V^2 E_1(W) \ll T^{o(1)} S(N,W)^{1/2} S_4(N,W)^{1/2} + T^{-50}
+\end{equation}
+(cf. \cite[Lemma 3]{heath_brown_consecutive_II}).  The quantity $S_4(N,W)$ can also be expressed as
+$$ S_4(N,W) = \sum_{t_1,t_2,t_3,t_4 \in W} |\sum_{n \in [N,2N]} n^{-i(t_1+t_2-t_3-t_4)}|^2.$$
+
+One can bound this quantity by an $S(N,W)$ type expression:
+
+\begin{lemma}\label{wtu} If $W \subset [-T,T]$ is $1$-separated and $1 \leq N \ll T^{O(1)}$, then one has
+$$ S_4(N,W) \ll T^{o(1)} u^2 S(N,U) + T^{-100}$$
+for some $1 \leq u \ll |W|$ and $1$-separated subset $U$ of $[-2T,2T]$ with
+\begin{equation}\label{v1}
+ u |U| \ll |W|^2
+\end{equation}
+and
+\begin{equation}\label{v2}
+     u^2 |U| \ll E_1(W).
+\end{equation}
+\end{lemma}
+
+This result appears implicitly in \cite[p. 229]{heath_brown_consecutive_II}, and is made more explicit in the proof of \cite[Lemma 11.6]{guth-maynard}.
+
+\begin{proof} One can bound
+    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2,t_3,t_4 \in W} \int_{t = t_1+t_2-t_3-t_4+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100},$$
+    and hence
+    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in [-2N,2N] \cap \Z} f(t_1) f(t_2) \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
+where $f$ is the counting function
+$$ f(t) \coloneqq |\{ (t_1,t_2) \in W: |t-t_1-t_2| \leq 1 \}|.$$
+Note that $f$ is integer valued and bounded above by $|W|$. By dyadic decomposition, one can then find $1 \leq u \ll |W|$ and a subset $U$ of $[-2N,2N] \cap \Z$ such that $f(t) \asymp u$ for $t \in U$, and
+$$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in U} u^2 \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
+which we can rearrange as
+$$ S_4(N,W) \ll T^{o(1)} u^2 \int_{s = O(T^{o(1)})} \sum_{n,m \in [N,2M]} (n/m)^{is} |R_U(n/m)|^2\ ds + T^{-100}$$
+and hence by the triangle inequality
+$$ S_4(N,W) \ll T^{o(1)} v^2 S(N,V) + T^{-100}.$$
+Also, by double counting one easily verifies the claims \eqref{v1}, \eqref{v2}.  The claim follows.
+\end{proof}
+
+
+\section{Large value additive energy region}
+
+Because the cardinality $|W|$ and additive energy $E_1(W)$ of a set $W$ are correlated with each other, as well as with the double zeta sum $S(N,W)$, we will not be able to consider them separately, and instead we will need to consider the possible joint exponents for these two quantities.  We formalize this via the following set:
+
+\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that 
+    \begin{equation}\label{sig-large} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
+\end{equation}
+for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
+
+We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that 
+\begin{equation}\label{sig-large-zeta} \left|\sum_{n \in I} n^{-it} \right| \geq V
+\end{equation}
+for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
+\end{definition}
+
+Clearly we have 
+
+\begin{lemma}[Trivial containment] We have $\Energy_\zeta \subset \Energy$.
+\end{lemma}
+
+These region is related to $\LV(\sigma,\tau)$ and as follows:
+
+\begin{lemma} For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we have
+$$ \LV(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
+and
+$$ \LV_\zeta(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}$$
+In particular, we have $\rho \leq \LV(\sigma,\tau)$ for all $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, and $\rho \leq \LV_\zeta(\sigma,\tau)$ for all $(\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta$.
+\end{lemma}
+
+\begin{proof} Clear from definition.
+\end{proof}
+
+Inspired by this, we can define
+
+\begin{definition}\label{lvze-def}  For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we define
+$$ \LV^*(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
+and
+$$ \LV^*_\zeta(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}.$$
+\end{definition}
+
+Thus these exponents are upper bounds for the additive energy of large values of Dirichlet polynomials which may or may not be of zeta function type.
+
+As usual, we have an equivalent non-asymptotic definition of the large value energy region:
+
+\begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
+    \begin{itemize}
+    \item[(i)] $(\sigma,\tau,\rho,\rho^*) \in \Energy$.
+    \item[(ii)] For every $\eps>0$ and $C > 0$, there exists $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, a $1$-bounded $a_n$ for each $n \in [N,2N]$, and a $1$-separated subset $W$  of an interval $J$ of length $T$ such that \eqref{sig-large}
+holds for all $t \in W$, with
+    $$ N^{\rho-\eps} \leq |W| \leq N^{\rho+\eps},$$
+    $$ N^{\rho^*-\eps} \leq E_1(W) \leq N^{\rho^*+\eps}$$
+    $$ N^{s-\eps} \leq S(N, W) \leq N^{s+\eps}.$$
+    \end{itemize}
+    Similarly with $\Energy$ replaced by $\Energy_\zeta$, $J$ replaced by $[N,2N]$, $a_n$ replaced by an interval $I$ in $[N,2N]$, and \eqref{sig-large} replaced by \eqref{sig-large-zeta}.
+\end{lemma}
+
+This lemma is proven by a routine expansion of the definitions, and is omitted.
+
+\begin{lemma}[Basic properties]\label{lve-basic}\   
+    \begin{itemize}
+        \item[(i)] (Monotonicity in $\sigma$) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+        $(\sigma',\tau',\rho,\rho^*,s) \in \Energy$ for all $1/2 \leq \sigma' \leq \sigma$ and $\tau' \geq \tau$.
+        \item[(ii)] (Subdivision) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ and $0 \leq \tau' \leq \tau$, then there exists $(\sigma,\tau', \rho', (\rho')^*,s') \in \Energy$ such that
+        $$\rho' \leq \rho \leq \rho' + \tau - \tau'$$
+        and
+        $$(\rho')^* + (\rho-\rho') \leq \rho^* \leq \rho' + 3(\rho-\rho').$$
+        and
+        $$s' \leq s \leq s' + 2(\rho-\rho').$$
+        \item[(iii)]  (Trivial bounds) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, one has
+        $$ 2\rho, 4\rho-\tau \leq \rho^* \leq 3 \rho.$$
+    \end{itemize}
+\end{lemma}
+
+\begin{proof}  ...
+\end{proof}
+
+
+\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.  
+\end{lemma}
+
+\begin{proof}
+    ...
+\end{proof}
+
+\section{Known relations for the large value energy region}
+
+\begin{theorem}[Reflection principle]\cite[\S 11.5]{ivic} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\sigma \geq 3/4$ and $\tau>1$, then for any integer $k \geq 1$, either $\rho \leq 2-2\sigma$, or there exists $0 < \alpha \leq k(\tau-1)$ and $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$ such that
+$$ \rho \leq \min( 2-2\sigma, k(3-4\sigma)/2 + s' - 1).$$
+\end{theorem}
+
+\begin{proof} By definition, there exists an unbounded $N>1$, $T = N^{\tau+o(1)}$, a $1$-bounded sequence $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ (which we can normalize without loss of generality to be $[0,T]$) such that
+    $$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq N^{\sigma+o(1)}$$
+for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By \cite[(11.58)]{ivic}, one has
+$$ |W|^2 \ll T^{o(1)} ( |W| N^{2-2\sigma} + N^{1-2\sigma} |W|^2 + N^{(3-4\sigma)/2} \int_{v = O(T^{o(1)})} \sum_{t,t' \in W} |\sum_{n \leq 4T/N} n^{-1/2+it-it'+iv}|\ dv ).$$
+Since $\sigma>1/2$, the $N^{1-2\sigma} |W|^2$ term can be dropped.  Applying H\"older's inequality and dyadic pigeonholing as in \cite[(11.59)]{ivic}, we conclude that
+$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2}  (\sum_{t,t' \in W} |\sum_{n \in [N',2N']} b_n n^{-1/2+it-it'+iv}|^2)^{1/2}$$
+for some $v = O(T^{o(1)})$ and coefficients $b_n = O(T^{o(1)})$, and some $N' \ll (4T/N)^k$.  After passing to a subsequence if necessary, we may assume that $N' = N^{\alpha+o(1)}$ for some $0 \leq \alpha \leq k(\tau-1)$.  If $\alpha=0$ then the second term here is negligible compared to the first and we obtain $\rho \leq 2-2\sigma$, so suppose that $\alpha > 0$.  Using \cite[Lemma 11.1]{ivic} to eliminate the $b_n n^{-1/2+iv}$ coefficients, we conclude that
+$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2-1} S(N', W).$$
+By construction, we have $S(N',W) = (N')^{s'/\alpha+o(1)} = N^{s'+o(1)}$ for some tuple $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$.  The claim follows.
+\end{proof}
+
+Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{ivic}).  There is one easy case in which this is true:
+
+\begin{lemma}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau < 1$, then $s \leq \max(\rho+1, 2\rho)+1$.
+\end{lemma}
+
+\begin{proof} See the discussion after \cite[(11.63)]{ivic}.
+\end{proof}
+
+Another bound is
+
+\begin{lemma}\cite[Lemma 11.2]{ivic}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+$$ s \leq \max( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ll} \tau) + 1.$$
+\end{lemma}
+
+Finally, we have the useful
+
+\begin{lemma}[Heath-Brown bound on double sums]\label{hb-double}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+    $$ s \leq \max( \rho+1, 2\rho, 5\rho/4+\tau/2) + 1.$$
+\end{lemma}
+
+Note that if $\tau \leq 3/2$, the $5\rho/4+\tau/2$ term is bounded by the convex combination $(3/4)(\rho+1)+(1/4)(2\rho)$ and may therefore be omitted.
+
+\begin{proof} See \cite[Theorem 1]{heathbrown_large_1979} or \cite[Lemma 11.5]{ivic}.
+\end{proof}
+
+Lemma \ref{wtu} can be formulated in terms of the large value energy region as follows.
+
+\begin{lemma}\label{wtu-alt}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then there exists $(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$ and $0 \leq \kappa \leq \rho$ such that
+$$ \kappa + \rho' \leq 2 \rho$$
+$$ 2\kappa + \rho' \leq \rho^*$$
+and
+$$ \rho^* + 2\sigma \leq \kappa + (s+s')/2.$$
+\end{lemma}
+
+
+\begin{proof}  By definition, there exists an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
+$$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
+for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $|W^*| = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$, then from \eqref{v1w} we have
+$$
+    V^2 E_1(W) \ll T^{o(1)} S(N,W)^{1/2} S_4(N,W)^{1/2} + T^{-50}.
+$$
+By Lemma \ref{wtu}, there exists $1 \leq u \ll |W|$ and a $1$-separated subset $U$ of $[-2T,2T]$ such that
+ such that
+$$
+    V^2 E_1(W) \ll T^{o(1)} u S(N,W)^{1/2} S(N,U)^{1/2} + T^{-50}
+$$
+with \eqref{v1}, \eqref{v2} holding.  Since $W$ is non-empty, $E_1(W) \geq 1$ and $V \geq N^{1/2} \geq 1$, so the $T^{-50}$ error here may be discarded.  Passing to a subsequence, we may assume that $u = N^{\kappa+o(1)}$ for some $0 \leq \kappa \leq \rho$, and that $|U| = N^{\rho'+o(1)}$ for some $\rho' \geq 0$.  Then we have $S_2(N,U) = s'$ for some
+$(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$, and the claim follows.
+\end{proof}
+
+These bounds on the double zeta sums can be used to control additive energies:
+
+\begin{theorem}[Heath-Brown relation]\label{hbt}\cite[(33)]{heathbrown_zero_1979} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then one has
+$$ \rho^* \leq 1-2\sigma + \max(\rho+1, 2\rho, 5\rho/4+\tau/2)/2 + \max(\rho^*+1, 4\rho, 3\rho^*/4+\rho+\tau/2)/2.$$
+\end{theorem}
+
+\begin{proof} By Lemma \ref{wtu-alt} followed by  we have
+$$ \rho^* + 2\sigma \leq \kappa + ( \max( \rho+1, 2\rho, 5\rho/4+\tau/2)+ \max( \rho'+1, 2\rho', 5\rho'/4+\tau/2) )/2 + 1$$
+for some $0 \leq \kappa \leq \rho$ with
+$$ \kappa + \rho' \leq 2\rho$$
+$$ 2\kappa + \rho' \leq \rho^*$$
+In particular, 
+$$ 2\kappa + 5\rho'/4 \leq 3\rho^*/4 + \rho$$
+and the claim follows after moving the $\kappa$ inside the second maximum and performing some algebra.
+\end{proof}
+
+\begin{corollary}[Simplified Heath-Brown relation]\label{hb-energy-simp}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ and $\tau \leq 3/2$, then
+$$ \rho^* \leq \max(3 \rho + 1-2\sigma, \rho +4-4\sigma, 5\rho/2 + (3-4\sigma)/2).$$
+\end{corollary}
+
+This result essentially appears as \cite[Lemma 3]{heathbrown_zero_1979}.
+
+\begin{proof} Apply the previous result.  For $\tau \leq 3/2$ we observe that $5\rho/4+\tau/2$ is less than $5\rho/4 + 3/4$, which is a convex combination of $\rho+1$ and $2\rho$.  Similarly $3\rho^*/4+\rho+\tau/2$ is less than $3\rho^*/4+\rho+3/4$, which is a convex combination of $\rho^*+1$ and $4\rho$. We conclude that
+$$ \rho^* \leq  1-2\sigma + \max(\rho+1, 2\rho)/2 + \max(\rho^*+1, 4\rho)/2.$$
+Thus $\rho^*$ is less than one of
+$$ 1-2\sigma + (\rho+\rho^*+2)/2, 1-2\sigma + (5\rho+1)/2, 1-2\sigma + (2\rho+\rho^*+1)/2, 1-2\sigma + (6\rho)/2;$$
+solving for $\rho^*$, we conclude
+$$ \rho^* \leq \max( 4-4\sigma + \rho, (3-4\sigma)/2 + 5\rho/2, 3-4\sigma + 2\rho, 1-2\sigma + 3\rho).$$
+But since $\sigma \geq 1/2$, $3-4\sigma + 2\rho$ is less than $5/2-3\sigma + 2\rho$, which is the mean of $4-4\sigma+\rho$ and $1-2\sigma+3\rho$. Thus
+$$ \rho^* \leq \max( 4-4\sigma + \rho, (3-4\sigma)/2 + 5\rho/2, 1-2\sigma + 3\rho),$$
+which gives the claim.
+\end{proof}
+
+
+\begin{lemma}[Second Heath-Brown relation] If If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+$$ \rho \leq \max( 2-2\sigma, \rho^*/4 + \max(\tau/4 + k(3-4\sigma)/4, k/4 + k(1-2\sigma)/2))$$
+for any positive integer $k$.
+\end{lemma}
+
+\begin{proof} See \cite[Lemma 4]{heathbrown_zero_1979}.
+\end{proof}
+
+\begin{lemma}[Guth-Maynard relation]\label{gm-1}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+$$ \rho \leq \max(2-2\sigma, 1-2\sigma + \max(S_1, S_2, S_3)/3)$$
+where $S_1, S_2, S_3$ are real numbers with
+$$ S_1 \leq -10,$$
+$$ S_2 \leq \max(2+2\rho, \tau+1+(2-1/k) \rho, 2 + 2\rho + (\tau/2 - 3\rho/4)/k )$$
+for any positive integer $k$ and
+$$ S_3 \leq 2\tau + \rho/2 + \rho^*/2$$
+and also
+$$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
+\end{lemma}
+
+\begin{proof} This follows from \cite[Propositions 4.6, 5.1, 6.1, 8.1, 10.1, (5.5)]{guth-maynard}.
+\end{proof}
+ 
+\begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+$$ \rho^* \leq \rho + s - 2\sigma.$$
+In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that    
+$$ \rho^* \leq \max(3\rho+1-2\sigma, 2\rho+2-2\sigma).$$
+\end{lemma}
+
+\begin{proof} By definition, we can find an unbounded $N>1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
+    $$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
+    for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$. From \eqref{energy-triv} one has
+$$    V^2 E_1(W) \ll T^{o(1)} |W| S(N,W) + T^{-50}.$$
+Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error can be discarded.  The claim then follows.
+\end{proof}
+
+
+\begin{lemma}[Third Guth-Maynard relation]\label{gm-3}  If $(\sigma,\tau,\rho,\rho^*) \in \Energy$ and $1 \leq \tau \leq 4/3$, then
+    $$ \rho^* \leq \max(\rho+4-4\sigma, 21\rho/8+\tau/4+1-2\sigma, 3\rho+1-2\sigma).$$
+\end{lemma}
+
+\begin{proof} See \cite[Proposition 11.1]{guth-maynard}.
+\end{proof}
+
+We can put this all together to prove the Guth--Maynard large values theorem (Theorem \ref{guth-maynard-lvt}):
+
+
+\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again} One has
+    $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$  
+\end{theorem}
+
+\begin{proof} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{lv-basic}(ii)) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
+    $$ \rho \leq 18/5-4\sigma$$
+whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau=6/5$ and $7/10 \leq \sigma \leq 8/10$.
+
+Applying Lemma \ref{gm-1} and discarding the very negative $S_1$ term, we have
+$$ \rho \leq \max(2-2\sigma, 1-2\sigma + \max(S_2, S_3)/3)$$
+where $S_2, S_3$ are real numbers with
+$$ S_2 \leq \max(2+2\rho, \tau+1+(2-1/k) \rho, 2 + 2\rho + (\tau/2 - 3\rho/4)/k )$$
+for any positive integer $k$ and
+$$ S_3 \leq 2\tau + \rho/2 + \rho^*/2$$
+and also
+$$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
+From the latter bound and Lemma \ref{gm-3}, one has
+$$ S_3 \leq \max( 2\tau+3\rho/2, \tau+\rho+3-2\sigma, \tau+2\rho+3/2-\sigma, 9\tau/8+29\rho/16 + 3/2-\sigma).$$
+Inserting this and the $S_2$ bound (with $k=4$) into the bound for $\rho$ and simplifying (using $\tau=6/5$), we eventually obtain
+the desired bound $\rho \leq 18/5-4\sigma$.
+\end{proof}
+
+
