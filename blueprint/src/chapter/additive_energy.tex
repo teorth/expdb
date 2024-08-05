@@ -38,7 +38,7 @@ The upper bound then follows from the triangle inequality.
 
 For (ii), we can upper bound the indicator function of $[-1,1]$ by the Fourier transform of a non-negative bump function $\varphi$, so that the right-hand side is bounded by
 $$ \sum_{t_1,t_2,t_3,t_4 \in W} \varphi(t_1+t_2-t_3-t_4)$$
-which is then bounded by $O(E_1(W))$ by choosing the suppport of $\varphi$ appropriately.  The lower bound is established similarly (using the arguments in (i) to adjust the error tolerance $1$ in the constraint $ |t_1+t_2 - x| \leq 1$ as necessary.)
+which is then bounded by $O(E_1(W))$ by choosing the support of $\varphi$ appropriately.  The lower bound is established similarly (using the arguments in (i) to adjust the error tolerance $1$ in the constraint $ |t_1+t_2 - x| \leq 1$ as necessary.)
 
 For (iii), first observe we may remove duplicates and assume that the $W_i$ are disjoint, then we can use (ii) and the triangle inequality.
 
@@ -73,7 +73,7 @@ when the $W_i$ are disjoint, and hence also when they are not assumed to be disj
 
 To relate $S(N,W)$ to $E_1(W)$, we first observe the following lemma, implicit in \cite{heath_brown_consecutive_II} and made more explicit in \cite[Lemma 11.4]{guth-maynard}.
 
-\begin{lemma} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and 
+\begin{lemma} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and
 $$|\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
 for all $t \in W$ and some $V>0$, then
 $$ V^2 E_1(W) \ll T^{o(1)} \sum_{n,m \in [N,2N]} |R_W(n/m)|^3 + T^{-50}.$$
@@ -139,18 +139,18 @@ Also, by double counting one easily verifies the claims \eqref{v1}, \eqref{v2}. 
 
 Because the cardinality $|W|$ and additive energy $E_1(W)$ of a set $W$ are correlated with each other, as well as with the double zeta sum $S(N,W)$, we will not be able to consider them separately, and instead we will need to consider the possible joint exponents for these two quantities.  We formalize this via the following set:
 
-\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that 
+\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that
     \begin{equation}\label{sig-large} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
 \end{equation}
 for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
 
-We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that 
+We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that
 \begin{equation}\label{sig-large-zeta} \left|\sum_{n \in I} n^{-it} \right| \geq V
 \end{equation}
 for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
 \end{definition}
 
-Clearly we have 
+Clearly we have
 
 \begin{lemma}[Trivial containment] We have $\Energy_\zeta \subset \Energy$.
 \end{lemma}
@@ -193,7 +193,7 @@ holds for all $t \in W$, with
 
 This lemma is proven by a routine expansion of the definitions, and is omitted.
 
-\begin{lemma}[Basic properties]\label{lve-basic}\   
+\begin{lemma}[Basic properties]\label{lve-basic}\
     \begin{itemize}
         \item[(i)] (Monotonicity in $\sigma$) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
         $(\sigma',\tau',\rho,\rho^*,s) \in \Energy$ for all $1/2 \leq \sigma' \leq \sigma$ and $\tau' \geq \tau$.
@@ -212,7 +212,7 @@ This lemma is proven by a routine expansion of the definitions, and is omitted.
 \end{proof}
 
 
-\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.  
+\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.
 \end{lemma}
 
 \begin{proof}
@@ -297,7 +297,7 @@ $$ \rho^* + 2\sigma \leq \kappa + ( \max( \rho+1, 2\rho, 5\rho/4+\tau/2)+ \max( 
 for some $0 \leq \kappa \leq \rho$ with
 $$ \kappa + \rho' \leq 2\rho$$
 $$ 2\kappa + \rho' \leq \rho^*$$
-In particular, 
+In particular,
 $$ 2\kappa + 5\rho'/4 \leq 3\rho^*/4 + \rho$$
 and the claim follows after moving the $\kappa$ inside the second maximum and performing some algebra.
 \end{proof}
@@ -341,10 +341,10 @@ $$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
 
 \begin{proof} This follows from \cite[Propositions 4.6, 5.1, 6.1, 8.1, 10.1, (5.5)]{guth-maynard}.
 \end{proof}
- 
+
 \begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
 $$ \rho^* \leq \rho + s - 2\sigma.$$
-In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that    
+In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that
 $$ \rho^* \leq \max(3\rho+1-2\sigma, 2\rho+2-2\sigma).$$
 \end{lemma}
 
@@ -367,7 +367,7 @@ We can put this all together to prove the Guth--Maynard large values theorem (Th
 
 
 \begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again} One has
-    $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$  
+    $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
 
 \begin{proof} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{lv-basic}(ii)) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
@@ -387,5 +387,3 @@ $$ S_3 \leq \max( 2\tau+3\rho/2, \tau+\rho+3-2\sigma, \tau+2\rho+3/2-\sigma, 9\t
 Inserting this and the $S_2$ bound (with $k=4$) into the bound for $\rho$ and simplifying (using $\tau=6/5$), we eventually obtain
 the desired bound $\rho \leq 18/5-4\sigma$.
 \end{proof}
-
-
