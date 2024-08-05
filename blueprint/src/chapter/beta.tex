@@ -35,7 +35,7 @@ whenever $T$ is unbounded, $N = T^{\alpha+o(1)}$, and $I$ is an interval in $[N,
 
 The quantity $\beta(\alpha)$ can also be formulated without asymptotic notation, but at the cost of introducing some ``epsilon and delta'' parameters:
 
-\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}  Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}  Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
 \begin{itemize}
 \item[(i)] $\beta(\alpha) \leq \overline{\beta}$.
 \item[(ii)] For every (fixed) $\eps>0$ and $\sigma > 0$ there exists (fixed) $\delta>0$, $P \geq 1$, $C \geq 1$ with the following property: if $T \geq C$, $T^{\alpha-\delta} \leq N \leq T^{\alpha+\delta}$ are (fixed) real numbers, $I \subset [N,2N]$ is a (fixed) interval, and $F$ is a (fixed) phase function such that
@@ -47,7 +47,7 @@ $$ |\sum_{n \in I} e(T F(n/N))| \leq C T^{\overline{\beta}+\eps}.$$
 \end{itemize}
 \end{lemma}
 
-\begin{proof}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\i$, one can find real numbers $T = T_{\i} \geq \i$, $T^{\alpha-1/\i} \leq N = N_{\i} \leq T^{\alpha+1/\i}$, an interval $I = I_{\i} \subset [N_\i, 2N_\i]$, and a phase function $F = F_{\i}$ such that
+\begin{proof}\uses{auto}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\i$, one can find real numbers $T = T_{\i} \geq \i$, $T^{\alpha-1/\i} \leq N = N_{\i} \leq T^{\alpha+1/\i}$, an interval $I = I_{\i} \subset [N_\i, 2N_\i]$, and a phase function $F = F_{\i}$ such that
 $$ |F_\i^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq 1/\i$$
 for all (fixed) $0 \leq p \leq \i$ and $u \in [1,2]$, but that
 $$ |\sum_{n \in I} e(T F(n/N))| \geq \i T^{\overline{\beta}+\eps}.$$
@@ -72,7 +72,7 @@ We record the trivial bounds on $\beta$:
 \code{trivial_beta_bound_1}
 \code{trivial_beta_bound_2}
 
-    \begin{proof}  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
+    \begin{proof}\uses{l2-int}  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
 
         For $\alpha > 1$, the Euler--Maclaurin formula (see e.g. \cite[(2.1.2)]{titchmarsh_theory_1986}) gives
         \begin{equation}\label{nit}
@@ -151,10 +151,10 @@ which completes the proof in view of Proposition \ref{beta-vdc}.  See Figure \re
 
 We can remove the role of $I$ in the definition of $\beta$:
 
-\begin{lemma}  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
+\begin{lemma}\uses{beta-def}  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
 \end{lemma}
 
-\begin{proof}  Suppose that $\alpha, \overline{\beta}$ are fixed quantities such that the bounds in Definition \ref{beta-def} hold just for $I  = [N,2N]$, thus whenever $T>1$ is unbounded, $N = T^{\alpha+o(1)}$, and $F$ is a model phase function one has
+\begin{proof}\uses{beta-vdc}  Suppose that $\alpha, \overline{\beta}$ are fixed quantities such that the bounds in Definition \ref{beta-def} hold just for $I  = [N,2N]$, thus whenever $T>1$ is unbounded, $N = T^{\alpha+o(1)}$, and $F$ is a model phase function one has
 \begin{equation}\label{three}
      \sum_{N \leq n \leq 2N} e(T F(n/N)) \ll T^{\overline{\beta}+o(1)}.
 \end{equation}
@@ -170,7 +170,7 @@ $$ \left|\sum_{n \in [N,2N]} e(T F(n/N) - t F(n/N)) \right| \ll T^{\overline{\be
 for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_points_1995}.
 \end{proof}
 
-\begin{lemma}[Reflection]\label{beta-reflect}  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
+\begin{lemma}[Reflection]\label{beta-reflect}\uses{beta-def}  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
 \end{lemma}
 
 {\bf TODO: implement this in python}
@@ -273,7 +273,7 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
 
 
 % Area, Lattice points and Exponential sums
-\begin{theorem}[1996 Huxley table]\label{huxley-table}  One can bound $\beta(\alpha)$ by
+\begin{theorem}[1996 Huxley table]\label{huxley-table}\uses{beta-def}  One can bound $\beta(\alpha)$ by
     \begin{align*}
         \frac{4+39\alpha}{60} & \hbox{ for } \frac{7}{12} \leq \alpha \leq \frac{517}{873} \\
         \frac{29+42\alpha}{120} & \hbox{ for } \frac{65}{114} \leq \alpha \leq \frac{7}{12} \\
@@ -343,7 +343,7 @@ See \cite[Theorem~1]{robert_fourth_2002}.
 
 
 % An analog of van der Corput’s A4-process for exponential sums
-\begin{theorem}[Sargos bound]  For any $\alpha > 0$ one has
+\begin{theorem}[Sargos bound]\uses{beta-def}  For any $\alpha > 0$ one has
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-8\alpha}{204}, -\frac{95(1-8\alpha)}{204}\right)$$
 and
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{7(1-9\alpha)}{2640}, -\frac{1001(1-9\alpha)}{2640}\right).$$
@@ -387,7 +387,7 @@ See \cite[Proposition~1, Theorem~1]{huxley_exponential_2005}.
 See \cite[Theorem~1]{robert_fourth_2016}.
 \end{proof}
 
-\begin{theorem}[Second Robert bound]\label{beta-R2} If $k \geq 4$ and $\alpha \geq -(1-k\alpha) \frac{k-1}{2k-3}$ then
+\begin{theorem}[Second Robert bound]\label{beta-R2}\uses{beta-def} If $k \geq 4$ and $\alpha \geq -(1-k\alpha) \frac{k-1}{2k-3}$ then
 $$ \beta(\alpha) \leq \alpha + \max( \frac{1-k\alpha}{2(k-1)(k-2)}, -\frac{1}{2(k-1)(k-2)}).$$
 \end{theorem}
 
@@ -430,3 +430,5 @@ See \cite[Equation~(3.18)]{bourgain_decoupling_2017}.
 \end{proof}
 
 {\bf TODO: provide a graphic of the best bounds available of beta, compared against the classical van der Corput bounds}
+
+{\bf TODO: replicate the $\beta$ table from \cite{trudgian-yang}}
