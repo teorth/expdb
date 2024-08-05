@@ -9,11 +9,11 @@ Again, it is not difficult to show that $M(\sigma,A)$ is a well-defined (fixed) 
 $$ \int_T^{2T} |\zeta(\sigma+it)|^A\ dt \leq C T^{M(\sigma,A)+\eps}$$
 holds for all $T \geq C$.
 
-\begin{lemma}[Basic properties of $M(\sigma,A)$]\label{zeta-moment-basic}
+\begin{lemma}[Basic properties of $M(\sigma,A)$]\label{zeta-moment-basic}\uses{zeta-moment-def}\
 \begin{itemize}
 \item[(i)] $M(\sigma,A)$ is convex in $\sigma$.
 \item[(ii)] For any $\sigma$, $a (M(\sigma,1/a)-1)$ is convex non-increasing in $a$.
-\item[(iii)] $M(\sigma,A)=0$ for all $A \geq 0$ and $\sigma \geq 1$. 
+\item[(iii)] $M(\sigma,A)=0$ for all $A \geq 0$ and $\sigma \geq 1$.
 \item[(iv)] $M(1/2,A)=0$ for all $0 \leq A \leq 4$.
 \item[(v)] $M(\sigma,A) \geq 0$ for all $1/2 \leq \sigma \leq 1$ and $A \geq 0$.
 \item[(vi)] $M(\sigma,0) = 1$ for all $\sigma$.
@@ -43,14 +43,14 @@ $$ \mu(\sigma+\eps/2) \leq \mu(\sigma)-\delta/2 + O(1/A).$$
 Sending $A$ to infinity and $\eps$ to zero, we obtain a contradiction.
 \end{proof}
 
-\begin{corollary} If the Lindelof hypothesis holds, then $M(\sigma,A) = \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
+\begin{corollary}\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic} If the Lindelof hypothesis holds, then $M(\sigma,A) = \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
 \end{corollary}
 
 Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds.  From Lemma \ref{zeta-moment-basic} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
 
 We can relate $M(\sigma,A)$ to $\LV_\zeta(\sigma,\tau)$:
 
-\begin{lemma}\label{mad}  If $1/2 \leq \sigma_0 \leq 1$ and $A \geq 1$, then
+\begin{lemma}\label{mad}\uses{zeta-moment-def, lvz-def}  If $1/2 \leq \sigma_0 \leq 1$ and $A \geq 1$, then
 \begin{equation}\label{M-form}
  M(\sigma_0,A) = \sup_{\tau \geq 2; \sigma \geq 1/2} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
 \end{equation}
@@ -73,7 +73,7 @@ By Definition \ref{zeta-moment-def}, the left-hand side is $\ll T^{M(\sigma_0,A)
 $$ R \ll N^{\tau M(\sigma_0,A) - A(\sigma-\sigma_0)},$$
 giving the claim.
 
-For the converse bound, let $M$ be the right-hand side of \eqref{M-form}.  From Lemma \ref{lvz-2} we have $M \geq 1$. By \cite[\S 8.1]{ivic} it will suffice to show that for any $V>0$ and any $1$-separated $t_1,\dots,t_r \in [T,2T]$ with 
+For the converse bound, let $M$ be the right-hand side of \eqref{M-form}.  From Lemma \ref{lvz-2} we have $M \geq 1$. By \cite[\S 8.1]{ivic} it will suffice to show that for any $V>0$ and any $1$-separated $t_1,\dots,t_r \in [T,2T]$ with
 $$ |\zeta(\sigma_0+it_r)| \geq V$$
 one has
 $$ R \ll T^{M+o(1)} V^{-A}.$$
@@ -93,25 +93,25 @@ $$ R \ll N^{M \tau - A (\sigma-\sigma_0)+o(1)} = T^{M+o(1)} V^{-A}$$
 as required.
 \end{proof}
 
-\begin{corollary}[Fourth moment bound]\label{lvz-4} One has $\LV_\zeta(\sigma,\tau) \leq \tau - 4 (\sigma-1/2)$ for all $1/2 \leq \sigma \leq 1$ and $\tau \geq 2$.
+\begin{corollary}[Fourth moment bound]\label{lvz-4}\uses{lvz-def} One has $\LV_\zeta(\sigma,\tau) \leq \tau - 4 (\sigma-1/2)$ for all $1/2 \leq \sigma \leq 1$ and $\tau \geq 2$.
 \end{corollary}
 
-\begin{proof} Apply Lemma \ref{mad} with $\sigma_0 = 1/2$ and $A=4$, using Lemma \ref{zeta-moment-basic}(iv).
+\begin{proof}\uses{mad, zeta-moment-basic} Apply Lemma \ref{mad} with $\sigma_0 = 1/2$ and $A=4$, using Lemma \ref{zeta-moment-basic}(iv).
 \end{proof}
 
 We have an important twelfth moment estimate of Heath-Brown:
 
-\begin{theorem}[Heath-Brown twelfth moment estimate]\label{hb-12}\cite{heathbrown_twelfth_1978} $M(1/2,12) \leq 2$.  Equivalently (by Lemma \ref{mad}), one has $\LV_\zeta(\sigma,\tau) \leq 2\tau - 12 (\sigma-1/2)$ for all $\tau \geq 2$ and $1/2 \leq \sigma \leq 1$.
+\begin{theorem}[Heath-Brown twelfth moment estimate]\label{hb-12}\cite{heathbrown_twelfth_1978}\uses{zeta-moment-def, lvz-def, mad} $M(1/2,12) \leq 2$.  Equivalently (by Lemma \ref{mad}), one has $\LV_\zeta(\sigma,\tau) \leq 2\tau - 12 (\sigma-1/2)$ for all $\tau \geq 2$ and $1/2 \leq \sigma \leq 1$.
 \end{theorem}
 
-\begin{proof}  From Lemma \ref{zeta-from-exp} with the exponent pair $(1/2,1/2)$ from Lemma \ref{vdc-class} we have
+\begin{proof}\uses{zeta-from-exp, vdc-class, lvz-infty}  From Lemma \ref{zeta-from-exp} with the exponent pair $(1/2,1/2)$ from Lemma \ref{vdc-class} we have
 $$ \LV_\zeta(\sigma,\tau) \leq \min( \tau - 6(\sigma-1/2), 2\tau - 12 (\sigma-1/2) ).$$
-If $2\tau - 12 (\sigma-1/2)  \geq 0$, the claim is immediate; if instead $2\tau - 12 (\sigma-1/2) < 0$, use Lemma \ref{lvz-infty}. 
+If $2\tau - 12 (\sigma-1/2)  \geq 0$, the claim is immediate; if instead $2\tau - 12 (\sigma-1/2) < 0$, use Lemma \ref{lvz-infty}.
 \end{proof}
 
 We also have a variant bound, which is slightly better when $\tau$ is close to $6(\sigma-1/2)$:
 
-\begin{theorem}[Auxiliary Heath-Brown estimate]  For $\tau \geq 2$ and $1/2 \leq \sigma \leq 1$, one has
+\begin{theorem}[Auxiliary Heath-Brown estimate]\label{hb-12-aux}\uses{lvz-def}  For $\tau \geq 2$ and $1/2 \leq \sigma \leq 1$, one has
 $$ \LV_\zeta(\sigma,\tau) \leq \min( \tau-6(\sigma-1/2), 5\tau-32(\sigma-1/2)).$$
 \end{theorem}
 
@@ -137,10 +137,10 @@ Applying \cite[Theorem 2]{heathbrown_twelfth_1978} (treating different cases usi
 $$ R' \ll T^{o(1)} ( T (V')^{-6} + T^5 (V')^{-32})$$
 and thus
 $$ R \ll T^{o(1)} ( T (N^{-1/2} V)^{-1} (V')^{-5} + T^5 (N^{-1/2} V)^{-1} (V')^{-31})$$
-and the claim now follows from the lower bound on $V'$. 
+and the claim now follows from the lower bound on $V'$.
 \end{proof}
 
-\begin{lemma}\cite[Theorem 8.4]{ivic}  We have $M(\sigma,A) = 1$ when $A$ is equal to
+\begin{lemma}\label{ivic-moment}\cite[Theorem 8.4]{ivic}\uses{zeta-moment-def}  We have $M(\sigma,A) = 1$ when $A$ is equal to
 \begin{align*}
     \frac{4}{3-4\sigma} & \hbox{ for } 1/2 < \sigma \leq 5/8; \\
     \frac{10}{5-6\sigma} & \hbox{ for } 5/8 < \sigma \leq 35/54; \\
@@ -149,9 +149,11 @@ and the claim now follows from the lower bound on $V'$.
     \frac{12408}{4537-4890\sigma} & \hbox{ for } 3/4 \leq \sigma \leq 5/6; \\
     \frac{4324}{1031-1044\sigma} & \hbox{ for } 5/6 \leq \sigma \leq 7/8; \\
     \frac{98}{31-32\sigma} & \hbox{ for } 7/8 \leq \sigma \leq 0.91591\dots; \\
-    \frac{24\sigma-9}{(4\sigma-1)(1-\sigma)} & \hbox{ for } 0.91591\dots \leq \sigma < 1. 
+    \frac{24\sigma-9}{(4\sigma-1)(1-\sigma)} & \hbox{ for } 0.91591\dots \leq \sigma < 1.
 \end{align*}
 \end{lemma}
+
+{\bf TODO: report the improvements from \cite{trudgian-yang}.}
 
 \section{Large values of \texorpdfstring{$\zeta$}{zeta} moments}
 
@@ -168,23 +170,23 @@ $$ M(\sigma_0,A,h) \leq M.$$
 
 A typical result concerning $M(\sigma_0,A,h)$ is as follows.
 
-\begin{lemma}\cite[(8.56)]{ivic} $M(1/2, 6, 11/72) \leq 1$.
+\begin{lemma}\label{ivic-6-large}\cite[(8.56)]{ivic} $M(1/2, 6, 11/72) \leq 1$.
 \end{lemma}
 
-\begin{proof} Applying Lemma \ref{zeta-from-exp} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ we have
+\begin{proof}\uses{zeta-from-exp} Applying Lemma \ref{zeta-from-exp} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ we have
 $$  \LV_\zeta(\sigma,\tau) \leq \min( \tau - 6(\sigma-1/2), 15\tau/4 - 24 (\sigma-1/2) ).$$
 In particular, we have
 $$ \LV_\zeta(\sigma,\tau) \leq \tau - 6(\sigma-1/2)$$
 if $\sigma - 1/2 \geq 11 \tau/72$, giving the claim.
 \end{proof}
 
-\begin{lemma}\cite[Proposition 2]{bourgain_remarks_1995} Suppose that $M(1/2,A,h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
+\begin{lemma}\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def} Suppose that $M(1/2,A,h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
     $$ \LV(\sigma,\tau) \leq \max( \alpha + 2 - 2 \sigma, -\alpha + \tau + A/2 - 2A (\sigma-1/2))$$
 whenever $1/2 \leq \sigma \leq 1$, $\tau > 0$, and $0 \leq \alpha \leq 1-\sigma$ is such that
 $$ \sigma - \frac{1}{2} > \frac{\tau h}{2} + \frac{1}{4}.$$
 \end{lemma}
 
-\begin{lemma} \cite[Proposition 5]{bourgain_remarks_1995}  Suppose that $M(1/2,6,h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
+\begin{lemma}\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def}  Suppose that $M(1/2,6,h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
 $$ A(\sigma) \leq \max( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}).$$
 \end{lemma}
 
