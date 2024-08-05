@@ -7,4 +7,4 @@ This is the repository for the Analytic Number Theory Exponent Database (expdb).
 - [Main web page](https://teorth.github.io/expdb/)
 - [Web blueprint](https://teorth.github.io/expdb/blueprint/)
 - [Dependency graph](https://teorth.github.io/expdb/blueprint/dep_graph_document.html)
-- [PDF form of blueprint](https://teorth.github.io/blueprint.pdf)
+- [PDF form of blueprint](https://teorth.github.io/expdb/blueprint.pdf)
