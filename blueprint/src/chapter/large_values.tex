@@ -1,7 +1,7 @@
 \chapter{Large value estimates}
 
 \begin{definition}[Large value exponent]\label{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV(\sigma,\tau)$ to be the least fixed quantity for which the following claim is true: whenever $N > 1$ is unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $a_n$ is a $1$-bounded complex number for each $n \in [N,2N]$, and $t_1,\dots,t_R$ are a $1$-separated sequence in some interval $J$ of length $T$ such that
-\begin{equation}\label{V-large} 
+\begin{equation}\label{V-large}
     \left|\sum_{n \in [N,2N]} a_n n^{-it_r} \right| \geq V
 \end{equation}
     for all $r=1,\dots,R$, then one has
@@ -13,7 +13,7 @@ $$ R \ll N^{\LV(\sigma,\tau)+o(1)}.$$
 
 One can check that the set of possible candidates for $\LV(\sigma,\tau)$ is closed (by underspill), non-empty, and bounded from below, so $\LV(\sigma,\tau)$ is well-defined as a real number.  As usual, we have an equivalent non-asymptotic definition:
 
-\begin{lemma}[Asymptotic form of large value exponent]\label{lv-asymp} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and $\rho \geq 0$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Asymptotic form of large value exponent]\label{lv-asymp}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and $\rho \geq 0$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $\LV(\sigma,\tau) \leq \rho$.
     \item[(ii)] For every (fixed)  $\eps>0$ there exists $C, \delta>0$ such that if $N \geq C$ and $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, $a_n$ is a $1$-bounded complex number for each $n \in [N,2N]$, and $t_1,\dots,t_R$ is a $1$-separated subset of an interval $J$ of length $T$ such that \eqref{V-large} holds for all $r=1,\dots,R$, then one has
@@ -24,7 +24,7 @@ One can check that the set of possible candidates for $\LV(\sigma,\tau)$ is clos
 The proof of Lemma \ref{lv-asymp} is similar to that of Lemma \ref{beta-asymp}, and is left to the reader.
 
 
-\begin{lemma}[Basic properties]\label{lv-basic}  
+\begin{lemma}[Basic properties]\label{lv-basic}\uses{lv-def}
     \begin{itemize}
         \item[(i)] (Monotonicity in $\sigma$) For any $\tau \geq 0$, $\sigma \mapsto \LV(\sigma,\tau)$ is upper semicontinuous and monotone non-increasing.
         \item[(ii)] (Huxley subdivision) For any $1/2 \leq \sigma \leq 1$ and $\tau' \geq \tau$ one has
@@ -36,16 +36,16 @@ In particular, $\tau \mapsto \LV(\sigma,\tau)$ is Lipschitz continuous.
 
 {\bf TODO: implement Huxley subdivision as a way to transform a large values estimate into a better estimate}
 
-\begin{proof}
-All claims are clear (using Lemma \ref{lv-asymp} if necessary) except perhaps for the upper bound
+\begin{proof}\uses{auto}
+All claims are clear except perhaps for the upper bound
 $$ \LV(\sigma,\tau') \leq \LV(\sigma,\tau) + \tau'-\tau,$$
-but this follows because any interval of length $N^{\tau'+o(1)}$ may be subdivided into $N^{\tau'-\tau+o(1)}$ intervals of length $N^{\tau+o(1)}$, so on applying Lemma \ref{lv-asymp} to each subinterval and summing, one obtains the claim.
+but this follows because any interval of length $N^{\tau'+o(1)}$ may be subdivided into $N^{\tau'-\tau+o(1)}$ intervals of length $N^{\tau+o(1)}$, so on applying Definition \ref{lv-def} to each subinterval and summing (using Lemma \ref{auto} to ensure uniformity), one obtains the claim.
 \end{proof}
 
-\begin{lemma}[Lower bound]\label{lv-lower}  For any $1/2 < \sigma \leq 1$ and $\tau \geq 0$, one has $\LV(\sigma, \tau) \geq \min(2 - 2 \sigma,\tau)$, while for $\sigma=1/2$ one has $\LV(\sigma,\tau) = \tau$.
+\begin{lemma}[Lower bound]\label{lv-lower}\uses{lv-def}  For any $1/2 < \sigma \leq 1$ and $\tau \geq 0$, one has $\LV(\sigma, \tau) \geq \min(2 - 2 \sigma,\tau)$, while for $\sigma=1/2$ one has $\LV(\sigma,\tau) = \tau$.
 \end{lemma}
 
-\begin{proof} In view of Lemma \ref{lv-basic}(ii), it suffices to show that $\LV(\sigma, 2-2\sigma) \geq 2-2\sigma$.  By definition, it suffices to find an unbounded $N$ and a $1$-bounded sequence $a_n$ for $n \in [N,2N]$ such that $|\sum_{n \in [N,2N]} a_n n^{-it}| \geq N^{\sigma+o(1)}$ for a $1$-separated set of $t = O(N^{2-2\sigma+o(1)})$ of cardinality $\gg N^{2-2\sigma-o(1)}$.
+\begin{proof}\uses{lv-basic} In view of Lemma \ref{lv-basic}(ii), it suffices to show that $\LV(\sigma, 2-2\sigma) \geq 2-2\sigma$.  By definition, it suffices to find an unbounded $N$ and a $1$-bounded sequence $a_n$ for $n \in [N,2N]$ such that $|\sum_{n \in [N,2N]} a_n n^{-it}| \geq N^{\sigma+o(1)}$ for a $1$-separated set of $t = O(N^{2-2\sigma+o(1)})$ of cardinality $\gg N^{2-2\sigma-o(1)}$.
 
 In the endpoint case $\sigma = 1$ one can achieve this by setting $a_n=1$ for all $n$ and taking $t=0$, so now we assume that $1/2 < \sigma<1$.
 
@@ -56,7 +56,7 @@ Finally, let $\sigma=1/2$.  In this case we just take each $a_n$ to be a random 
 
 We conjecturally have a complete description of the function $\LV$:
 
-\begin{conjecture}[Montgomery conjecture]\label{montgomery-conj}  One has 
+\begin{conjecture}[Montgomery conjecture]\label{montgomery-conj}\uses{lv-def}  One has
     \begin{equation}\label{mont-conj}
         \LV(\sigma, \tau) \leq 2 - 2 \sigma
     \end{equation}
@@ -68,16 +68,23 @@ We conjecturally have a complete description of the function $\LV$:
 
 We refer to \cite{bourgain_montgomery_1991} for further discussion of this conjecture, including some counterexamples to strong versions of the conjecture in which certain epsilon losses are omitted.  In view of this conjecture, we do not expect any further lower bounds on $\LV(\sigma,\tau)$ to be proven, and the literature is instead focused on upper bounds.
 
-In many situations, we are able to estalbish the Montgomery conjecture for certain fixed $\sigma$, and all $\tau<\tau_0$ for some fixed $\tau_0$.  By subdivision (Lemma \ref{lv-basic}(ii)) we then obtain the bound
+The following application of subdivision is useful:
+
+\begin{lemma}[Subdivision and the Montgomery conjecture]\label{montgomery-subdivide}\uses{montgomery-conj}  If $\sigma$ is fixed, and the Montgomery conjecture holds for all fixed $\tau < \tau_0$, then
 \begin{equation}\label{lvt-opt}
     \LV(\sigma, \tau) \leq \max( 2 - 2 \sigma, \tau - \tau_0 + 2 - 2\sigma)
 \end{equation}
-for all $\tau \geq 0$.
+for all fixed $\tau \geq 0$.
+\end{lemma}
+
+\begin{proof}\uses{lv-basic}
+Clear from Lemma \ref{lv-basic}(ii).
+\end{proof}
 
 
 The following basic property of $\LV(\sigma,\tau)$ is extremely useful in applications:
 
-\begin{lemma}[Raising to a power]\label{power-lemma}  For any $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and natural number $k$, one has
+\begin{lemma}[Raising to a power]\label{power-lemma}\uses{lv-def}  For any $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and natural number $k$, one has
     $$ \LV(\sigma, k\tau) \leq k \LV(\sigma, \tau).$$
 \end{lemma}
 
@@ -87,7 +94,7 @@ The following basic property of $\LV(\sigma,\tau)$ is extremely useful in applic
 \begin{proof}  Let $N$ be unbounded, let $T = N^{k\tau+o(1)}$ and $V = N^{\sigma+o(1)}$, let $a_n$ be a $1$-bounded sequence on $[N,2N]$, and let $t_1,\dots,t_R$ be a $1$-separated sequence in an interval of length $T$ obeying \eqref{V-large}
 for all $r=1,\dots,R$.  Raising to the $k^{\mathrm{th}}$ power, we conclude that
 $$ \left|\sum_{n \in [N^k,2^kN^k]} b_n n^{-it_r} \right| \geq V^k$$
-where $b_n$ is the Dirichlet convolution of $k$ copies of $a_n$, and thus is bounded by $N^{o(1)}$ thanks to divisor bounds.  Subdividing $[N^k, 2^k N^k]$ into $k$ intervals of the form $[N',2N']$ for $N' \asymp N^k$ and applying Lemma \ref{lv-asymp} (with $N, T, V$ replaced by $N', T, V^k$) we conclude that
+where $b_n$ is the Dirichlet convolution of $k$ copies of $a_n$, and thus is bounded by $N^{o(1)}$ thanks to divisor bounds.  Subdividing $[N^k, 2^k N^k]$ into $k$ intervals of the form $[N',2N']$ for $N' \asymp N^k$ and applying Definition \ref{lv-def} (with $N, T, V$ replaced by $N', T, V^k$) we conclude that
 $$ R \ll N^{k \LV(\sigma,\tau) + o(1)}$$
 and the claim then follows from Lemma \ref{lv-asymp}.
 \end{proof}
@@ -96,7 +103,7 @@ and the claim then follows from Lemma \ref{lv-asymp}.
 
 Upper bounds on $\LV(\sigma,\tau)$ in the literature tend to be piecewise linear functions of $\sigma$ and $\tau$.  Listed below are some examples of such bounds.
 
-\begin{theorem}[$L^2$ mean value theorem]\label{l2-mvt} For any fixed $1/2 \leq \sigma \leq 1$ and $\tau\geq 0$ one has
+\begin{theorem}[$L^2$ mean value theorem]\label{l2-mvt}\uses{lv-def} For any fixed $1/2 \leq \sigma \leq 1$ and $\tau\geq 0$ one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 1 + \tau - 2 \sigma).$$
 In particular, the Montgomery conjecture holds \eqref{mont-conj} for $\tau \leq 1$.
 \end{theorem}
@@ -105,23 +112,23 @@ In particular, the Montgomery conjecture holds \eqref{mont-conj} for $\tau \leq 
 \code{large_value_estimate_L2}
 
 \begin{proof}
-Let $N$ be unbounded, let  and let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, let $a_n$ be $1$-bounded on $[N,2N]$, and let $t_r$ be a $1$-separated sequence in an interval of length $T$ obeying . Let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
+Let $N$ be unbounded, let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, let $a_n$ be $1$-bounded on $[N,2N]$, and let $t_r$ be a $1$-separated sequence in an interval of length $T$ obeying . Let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
 \[
 RV^2 \le \sum_{r = 1}^R\left|\sum_{N \le n \le 2N} a_n n^{-it_r}\right|^2 \ll N^{1 + o(1)}(T + N)
 \]
-from which the result follows. 
+from which the result follows.
 \end{proof}
 
-\begin{theorem}[Montgomery large values theorem]\label{montgomery-lv} If $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ is such that
-\begin{equation}\label{tab}   
+\begin{theorem}[Montgomery large values theorem]\label{montgomery-lv}\uses{beta-def, lv-def} If $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ is such that
+\begin{equation}\label{tab}
 \sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau < 2\sigma - 1
 \end{equation}
-(this condition is vacuous for $\tau < 1$) then the Montgomery conjecture \eqref{mont-conj} holds for this choice of parameters. 
+(this condition is vacuous for $\tau < 1$) then the Montgomery conjecture \eqref{mont-conj} holds for this choice of parameters.
 \end{theorem}
 
 For a stronger version of this inequality, see Lemma \ref{hl-improv}.
 
-\begin{proof}  Set $\rho \coloneqq \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Lemma \ref{lv-asymp}, we can find a sequence $N = N_i$ be a sequence going to infinity with $i$, let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, a $1$-bounded sequence $a_n$ and a $1$-separated sequence $t_1,\dots,t_R$ in an interval of length $T$ with $R = N^{\rho+o(1)}$, such that \eqref{V-large} holds for all $r$.  In particular
+\begin{proof}\uses{beta-triv}  Set $\rho \coloneqq \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Definition \ref{lv-def}, we can find an unbounded $N > 1$, let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, a $1$-bounded sequence $a_n$ and a $1$-separated sequence $t_1,\dots,t_R$ in an interval of length $T$ with $R = N^{\rho+o(1)}$, such that \eqref{V-large} holds for all $r$.  In particular
 $$ \sum_{r=1}^R \left|\sum_{n \in [N,2N]} a_n n^{it_r} \right| \geq RV$$
 hence for some $1$-bounded coefficients $c_r$
 $$ \left|\sum_{r=1}^R c_r \sum_{n \in [N,2N]} a_n n^{it_r} \right| \geq RV$$
@@ -139,33 +146,33 @@ $$ N^{2\rho} \ll N^{2-2\sigma+\rho+o(1)} + N^{2\rho + 1-2\sigma+\sup_{1 \leq \ta
 By hypothesis, the second term on the right-hand side is asymptotically smaller than the left-hand side, and so we obtain $\rho \leq 2-2\sigma$ as required.
 \end{proof}
 
-\begin{corollary}[Converting an exponent pair to a large values theorem]\label{exp-lv}  If $(k,\ell)$ is an exponent pair, and $1/2 \leq \sigma \leq 1$, and $\tau \geq 0$ are fixed, then
+\begin{corollary}[Converting an exponent pair to a large values theorem]\label{exp-lv}\uses{exp-pair-def, lv-def}  If $(k,\ell)$ is an exponent pair, and $1/2 \leq \sigma \leq 1$, and $\tau \geq 0$ are fixed, then
 $$\LV(\sigma,\tau) \leq \max\left( 2-2\sigma, 2 - 2\sigma + \tau - \frac{2\sigma+k-\ell-1}{k} \right).$$
 In particular, the Montgomery conjecture holds for $\tau \leq \frac{2\sigma+k-\ell-1}{k}$.
 \end{corollary}
 
-One can also obtain a similar implication starting from a bound on $\mu$: see 
+One can also obtain a similar implication starting from a bound on $\mu$: see Lemma \ref{mu-lv}.
 
-\begin{proof}  From Lemma \ref{beta-duality} one has
+\begin{proof}\uses{beta-duality, montgomery-lv, montgomery-subdivide}  By Lemma \ref{montgomery-subdivide} it suffices to prove the latter claim.  From Lemma \ref{beta-duality} one has
     $\beta(1/\tau') \tau' \leq k \tau' + (\ell-k)$
 and so the condition \eqref{tab} holds whenever
 $$ \tau < \frac{2\sigma+k-\ell-1}{k}.$$
-This gives the claim in this range; the general case then follows from Lemma \ref{lv-basic}(ii).
+The claim follows.
 \end{proof}
 
-\begin{theorem}[Huxley large values theorem]\label{huxley-lv}\cite[Equation~(2.9)]{Huxley} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  Then one has
+\begin{theorem}[Huxley large values theorem]\label{huxley-lv}\cite[Equation~(2.9)]{Huxley}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  Then one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 4 + \tau - 6 \sigma).$$
     In particular, one has the Montgomery conjecture for $\tau < 4 \sigma - 2$.
 \end{theorem}
 
-\begin{proof}  Apply Corollary \ref{exp-lv} with the pair $(k,\ell) = (1/2,1/2)$ from Lemma \ref{vdc-class}.
+\begin{proof}\uses{exp-lv, vdc-class}  Apply Corollary \ref{exp-lv} with the pair $(k,\ell) = (1/2,1/2)$ from Lemma \ref{vdc-class}.
 \end{proof}
 
 
 
 
 
-\begin{theorem}[Heath-Brown large values theorem, preliminary form] Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  If $\LV(\sigma, \tau) \le \rho$ then 
+\begin{theorem}[Heath-Brown large values theorem, preliminary form]\label{heath_brown-lv-prelim}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  If $\LV(\sigma, \tau) \le \rho$ then
     \[
     \LV(\sigma, \tau) \le \max\left(2 - 2\sigma, \frac{11}{12}\rho + \frac{3}{2} + \frac{\tau}{6} - 2\sigma\right)
     \]
@@ -174,33 +181,31 @@ This gives the claim in this range; the general case then follows from Lemma \re
     \begin{proof}
     Follows from \cite[Lemma~1]{heathbrown_zero_1979}.
     \end{proof}
-    
-\begin{theorem}[Heath-Brown large values theorem, optimized]\label{hb-opt} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.   One has
+
+\begin{theorem}[Heath-Brown large values theorem, optimized]\label{hb-opt}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.   One has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 10 + \tau - 13 \sigma).$$
 In particular, the Montgomery conjecture holds for $\tau \leq 11 \sigma - 8$.
 \end{theorem}
 
-\begin{proof}  From the previous theorem, and setting $\rho = \LV(\sigma,\tau)$, we have either
+\begin{proof}\uses{heath_brown-lv-prelim, montgomery-subdivide}  By Lemma \ref{montgomery-subdivide} it suffices to show that $\LV(\sigma,\tau) \leq 2-2\sigma$ for $\tau \leq 11\sigma-8$.  From the previous theorem, and setting $\rho = \LV(\sigma,\tau)$, we have either
 $$ \LV(\sigma,\tau) \leq 2-2\sigma$$
 or
 $$ \LV(\sigma,\tau) \leq \frac{11}{12}\LV(\sigma,\tau) + \frac{3}{2} + \frac{\tau}{6} - 2\sigma.$$
 The latter bound can be rearranged as
 $$ \LV(\sigma,\tau) \leq 2\tau + 18 - 24\sigma$$
 and thus
-$$ \LV(\sigma,\tau) \leq \min( 2-2\sigma, 2\tau + 18 - 24\sigma).$$
-This is not quite what we wanted to show, but we can improve this bound using subdivision.  The bound implies in particular that
-$$ \LV(\sigma,\tau) \leq 2-2\sigma \hbox{ when } \tau \leq 11 \sigma - 8,$$
-giving the claim in this range; the general case then follows from Lemma \ref{lv-basic}(ii).  (See also the arguments in the first paragraph of \cite[p. 226]{heathbrown_zero_1979}.)
+$$ \LV(\sigma,\tau) \leq \min( 2-2\sigma, 2\tau + 18 - 24\sigma),$$
+and the claim follows.  (See also the arguments in the first paragraph of \cite[p. 226]{heathbrown_zero_1979}.)
 \end{proof}
 
 
-\begin{lemma}[Second Heath-Brown large values theorem] If $3/4 < \sigma \leq 1$ and $\tau \geq 0$ are fixed, then
+\begin{lemma}[Second Heath-Brown large values theorem]\label{lv-def} If $3/4 < \sigma \leq 1$ and $\tau \geq 0$ are fixed, then
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, k\tau + k(2-4\sigma), 2\tau/3 + k(12-16\sigma)/3 )$$
     for any positive integer $k$.
     \end{lemma}
-    
+
 \begin{proof}
-    Let $N = N_i$ be a sequence going to infinity with $i$, and let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$. Let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. By \cite[Lemma~6]{heathbrown_large_1979} we have
+    Let $N \geq 1$ be unbounded, $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, and let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. By \cite[Lemma~6]{heathbrown_large_1979} we have
     $$ (R V)^2 \ll T^{o(1)}( RN + R^2 N^{1/2} + R^{2-1/2k} T^{1/2} + R^{2-3/8k} N^{1/2} T^{1/4k}) N.$$
     Thus one must have one of
 $$ (R N^\sigma)^2 \ll RN^{2+o(1)},$$
@@ -209,10 +214,10 @@ $$ (R N^\sigma)^2 \ll R^{2-1/2k} N^{\tau/2+1+o(1)},$$
 $$ (R N^\sigma)^2 \ll R^{2-3/8k} N^{\tau/4k + 3/2+ o(1)}.$$
 The third estimate is not possible asymptotically since $\sigma > 3/4$.  Rearranging the other estimates to solve for $R$, and using we conclude that
 $$ R \ll \max\left( N^{2-2\sigma+o(1)}, N^{k\tau + k(2-4\sigma)+o(1), 2\tau/3 + k(12-16\sigma)/3 + o(1)}\right),$$
-and the claim follows from Lemma \ref{lv-asymp}. 
+and the claim follows.
 \end{proof}
-    
-\begin{theorem}[Jutila large values theorem]\label{jutila-lvt}  For any integer $k \geq 1$, one has
+
+\begin{theorem}[Jutila large values theorem]\label{jutila-lvt}\uses{lv-def}  For any integer $k \geq 1$, one has
 $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, \tau + (4-2/k) - (6-2/k)\sigma, \tau + (6-8\sigma)k).$$
 Thus for instance with $k=2$ we have
 $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, \tau + 3 - 5\sigma, \tau + 12-16\sigma)$$
@@ -224,18 +229,18 @@ $$ \tau \leq \min( (4-2/k)\sigma - (2-2/k), (8k-2)\sigma - 6k + 2).$$
 
 \begin{proof} See \cite[(1.4)]{jutila_zero_density_1977} (setting $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, and $G \leq N$).  We remark that this form is an optimized form of the inequality after (3.2) in Jutila's paper, which in our notation would read that
 $$ 2\LV(\sigma,\tau) + 2\sigma \leq \max \left(2 + \rho, \frac{3}{2} + \left(2 - \frac{1}{k}\right)\rho + \rho + \frac{1}{2k}\max\left(k(\tau-1), \frac{\rho+\tau}{2}\right), 2\rho + 1\right)$$
-whenever $\LV(\sigma,\tau) \leq \rho$.  The optimization procedure is similar to that in Theorem \ref{hb-opt}.
+whenever $\LV(\sigma,\tau) \leq \rho$.  The optimization follows from Lemma \ref{montgomery-subdivide} and routine calculations.
 \end{proof}
 
-\begin{theorem}[Guth--Maynard large values theorem]\label{guth-maynard-lvt} One has
-$$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$  
+\begin{theorem}[Guth--Maynard large values theorem]\label{guth-maynard-lvt}\uses{lv-def} One has
+$$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
 
 \begin{proof}
 See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{guth-maynard-lvt-again}
 \end{proof}
 
-\begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho \coloneqq \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
+\begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt}\uses{lv-def} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho \coloneqq \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
 $$ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma)$$
 or else there exists $s \geq 0$ such that
 \begin{equation}\label{rs}
@@ -244,21 +249,21 @@ or else there exists $s \geq 0$ such that
 \end{equation}
 \end{theorem}
 
-\begin{proof}  By Lemma \ref{lv-asymp}, we can find $N$ going to infinity, $T = N^{\tau+o(1)}$, $R = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and $1$-separated $t_1,\dots,t_R$ in $[T,2T]$ such that
+\begin{proof}  By Definition \ref{lv-def}, we can find an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $R = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and $1$-separated $t_1,\dots,t_R$ in $[T,2T]$ such that
 $$ |\sum_n a_n n^{-it_r}| \geq V$$
 for $r=1,\dots,R$.  Now set $\delta_1 \coloneqq N^{-\alpha_1}$, $\delta_2 \coloneqq N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
 $$ R \leq \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16},$$
-or one can bound the quantity 
+or one can bound the quantity
 $$ T^{-\eps} \delta_1^2 V^2 |S| R + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} R^{3/2}$$
 $$ T^\eps (RN^2 + R^2 N + R^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N)^{1/2}$$
 for a certain non-empty set $S$.  After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s \geq 1$, and the claim follows.
 \end{proof}
 
-\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
+\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\label{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
 $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
 \end{corollary}
 
-\begin{proof}  With $\rho \leq 1$ and $\tau \leq 3/2$, the $2\rho+1$ and $5\rho/4+\tau/2$ terms in the previous theorem are dominated by $\rho+2$, so the inequality \eqref{rs} simplifies to
+\begin{proof}\uses{bourgain-lvt}  With $\rho \leq 1$ and $\tau \leq 3/2$, the $2\rho+1$ and $5\rho/4+\tau/2$ terms in the previous theorem are dominated by $\rho+2$, so the inequality \eqref{rs} simplifies to
 $$(\rho+2)/2 + \max(s+2, 2s+1)/2 \geq
     \max( -2\alpha-1 + 2\sigma + s + \rho, -\alpha_1 - \alpha_2/2 + 2\sigma + s/2 + 3\rho/2).$$
 Thus either
@@ -273,7 +278,7 @@ giving the claim.
 \end{proof}
 
 
-\begin{theorem}[Ivic large values theorem]\cite[Lemma 8.2]{ivic}  If $\tau \geq 0$ and $1/2 < \sigma < \sigma' < 1$ are fixed, then
+\begin{theorem}[Ivic large values theorem]\label{ivic-lvt-82}\cite[Lemma 8.2]{ivic}  If $\tau \geq 0$ and $1/2 < \sigma < \sigma' < 1$ are fixed, then
 $$ \LV(\sigma', \tau) \leq \max( 2 - 2\sigma', \tau - f(\sigma) (\sigma'-\sigma) )$$
 where $f(\sigma)$ is equal to
 \begin{align*}
@@ -286,4 +291,3 @@ where $f(\sigma)$ is equal to
 In particular, the Montgomery conjecture holds for this choice of $\sigma'$ if
 $$ \tau \leq \sup_{1/2 < \sigma < \sigma'} f(\sigma) (\sigma'-\sigma) + 2 - 2 \sigma'.$$
 \end{theorem}
-
