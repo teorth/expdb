@@ -199,7 +199,7 @@ and the claim follows.  (See also the arguments in the first paragraph of \cite[
 \end{proof}
 
 
-\begin{lemma}[Second Heath-Brown large values theorem]\label{lv-def} If $3/4 < \sigma \leq 1$ and $\tau \geq 0$ are fixed, then
+\begin{lemma}[Second Heath-Brown large values theorem]\label{hb-lvt-2}\uses{lv-def} If $3/4 < \sigma \leq 1$ and $\tau \geq 0$ are fixed, then
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, k\tau + k(2-4\sigma), 2\tau/3 + k(12-16\sigma)/3 )$$
     for any positive integer $k$.
     \end{lemma}
@@ -259,7 +259,7 @@ $$ T^\eps (RN^2 + R^2 N + R^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N)^{1/2}$$
 for a certain non-empty set $S$.  After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s \geq 1$, and the claim follows.
 \end{proof}
 
-\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\label{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
+\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\uses{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
 $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
 \end{corollary}
 
