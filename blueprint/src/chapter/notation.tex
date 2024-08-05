@@ -40,12 +40,12 @@ A convenient property of this asymptotic formalism, analogous to the property of
 
 \begin{proposition}[Automatic uniformity]\label{auto}  Let $E = E_{\i}$ be a non-empty variable set, and let $f = f_{\i}: E \to \C$ be a variable function.  \begin{itemize}
     \item[(i)] Suppose that $f(x)=O(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists a fixed $C$ such that $|f(x)| \leq C$ for all $x \in E$.
-    \item[(ii)] Suppose that $f(x)=o(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists an infitesimal $c$ such that $|f(x)| \leq c$ for all $x \in E$.
+    \item[(ii)] Suppose that $f(x)=o(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists an infinitesimal $c$ such that $|f(x)| \leq c$ for all $x \in E$.
 \end{itemize}
 \end{proposition}
 
-\begin{proof} We begin with (i).  Suppoe that there is no uniform bound.  Then for any fixed natural number $n$, one can find arbitrarily large $\i_n$ in the sequence and $x_{\i_n} \in E_{\i_n}$ such that $|f_{\i_n}(x_{\i_n})| \geq n$.  Clearly one can arrange matters so that the sequence $\i_n$ is increasing.  If one then restricts to this sequence and sets $x$ to be the variable element $x_{\i_n}$ of $E$, then $f(x)$ is unbounded, a contradiction.
-    
+\begin{proof} We begin with (i).  Suppose that there is no uniform bound.  Then for any fixed natural number $n$, one can find arbitrarily large $\i_n$ in the sequence and $x_{\i_n} \in E_{\i_n}$ such that $|f_{\i_n}(x_{\i_n})| \geq n$.  Clearly one can arrange matters so that the sequence $\i_n$ is increasing.  If one then restricts to this sequence and sets $x$ to be the variable element $x_{\i_n}$ of $E$, then $f(x)$ is unbounded, a contradiction.
+
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\i_n$ in the ambient sequence such that $|f_{\i}(x_{\i})| \leq 1/n$ for all $\i \geq \i_n$ and $x_{\i} \in E_{\i}$, since if this were not the case one can construct an $x = x_{\i} \in E$ such that $|f_{\i}(x_{\i})| \geq 1/n$ for $\i$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\i_n$ to be increasing.  Restricting to this sequence, and writing $c_{\i_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
 
