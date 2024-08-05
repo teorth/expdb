@@ -1,24 +1,24 @@
 \chapter{The number of Pythagorean triples}
 
-\begin{definition}[Pythagorean triple exponent]\label{pythag-def}  Let $\Pythag$ be the least exponent for which one has 
+\begin{definition}[Pythagorean triple exponent]\label{pythag-def}  Let $\Pythag$ be the least exponent for which one has
 $$ P(N) = c N^{1/2} - c' N^{1/3} + N^{\Pythag+o(1)}$$
 for unbounded $N$ and some fixed $c,c'$, where $P(N)$ is the number of primitive Pythagorean triples of area no greater than $N$.
 \end{definition}
 
-\begin{lemma} One has $\Pythag \leq 1/4$.
+\begin{lemma}\label{pythag-14}\uses{pythag-def} One has $\Pythag \leq 1/4$.
 \end{lemma}
 
 \begin{proof} See \cite{wild_1955, duttlinger_schwarz}.  The previous bound $\Pythag \leq 1/3$ was obtained in \cite{lambek_moser}.
-\end{proof}    
+\end{proof}
 
-\begin{lemma} If $(k,\ell)$ is an exponent pair, and RH holds, then 
+\begin{lemma}\label{exp_pair_to_pythag}\uses{pythag-def, exp-pair-def} If $(k,\ell)$ is an exponent pair, and RH holds, then
 $$ \Pythag \leq \max( \frac{1}{3} - \frac{5}{6} \frac{k+\ell-3/2}{4(k+\ell)-7}, \frac{1}{2} - \frac{3}{2}\frac{k+\ell-3/2}{4(k+\ell)-7} )$$
 \end{lemma}
 
 \begin{proof} See \cite{menzer} and and \cite[Section 5.10]{trudgian-yang}.
 \end{proof}
 
-\begin{lemma} Assuming RH, one has $\Pythag \leq 71/316$.
+\begin{lemma}\label{pythag-71-316}\uses{pythag-def} Assuming RH, one has $\Pythag \leq 71/316$.
 \end{lemma}
 
 \begin{proof} See \cite[Section 5.10]{trudgian-yang}.

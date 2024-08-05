@@ -9,7 +9,7 @@ $$
 
 We remark that in additive combinatorics, the variant $E_0(W)$ of the additive energy is often studied, in which $t_1+t_2-t_3-t_4$ is not merely required to be $1$-bounded, but in fact vanish exactly.  However, this version of additive energy is less relevant for analytic number theory applications.
 
-\begin{lemma}[Basic properties of additive energy]\label{add-energy}
+\begin{lemma}[Basic properties of additive energy]\label{add-energy}\uses{add-def}
 \begin{itemize}
 \item[(i)] If $W$ is a finite set of reals, then
 $$ E_1(W) \asymp \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |^2\ dx.$$
@@ -73,7 +73,7 @@ when the $W_i$ are disjoint, and hence also when they are not assumed to be disj
 
 To relate $S(N,W)$ to $E_1(W)$, we first observe the following lemma, implicit in \cite{heath_brown_consecutive_II} and made more explicit in \cite[Lemma 11.4]{guth-maynard}.
 
-\begin{lemma} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and 
+\begin{lemma}[Energy controlled by third moment]\label{energy-third}\uses{energy-def} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and
 $$|\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
 for all $t \in W$ and some $V>0$, then
 $$ V^2 E_1(W) \ll T^{o(1)} \sum_{n,m \in [N,2N]} |R_W(n/m)|^3 + T^{-50}.$$
@@ -105,7 +105,7 @@ $$ S_4(N,W) = \sum_{t_1,t_2,t_3,t_4 \in W} |\sum_{n \in [N,2N]} n^{-i(t_1+t_2-t_
 
 One can bound this quantity by an $S(N,W)$ type expression:
 
-\begin{lemma}\label{wtu} If $W \subset [-T,T]$ is $1$-separated and $1 \leq N \ll T^{O(1)}$, then one has
+\begin{lemma}\label{wtu}\uses{energy-def} If $W \subset [-T,T]$ is $1$-separated and $1 \leq N \ll T^{O(1)}$, then one has
 $$ S_4(N,W) \ll T^{o(1)} u^2 S(N,U) + T^{-100}$$
 for some $1 \leq u \ll |W|$ and $1$-separated subset $U$ of $[-2T,2T]$ with
 \begin{equation}\label{v1}
@@ -139,25 +139,25 @@ Also, by double counting one easily verifies the claims \eqref{v1}, \eqref{v2}. 
 
 Because the cardinality $|W|$ and additive energy $E_1(W)$ of a set $W$ are correlated with each other, as well as with the double zeta sum $S(N,W)$, we will not be able to consider them separately, and instead we will need to consider the possible joint exponents for these two quantities.  We formalize this via the following set:
 
-\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that 
+\begin{definition}[Large value energy region]\label{lv-edef}\uses{energy-def} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that
     \begin{equation}\label{sig-large} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
 \end{equation}
 for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
 
-We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that 
+We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that
 \begin{equation}\label{sig-large-zeta} \left|\sum_{n \in I} n^{-it} \right| \geq V
 \end{equation}
 for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
 \end{definition}
 
-Clearly we have 
+Clearly we have
 
-\begin{lemma}[Trivial containment] We have $\Energy_\zeta \subset \Energy$.
+\begin{lemma}[Trivial containment]\label{triv-contain}\uses{lv-edef} We have $\Energy_\zeta \subset \Energy$.
 \end{lemma}
 
 These region is related to $\LV(\sigma,\tau)$ and as follows:
 
-\begin{lemma} For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we have
+\begin{lemma}\label{energy-region-lv}\uses{lv-def, lvz-def, energy-def} For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we have
 $$ \LV(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
 and
 $$ \LV_\zeta(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}$$
@@ -169,7 +169,7 @@ In particular, we have $\rho \leq \LV(\sigma,\tau)$ for all $(\sigma,\tau,\rho,\
 
 Inspired by this, we can define
 
-\begin{definition}\label{lvze-def}  For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we define
+\begin{definition}\label{lvze-def}\uses{energy-def}  For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we define
 $$ \LV^*(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
 and
 $$ \LV^*_\zeta(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}.$$
@@ -179,7 +179,7 @@ Thus these exponents are upper bounds for the additive energy of large values of
 
 As usual, we have an equivalent non-asymptotic definition of the large value energy region:
 
-\begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{energy-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(\sigma,\tau,\rho,\rho^*) \in \Energy$.
     \item[(ii)] For every $\eps>0$ and $C > 0$, there exists $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, a $1$-bounded $a_n$ for each $n \in [N,2N]$, and a $1$-separated subset $W$  of an interval $J$ of length $T$ such that \eqref{sig-large}
@@ -193,7 +193,7 @@ holds for all $t \in W$, with
 
 This lemma is proven by a routine expansion of the definitions, and is omitted.
 
-\begin{lemma}[Basic properties]\label{lve-basic}\   
+\begin{lemma}[Basic properties]\label{lve-basic}\uses{lv-edef}\
     \begin{itemize}
         \item[(i)] (Monotonicity in $\sigma$) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
         $(\sigma',\tau',\rho,\rho^*,s) \in \Energy$ for all $1/2 \leq \sigma' \leq \sigma$ and $\tau' \geq \tau$.
@@ -212,7 +212,7 @@ This lemma is proven by a routine expansion of the definitions, and is omitted.
 \end{proof}
 
 
-\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.  
+\begin{lemma}[Raising to a power]\label{power-energy}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.
 \end{lemma}
 
 \begin{proof}
@@ -221,7 +221,7 @@ This lemma is proven by a routine expansion of the definitions, and is omitted.
 
 \section{Known relations for the large value energy region}
 
-\begin{theorem}[Reflection principle]\cite[\S 11.5]{ivic} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\sigma \geq 3/4$ and $\tau>1$, then for any integer $k \geq 1$, either $\rho \leq 2-2\sigma$, or there exists $0 < \alpha \leq k(\tau-1)$ and $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$ such that
+\begin{theorem}[Reflection principle]\label{reflect}\cite[\S 11.5]{ivic}\uses{lv-edef} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\sigma \geq 3/4$ and $\tau>1$, then for any integer $k \geq 1$, either $\rho \leq 2-2\sigma$, or there exists $0 < \alpha \leq k(\tau-1)$ and $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$ such that
 $$ \rho \leq \min( 2-2\sigma, k(3-4\sigma)/2 + s' - 1).$$
 \end{theorem}
 
@@ -238,7 +238,7 @@ By construction, we have $S(N',W) = (N')^{s'/\alpha+o(1)} = N^{s'+o(1)}$ for som
 
 Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{ivic}).  There is one easy case in which this is true:
 
-\begin{lemma}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau < 1$, then $s \leq \max(\rho+1, 2\rho)+1$.
+\begin{lemma}\label{easy-double-zeta-bound}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau < 1$, then $s \leq \max(\rho+1, 2\rho)+1$.
 \end{lemma}
 
 \begin{proof} See the discussion after \cite[(11.63)]{ivic}.
@@ -246,13 +246,13 @@ Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{iv
 
 Another bound is
 
-\begin{lemma}\cite[Lemma 11.2]{ivic}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+\begin{lemma}\label{double-zeta_from_exp_pair}\cite[Lemma 11.2]{ivic}\uses{lv-edef}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
 $$ s \leq \max( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ll} \tau) + 1.$$
 \end{lemma}
 
 Finally, we have the useful
 
-\begin{lemma}[Heath-Brown bound on double sums]\label{hb-double}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+\begin{lemma}[Heath-Brown bound on double sums]\label{hb-double}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
     $$ s \leq \max( \rho+1, 2\rho, 5\rho/4+\tau/2) + 1.$$
 \end{lemma}
 
@@ -263,7 +263,7 @@ Note that if $\tau \leq 3/2$, the $5\rho/4+\tau/2$ term is bounded by the convex
 
 Lemma \ref{wtu} can be formulated in terms of the large value energy region as follows.
 
-\begin{lemma}\label{wtu-alt}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then there exists $(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$ and $0 \leq \kappa \leq \rho$ such that
+\begin{lemma}\label{wtu-alt}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then there exists $(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$ and $0 \leq \kappa \leq \rho$ such that
 $$ \kappa + \rho' \leq 2 \rho$$
 $$ 2\kappa + \rho' \leq \rho^*$$
 and
@@ -271,7 +271,7 @@ $$ \rho^* + 2\sigma \leq \kappa + (s+s')/2.$$
 \end{lemma}
 
 
-\begin{proof}  By definition, there exists an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
+\begin{proof}\uses{wtu}  By definition, there exists an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
 $$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
 for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $|W^*| = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$, then from \eqref{v1w} we have
 $$
@@ -288,16 +288,16 @@ $(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$, and the claim follows.
 
 These bounds on the double zeta sums can be used to control additive energies:
 
-\begin{theorem}[Heath-Brown relation]\label{hbt}\cite[(33)]{heathbrown_zero_1979} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then one has
+\begin{theorem}[Heath-Brown relation]\label{hbt}\cite[(33)]{heathbrown_zero_1979}\uses{lv-edef} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then one has
 $$ \rho^* \leq 1-2\sigma + \max(\rho+1, 2\rho, 5\rho/4+\tau/2)/2 + \max(\rho^*+1, 4\rho, 3\rho^*/4+\rho+\tau/2)/2.$$
 \end{theorem}
 
-\begin{proof} By Lemma \ref{wtu-alt} followed by  we have
+\begin{proof}\uses{wtu-alt} By Lemma \ref{wtu-alt} followed by  we have
 $$ \rho^* + 2\sigma \leq \kappa + ( \max( \rho+1, 2\rho, 5\rho/4+\tau/2)+ \max( \rho'+1, 2\rho', 5\rho'/4+\tau/2) )/2 + 1$$
 for some $0 \leq \kappa \leq \rho$ with
 $$ \kappa + \rho' \leq 2\rho$$
 $$ 2\kappa + \rho' \leq \rho^*$$
-In particular, 
+In particular,
 $$ 2\kappa + 5\rho'/4 \leq 3\rho^*/4 + \rho$$
 and the claim follows after moving the $\kappa$ inside the second maximum and performing some algebra.
 \end{proof}
@@ -308,7 +308,7 @@ $$ \rho^* \leq \max(3 \rho + 1-2\sigma, \rho +4-4\sigma, 5\rho/2 + (3-4\sigma)/2
 
 This result essentially appears as \cite[Lemma 3]{heathbrown_zero_1979}.
 
-\begin{proof} Apply the previous result.  For $\tau \leq 3/2$ we observe that $5\rho/4+\tau/2$ is less than $5\rho/4 + 3/4$, which is a convex combination of $\rho+1$ and $2\rho$.  Similarly $3\rho^*/4+\rho+\tau/2$ is less than $3\rho^*/4+\rho+3/4$, which is a convex combination of $\rho^*+1$ and $4\rho$. We conclude that
+\begin{proof}\uses{hbt} Apply the previous result.  For $\tau \leq 3/2$ we observe that $5\rho/4+\tau/2$ is less than $5\rho/4 + 3/4$, which is a convex combination of $\rho+1$ and $2\rho$.  Similarly $3\rho^*/4+\rho+\tau/2$ is less than $3\rho^*/4+\rho+3/4$, which is a convex combination of $\rho^*+1$ and $4\rho$. We conclude that
 $$ \rho^* \leq  1-2\sigma + \max(\rho+1, 2\rho)/2 + \max(\rho^*+1, 4\rho)/2.$$
 Thus $\rho^*$ is less than one of
 $$ 1-2\sigma + (\rho+\rho^*+2)/2, 1-2\sigma + (5\rho+1)/2, 1-2\sigma + (2\rho+\rho^*+1)/2, 1-2\sigma + (6\rho)/2;$$
@@ -320,7 +320,7 @@ which gives the claim.
 \end{proof}
 
 
-\begin{lemma}[Second Heath-Brown relation] If If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+\begin{lemma}[Second Heath-Brown relation]\label{hbt-2}\uses{lv-edef} If If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
 $$ \rho \leq \max( 2-2\sigma, \rho^*/4 + \max(\tau/4 + k(3-4\sigma)/4, k/4 + k(1-2\sigma)/2))$$
 for any positive integer $k$.
 \end{lemma}
@@ -328,7 +328,7 @@ for any positive integer $k$.
 \begin{proof} See \cite[Lemma 4]{heathbrown_zero_1979}.
 \end{proof}
 
-\begin{lemma}[Guth-Maynard relation]\label{gm-1}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+\begin{lemma}[Guth-Maynard relation]\label{gm-1}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
 $$ \rho \leq \max(2-2\sigma, 1-2\sigma + \max(S_1, S_2, S_3)/3)$$
 where $S_1, S_2, S_3$ are real numbers with
 $$ S_1 \leq -10,$$
@@ -341,10 +341,10 @@ $$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
 
 \begin{proof} This follows from \cite[Propositions 4.6, 5.1, 6.1, 8.1, 10.1, (5.5)]{guth-maynard}.
 \end{proof}
- 
-\begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
+
+\begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
 $$ \rho^* \leq \rho + s - 2\sigma.$$
-In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that    
+In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that
 $$ \rho^* \leq \max(3\rho+1-2\sigma, 2\rho+2-2\sigma).$$
 \end{lemma}
 
@@ -356,7 +356,7 @@ Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error c
 \end{proof}
 
 
-\begin{lemma}[Third Guth-Maynard relation]\label{gm-3}  If $(\sigma,\tau,\rho,\rho^*) \in \Energy$ and $1 \leq \tau \leq 4/3$, then
+\begin{lemma}[Third Guth-Maynard relation]\label{gm-3}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*) \in \Energy$ and $1 \leq \tau \leq 4/3$, then
     $$ \rho^* \leq \max(\rho+4-4\sigma, 21\rho/8+\tau/4+1-2\sigma, 3\rho+1-2\sigma).$$
 \end{lemma}
 
@@ -366,11 +366,11 @@ Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error c
 We can put this all together to prove the Guth--Maynard large values theorem (Theorem \ref{guth-maynard-lvt}):
 
 
-\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again} One has
-    $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$  
+\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt-again}\uses{lv-def} One has
+    $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
 
-\begin{proof} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{lv-basic}(ii)) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
+\begin{proof}\uses{l2-mvt,huxley-lv, gm-1, gm-3, montgomery-subdivide} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{montgomery-subdivide}) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
     $$ \rho \leq 18/5-4\sigma$$
 whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau=6/5$ and $7/10 \leq \sigma \leq 8/10$.
 
@@ -388,4 +388,10 @@ Inserting this and the $S_2$ bound (with $k=4$) into the bound for $\rho$ and si
 the desired bound $\rho \leq 18/5-4\sigma$.
 \end{proof}
 
+It was noted in \cite{guth-maynard} that some improvements are available in the $\tau < 6/5$ regime. For instance:
 
+\begin{lemma}[Improved Guth--Maynard theorem]\label{guth-maynard-lvt-improv}\uses{lv-def} \cite[Proposition 12.1]{guth-maynard} If $1 \leq \tau \leq 6/5$ and $\sigma \geq 7/10$ then for any natural number $k$ one has
+    $$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \frac{\tau}{2}+3-4\sigma, \max( \frac{k}{k+1}\tau + \frac{k}{k+1} (4-6\sigma), \frac{4k}{4k+3}(5-6\sigma) + \frac{2}{4k+3} \tau)\right).$$
+In particular, one has
+$$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \frac{\tau}{2}+3-4\sigma, \frac{30\sigma-21}{5} \tau + \frac{46-60\sigma}{5}\right).$$
+\end{lemma}
