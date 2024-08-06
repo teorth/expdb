@@ -271,6 +271,13 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
 \end{proof}
 
 
+\begin{theorem}[1995 Sargos bound]\label{sargos_1995}\cite[Th\'eor\`eme 2.4, Lemme 2.6]{sargos_points_1995}  For any $0 \leq \alpha \leq 1$, one has
+$$ \beta(\alpha) \leq \max(\alpha + \frac{3(1-4\alpha)}{40}, \frac{7}{8} \alpha, \frac{1}{3}\alpha - \frac{1-4\alpha}{6}, 0)$$
+and
+$$ \beta(\alpha) \leq \max(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alpha, \frac{1}{3}\alpha - \frac{1-4\alpha}{6}, 0).$$
+\end{theorem}
+
+{\bf TODO: implement this in python}
 
 \begin{table}[ht]
     \caption{Huxley table 17.1.}
@@ -387,7 +394,7 @@ See \cite[Theorem~1]{robert_fourth_2002}.
 
 
 % An analog of van der Corput’s A4-process for exponential sums
-\begin{theorem}[Sargos bound]\label{sargos-bound}\uses{beta-def}  For any $\alpha > 0$ one has
+\begin{theorem}[Sargos 2003 bound]\label{sargos-bound}\uses{beta-def}  For any $\alpha > 0$ one has
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-8\alpha}{204}, -\frac{95(1-8\alpha)}{204}\right)$$
 and
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{7(1-9\alpha)}{2640}, -\frac{1001(1-9\alpha)}{2640}\right).$$
@@ -479,7 +486,7 @@ $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{
 
 {\bf TODO: implement this in python}
 
-\begin{theorem}[Combined bound]  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
+\begin{theorem}[Combined bound]\label{combined-bound}\uses{beta-def}  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
 \end{theorem}
 
 \begin{proof} See \cite[Table 3]{trudgian-yang}.
@@ -519,7 +526,7 @@ $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{
     \hline
     $ \frac{1}{32} + \frac{103}{128} \alpha $ & $ \frac{12}{31} $ & $ \frac{1508}{3825} = 0.3942\ldots $ & Table \ref{huxley-table-1}\\
     \hline
-    $ \frac{18}{199} + \frac{521}{796} \alpha $ & $ \frac{1508}{3825} $ & $ \frac{62831}{155153} = 0.4049\ldots $ & Sargos \cite{sargos_points_1995}\\
+    $ \frac{18}{199} + \frac{521}{796} \alpha $ & $ \frac{1508}{3825} $ & $ \frac{62831}{155153} = 0.4049\ldots $ & Exponent pair $D(\frac{13}{84}, \frac{55}{84})$\\
     \hline
     $ \frac{569}{2800} + \frac{1053}{2800} \alpha $ & $ \frac{62831}{155153} $ & $ \frac{143}{349} = 0.4097\ldots $ & Table \ref{huxley-table-2}\\
     \hline
