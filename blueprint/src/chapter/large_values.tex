@@ -134,7 +134,7 @@ from which the result follows.
 
 For a stronger version of this inequality, see Lemma \ref{hl-improv}.
 
-\begin{proof}\uses{beta-triv}  Set $\rho \coloneqq \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$  with $N > 1$ unbounded, $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, and $|W| = N^{\rho+o(1)}$.  From \eqref{V-large} we have
+\begin{proof}\uses{beta-triv}  Set $\rho := \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$  with $N > 1$ unbounded, $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, and $|W| = N^{\rho+o(1)}$.  From \eqref{V-large} we have
 $$ \sum_{t \in W} \left|\sum_{n \in [N,2N]} a_n n^{it} \right| \geq |W|V$$
 hence for some $1$-bounded coefficients $c_t$
 $$ \left|\sum_{t \in W} c_t \sum_{n \in [N,2N]} a_n n^{it} \right| \geq |W|V$$
@@ -245,7 +245,7 @@ $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma)
 See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{guth-maynard-lvt-again}
 \end{proof}
 
-\begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt}\uses{lv-def} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho \coloneqq \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
+\begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt}\uses{lv-def} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho := \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
 $$ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma)$$
 or else there exists $s \geq 0$ such that
 \begin{equation}\label{rs}
@@ -256,7 +256,7 @@ or else there exists $s \geq 0$ such that
 \end{equation}
 \end{theorem}
 
-\begin{proof}  By Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $N \geq 1$, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$.  Now set $\delta_1 \coloneqq N^{-\alpha_1}$, $\delta_2 \coloneqq N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
+\begin{proof}  By Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $N \geq 1$, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$.  Now set $\delta_1 := N^{-\alpha_1}$, $\delta_2 := N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
 $$ |W| \leq \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16},$$
 or one can bound the quantity
 $$ T^{-\eps} \delta_1^2 V^2 |S| |W| + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} |W|^{3/2}$$

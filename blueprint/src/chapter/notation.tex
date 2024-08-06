@@ -3,23 +3,21 @@
 We freely assume the axiom of choice in this blueprint.
 
 Throughout this blueprint we adopt following notation. If $\theta$ is a real number, then we write
-$$ e(\theta) \coloneqq e^{2\pi i\theta}$$
+$$ e(\theta) := e^{2\pi i\theta}$$
 where $i$ is the imaginary unit. The indicator function $1_I(n)$ of a set $I$ is defined to equal $1$ when $n \in I$, and $0$ otherwise.
 
 We adopt the convention that an empty supremum is $-\infty$, and an empty infimum is $+\infty$.  Thus, for instance, $\sup_{\sigma_0 \leq \sigma \leq \sigma_1} f(\sigma)$ would equal $-\infty$ if $\sigma_1 < \sigma_0$.  Related to this, we also adopt the convention that $N^{-\infty}=0$ when $N > 1$.
 
-The cardinality of a finite set $E$ will be denoted $|E|$.
+The cardinality of a finite set $W$ will be denoted $|W|$.
 
-A sequence $a_n, n \in I$ of real or complex numbers indexed by some index set is said to be \emph{$1$-bounded} if $|a_n| \leq 1$ for all $n \in I$.  Similarly, a sequence $t_1,\dots,t_R$ of real numbers is said to be \emph{$1$-separated} if $|t_r-t_{r'}| \geq 1$ for all $1 \leq r < r' \leq R$.  One can define more general notions of $\lambda$-bounded or $\lambda$-separated for other $\lambda>0$ in the obvious fashion.
+A sequence $a_n, n \in I$ of real or complex numbers indexed by some index set is said to be \emph{$1$-bounded} if $|a_n| \leq 1$ for all $n \in I$.  Similarly, a set $W$ of real numbers is said to be \emph{$1$-separated} if $|t-t'| \geq 1$ for all distinct $t,t' \in W$.  One can define more general notions of $\lambda$-bounded or $\lambda$-separated for other $\lambda>0$ in the obvious fashion.
 
 \section{Asymptotic (or ``cheap nonstandard'') notation}
 
 It is convenient to use a ``cheap nonstandard analysis'' framework for asymptotic notation, in the spirit of \cite{tao-cheap}, as this will reduce the amount of ``epsilon management'' one has to do in the arguments.  This framework is inspired by nonstandard analysis, but we will avoid explicitly using such nonstandard constructions as ultraproducts in the discussion below, relying instead on the more familiar notion of sequential limits.
 
 In this framework, we assume there is some ambient index parameter $\ii$, which ranges over some ambient sequence of natural numbers going to infinity.  All mathematical objects $X$ (numbers, sequences, sets, functions, etc.), will either be \emph{fixed} - i.e., independent of $\ii$ - or \emph{variable} - i.e., dependent on $\ii$.  (These correspond to the notions of \emph{standard} and \emph{non-standard} objects in nonstandard analysis.)  Of course, fixed objects can be considered as special cases of variable objects, in which the dependency is constant.  By default, objects should be understood to be variable if not explicitly declared to be fixed. For emphasis, we shall sometimes write $X = X_{\ii}$ to explicitly indicate that an object $X$ is variable; however, to reduce clutter, we shall generally omit explicit mention of the parameter $\ii$ in most of our arguments. We will often reserve the right to refine the ambient sequence to a subsequence as needed, usually in order to apply a compactness theorem such as the Bolzano--Weierstrass theorem; we refer to this process as ``passing to a subsequence if necessary''.  When we say that a statement involving variable objects is true, we mean that it is true for all $\ii$ in the ambient sequence.
-For instance, a variable set $E$ of real numbers is a set $E = E_{\ii}$ indexed by the ambient parameter $\ii$, and by an element of such a set, we mean a variable real number $x = x_{\ii}$ such that $x_{\ii} \in E_{\ii}$ for all $\ii$ in the ambient sequence.  A variable sequence $t_1,\dots,t_R$ of real numbers of some variable length $R$ is actually a sequence of sequences $t_{1,\ii},\dots,t_{R_{\ii}, \ii}$ of real numbers of some $\ii$-dependent length $R_{\ii}$.  Saying that such a sequence is $1$-separated is thus asserting that
-$$ |t_{r, \ii} - t_{r', \ii}| \geq 1$$
-for all $\ii$ in the ambient sequence and all $1 \leq r < r' \leq R_{\ii}$.
+For instance, a variable set $E$ of real numbers is a set $E = E_{\ii}$ indexed by the ambient parameter $\ii$, and by an element of such a set, we mean a variable real number $x = x_{\ii}$ such that $x_{\ii} \in E_{\ii}$ for all $\ii$ in the ambient sequence.
 
 We isolate some special types of variable numerical quantities $X = X_{\ii}$ (which could be a natural number, real number, or complex number):
 \begin{itemize}
@@ -51,7 +49,7 @@ A convenient property of this asymptotic formalism, analogous to the property of
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ in the ambient sequence such that $|f_{\ii}(x_{\ii})| \leq 1/n$ for all $\ii \geq \ii_n$ and $x_{\ii} \in E_{\ii}$, since if this were not the case one can construct an $x = x_{\ii} \in E$ such that $|f_{\ii}(x_{\ii})| \geq 1/n$ for $\ii$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\ii_n$ to be increasing.  Restricting to this sequence, and writing $c_{\ii_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
 
-\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii \coloneqq \ii$ is a counterexample).
+\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii := \ii$ is a counterexample).
 \end{remark}
 
 
