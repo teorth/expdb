@@ -89,10 +89,8 @@ giving the claim.
 \literature
 \code{A_transform()}
 
-\begin{proof} See \cite[Lemma 2.8]{ivic}.
+\begin{proof}\uses{vdca-beta, beta-duality} See \cite[Lemma 2.8]{ivic}. It can also be deduced from Lemma \ref{vdca-beta} and Lemma \ref{beta-duality}.
 \end{proof}
-
-{\bf TODO: determine the analogous $A$-process for $\beta()$ and state it as a lemma.}
 
 \begin{proposition}[Van der Corput $B$-process]\label{vdc-b}  If $(k,\ell)$ is an exponent pair, then so is
     $$B(k,\ell) := \left(\ell-\frac{1}{2}, k+\frac{1}{2}\right).$$
@@ -185,7 +183,7 @@ is an exponent pair.
 
 \begin{theorem}[2017 Heath--Brown sequence]\label{heath-brown_exp_pair_2017}\cite[Theorem 2]{heathbrown_new_2017}\uses{exp-pair-def}
 For any integer $m \geq 3$, the pair
-$$ \left(\frac{2}{(m-1)^2(m+2)}, 1 - \frac{3m-2}{m(m-1)(m+2)}\right)$$
+$$ (p_n,q_n) := \left(\frac{2}{(m-1)^2(m+2)}, 1 - \frac{3m-2}{m(m-1)(m+2)}\right)$$
 is an exponent pair.
 \end{theorem}
 
@@ -206,9 +204,9 @@ is an exponent pair.
 The following process is not quite a process to automatically transform one exponent pair to another, but it often achieves this in practice:
 
 \begin{theorem}[Sargos $D$-process]\label{sargos_D}\cite[Theorem 7.1]{sargos_points_1995}\uses{exp-pair-def, beta-def}  If $(k,\ell)$ is an exponent pair, then one has
-    $$ \beta(\alpha) \leq \max( k_1 + \alpha(\ell_1-k_1), \frac{1}{12} + \frac{2}{3} \alpha)$$
+    $$ \beta(\alpha) \leq \max\left( k_1 + \alpha(\ell_1-k_1), \frac{1}{12} + \frac{2}{3} \alpha\right)$$
     for all $0 \leq \alpha \leq 1$, where $(k_1,\ell_1) = D(k,\ell)$ is the pair
-$$ D(k,\ell) := \left(\frac{5k+\ell+2}{8(5k+3\ell+2)}, \ell_1 := \frac{29k+21\ell+10}{8(5k+3\ell+2)}\right).$$
+$$ D(k,\ell) := \left(\frac{5k+\ell+2}{8(5k+3\ell+2)}, \frac{29k+21\ell+10}{8(5k+3\ell+2)}\right).$$
 \end{theorem}
 
 {\bf TODO: add this to literature.py}
@@ -217,7 +215,7 @@ $$ D(k,\ell) := \left(\frac{5k+\ell+2}{8(5k+3\ell+2)}, \ell_1 := \frac{29k+21\el
 
 \begin{theorem}\label{trudgian_yang_eps}\cite[Lemma 1.1]{trudgian-yang}\uses{exp-pair-def}  The following are exponent pairs:
 \[
- \left(\frac{4742}{38463}, \frac{35731}{51284}\right),\quad \left(\frac{18}{199}, \frac{593}{796}\right),\quad\left(\frac{2779}{38033}, \frac{58699}{76066}\right),\quad\left(\frac{715}{10238}, \frac{7955}{10238}\right).
+ (k_1,\ell_1) := \left(\frac{4742}{38463}, \frac{35731}{51284}\right),\quad (k_2,\ell_2) := \left(\frac{18}{199}, \frac{593}{796}\right),\quad (k_3,\ell_3) := \left(\frac{2779}{38033}, \frac{58699}{76066}\right),\quad (k_4,\ell_4) := \left(\frac{715}{10238}, \frac{7955}{10238}\right).
 \]
 \end{theorem}
 
@@ -229,12 +227,17 @@ $$ D(k,\ell) := \left(\frac{5k+\ell+2}{8(5k+3\ell+2)}, \ell_1 := \frac{29k+21\el
 The remaining pairs come from Lemma \ref{beta-duality} and the remaining components of Theorem \ref{combined-bound}.
 \end{proof}
 
+\begin{corollary}\label{H-pairs}\cite[Theorem 1.3]{trudgian-yang}\uses{exp-pair-def}  Let $H$ be the convex hull $(0,1)$, $(1/2,1/2)$, and of $(k_n,\ell_n)$ for $n \in \Z$, where $(k_0,\ell_0) := 13/84$, $(k_n,\ell_n)$ for $n=1,2,3,4$ is defined by Theorem \ref{trudgian_yang_eps}, $(k_n,\ell_n) := A(k_{n-4},\ell_{n-4})$ for $5 \leq n \leq 8$, $(k_n,\ell_n) := (p_n,q_n)$ for $n > 9$ (with $(p_n,q_n)$ defined by Theorem \ref{heath-brown_exp_pair_2017}), and $(k_{-n},\ell_{-n}) := B(k_n,\ell_n)$ for $n \geq 0$.  Then all elements of $H$ are exponent pairs.
+\end{corollary}
 
-{\bf TODO: describe the polytope $H$ that represented the best known exponent pairs from \cite{trudgian-yang}}
+Indeed, as of \cite{trudgian-yang} the set $H$ represented all known exponent pairs, until Theorem \ref{new-exp-pair} below.
 
-The following exponent pair was derived using this database:
+\begin{proof}\uses{exp-pair-closed, exp-pair-trivial, trudgian_yang_eps, heath-brown_exp_pair_2017} Clear from Corollary \ref{exp-pair-closed}, Proposition \ref{exp-pair-trivial}, \ref{trudgian_yang_eps}, and Theorem \ref{heath-brown_exp_pair_2017}.
+\end{proof}
 
-\begin{theorem}\uses{exp-pair-def} One has that
+The following new exponent pair was derived using this database:
+
+\begin{theorem}[New exponent pair]\label{new-exp-pair}\uses{exp-pair-def} One has that
 \[
 \left(\frac{1101653}{15854002}, \frac{12327829}{15854002}\right)
 \]
