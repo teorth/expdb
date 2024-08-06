@@ -192,11 +192,11 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
                 ):
                     dep_indices.add(i)
     dependencies = [beta_bound[i] for i in dep_indices]
-
     # Keep track of the existing set of exponent pairs,
     known_ephs = hypothesis_set.list_hypotheses("Exponent pair")
     known_eps = {(p.data.k, p.data.l) for p in known_ephs}
     all_eps = [e for e in known_ephs]
+    
     for i in range(len(conv.vertices)):
         p1 = points[conv.vertices[i]]
         p2 = points[conv.vertices[(i + 1) % len(conv.vertices)]]
@@ -211,7 +211,8 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
         # Tangent line \beta = m * \alpha + c \implies the exponent pair (c, m + c)
         m = (p2[1] - p1[1]) / (p2[0] - p1[0])
         c = (p1[1] * p2[0] - p1[0] * p2[1]) / (p2[0] - p1[0])
-        key = (m, m + c)
+        key = (c, m + c)
+        h = None
         if key not in known_eps:
             h = derived_exp_pair(
                 key[0],

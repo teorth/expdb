@@ -1,4 +1,4 @@
-# This file contains all bounds that can be derived from other bounds, inlcuding those from literature.py
+# This file contains all bounds that can be derived from other bounds, including those from literature.py
 
 from literature import *
 import exponent_pair as ep
@@ -56,7 +56,6 @@ def prove_exponent_pair(k, l):
     eph = next(h for h in new_exp_pairs if h.data.k == k and h.data.l == l)
     eph.recursively_list_proofs()
 
-
 def prove_heathbrown_exponent_pairs():
 
     hypotheses = Hypothesis_Set()
@@ -79,7 +78,6 @@ def prove_heathbrown_exponent_pairs():
     for ep in new_exp_pairs:
         print(ep)
 
-
 # Find the shortest proof of the exponent pair (k, l)
 def best_proof_of_exponent_pair(k, l):
     hyp = ep.find_best_proof(
@@ -91,7 +89,6 @@ def best_proof_of_exponent_pair(k, l):
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.COMPLEXITY
     )
     hyp.recursively_list_proofs()
-
 
 def prove_ingham_zero_density_estimate():
     hypotheses = Hypothesis_Set()
@@ -106,13 +103,11 @@ def prove_ingham_zero_density_estimate():
 
     pass
 
-
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
     # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_heathbrown_exponent_pairs()
     # prove_ingham_zero_density_estimate()
-
 
 prove_all()

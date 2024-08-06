@@ -168,8 +168,7 @@ def beta_bound_examples():
     )
     print("\tComputing... (may take a few minutes)")
     start_time = time.time()
-    beta_bounds = exponent_pairs_to_beta_bounds(hypotheses)
-    hypotheses.add_hypotheses(beta_bounds)
+    hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
     bounds = compute_best_beta_bounds(hypotheses)
     display_beta_bounds(bounds)
     print(f"\tComputed in {time.time() - start_time} sec")
@@ -178,6 +177,7 @@ def beta_bound_examples():
     print("4. This beta bound implies the following exponent pairs:")
     hypotheses.add_hypotheses(bounds)
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
+    new_exp_pairs.sort(key=lambda p: p.data.k)
     for h in new_exp_pairs:
         print(f"\t{h}")
 
@@ -417,10 +417,8 @@ def zero_density_estimates_examples2():
     for k in range(2, 5):
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
 
-
 def more_zero_density_examples():
     zd.optimise_bourgain_zero_density_estimate()
-
 
 def all_examples():
     # mu_bound_examples()
@@ -431,6 +429,5 @@ def all_examples():
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     more_zero_density_examples()
-
 
 all_examples()

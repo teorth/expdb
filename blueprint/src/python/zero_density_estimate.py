@@ -51,7 +51,7 @@ class Zero_Density_Estimate:
     # Computes the zero-density estimate at a particular value of sigma
     def at(self, sigma):
         if not self.interval.contains(sigma):
-            return float("inf")  # TODO replace with something more informative
+            raise ValueError(f'Sigma value {sigma} is out of bounds {self.interval}')
 
         self._ensure_bound_is_computed()
         return self.bound.at(sigma)
@@ -63,9 +63,6 @@ class Zero_Density_Estimate:
             raise ValueError("Parameter rf must be of type RationalFunction")
 
         zde = Zero_Density_Estimate("", interval)
-        zde.bound = rf
-        return zde
-
 
 def derived_zero_density_estimate(data, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
@@ -117,7 +114,6 @@ def approximate_sup_LV_on_tau(hypotheses, tau0):
         # argmax = 0
         for j in range(N + 1):
             tau = frac(2, 3) * t0 + frac(1, 3) * t0 * j / N
-
             if estimate.at([sigma, tau]) is None:
                 print(sigma, tau)
             v = estimate.at([sigma, tau]) / tau
@@ -133,7 +129,6 @@ def approximate_sup_LV_on_tau(hypotheses, tau0):
     plt.show()
 
     return values
-
 
 # Given a value of \sigma, numerically optimise the the choice of \tau0 which
 # minimises the maximum between:
@@ -294,7 +289,6 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper, titl
 
     return max_RF(crits, faces)
 
-
 # Bounds are 4-tuples of
 # (domain, function, interval, estimate), where
 #
@@ -428,8 +422,6 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
             s1[1].x1 = s2[1].x1
             soln.pop(i)
     return soln
-
-
 # Computes the zero-density estimate obtained from
 #
 # A(s) \leq 3m / ((3m - 2) s + 2 - m)
@@ -559,7 +551,6 @@ def ep_to_zd(hypotheses):
 
     return zdts
 
-
 def optimise_bourgain_zero_density_estimate():
 
     # The domain of definition is (sigma, tau, alpha1, alpha2) jointly satisfying
@@ -632,7 +623,7 @@ def optimise_bourgain_zero_density_estimate():
     verts = p.domain.get_vertices()
     incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
     constraints = p.domain.get_constraints()
-    
+
     for i in range(len(constraints)):
         vs = [verts[j] for j in incidences[i]]
         print('Vertices of the facet', constraints[i], 'are:')

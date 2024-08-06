@@ -306,6 +306,9 @@ With the aid of computer assistance, we were able to strengthen the second claim
 \begin{lemma}\label{3-40}\uses{exp-pair-def, zeta-grow-def} $(3/40, 31/40)$ is an exponent pair.  In particular, by Corollary \ref{exp-pair-mu}, $\mu(7/10) \leq 3/40$.
 \end{lemma}
 
+\derived
+\code{best_proof_of_exponent_pair(frac(3,40), frac(31,40))}
+
 \begin{proof}\uses{line-sym, exp-pair-closed, vdc-a, vdc-b, beta-duality, huxley-table, vdc-opt}  This can be derived from the Watt exponent pair $W := (89/560, 1/2 + 89/560)$ from Theorem \ref{line-sym} as well as the $A$ and $B$ transforms and convexity (Lemmas \ref{exp-pair-closed}, \ref{vdc-a}, \ref{vdc-b}) after observing that
 $$(3/40,31/40) = xy AW + (1-x)y ABA W + (1-y) W$$
 with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more recent exponent pairs that are stronger, such as the Bourgain exponent pair $(13/84, 1/2+13/84)$.)  We remark that one could also obtain this result from Lemma \ref{beta-duality}, after observing that the required bound $\beta(\alpha) \leq 3/40 + 7\alpha/10$ can be derived from Theorem \ref{huxley-table} (as well as the classical bounds in Corollary \ref{vdc-opt}).  We also note that the corollary $\mu(7/10) \leq 3/40 = 0.075$ is immediate from \cite[Theorem 2.4]{trudgian-yang}, which in fact gives the slightly stronger bound $\mu(7/10) \leq 218/3005 = 0.07254\dots$.
