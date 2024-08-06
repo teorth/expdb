@@ -90,7 +90,7 @@ def prove_ingham_zero_density_estimate():
 def prove_all():
     #prove_hardy_littlewood_mu_bound()
     best_proof_of_exponent_pair(frac(3,40), frac(31,40))
-    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     #prove_heathbrown_exponent_pairs()
     #prove_ingham_zero_density_estimate()
     

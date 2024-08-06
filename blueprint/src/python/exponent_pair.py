@@ -162,8 +162,9 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
     
     # Keep track of the existing set of exponent pairs, 
     known_ephs = hypothesis_set.list_hypotheses('Exponent pair')
-    known_eps = {(p.data.k, p.data.l) for p in known_ephs}
+    known_eps = {(p.data.k, p.data.l): p for p in known_ephs}
     all_eps = [e for e in known_ephs]
+    
     for i in range(len(conv.vertices)):
         p1 = points[conv.vertices[i]]
         p2 = points[conv.vertices[(i + 1) % len(conv.vertices)]]
@@ -176,20 +177,26 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
         # Tangent line \beta = m * \alpha + c \implies the exponent pair (c, m + c)
         m = (p2[1] - p1[1]) / (p2[0] - p1[0])
         c = (p1[1] * p2[0] - p1[0] * p2[1]) / (p2[0] - p1[0])
-        key = (m, m + c)
+        key = (c, m + c)
+        h = None
         if key not in known_eps:
-            h = derived_exp_pair(key[0], key[1], f'Follows from combining {len(dependencies)} bounds on \\beta', set(dependencies))
-            all_eps.append(h)
+            if key[0] + key[1] < 1:
+                h = derived_exp_pair(key[0], key[1], f'Follows from combining {len(dependencies)} bounds on \\beta', set(dependencies))
+                all_eps.append(h)
         else:
             h = known_eps[key]
     
         # Since we only consider \alpha \in [0, 1/2], we need to apply the B transformation to 
         # also get those exponent pairs which are B transforms of the new exponent pairs
-        B = hypothesis_set.find_hypothesis(keywords='van der Corput B transform')
-        if B is None: continue
-        Bh = B.data.transform(h)
-        if (Bh.data.k, Bh.data.l) not in known_eps:
-            all_eps.append(Bh)
+        if h is not None:
+            # Find the van der Corput B transform without invoking an error 
+            B = next((h for h in hypothesis_set if h.name == 'van der Corput B transform'), None)
+            if B is None: continue
+            Bh = B.data.transform(h)
+            if (Bh.data.k, Bh.data.l) not in known_eps and \
+                Bh.data.k + Bh.data.l < 1:
+                all_eps.append(Bh)
+        
     return all_eps
     
 

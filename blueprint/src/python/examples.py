@@ -123,13 +123,12 @@ def beta_bound_examples():
     hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
     hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
     print('\tTotal exponent pairs:', len(hypotheses.list_hypotheses(hypothesis_type="Exponent pair")))
-    derived_pairs = compute_exp_pairs(hypotheses, search_depth=1) # Compute the hull a bit
+    derived_pairs = compute_exp_pairs(hypotheses, search_depth=1, prune=False) # Compute the hull a bit
     hypotheses.add_hypotheses(derived_pairs)
     print(f'\tAlso assume derived exponent pairs with transform depth \\leq 1. Total pairs:', len(hypotheses.list_hypotheses(hypothesis_type="Exponent pair")))
     print('\tComputing... (may take a few minutes)')
     start_time = time.time()
-    beta_bounds = exponent_pairs_to_beta_bounds(hypotheses)
-    hypotheses.add_hypotheses(beta_bounds)
+    hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
     bounds = compute_best_beta_bounds(hypotheses)
     display_beta_bounds(bounds)
     print(f'\tComputed in {time.time() - start_time} sec')
@@ -138,6 +137,7 @@ def beta_bound_examples():
     print('4. This beta bound implies the following exponent pairs:')
     hypotheses.add_hypotheses(bounds)
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
+    new_exp_pairs.sort(key=lambda p: p.data.k)
     for h in new_exp_pairs:
         print(f'\t{h}')
     
@@ -341,12 +341,12 @@ def more_zero_density_examples():
 def all_examples():
     #mu_bound_examples()
     #exp_pair_examples()
-    #beta_bound_examples()
+    beta_bound_examples()
     #large_values_examples()
     #zeta_large_values_examples()
     #zero_density_estimates_examples()
     #zero_density_estimates_examples2()
-    more_zero_density_examples()
+    #more_zero_density_examples()
     
     
 all_examples()
