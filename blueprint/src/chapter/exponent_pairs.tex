@@ -205,4 +205,17 @@ is an exponent pair.
 
 {\bf TODO: replicate the exponent pair theorem from \cite{trudgian-yang}}
 
-{\bf TODO: implement our new exponent pair $(1101653/15854002, 12327829,15854002)$}
+\begin{theorem}\label{trudgian_yang_eps}\cite[Lemma 1.1]{trudgian-yang}\uses{exp-pair-def}  The following are exponent pairs:
+\[
+ \left(\frac{4742}{38463}, \frac{35731}{51284}\right),\quad \left(\frac{18}{199}, \frac{593}{796}\right),\quad\left(\frac{2779}{38033}, \frac{58699}{76066}\right),\quad\left(\frac{715}{10238}, \frac{7955}{10238}\right).
+\]
+\end{theorem}
+
+\begin{theorem}\uses{exp-pair-def} One has that
+\[
+\left(\frac{1101653}{15854002}, \frac{12327829}{15854002}\right)
+\]
+is an exponent pair. 
+\end{theorem}
+\derived
+\code{prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))}
