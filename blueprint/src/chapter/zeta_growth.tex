@@ -125,6 +125,9 @@ for large $T$, giving the claim.
 
 \section{Known bounds on \texorpdfstring{$\mu$}{mu}}
 
+\begin{theorem}[Historical bounds]\label{mu-hist}\uses{zeta-grow-def}  The bounds on $\mu(\sigma)$ given by Table \ref{mu-table} are known.
+\end{theorem}
+
 \begin{table}[ht]
 \caption{Historical bounds on $\mu(\sigma)$ for $1/2 \le \sigma \le 1$, and the exponent pair generating them (if applicable). \textbf{Longer term goal: supplement as many of these citations as possible with derivations from other exponents and relations in the database}}
 \centering
@@ -180,3 +183,32 @@ Heath-Brown (2020) \cite{demeter_small_2020} & $\mu(11/15) \leq 1/15$& \\
 
 \literature
 \code{add_literature_bounds_mu()}
+
+
+\begin{theorem}\label{mu_est_thm}\cite[Theorems 2.4-2.6]{trudgian-yang}\uses{zeta-grow-def}
+    We have
+    \[
+    \mu(\sigma) \le \begin{cases}
+         (31 - 36\sigma)/84 , & \frac{1}{2} \leq\sigma < \frac{88225}{153852} = 0.5734\ldots, \\
+         (220633 - 251324\sigma)/620612 , & \frac{88225}{153852} \leq\sigma < \frac{521}{796} = 0.6545\ldots, \\
+         (1333 - 1508\sigma)/3825 , & \frac{521}{796} \leq\sigma < \frac{53141}{76066} = 0.6986\ldots, \\
+         (405 - 454\sigma)/1202 , & \frac{53141}{76066} \leq\sigma < \frac{3620}{5119} = 0.7071\ldots, \\
+         (49318855 - 52938216\sigma)/170145110 , & \frac{3620}{5119} \leq\sigma < \frac{52209}{69128} = 0.7552\ldots, \\
+         (471957 - 502648\sigma)/1682490 , & \frac{52209}{69128} \leq\sigma < \frac{1389}{1736} = 0.8001\ldots, \\
+         (2841 - 3016\sigma)/10316 , & \frac{1389}{1736} \leq\sigma < \frac{134765}{163248} = 0.8255\ldots, \\
+         (859 - 908\sigma)/3214 , & \frac{134765}{163248} \leq\sigma < \frac{18193}{21906} = 0.8305\ldots, \\
+         5(8707 - 9067\sigma)/180277 , & \frac{18193}{21906} \leq\sigma < \frac{249}{280} = 0.8892\ldots, \\
+         (29 - 30\sigma)/130 , & \frac{249}{280} \leq\sigma \leq \frac{9}{10}.\\
+    \end{cases}
+    \]
+    Furthermore, for $1/2 \le \sigma \le 1$, we have
+\[
+\mu(\sigma) \le \frac{2}{13}\sqrt{10}(1 - \sigma)^{3/2} = 0.4865\ldots(1 - \sigma)^{3/2},
+\]
+and
+\[
+\mu(\sigma) \le \frac{2}{3^{3/2}}(1 - \sigma)^{3/2} + \frac{103}{300}(1 - \sigma)^{2},\qquad \frac{117955}{118272} \le \sigma \le 1.
+\]
+\end{theorem}
+
+{\bf TODO: make a python function for the first part of this theorem at least.}
