@@ -3,7 +3,7 @@
 We freely assume the axiom of choice in this blueprint.
 
 Throughout this blueprint we adopt following notation. If $\theta$ is a real number, then we write
-$$ e(\theta) \coloneqq e^{2\pi i\theta}$$
+$$ e(\theta) := e^{2\pi i\theta}$$
 where $i$ is the imaginary unit. The indicator function $1_I(n)$ of a set $I$ is defined to equal $1$ when $n \in I$, and $0$ otherwise.
 
 We adopt the convention that an empty supremum is $-\infty$, and an empty infimum is $+\infty$.  Thus, for instance, $\sup_{\sigma_0 \leq \sigma \leq \sigma_1} f(\sigma)$ would equal $-\infty$ if $\sigma_1 < \sigma_0$.  Related to this, we also adopt the convention that $N^{-\infty}=0$ when $N > 1$.
@@ -49,7 +49,7 @@ A convenient property of this asymptotic formalism, analogous to the property of
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ in the ambient sequence such that $|f_{\ii}(x_{\ii})| \leq 1/n$ for all $\ii \geq \ii_n$ and $x_{\ii} \in E_{\ii}$, since if this were not the case one can construct an $x = x_{\ii} \in E$ such that $|f_{\ii}(x_{\ii})| \geq 1/n$ for $\ii$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\ii_n$ to be increasing.  Restricting to this sequence, and writing $c_{\ii_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
 
-\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii \coloneqq \ii$ is a counterexample).
+\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii := \ii$ is a counterexample).
 \end{remark}
 
 

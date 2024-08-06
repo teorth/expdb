@@ -48,13 +48,13 @@ hence by Cauchy--Schwarz
 $$ \int_\R |\# \{ (t_1,t_2) \in W: |t_1+t_2 - x| \leq 1\} |^2\ dx \gg (\# W)^2/T$$
 and the claim follows from (i).
 
-For (v), write $a_k \coloneqq E_1(W \cap J_k)^{1/4}$.  Each tuple $(t_1,t_2,t_3,t_4)$ that contributes to $E_1(W)$ is associated to a tuple $J_{k_1}, J_{k_2}, J_{k_3}, J_{k_4}$ of intervals with $k_1+k_2-k_3-k_4=O(1)$.  By modifying the proof of (ii), the total contribution of such a tuple of intervals is
+For (v), write $a_k := E_1(W \cap J_k)^{1/4}$.  Each tuple $(t_1,t_2,t_3,t_4)$ that contributes to $E_1(W)$ is associated to a tuple $J_{k_1}, J_{k_2}, J_{k_3}, J_{k_4}$ of intervals with $k_1+k_2-k_3-k_4=O(1)$.  By modifying the proof of (ii), the total contribution of such a tuple of intervals is
 $$ \ll \int_\R \prod_{j=1}^4 |\sum_{t \in W \cap J_{k_j}} e(t\theta)|\ d\theta$$
 which by Cauchy--Schwarz is bounded by
 $$ \ll a_{k_1} a_{k_2} a_{k_3} a_{k_4}.$$
 Thus we see that
 $$ E_1(W) \ll \sum_{m=O(1)} a * a * \tilde a * \tilde a(m)$$
-where $\tilde a_k \coloneqq a_{-k}$ and $*$ denotes convolution on the integers.  By Young's inequality we then have
+where $\tilde a_k := a_{-k}$ and $*$ denotes convolution on the integers.  By Young's inequality we then have
 $$ E_1(W) \ll \|a\|_{\ell^{4/3}}^4$$
 and the claim follows.
 
@@ -62,11 +62,11 @@ We remark that (v) can also be proven using \cite[Lemma 4.8, (4.2)]{cladek-tao}.
 \end{proof}
 
 We will also study the following related quantity.  Given a set $W$ and a scale $N>1$, let $S(N,W)$ denote the \emph{double zeta sum}
-$$ S(N,W) \coloneqq \sum_{t,t' \in W} |\sum_{n \in [N,2N]} n^{-i(t-t')}|^2.$$
+$$ S(N,W) := \sum_{t,t' \in W} |\sum_{n \in [N,2N]} n^{-i(t-t')}|^2.$$
 We caution that this normalization differs from the one in \cite{ivic}, where $n^{-1/2-i(t-t')}$ is used in place of $n^{-i(t-t')}$.  This sum may also be rearranged as
 $$ S(N,W) = \sum_{n,m \in [N,2N]} |R_W(n/m)|^2$$
 where $R_W$ is the exponential sum
-$$ R_W(x) \coloneqq \sum_{t \in W} x^{it}.$$
+$$ R_W(x) := \sum_{t \in W} x^{it}.$$
 From the first formula it is clear that $S(N,W)$ is monotone non-decreasing in $W$, and from the second formula one has the triangle inequality
 $$ S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}$$
 when the $W_i$ are disjoint, and hence also when they are not assumed to be disjoint, thanks to the monotonicity.
@@ -93,7 +93,7 @@ Thus, $S(N,W)$ involves a second moment of $R_W$, while the energy $E_1(W)$ is r
 V^2 E_1(W) \ll T^{o(1)} |W| S(N,W) + T^{-50}
 \end{equation}
 It is then natural to introduce the fourth moment
-$$ S_4(N,W) \coloneqq \sum_{n,m \in [N,2N]} |R_W(n/m)|^4$$
+$$ S_4(N,W) := \sum_{n,m \in [N,2N]} |R_W(n/m)|^4$$
 since from H\"older's inequality one now has
 \begin{equation}\label{v1w}
     V^2 E_1(W) \ll T^{o(1)} S(N,W)^{1/2} S_4(N,W)^{1/2} + T^{-50}
@@ -122,7 +122,7 @@ This result appears implicitly in \cite[p. 229]{heath_brown_consecutive_II}, and
     and hence
     $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in [-2N,2N] \cap \Z} f(t_1) f(t_2) \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
 where $f$ is the counting function
-$$ f(t) \coloneqq |\{ (t_1,t_2) \in W: |t-t_1-t_2| \leq 1 \}|.$$
+$$ f(t) := |\{ (t_1,t_2) \in W: |t-t_1-t_2| \leq 1 \}|.$$
 Note that $f$ is integer valued and bounded above by $|W|$. By dyadic decomposition, one can then find $1 \leq u \ll |W|$ and a subset $U$ of $[-2N,2N] \cap \Z$ such that $f(t) \asymp u$ for $t \in U$, and
 $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in U} u^2 \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
 which we can rearrange as
@@ -162,9 +162,9 @@ In particular, we have $\rho \leq \LV(\sigma,\tau)$ for all $(\sigma,\tau,\rho,\
 Inspired by this, we can define
 
 \begin{definition}\label{lvze-def}\uses{energy-def}  For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we define
-$$ \LV^*(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
+$$ \LV^*(\sigma,\tau) := \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
 and
-$$ \LV^*_\zeta(\sigma,\tau) \coloneqq \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}.$$
+$$ \LV^*_\zeta(\sigma,\tau) := \sup \{ \rho^*: (\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta\}.$$
 \end{definition}
 
 Thus these exponents are upper bounds for the additive energy of large values of Dirichlet polynomials which may or may not be of zeta function type.

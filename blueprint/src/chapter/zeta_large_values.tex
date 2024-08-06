@@ -64,9 +64,9 @@ Now we use the approximate functional equation
 $$ \zeta(1/2+it') = \sum_{n \leq x} n^{-1/2-it'} + \chi(1/2+it') \sum_{m \leq t' / 2\pi x} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
 for $x \sim N$; see \cite[Theorem 4.1]{ivic}.  Applying this to the two endpoints of $I$ and subtracting, we conclude that
 $$ \sum_{n \in I} n^{-1/2-it'} =\chi(1/2+it') \sum_{m \in J_{t'}} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
-where $J_{t'} \coloneqq \{ m: t' / 2\pi m \in I \}$. Since $\chi(1/2+it')$ has magnitude one, we conclude that
+where $J_{t'} := \{ m: t' / 2\pi m \in I \}$. Since $\chi(1/2+it')$ has magnitude one, we conclude that
 $$ |\sum_{m \in J_r} m^{-1/2-it'}| \gg N^{-1/2-o(1)} V.$$
-Writing $M \coloneqq T/N = N^{\frac{1}{\tau-1}+o(1)}$, we see that $J_r \subset [M/10, 10M]$ and
+Writing $M := T/N = N^{\frac{1}{\tau-1}+o(1)}$, we see that $J_r \subset [M/10, 10M]$ and
 $$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \gg M^{1/2} N^{-1/2-o(1)} V = M^{\sigma+o(1)}.$$
 Performing a Fourier expansion of $(M/m)^{1/2} 1_{J_r}(m)$ (smoothed out at scale $O(1)$) in $\log m$, we can bound
 $$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \ll \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1 + T^{-10}$$
@@ -140,10 +140,10 @@ For completeness, we now work out the values of $\LV_\zeta(\sigma,\tau)$ in the 
 \begin{lemma}[Value at $\sigma=1/2$]\label{lvz-2}\uses{lvz-def} One has $\LV_\zeta(1/2,\tau) = \tau$ for all $\tau \geq 1$.
 \end{lemma}
 
-\begin{proof}\uses{lvz-basic, l2-int, l2-mvt}  The upper bound $\LV_\zeta(1/2,\tau) \leq \tau$  follows from Lemma \ref{lvz-basic}(ii), so it suffices to prove the lower bound.  Accordingly, let $N$ be unbounded, let $T  = CN$ for a large fixed constant $C$, and set $I \coloneqq [N,2N]$.  In the case $\sigma=1$, we see from the $L^2$ mean value theorem (Lemma \ref{l2-int}) that the expression $\sum_{n \in I} n^{-it}$ has an $L^2$ mean of $\asymp N^{1/2}$ for $t \in [T,2T]$; on other hand, from \eqref{beta-1} we also have an $L^\infty$ norm of $O(N^{1/2+o(1)})$.  We conclude that $|\sum_{n \in I} n^{-it}| \gg N^{1/2+o(1)}$ for $t$ in a subset of $[T,2T]$ of measure $T^{1-o(1)}$, and hence on a $1$-separated subset of cardinality $\gg T^{1-o(1)}$.  This gives the claim $\LV(1/2,1) \geq 1$.
+\begin{proof}\uses{lvz-basic, l2-int, l2-mvt}  The upper bound $\LV_\zeta(1/2,\tau) \leq \tau$  follows from Lemma \ref{lvz-basic}(ii), so it suffices to prove the lower bound.  Accordingly, let $N$ be unbounded, let $T  = CN$ for a large fixed constant $C$, and set $I := [N,2N]$.  In the case $\sigma=1$, we see from the $L^2$ mean value theorem (Lemma \ref{l2-int}) that the expression $\sum_{n \in I} n^{-it}$ has an $L^2$ mean of $\asymp N^{1/2}$ for $t \in [T,2T]$; on other hand, from \eqref{beta-1} we also have an $L^\infty$ norm of $O(N^{1/2+o(1)})$.  We conclude that $|\sum_{n \in I} n^{-it}| \gg N^{1/2+o(1)}$ for $t$ in a subset of $[T,2T]$ of measure $T^{1-o(1)}$, and hence on a $1$-separated subset of cardinality $\gg T^{1-o(1)}$.  This gives the claim $\LV(1/2,1) \geq 1$.
 
 Next, we establish the $\tau \geq 2$ case.
-Let $N$ be unbounded, set $T \coloneqq N^\tau$, and set $I \coloneqq [N,2N]$.  From Lemma \ref{l2-int} we see that the $L^2$ mean of $\sum_{n \in I} n^{-it}$ is $\asymp N^{1/2}$.  Also, by squaring this Dirichlet series and applying Lemma \ref{l2-int} again we see that the $L^4$ mean is $O(N^{1/2+o(1)})$.  We may now argue as before to give the desired claim $\LV(1/2,\tau) \geq \tau$.
+Let $N$ be unbounded, set $T := N^\tau$, and set $I := [N,2N]$.  From Lemma \ref{l2-int} we see that the $L^2$ mean of $\sum_{n \in I} n^{-it}$ is $\asymp N^{1/2}$.  Also, by squaring this Dirichlet series and applying Lemma \ref{l2-int} again we see that the $L^4$ mean is $O(N^{1/2+o(1)})$.  We may now argue as before to give the desired claim $\LV(1/2,\tau) \geq \tau$.
 
 Finally we need to handle the case $1 < \tau < 2$. By Lemma \ref{lvz-basic}(iv) with $\sigma=1/2$ we have
 $$ \LV_\zeta\left(\frac{1}{2}, \frac{\tau}{\tau-1}\right) = \frac{1}{\tau-1}  \sup_{1/2 \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-1/2).$$
@@ -222,7 +222,7 @@ This implies the Montgomery conjecture for
 $$ \tau \leq \min( 10\sigma-7, 12 \sigma - \frac{53}{6}).$$
 \end{lemma}
 
-\begin{proof}\uses{hl-improv, zeta-from-exp}  Write $\rho \coloneqq \LV(\sigma,\tau)$, and let $\eps>0$ be arbitrary. By Lemma \ref{hl-improv}, we may assume without loss of generality that
+\begin{proof}\uses{hl-improv, zeta-from-exp}  Write $\rho := \LV(\sigma,\tau)$, and let $\eps>0$ be arbitrary. By Lemma \ref{hl-improv}, we may assume without loss of generality that
 $$ \rho \leq \max( 2-2\sigma, 1-2\sigma + \sigma' + \min( \rho, \LV_\zeta(\sigma',\tau')) ) + \eps$$
 for some $1/2 \leq \sigma' \leq 1$ and $1 \leq \tau' \leq \tau$.  On the other hand, from Lemma \ref{zeta-from-exp} applied to the exponent pair $(2/7,4/7)$, and bounding $\tau'$ by $\tau$, one has
 $$ \LV_\zeta(\sigma',\tau') \leq \max( \tau-6(\sigma'-1/2), 3\tau - 19(\sigma'-1/2))$$
