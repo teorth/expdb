@@ -5,17 +5,17 @@ $$ \sum_{n \leq x} d_k(n) = x P_{k-1}(\log x) + O(x^{\alpha_k+o(1)})$$
 as $x \to \infty$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) \coloneqq \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function.
 \end{definition}
 
-\begin{lemma}[$d_1$ exponent]\uses{divisor-def} One has $\alpha_1=0$.
+\begin{lemma}[$d_1$ exponent]\label{divisor-1}\uses{divisor-def} One has $\alpha_1=0$.
 \end{lemma}
 
-\begin{lemma}\cite[Theorem 13.1]{ivic}\uses{divisor-def} One has $\alpha_2 \leq 35/108$.
+\begin{lemma}\label{divisor-2-bound}\cite[Theorem 13.1]{ivic}\uses{divisor-def} One has $\alpha_2 \leq 35/108$.
 \end{lemma}
 
-\begin{lemma}\cite{kolesnik}\uses{divisor-def} One has $\alpha_3 \leq 43/96$.
+\begin{lemma}\label{divisor-kolesnik}\cite{kolesnik}\uses{divisor-def} One has $\alpha_3 \leq 43/96$.
 \end{lemma}
 
 
-\begin{lemma}[Lower bound]\uses{divisor-def} $\alpha_k \geq \frac{1}{2} - \frac{1}{2k}$ for all $k$.
+\begin{lemma}[Lower bound]\label{divisor-lower}\uses{divisor-def} $\alpha_k \geq \frac{1}{2} - \frac{1}{2k}$ for all $k$.
 \end{lemma}
 
 \begin{proof} See \cite{hardy_divisor_1916, szego-walfisz-I, szego-walfisz-II}.
@@ -23,7 +23,7 @@ as $x \to \infty$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(
 
 It is conjectured that this lower bound is in fact an equality.
 
-\begin{lemma}\label{mas}\uses{divisor-def}  Let $k \geq 2$ be an integer. If $M(\sigma,k) = 1$ then $\alpha_k \leq \sigma$.
+\begin{lemma}\label{mas}\uses{divisor-def,zeta-moment-def}  Let $k \geq 2$ be an integer. If $M(\sigma,k) = 1$ then $\alpha_k \leq \sigma$.
 \end{lemma}
 
 \begin{proof}  See \cite[\S 13.3]{ivic}.
@@ -45,4 +45,4 @@ Using Lemma \ref{mas}, the following bounds were obtained:
 \end{theorem}
 
 
-{\bf list known bounds on $\alpha_k$}
+{\bf TODO: list known bounds on $\alpha_k$}
