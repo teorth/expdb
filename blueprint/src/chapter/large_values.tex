@@ -1,11 +1,18 @@
 \chapter{Large value estimates}
 
-\begin{definition}[Large value exponent]\label{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV(\sigma,\tau)$ to be the least fixed quantity for which the following claim is true: whenever $N > 1$ is unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $a_n$ is a $1$-bounded complex number for each $n \in [N,2N]$, and $t_1,\dots,t_R$ are a $1$-separated sequence in some interval $J$ of length $T$ such that
+\begin{definition}[Large value pattern]\label{large-pattern-def} A \emph{large value pattern} is a tuple $(N, T, V, (a_n)_{n \in [N,2N]}, J, W)$, where $N > 1$ and $T, V > 0$ are real numbers, $a_n$ is a $1$-bounded sequence on $[N,2N]$, $J$ is an interval of length $T$, and $W$ is a $1$-separated subset of $J$ such that
 \begin{equation}\label{V-large}
-    \left|\sum_{n \in [N,2N]} a_n n^{-it_r} \right| \geq V
+        \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
 \end{equation}
-    for all $r=1,\dots,R$, then one has
-$$ R \ll N^{\LV(\sigma,\tau)+o(1)}.$$
+for all $t \in W$.
+
+A \emph{Zeta large value pattern} is a large value pattern in which $J = [T,2T]$ and $a_n = 1_I(n)$ for some interval $I \subset [N,2N]$.
+\end{definition}
+
+The choice of interval $J$ is not too important for a large value pattern, since one can translate $J$ and $W$ by any shift $t_0$ if we also modulate the coefficients $a_n$ by $n^{it_0}$ to compensate.  However, this modulation freedom is not available for zeta large value patterns, as it destroys the form $a_n = 1_I(n)$ of the coefficients.  The cardinality $|W|$ of $W$ is traditionally called $R$ in the literature.
+
+\begin{definition}[Large value exponent]\label{lv-def}\uses{large-value-pattern} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV(\sigma,\tau)$ to be the least fixed quantity for which the following claim is true: whenever $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value pattern with $N>1$ unbounded, $T = N^{\tau+o(1)}$, and $V = N^{\sigma+o(1)}$, then
+$$ |W| \ll N^{\LV(\sigma,\tau)+o(1)}.$$
 \end{definition}
 
 \python{large_values}
@@ -16,7 +23,7 @@ One can check that the set of possible candidates for $\LV(\sigma,\tau)$ is clos
 \begin{lemma}[Asymptotic form of large value exponent]\label{lv-asymp}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and $\rho \geq 0$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $\LV(\sigma,\tau) \leq \rho$.
-    \item[(ii)] For every (fixed)  $\eps>0$ there exists $C, \delta>0$ such that if $N \geq C$ and $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, $a_n$ is a $1$-bounded complex number for each $n \in [N,2N]$, and $t_1,\dots,t_R$ is a $1$-separated subset of an interval $J$ of length $T$ such that \eqref{V-large} holds for all $r=1,\dots,R$, then one has
+    \item[(ii)] For every (fixed)  $\eps>0$ there exists $C, \delta>0$ such that if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value pattern with $N \geq C$ and $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, then one has
     $$ R \leq C N^{\rho+\eps}.$$
     \end{itemize}
 \end{lemma}
@@ -45,9 +52,9 @@ but this follows because any interval of length $N^{\tau'+o(1)}$ may be subdivid
 \begin{lemma}[Lower bound]\label{lv-lower}\uses{lv-def}  For any $1/2 < \sigma \leq 1$ and $\tau \geq 0$, one has $\LV(\sigma, \tau) \geq \min(2 - 2 \sigma,\tau)$, while for $\sigma=1/2$ one has $\LV(\sigma,\tau) = \tau$.
 \end{lemma}
 
-\begin{proof}\uses{lv-basic} In view of Lemma \ref{lv-basic}(ii), it suffices to show that $\LV(\sigma, 2-2\sigma) \geq 2-2\sigma$.  By definition, it suffices to find an unbounded $N$ and a $1$-bounded sequence $a_n$ for $n \in [N,2N]$ such that $|\sum_{n \in [N,2N]} a_n n^{-it}| \geq N^{\sigma+o(1)}$ for a $1$-separated set of $t = O(N^{2-2\sigma+o(1)})$ of cardinality $\gg N^{2-2\sigma-o(1)}$.
+\begin{proof}\uses{lv-basic} In view of Lemma \ref{lv-basic}(ii), it suffices to show that $\LV(\sigma, 2-2\sigma) \geq 2-2\sigma$.  By definition, it suffices to find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value pattern with $N$ unbounded, $V=N^{\sigma+o(1)}$, $T = N^{2-2\sigma+o(1)}$, and $|W| \gg N^{2-2\sigma-o(1)}$.
 
-In the endpoint case $\sigma = 1$ one can achieve this by setting $a_n=1$ for all $n$ and taking $t=0$, so now we assume that $1/2 < \sigma<1$.
+In the endpoint case $\sigma = 1$ one can achieve this by setting $a_n=1$ for all $n$ and taking $W=\{0\}$, so now we assume that $1/2 < \sigma<1$.
 
 We use the probabilistic method.  We divide $[N,2N]$ into $\asymp N^{2-2\sigma}$ intervals $I$ of length $\asymp N^{2\sigma-1}$.  On each interval $I$, we choose $a_n$ to equal some randomly chosen sign $\epsilon_I \in \{-1,+1\}$, with the $\epsilon_I$ chosen independently in $I$.  If $t = o(N^{2-2\sigma})$, then $\sum_{n \in I} a_n n^{-it}$ is equal to $\epsilon_I$ times a deterministic quantity $c_{t,I}$ of magnitude $\asymp N^{2\sigma-1}$ (the point being that the phase $t \log n$ is close to constant in this range).  By the Chernoff bound, we thus see that for any such $t$, $\sum_{n \in [N,2N]} a_n n^{it}$ will have size $\gg N^{(2\sigma-1) + (2-2\sigma)/2} = N^\sigma$ with probability $\gg 1$. By linearity of expectation, we thus see that with positive probability, a $\gg 1$ fraction of integers $t$ with $t = o(N^{2-2\sigma})$ will have this property, giving the claim.
 
@@ -91,12 +98,11 @@ The following basic property of $\LV(\sigma,\tau)$ is extremely useful in applic
 \python{large_values}
 \code{raise_to_power_hypothesis()}
 
-\begin{proof}  Let $N$ be unbounded, let $T = N^{k\tau+o(1)}$ and $V = N^{\sigma+o(1)}$, let $a_n$ be a $1$-bounded sequence on $[N,2N]$, and let $t_1,\dots,t_R$ be a $1$-separated sequence in an interval of length $T$ obeying \eqref{V-large}
-for all $r=1,\dots,R$.  Raising to the $k^{\mathrm{th}}$ power, we conclude that
-$$ \left|\sum_{n \in [N^k,2^kN^k]} b_n n^{-it_r} \right| \geq V^k$$
-where $b_n$ is the Dirichlet convolution of $k$ copies of $a_n$, and thus is bounded by $N^{o(1)}$ thanks to divisor bounds.  Subdividing $[N^k, 2^k N^k]$ into $k$ intervals of the form $[N',2N']$ for $N' \asymp N^k$ and applying Definition \ref{lv-def} (with $N, T, V$ replaced by $N', T, V^k$) we conclude that
-$$ R \ll N^{k \LV(\sigma,\tau) + o(1)}$$
-and the claim then follows from Lemma \ref{lv-asymp}.
+\begin{proof} Let  $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $T = N^{k\tau+o(1)}$ and $V = N^{\sigma+o(1)}$, Raising \eqref{V-large} the $k^{\mathrm{th}}$ power, we conclude that
+$$ \left|\sum_{n \in [N^k,2^kN^k]} b_n n^{-it} \right| \geq V^k$$
+for all $t \in W$, where $b_n$ is the Dirichlet convolution of $k$ copies of $a_n$, and thus is bounded by $N^{o(1)}$ thanks to divisor bounds.  Subdividing $[N^k, 2^k N^k]$ into $k$ intervals of the form $[N',2N']$ for $N' \asymp N^k$ and applying Definition \ref{lv-def} (with $N, T, V$ replaced by $N', T, V^k$) we conclude that
+$$ |W| \ll N^{k \LV(\sigma,\tau) + o(1)}$$
+and the claim then follows.
 \end{proof}
 
 \section{Known upper bounds on \texorpdfstring{$\LV(\sigma,\tau)$}{LV(sigma,tau)}}
@@ -112,9 +118,9 @@ In particular, the Montgomery conjecture holds \eqref{mont-conj} for $\tau \leq 
 \code{large_value_estimate_L2}
 
 \begin{proof}
-Let $N$ be unbounded, let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, let $a_n$ be $1$-bounded on $[N,2N]$, and let $t_r$ be a $1$-separated sequence in an interval of length $T$ obeying . Let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
+LEt $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
 \[
-RV^2 \le \sum_{r = 1}^R\left|\sum_{N \le n \le 2N} a_n n^{-it_r}\right|^2 \ll N^{1 + o(1)}(T + N)
+|W|V^2 \le \sum_{t \in W} \left|\sum_{N \le n \le 2N} a_n n^{-it}\right|^2 \ll N^{1 + o(1)}(T + N)
 \]
 from which the result follows.
 \end{proof}
@@ -128,19 +134,19 @@ from which the result follows.
 
 For a stronger version of this inequality, see Lemma \ref{hl-improv}.
 
-\begin{proof}\uses{beta-triv}  Set $\rho \coloneqq \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Definition \ref{lv-def}, we can find an unbounded $N > 1$, let $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, a $1$-bounded sequence $a_n$ and a $1$-separated sequence $t_1,\dots,t_R$ in an interval of length $T$ with $R = N^{\rho+o(1)}$, such that \eqref{V-large} holds for all $r$.  In particular
-$$ \sum_{r=1}^R \left|\sum_{n \in [N,2N]} a_n n^{it_r} \right| \geq RV$$
-hence for some $1$-bounded coefficients $c_r$
-$$ \left|\sum_{r=1}^R c_r \sum_{n \in [N,2N]} a_n n^{it_r} \right| \geq RV$$
+\begin{proof}\uses{beta-triv}  Set $\rho \coloneqq \LV(\sigma,\tau)$; we may assume without loss of generality that $\rho \geq 0$.  Then by Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$  with $N > 1$ unbounded, $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, and $|W| = N^{\rho+o(1)}$.  From \eqref{V-large} we have
+$$ \sum_{t \in W} \left|\sum_{n \in [N,2N]} a_n n^{it} \right| \geq |W|V$$
+hence for some $1$-bounded coefficients $c_t$
+$$ \left|\sum_{t \in W} c_t \sum_{n \in [N,2N]} a_n n^{it} \right| \geq |W|V$$
 We apply the Hal\'asz argument. Interchanging the summations and applying Cauchy--Schwarz, we conclude that
-$$ RV \leq N^{1/2} \left|\sum_{1 \leq r,r' \leq R} c_r \overline{c_{r'}} \sum_{n \in [N,2N]} n^{i(t_r-t_{r'})} \right|^{1/2}$$
+$$ |W|V \leq N^{1/2} \left|\sum_{t, t' \in W} c_t \overline{c_{t'}} \sum_{n \in [N,2N]} n^{i(t-t')} \right|^{1/2}$$
 hence on squaring and using the triangle inequality
-$$ N^{2\rho} \ll N^{1-2\sigma+o(1)} \sum_{1 \leq r,r' \leq R} \left|\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})} \right|.$$
-In the case $|t_r - t_{r'}| \leq N^{1-\eps}$ for any fixed $\eps>0$, one can use Lemma \ref{beta-triv} to obtain the bound
-$$ \sum_{n \in [N,2N]} n^{i(t_r-t_{r'})} \ll N^{o(1)} \frac{N}{1 + |t_r - t_{r'}|}.$$
+$$ N^{2\rho} \ll N^{1-2\sigma+o(1)} \sum_{t,t' \in W} \left|\sum_{n \in [N,2N]} n^{i(t-t')} \right|.$$
+In the case $|t - t'| \leq N^{1-\eps}$ for any fixed $\eps>0$, one can use Lemma \ref{beta-triv} to obtain the bound
+$$ \sum_{n \in [N,2N]} n^{i(t-t')} \ll N^{o(1)} \frac{N}{1 + |t - t'|}.$$
 The total contribution of this case can then be bounded by $N^{1+o(1)} R = N^{1+\rho+o(1)}$, thanks to the $1$-separation.
-In the remaining cases $|t_r - t_{r'}| \geq N^{1-o(1)}$, we use Definition \ref{beta-def} to see that
-$$ \sum_{n \in [N,2N]} n^{i(t_r-t_{r'})} \ll N^{\sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau' + o(1)}$$
+In the remaining cases $|t - t'| \geq N^{1-o(1)}$, we use Definition \ref{beta-def} to see that
+$$ \sum_{n \in [N,2N]} n^{i(t-t')} \ll N^{\sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau' + o(1)}$$
 and thus
 $$ N^{2\rho} \ll N^{2-2\sigma+\rho+o(1)} + N^{2\rho + 1-2\sigma+\sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau' + o(1)}.$$
 By hypothesis, the second term on the right-hand side is asymptotically smaller than the left-hand side, and so we obtain $\rho \leq 2-2\sigma$ as required.
@@ -204,16 +210,15 @@ and the claim follows.  (See also the arguments in the first paragraph of \cite[
     for any positive integer $k$.
     \end{lemma}
 
-\begin{proof}
-    Let $N \geq 1$ be unbounded, $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$, and let $a_n$ and $t_r$ be as defined in Definition \ref{lv-def}. By \cite[Lemma~6]{heathbrown_large_1979} we have
-    $$ (R V)^2 \ll T^{o(1)}( RN + R^2 N^{1/2} + R^{2-1/2k} T^{1/2} + R^{2-3/8k} N^{1/2} T^{1/4k}) N.$$
+\begin{proof} Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $N \geq 1$ be unbounded, $T = N^{\tau + o(1)}$, and $V = N^{\sigma + o(1)}$. By \cite[Lemma~6]{heathbrown_large_1979} we have
+    $$ (|W| V)^2 \ll T^{o(1)}( |W|N + |W|^2 N^{1/2} + |W|^{2-1/2k} T^{1/2} + |W|^{2-3/8k} N^{1/2} T^{1/4k}) N.$$
     Thus one must have one of
-$$ (R N^\sigma)^2 \ll RN^{2+o(1)},$$
-$$ (R N^\sigma)^2 \ll R^2 N^{3/2+o(1)}$$
-$$ (R N^\sigma)^2 \ll R^{2-1/2k} N^{\tau/2+1+o(1)},$$
-$$ (R N^\sigma)^2 \ll R^{2-3/8k} N^{\tau/4k + 3/2+ o(1)}.$$
-The third estimate is not possible asymptotically since $\sigma > 3/4$.  Rearranging the other estimates to solve for $R$, and using we conclude that
-$$ R \ll \max\left( N^{2-2\sigma+o(1)}, N^{k\tau + k(2-4\sigma)+o(1), 2\tau/3 + k(12-16\sigma)/3 + o(1)}\right),$$
+$$ (|W| N^\sigma)^2 \ll |W|N^{2+o(1)},$$
+$$ (|W| N^\sigma)^2 \ll |W|^2 N^{3/2+o(1)}$$
+$$ (|W| N^\sigma)^2 \ll |W|^{2-1/2k} N^{\tau/2+1+o(1)},$$
+$$ (|W| N^\sigma)^2 \ll |W|^{2-3/8k} N^{\tau/4k + 3/2+ o(1)}.$$
+The third estimate is not possible asymptotically since $\sigma > 3/4$.  Rearranging the other estimates to solve for $|W|$, and using we conclude that
+$$ |W| \ll \max\left( N^{2-2\sigma+o(1)}, N^{k\tau + k(2-4\sigma)+o(1), 2\tau/3 + k(12-16\sigma)/3 + o(1)}\right),$$
 and the claim follows.
 \end{proof}
 
@@ -249,13 +254,11 @@ or else there exists $s \geq 0$ such that
 \end{equation}
 \end{theorem}
 
-\begin{proof}  By Definition \ref{lv-def}, we can find an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $R = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and $1$-separated $t_1,\dots,t_R$ in $[T,2T]$ such that
-$$ |\sum_n a_n n^{-it_r}| \geq V$$
-for $r=1,\dots,R$.  Now set $\delta_1 \coloneqq N^{-\alpha_1}$, $\delta_2 \coloneqq N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
-$$ R \leq \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16},$$
+\begin{proof}  By Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $N \geq 1$, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$.  Now set $\delta_1 \coloneqq N^{-\alpha_1}$, $\delta_2 \coloneqq N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
+$$ |W| \leq \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16},$$
 or one can bound the quantity
-$$ T^{-\eps} \delta_1^2 V^2 |S| R + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} R^{3/2}$$
-$$ T^\eps (RN^2 + R^2 N + R^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N)^{1/2}$$
+$$ T^{-\eps} \delta_1^2 V^2 |S| |W| + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} |W|^{3/2}$$
+$$ T^\eps (|W|N^2 + |W|^2 N + |W|^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N)^{1/2}$$
 for a certain non-empty set $S$.  After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s \geq 1$, and the claim follows.
 \end{proof}
 

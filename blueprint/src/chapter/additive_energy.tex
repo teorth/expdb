@@ -73,9 +73,7 @@ when the $W_i$ are disjoint, and hence also when they are not assumed to be disj
 
 To relate $S(N,W)$ to $E_1(W)$, we first observe the following lemma, implicit in \cite{heath_brown_consecutive_II} and made more explicit in \cite[Lemma 11.4]{guth-maynard}.
 
-\begin{lemma}[Energy controlled by third moment]\label{energy-third}\uses{energy-def} Let $T \geq 1$. If $a_n$ is a $1$-bounded sequence on $[N,2N]$ for some $1 \leq N \ll T^{O(1)}$, $W$ is $1$-separated in $[-T,T]$, and
-$$|\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
-for all $t \in W$ and some $V>0$, then
+\begin{lemma}[Energy controlled by third moment]\label{energy-third}\uses{energy-def} Suppose that $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value patterm with $T \geq 1$ and $1 \leq N \ll T^{O(1)}$.  Then
 $$ V^2 E_1(W) \ll T^{o(1)} \sum_{n,m \in [N,2N]} |R_W(n/m)|^3 + T^{-50}.$$
 \end{lemma}
 
@@ -139,15 +137,9 @@ Also, by double counting one easily verifies the claims \eqref{v1}, \eqref{v2}. 
 
 Because the cardinality $|W|$ and additive energy $E_1(W)$ of a set $W$ are correlated with each other, as well as with the double zeta sum $S(N,W)$, we will not be able to consider them separately, and instead we will need to consider the possible joint exponents for these two quantities.  We formalize this via the following set:
 
-\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence  $a_n$ on $[N,2N]$, and a  $1$-separated subset $W$ of cardinality $N^{\rho+o(1)}$ in an interval $J$ of length $T$ such that
-    \begin{equation}\label{sig-large} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
-\end{equation}
-for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
+\begin{definition}[Large value energy region]\label{lv-edef} The \emph{large value energy region} $\Energy \subset \R^5$ is defined to be the set of all fixed tuples $(\sigma,\tau,\rho,\rho^*,s)$ with $1/2 \leq \sigma \leq 1$, $\tau, \rho, \rho' \geq 0$, such that there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
 
-We define the \emph{large value energy region for zeta} $\Energy_\zeta \subset \R^5$ similarly, but now the interval $J$ is required to be of the form $[T,2T]$, and the sequence $a_n$ is required to be of the form $1_I(n)$ for some interval $I \subset [N,2N]$.  Thus, in order for $(\sigma,\tau,\rho,\rho^*,s)$ to lie in $\Energy_\zeta$, there must exist an unbounded $N > 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, an interval $I$ in $[N,2N]$, and  $W = W$ is a $1$-separated subset of cardinality $N^{\rho+o(1)}$ in $[T,2T]$ such that
-\begin{equation}\label{sig-large-zeta} \left|\sum_{n \in I} n^{-it} \right| \geq V
-\end{equation}
-for all $t \in W$, and such that $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.
+We define the \emph{zeta large value energy region} $\Energy_\zeta \subset \R^5$ similarly, but where now $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is required to be a zeta large value pattern.
 \end{definition}
 
 Clearly we have
@@ -155,7 +147,7 @@ Clearly we have
 \begin{lemma}[Trivial containment]\label{triv-contain}\uses{lv-edef} We have $\Energy_\zeta \subset \Energy$.
 \end{lemma}
 
-These region is related to $\LV(\sigma,\tau)$ and as follows:
+These regions are related to $\LV(\sigma,\tau)$ and as follows:
 
 \begin{lemma}\label{energy-region-lv}\uses{lv-def, lvz-def, energy-def} For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we have
 $$ \LV(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
@@ -182,13 +174,12 @@ As usual, we have an equivalent non-asymptotic definition of the large value ene
 \begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{energy-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(\sigma,\tau,\rho,\rho^*) \in \Energy$.
-    \item[(ii)] For every $\eps>0$ and $C > 0$, there exists $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, a $1$-bounded $a_n$ for each $n \in [N,2N]$, and a $1$-separated subset $W$  of an interval $J$ of length $T$ such that \eqref{sig-large}
-holds for all $t \in W$, with
-    $$ N^{\rho-\eps} \leq |W| \leq N^{\rho+\eps},$$
-    $$ N^{\rho^*-\eps} \leq E_1(W) \leq N^{\rho^*+\eps}$$
-    $$ N^{s-\eps} \leq S(N, W) \leq N^{s+\eps}.$$
+    \item[(ii)] For every $\eps>0$ and $C > 0$, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$,
+    $N^{\rho-\eps} \leq |W| \leq N^{\rho+\eps}$,
+    $N^{\rho^*-\eps} \leq E_1(W) \leq N^{\rho^*+\eps}$, and
+    $N^{s-\eps} \leq S(N, W) \leq N^{s+\eps}$.
     \end{itemize}
-    Similarly with $\Energy$ replaced by $\Energy_\zeta$, $J$ replaced by $[N,2N]$, $a_n$ replaced by an interval $I$ in $[N,2N]$, and \eqref{sig-large} replaced by \eqref{sig-large-zeta}.
+    Similarly with $\Energy$ replaced by $\Energy_\zeta$, and with $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ required to be a zeta large value pattern.
 \end{lemma}
 
 This lemma is proven by a routine expansion of the definitions, and is omitted.
@@ -225,14 +216,12 @@ This lemma is proven by a routine expansion of the definitions, and is omitted.
 $$ \rho \leq \min( 2-2\sigma, k(3-4\sigma)/2 + s' - 1).$$
 \end{theorem}
 
-\begin{proof} By definition, there exists an unbounded $N>1$, $T = N^{\tau+o(1)}$, a $1$-bounded sequence $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ (which we can normalize without loss of generality to be $[0,T]$) such that
-    $$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq N^{\sigma+o(1)}$$
-for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By \cite[(11.58)]{ivic}, one has
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By \cite[(11.58)]{ivic}, one has
 $$ |W|^2 \ll T^{o(1)} ( |W| N^{2-2\sigma} + N^{1-2\sigma} |W|^2 + N^{(3-4\sigma)/2} \int_{v = O(T^{o(1)})} \sum_{t,t' \in W} |\sum_{n \leq 4T/N} n^{-1/2+it-it'+iv}|\ dv ).$$
 Since $\sigma>1/2$, the $N^{1-2\sigma} |W|^2$ term can be dropped.  Applying H\"older's inequality and dyadic pigeonholing as in \cite[(11.59)]{ivic}, we conclude that
-$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2}  (\sum_{t,t' \in W} |\sum_{n \in [N',2N']} b_n n^{-1/2+it-it'+iv}|^2)^{1/2}$$
+$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2}  (\sum_{t,t' \in W} |\sum_{n \in [N',2N']} b_n n^{-1/2+it-it'+iv}|^2)^{1/2})$$
 for some $v = O(T^{o(1)})$ and coefficients $b_n = O(T^{o(1)})$, and some $N' \ll (4T/N)^k$.  After passing to a subsequence if necessary, we may assume that $N' = N^{\alpha+o(1)}$ for some $0 \leq \alpha \leq k(\tau-1)$.  If $\alpha=0$ then the second term here is negligible compared to the first and we obtain $\rho \leq 2-2\sigma$, so suppose that $\alpha > 0$.  Using \cite[Lemma 11.1]{ivic} to eliminate the $b_n n^{-1/2+iv}$ coefficients, we conclude that
-$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2-1} S(N', W).$$
+$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2-1} S(N', W)).$$
 By construction, we have $S(N',W) = (N')^{s'/\alpha+o(1)} = N^{s'+o(1)}$ for some tuple $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$.  The claim follows.
 \end{proof}
 
@@ -271,9 +260,7 @@ $$ \rho^* + 2\sigma \leq \kappa + (s+s')/2.$$
 \end{lemma}
 
 
-\begin{proof}\uses{wtu}  By definition, there exists an unbounded $N \geq 1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $1$-bounded coefficients $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
-$$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
-for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $|W^*| = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$, then from \eqref{v1w} we have
+\begin{proof}\uses{wtu}  By definition, there exists a large value pattern $$(N,T,V,(a_n)_{n \in [N,2N]},J,W)$$ with $N \geq 1$ unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$. From \eqref{v1w} we have
 $$
     V^2 E_1(W) \ll T^{o(1)} S(N,W)^{1/2} S_4(N,W)^{1/2} + T^{-50}.
 $$
@@ -348,9 +335,7 @@ In particular, from Lemma \ref{hb-double} we see for $\tau \leq 3/2$ that
 $$ \rho^* \leq \max(3\rho+1-2\sigma, 2\rho+2-2\sigma).$$
 \end{lemma}
 
-\begin{proof} By definition, we can find an unbounded $N>1$, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, a $1$-bounded sequence $a_n$ on $[N,2N]$, and a $1$-separated subset $W$ of an interval of length $T$ such that
-    $$ |\sum_{n \in [N,2N]} a_n n^{-it}| \geq V$$
-    for all $t \in W$, with $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$. From \eqref{energy-triv} one has
+\begin{proof} By definition, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$. From \eqref{energy-triv} one has
 $$    V^2 E_1(W) \ll T^{o(1)} |W| S(N,W) + T^{-50}.$$
 Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error can be discarded.  The claim then follows.
 \end{proof}

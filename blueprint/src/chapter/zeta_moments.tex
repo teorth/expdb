@@ -73,23 +73,23 @@ By Definition \ref{zeta-moment-def}, the left-hand side is $\ll T^{M(\sigma_0,A)
 $$ R \ll N^{\tau M(\sigma_0,A) - A(\sigma-\sigma_0)},$$
 giving the claim.
 
-For the converse bound, let $M$ be the right-hand side of \eqref{M-form}.  From Lemma \ref{lvz-2} we have $M \geq 1$. By \cite[\S 8.1]{ivic} it will suffice to show that for any $V>0$ and any $1$-separated $t_1,\dots,t_r \in [T,2T]$ with
-$$ |\zeta(\sigma_0+it_r)| \geq V$$
-one has
-$$ R \ll T^{M+o(1)} V^{-A}.$$
-The claim is clear if $V \geq T^C$ or $V \leq T^C$ for some sufficiently large $C$, so we may assume that $V = T^{O(1)}$.  We also clearly can assume $R \geq 1$.  Using the Riemann--Siegel formula and dyadic decomposition, we have either
-$$ |\sum_{n \in I} \frac{1}{n^{\sigma_0+it_r}} \gg T^{-o(1)} V$$
+For the converse bound, let $M$ be the right-hand side of \eqref{M-form}.  From Lemma \ref{lvz-2} we have $M \geq 1$. By \cite[\S 8.1]{ivic} it will suffice to show that for any $V>0$ and any $1$-separated $W \subset [T,2T]$ with
+$$ |\zeta(\sigma_0+it)| \geq V$$
+for all $t \in W$, one has
+$$ |W| \ll T^{M+o(1)} V^{-A}.$$
+The claim is clear if $V \geq T^C$ or $V \leq T^C$ for some sufficiently large $C$, so we may assume that $V = T^{O(1)}$.  We also clearly can assume $|W|\geq 1$.  Using the Riemann--Siegel formula \cite[Theorem 4.1]{ivic} and dyadic decomposition, we have either
+$$ |\sum_{n \in I} \frac{1}{n^{\sigma_0+it}} \gg T^{-o(1)} V$$
 or
-$$ T^{1/2-\sigma_0} |\sum_{n \in I} \frac{1}{n^{1-\sigma_0-it_r}}| \gg T^{-o(1)} V$$
-for some $I \subset [N,2N]$ and $1 \leq N \ll T^{1/2}$.  In either case, we can perform summation by parts and conclude that
-$$ |\sum_{n \in I'} n^{-it_r}|\gg T^{-o(1)} V N^{\sigma_0}$$
+$$ T^{1/2-\sigma_0} |\sum_{n \in I} \frac{1}{n^{1-\sigma_0-it}}| \gg T^{-o(1)} V$$
+for some $I \subset [N,2N]$ and $1 \leq N \ll T^{1/2}$, and all $t \in W$.  In either case, we can perform summation by parts and conclude that
+$$ |\sum_{n \in I'} n^{-it}|\gg T^{-o(1)} V N^{\sigma_0}$$
 or
-$$ |\sum_{n \in I'} n^{-it_r}|\gg T^{-o(1)} V N^{1-\sigma_0} T^{\sigma_0-1/2}$$
-for some $I'$ in $[N,2N]$.  As $\sigma_0 \geq 1/2$, the letter hypothesis is stronger than the former, so we may assume the former.  If $N = T^{o(1)}$ then this would imply that $V \ll T^{o(1)}$, and we would be done from the trivial bound $R \ll T$ since $M \geq 1$.
+$$ |\sum_{n \in I'} n^{-it}|\gg T^{-o(1)} V N^{1-\sigma_0} T^{\sigma_0-1/2}$$
+for some $I'$ in $[N,2N]$ and all $t \in W$.  As $\sigma_0 \geq 1/2$, the letter hypothesis is stronger than the former, so we may assume the former.  If $N = T^{o(1)}$ then this would imply that $V \ll T^{o(1)}$, and we would be done from the trivial bound $R \ll T$ since $M \geq 1$.
 Hence, after passing to a subsequence, we can assume that $N = T^{1/\tau+o(1)}$ for some $2 < \tau < \infty$.  We can also assume that $V = N^{\sigma-\sigma_0+o(1)}$ for some $\sigma \in \R$. If $\sigma \leq \sigma_0$ then $V \ll T^{o(1)}$ and we are done as before, so we may assume $\sigma > \sigma_0$; in particular, $\sigma \geq 1/2$.  From Lemma \ref{lvz-asymp} we have
-$$ R \ll N^{\LV_\zeta(\sigma,\tau)+o(1)}$$
+$$ |W| \ll N^{\LV_\zeta(\sigma,\tau)+o(1)}$$
 and hence by definition of $M$
-$$ R \ll N^{M \tau - A (\sigma-\sigma_0)+o(1)} = T^{M+o(1)} V^{-A}$$
+$$ |W| \ll N^{M \tau - A (\sigma-\sigma_0)+o(1)} = T^{M+o(1)} V^{-A}$$
 as required.
 \end{proof}
 
@@ -115,28 +115,27 @@ We also have a variant bound, which is slightly better when $\tau$ is close to $
 $$ \LV_\zeta(\sigma,\tau) \leq \min( \tau-6(\sigma-1/2), 5\tau-32(\sigma-1/2)).$$
 \end{theorem}
 
-\begin{proof} Let $N$ be unbounded, let $T = N^{\tau+o(1)}$ and $V = N^{\sigma+o(1)}$, let $I \subset [N,2N]$, and let $t_1 < \dots < t_R$ in $[T,2T]$ be $1$-separated with
-$$ |\sum_{n \in I} n^{-it_r}| \geq V$$
-for all $r$.  Our task is to show that
-$$ R \ll T^{o(1)} ( T (N^{-1/2} V)^{-6} + T^5 (N^{-1/2} V)^{-32}).$$
-By a Fourier analytic expansion we can bound
-$$ N^{-1/2} |\sum_{n \in I} n^{-it_r}| \ll T^{o(1)} \int_{T/4}^{3T} |\zeta(1/2+it)| \frac{dt}{1+|t-t_r|} + N^{-\eps}$$
-for some $\eps>0$, hence
-$$ \int_{T/4}^{3T} |\zeta(1/2+it)| \frac{dt}{1+|t-t_r|} \gg T^{-o(1)} N^{-1/2} V.$$
-In particular, we can truncate to large values of $\zeta(1/2+it)$, in the sense that
-$$ \int_{T/4}^{3T} |\zeta(1/2+it)| 1_{|\zeta(1/2+it)| \geq T^{-o(1)} N^{-1/2} V} \frac{dt}{1+|t-t_r|} \gg T^{-o(1)} N^{-1/2} V.$$
-Summing in $r$ and using the $1$-separation to bound the sum of $1/(1+|t-t_r|)$ by $T^{o(1)}$, we conclude that
-$$ \int_{T/4}^{3T} |\zeta(1/2+it)| 1_{|\zeta(1/2+it)| \geq T^{-o(1)} N^{-1/2} V} \ dt \gg T^{-o(1)} R N^{-1/2} V.$$
+\begin{proof} Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a zeta large value pattern with $N$, $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$ and $W = N^{\LV_\zeta(\sigma,\tau)+o(1)}$.
+Our task is to show that
+$$ |W| \ll T^{o(1)} ( T (N^{-1/2} V)^{-6} + T^5 (N^{-1/2} V)^{-32}).$$
+Write $a(n) = 1_I(n)$. By a Fourier analytic expansion we can bound
+$$ N^{-1/2} |\sum_{n \in I} n^{-it}| \ll T^{o(1)} \int_{T/4}^{3T} |\zeta(1/2+it_1)| \frac{dt_1}{1+|t_1-t|} + N^{-\eps}$$
+for some fixed $\eps>0$ and all $t \in W$, hence
+$$ \int_{T/4}^{3T} |\zeta(1/2+it_1)| \frac{dt}{1+|t_1-t|} \gg T^{-o(1)} N^{-1/2} V.$$
+In particular, we can truncate to large values of $\zeta(1/2+it_1)$, in the sense that
+$$ \int_{T/4}^{3T} |\zeta(1/2+it_1)| 1_{|\zeta(1/2+it_1)| \geq T^{-o(1)} N^{-1/2} V} \frac{dt_1}{1+|t_1-t|} \gg T^{-o(1)} N^{-1/2} V.$$
+Summing in $t$ and using the $1$-separation to bound the sum of $1/(1+|t_1-t|)$ by $T^{o(1)}$, we conclude that
+$$ \int_{T/4}^{3T} |\zeta(1/2+it_1)| 1_{|\zeta(1/2+it_1)| \geq T^{-o(1)} N^{-1/2} V} \ dt_1 \gg T^{-o(1)} R N^{-1/2} V.$$
 Hence by dyadic pigeonholing we have
-$$ V' \int_{T/4}^{3T} |\zeta(1/2+it)| 1_{|\zeta(1/2+it)| \asymp V'} \ dt \gg T^{-o(1)} R N^{-1/2} V$$
+$$ V' \int_{T/4}^{3T} |\zeta(1/2+it_1)| 1_{|\zeta(1/2+it_1)| \asymp V'} \ dt \gg T^{-o(1)} R N^{-1/2} V$$
 for some $V' \geq T^{-o(1)} N^{-1/2} V$, and thus
-$$ |\zeta(1/2+it'_r)| \asymp V'$$
-for some $1$-separated sequence $t'_1 < \dots < t'_{R'}$ in $[T/4, 3T]$ with
-$$ R' \gg T^{-o(1)} R N^{-1/2} V / V'.$$
+$$ |\zeta(1/2+it')| \asymp V'$$
+for all $t'$ in some $1$-separated subset $W'$ of $[T/4, 3T]$ with
+$$ |W'| \gg T^{-o(1)} |W| N^{-1/2} V / V'.$$
 Applying \cite[Theorem 2]{heathbrown_twelfth_1978} (treating different cases using the bounds \cite[(7), (8), (9)]{heathbrown_twelfth_1978}), we have the bound
-$$ R' \ll T^{o(1)} ( T (V')^{-6} + T^5 (V')^{-32})$$
+$$ |W'| \ll T^{o(1)} ( T (V')^{-6} + T^5 (V')^{-32})$$
 and thus
-$$ R \ll T^{o(1)} ( T (N^{-1/2} V)^{-1} (V')^{-5} + T^5 (N^{-1/2} V)^{-1} (V')^{-31})$$
+$$ |W| \ll T^{o(1)} ( T (N^{-1/2} V)^{-1} (V')^{-5} + T^5 (N^{-1/2} V)^{-1} (V')^{-31})$$
 and the claim now follows from the lower bound on $V'$.
 \end{proof}
 

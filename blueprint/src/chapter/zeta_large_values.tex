@@ -2,10 +2,7 @@
 
 Now we study a variant of the exponent $\LV(\sigma,\tau)$, specialized to the Riemann zeta function.
 
-\begin{definition}[Large value zeta exponent]\label{lvz-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV_\zeta(\sigma,\tau) \in [-\infty, +\infty)$ to be the least (fixed) exponent for which the following claim is true:
-    If $N$ is unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $I$ is an interval in $[N,2N]$, and $t_1,\dots,t_R$ is a $1$-separated subset of $[T,2T]$ such that
-    $$  |\sum_{n \in I} n^{-it_r}| \geq V$$
-    for all $r=1,\dots,R$, then $R \ll N^{\rho+o(1)}$.
+\begin{definition}[Large value zeta exponent]\label{lvz-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV_\zeta(\sigma,\tau) \in [-\infty, +\infty)$ to be the least (fixed) exponent for which the following claim is true: if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a zeta large value pattern with $N$ is unbounded, $T = N^{\tau+o(1)}$, and $V = N^{\sigma+o(1)}$, then $|W| \ll N^{\rho+o(1)}$.
 \end{definition}
 
 \python{large_values}
@@ -18,10 +15,8 @@ As usual, we have a non-asymptotic formulation of $\LV_\zeta(\sigma,\tau)$:
 \begin{lemma}[Asymptotic form of large value exponent at zeta]\label{lvz-asymp}\uses{lvz-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and $\rho \geq 0$  be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $\LV_\zeta(\sigma,\tau) \leq \rho$.
-    \item[(ii)] For every $\eps>0$ there exists $C,\delta>0$ such that if $N > C$ and $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, $I$ is a subinterval of $[N,2N]$, and $t_1,\dots,t_R$ is a $1$-separated subset of $[T,2T]$ with
-    $$ |\sum_{n \in I} n^{-it_r}| \geq V$$
-    for all $r=1,\dots,R$, then one has
-    $$ R \leq C N^{\rho+\eps}.$$
+    \item[(ii)] For every $\eps>0$ there exists $C,\delta>0$ such that if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a zeta large value pattern with $N > C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, and $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, then one has
+    $$ |W| \leq C N^{\rho+\eps}.$$
     \end{itemize}
 \end{lemma}
 
@@ -53,41 +48,40 @@ Now we turn to (iv).  By symmetry it suffices to prove the upper bound.  Actuall
 $$ \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1}\right) \leq \frac{1}{\tau-1} \sup_{\sigma \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)$$
 as this easily implies the general upper bound.
 
-Let $N$ be unbounded, $T= N^{\frac{\tau}{\tau-1}+o(1)}$, $V  N^{\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2})+o(1)}$, $I$ be an interval in $[N,2N]$, and $t_1,\dots,t_R$ be a $1$-separated subset of $[T,2T]$ such that
-$$ |\sum_{n \in I} n^{-it_r}| \geq V$$
-for all $r=1,\dots,R$. By definition, it suffices to show the bound
+Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a zeta large value pattern with
+$N$ unbounded, $T= N^{\frac{\tau}{\tau-1}+o(1)}$, and $V = N^{\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2})+o(1)}$. By definition, it suffices to show the bound
 \begin{equation}\label{r-targ}
-    R \ll N^{\frac{1}{\tau-1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)+o(1)}.
+    |W| \ll N^{\frac{1}{\tau-1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)+o(1)}.
 \end{equation}
 for some $\sigma \leq \sigma' \leq 1$.
-By a Fourier expansion of $(n/N)^{1/2}$ in $\log n$, we can bound
+By definition, $a_n = 1_I(n)$. By a Fourier expansion of $(n/N)^{1/2}$ in $\log n$, we can bound
 $$ |\sum_{n \in I} n^{-it_r}| \ll_A N^{1/2} \int_\R |\sum_{n \in I} n^{-1/2-it}| (1 + |t-t_r|)^{-A}\ dt$$
-and hence by the pigeonhole principle, we can find $t'_r = t_r + O(N^{o(1)})$ such that
-$$ |\sum_{n \in I} n^{-1/2-it'_r}| \gg N^{-1/2-o(1)} V$$
-for $r=1,\dots,R$.  By refining the $t_r$ by $N^{o(1)}$ if necessary, we may assume that the $t'_r$ are $1$-separated.
+and hence by the pigeonhole principle, we can find $t' = t + O(N^{o(1)})$ for each $t \in W$ such that
+$$ |\sum_{n \in I} n^{-1/2-it'}| \gg N^{-1/2-o(1)} V$$
+for $t \in W$.  By refining $W$ by $N^{o(1)}$ if necessary, we may assume that the $t'$ are $1$-separated.
 
 Now we use the approximate functional equation
-$$ \zeta(1/2+it'_r) = \sum_{n \leq x} n^{-1/2-it'_r} + \chi(1/2+it'_r) \sum_{m \leq t'_r / 2\pi x} m^{-1/2+it_r} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
+$$ \zeta(1/2+it') = \sum_{n \leq x} n^{-1/2-it'} + \chi(1/2+it') \sum_{m \leq t' / 2\pi x} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
 for $x \sim N$; see \cite[Theorem 4.1]{ivic}.  Applying this to the two endpoints of $I$ and subtracting, we conclude that
-$$ \sum_{n \in I} n^{-1/2-it'_r} =\chi(1/2+it'_r) \sum_{m \in J_r} m^{-1/2+it'_r} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
-where $J_r \coloneqq \{ m: t'_r / 2\pi m \in I \}$. Since $\chi(1/2+it'_r)$ has magnitude one, we conclude that
-$$ |\sum_{m \in J_r} m^{-1/2-it'_r}| \gg N^{-1/2-o(1)} V.$$
+$$ \sum_{n \in I} n^{-1/2-it'} =\chi(1/2+it') \sum_{m \in J_{t'}} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
+where $J_{t'} \coloneqq \{ m: t' / 2\pi m \in I \}$. Since $\chi(1/2+it')$ has magnitude one, we conclude that
+$$ |\sum_{m \in J_r} m^{-1/2-it'}| \gg N^{-1/2-o(1)} V.$$
 Writing $M \coloneqq T/N = N^{\frac{1}{\tau-1}+o(1)}$, we see that $J_r \subset [M/10, 10M]$ and
-$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'_r}| \gg M^{1/2} N^{-1/2-o(1)} V = M^{\sigma+o(1)}.$$
+$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \gg M^{1/2} N^{-1/2-o(1)} V = M^{\sigma+o(1)}.$$
 Performing a Fourier expansion of $(M/m)^{1/2} 1_{J_r}(m)$ (smoothed out at scale $O(1)$) in $\log m$, we can bound
-$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'_r}| \ll \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it}| (1 + |t-t'_r|)^{-1}\ dt + T^{-10}$$
+$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \ll \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1 + T^{-10}$$
 and hence
-$$ \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it}| (1 + |t-t'_r|)^{-1}\ dt  \gg M^{\sigma+o(1)}.$$
-If we let $E$ denote the set of $t \in [T/10, 10T]$ for which $|\sum_{m \in [M/10,10M]} m^{-it}| \geq M^{\sigma-o(1)}$ for a suitably chosen $o(1)$ error, then we have
-$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it}| (1 + |t-t'_r|)^{-1}\ dt  \gg M^{\sigma+o(1)}.$$
-Summing in $r$, we obtain
-$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it}|\ dt  \gg M^{\sigma+o(1)} R$$
-and so by dyadic pigeonholing we can find $M^{\sigma-o(1)} \ll V'' \ll M$ and a $1$-separated sequence $t''_1,\dots,t''_{R''}$ in $E$ such that
-$$ |\sum_{m \in [M/10,10M]} m^{-it''_r}|\ dt \asymp V''$$
-and
-$$ V'' R'' \gg M^{\sigma+o(1)} R.$$
+$$ \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1  \gg M^{\sigma+o(1)}.$$
+If we let $E$ denote the set of $t_1 \in [T/10, 10T]$ for which $|\sum_{m \in [M/10,10M]} m^{-it_1}| \geq M^{\sigma-o(1)}$ for a suitably chosen $o(1)$ error, then we have
+$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt  \gg M^{\sigma+o(1)}.$$
+Summing in $t'$, we obtain
+$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}|\ dt_1  \gg M^{\sigma+o(1)} R$$
+and so by dyadic pigeonholing we can find $M^{\sigma-o(1)} \ll V'' \ll M$ and a $1$-separated subset $W''$ of $E$ such that
+$$ |\sum_{m \in [M/10,10M]} m^{-it''}|\ dt \asymp V''$$
+for all $t'' \in W''$, and
+$$ V'' |W''| \gg M^{\sigma+o(1)} |W|.$$
 By passing to a subsequence we may assume that $V'' = M^{\sigma'+o(1)}$ for some $\sigma \leq \sigma' \leq 1$. Partitioning $[M/10,10M]$ into a bounded number of intervals each of which lies in a dyadic range $[M',2M']$ for some $M' \asymp M$, and using Definition \ref{lvz-def}, we have
-$$ R''  \ll M^{\LV_\zeta(\sigma',\tau)+o(1)}$$
+$$ |W''|  \ll M^{\LV_\zeta(\sigma',\tau)+o(1)}$$
 and \eqref{r-targ} follows.
 \end{proof}
 
@@ -104,7 +98,8 @@ whenever $|t| = N^{\tau+o(1)}$.
 \end{lemma}
 
 \begin{proof} Clearly (i) implies (ii).
-If (iii) holds, then in the situation of (i), we see that $R$ will vanish for sufficiently large $i$, giving (i). Conversely, if (i) fails, then the quantity $R$ in Definition \ref{lvz-def} can be positive, hence at least $1$, contradicting (ii).
+If (iii) holds, then in any zeta large value pattern
+$(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$, $W$ is necessarily empty, giving (i). Conversely, if (i) fails, then there must be $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$ with $W$ non-empty, contradicting (ii).
 \end{proof}
 
 \begin{corollary}\label{beta-zeta-vanish}\uses{lvz-def}  If $\tau \geq 0$ is fixed then $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \tau \beta(1/\tau)$ is fixed. For instance, by \eqref{beta-1}, one has $\LV_\zeta(\sigma,1)=-\infty$ whenever $\sigma > 1/2$ is fixed.
@@ -120,7 +115,7 @@ and the claim follows from Lemma \ref{lvz-infty}.
 
 \begin{proof}\uses{lvz-infty} From Definition \ref{zeta-grow-def} one has
     $$ \zeta(\sigma_0 + it) \ll |t|^{\mu(\sigma_0) + o(1)}$$
-    for unbounded $t$.  By standard arguments {\bf give ref}, this implies that
+    for unbounded $t$.  By standard arguments (see \cite[(8.13)]{ivic}), this implies that
     $$ \sum_{n \in I} \frac{1}{n^{\sigma_0+it}} \ll |t|^{\mu(\sigma_0) + o(1)}$$
 as $N \to \infty$, if $I \subset [N,2N]$ and $|t| = N^{\tau+o(1)}$.  By partial summation this gives
 $$ \sum_{n \in I} n^{-it} \ll N^{\sigma_0} |t|^{\mu(\sigma_0) + o(1)} = N^{\sigma_0 + \tau \mu(\sigma_0) + o(1)}.$$
@@ -145,7 +140,7 @@ For completeness, we now work out the values of $\LV_\zeta(\sigma,\tau)$ in the 
 \begin{lemma}[Value at $\sigma=1/2$]\label{lvz-2}\uses{lvz-def} One has $\LV_\zeta(1/2,\tau) = \tau$ for all $\tau \geq 1$.
 \end{lemma}
 
-\begin{proof}\uses{lvz-basic, l2-int, l2-mvt}  The upper bound $\LV_\zeta(1/2,\tau) \leq \tau$  follows from Lemma \ref{lvz-basic}(ii), so it suffices to prove the lower bound.  Accordingly, let $N$be unbounded, let $T  = CN$ for a large fixed constant $C$, and set $I \coloneqq [N,2N]$.  In the case $\sigma=1$, we see from the $L^2$ mean value theorem (Lemma \ref{l2-int}) that the expression $\sum_{n \in I} n^{-it}$ has an $L^2$ mean of $\asymp N^{1/2}$ for $t \in [T,2T]$; on other hand, from \eqref{beta-1} we also have an $L^\infty$ norm of $O(N^{1/2+o(1)})$.  We conclude that $|\sum_{n \in I} n^{-it}| \gg N^{1/2+o(1)}$ for $t$ in a subset of $[T,2T]$ of measure $T^{1-o(1)}$, and hence on a $1$-separated subset of cardinality $\gg T^{1-o(1)}$.  This gives the claim $\LV(1/2,1) \geq 1$.
+\begin{proof}\uses{lvz-basic, l2-int, l2-mvt}  The upper bound $\LV_\zeta(1/2,\tau) \leq \tau$  follows from Lemma \ref{lvz-basic}(ii), so it suffices to prove the lower bound.  Accordingly, let $N$ be unbounded, let $T  = CN$ for a large fixed constant $C$, and set $I \coloneqq [N,2N]$.  In the case $\sigma=1$, we see from the $L^2$ mean value theorem (Lemma \ref{l2-int}) that the expression $\sum_{n \in I} n^{-it}$ has an $L^2$ mean of $\asymp N^{1/2}$ for $t \in [T,2T]$; on other hand, from \eqref{beta-1} we also have an $L^\infty$ norm of $O(N^{1/2+o(1)})$.  We conclude that $|\sum_{n \in I} n^{-it}| \gg N^{1/2+o(1)}$ for $t$ in a subset of $[T,2T]$ of measure $T^{1-o(1)}$, and hence on a $1$-separated subset of cardinality $\gg T^{1-o(1)}$.  This gives the claim $\LV(1/2,1) \geq 1$.
 
 Next, we establish the $\tau \geq 2$ case.
 Let $N$ be unbounded, set $T \coloneqq N^\tau$, and set $I \coloneqq [N,2N]$.  From Lemma \ref{l2-int} we see that the $L^2$ mean of $\sum_{n \in I} n^{-it}$ is $\asymp N^{1/2}$.  Also, by squaring this Dirichlet series and applying Lemma \ref{l2-int} again we see that the $L^4$ mean is $O(N^{1/2+o(1)})$.  We may now argue as before to give the desired claim $\LV(1/2,\tau) \geq \tau$.
@@ -187,19 +182,19 @@ Note from Lemma \ref{beta-zeta-vanish} one could also impose the restriction $\s
 \begin{proof} It suffices to show that
  $$ \LV(\sigma,\tau) \leq \max\left(2-2\sigma, 1 - 2\sigma + \sup_{\stackrel{1 \leq \tau' \leq \tau}{1/2 \leq \sigma' \leq 1}}  \sigma' + \min(\LV_\zeta(\sigma',\tau'), \LV(\sigma,\tau)) \right)$$
 since the terms with $\sigma' < 2\sigma-1$ are less than the left-hand side and can thus be dropped.
-    We repeat the proof of Lemma \ref{montgomery-lv}.  Letting $N$, $T$, $V$, $a_n$, $t_r$ be as in the proof of that lemma; we may assume without loss of generality that $R = N^{\LV(\sigma,\tau)+o(1)}$, and we have
-    $$ RV \leq N^{1/2} \left|\sum_{1 \leq r,r' \leq R} c_r \overline{c_{r'}} \sum_{n \in [N,2N]} n^{i(t_r-t_{r'})} \right|^{1/2}$$
-    and hence by the triangle inequality
-    $$ RV \leq N^{1/2} R^{1/2} \sup_{r'} \left|\sum_{1 \leq r \leq R} |\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})}| \right|^{1/2}$$
+    We repeat the proof of Lemma \ref{montgomery-lv}.  We can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded, $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, and $|W| = N^{\LV(\sigma,\tau)+o(1)}$, and we have
+    $$ |W|V \leq N^{1/2} \left|\sum_{t,t' \in W} c_t \overline{c_{t'}} \sum_{n \in [N,2N]} n^{i(t-t')} \right|^{1/2}$$
+    for some $1$-bounded $c_t$, and hence by the triangle inequality
+    $$ |W|V \leq N^{1/2} |W|^{1/2} \sup_{t'} \left|\sum_{t \in W} |\sum_{n \in [N,2N]} n^{i(t-t')}| \right|^{1/2}$$
     which we rearrange as
-    $$ R \leq N^{1-2\sigma+o(1)} \sup_{r'} \sum_{1 \leq r \leq R} |\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})}|.$$
-    As in the proof of Lemma \ref{montgomery-lv}, the contribution of the case $|t_r - t_{r'}| \leq N^{1-\eps}$ to the right-hand side is $N^{2-2\sigma+o(1)}$, so we can restrict attention to the case $|t_r - t_{r'}| \geq N^{1-o(1)}$.  By a dyadic decomposition and the pigeonhole principle, we may then assume that
-    $$ R \leq N^{1-2\sigma+o(1)} \sum_{1 \leq r \leq R: |t_r - t_{r'}| \asymp T'} |\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})}|$$
+    $$ |W| \leq N^{1-2\sigma+o(1)} \sup_{t'} \sum_{t \in W} |\sum_{n \in [N,2N]} n^{i(t-t')}|.$$
+    As in the proof of Lemma \ref{montgomery-lv}, the contribution of the case $|t - t'| \leq N^{1-\eps}$ to the right-hand side is $N^{2-2\sigma+o(1)}$, so we can restrict attention to the case $|t - t'| \geq N^{1-o(1)}$.  By a dyadic decomposition and the pigeonhole principle, we may then assume that
+    $$ |W| \leq N^{1-2\sigma+o(1)} \sum_{t \in W: |t - t'| \asymp T'} |\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})}|$$
     for some $N^{1-o(1)} \ll T' \ll T$ and some $r'$; by passing to a subsequence we may assume that $T' = N^{\tau'+o(1)}$ for some $1 \leq \tau' \leq \tau$.  By further dyadic decomposition, we may also assume that
-    $ |\sum_{n \in [N,2N]} n^{i(t_r-t_{r'})}| \asymp N^{\sigma'+o(1)}$
-    for some $\sigma' \leq 1$; the cardinality of the sum is then bounded both by $R$ and by $N^{\LV_\zeta(\sigma',\tau') + o(1)}$,
+    $ |\sum_{n \in [N,2N]} n^{i(t-t')}| \asymp N^{\sigma'+o(1)}$
+    for some $\sigma' \leq 1$; the cardinality of the sum is then bounded both by $|W|$ and by $N^{\LV_\zeta(\sigma',\tau') + o(1)}$,
     hence
-    $$ R \leq N^{1-2\sigma+\sigma' + \min( \LV(\sigma,\tau), \LV_\zeta(\sigma',\tau') ) + o(1)}.$$
+    $$ |W| \leq N^{1-2\sigma+\sigma' + \min( \LV(\sigma,\tau), \LV_\zeta(\sigma',\tau') ) + o(1)}.$$
     The case $\sigma' < 1/2$ is dominated by that of $\sigma'=1/2$.  The claim now follows.
 \end{proof}
 
