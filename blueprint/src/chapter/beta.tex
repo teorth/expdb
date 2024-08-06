@@ -46,11 +46,11 @@ $$ |\sum_{n \in I} e(T F(n/N))| \leq C T^{\overline{\beta}+\eps}.$$
 \end{itemize}
 \end{lemma}
 
-\begin{proof}\uses{auto}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\i$, one can find real numbers $T = T_{\i} \geq \i$, $T^{\alpha-1/\i} \leq N = N_{\i} \leq T^{\alpha+1/\i}$, an interval $I = I_{\i} \subset [N_\i, 2N_\i]$, and a phase function $F = F_{\i}$ such that
-$$ |F_\i^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq 1/\i$$
-for all (fixed) $0 \leq p \leq \i$ and $u \in [1,2]$, but that
-$$ |\sum_{n \in I} e(T F(n/N))| \geq \i T^{\overline{\beta}+\eps}.$$
-But then $F = F_\i$ is a model phase function which gives a counterexample to the claim $\beta(\alpha) \leq \overline{\beta}$.
+\begin{proof}\uses{auto}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\ii$, one can find real numbers $T = T_{\ii} \geq \ii$, $T^{\alpha-1/\ii} \leq N = N_{\ii} \leq T^{\alpha+1/\ii}$, an interval $I = I_{\ii} \subset [N_\ii, 2N_\ii]$, and a phase function $F = F_{\ii}$ such that
+$$ |F_\ii^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq 1/\ii$$
+for all (fixed) $0 \leq p \leq \ii$ and $u \in [1,2]$, but that
+$$ |\sum_{n \in I} e(T F(n/N))| \geq \ii T^{\overline{\beta}+\eps}.$$
+But then $F = F_\ii$ is a model phase function which gives a counterexample to the claim $\beta(\alpha) \leq \overline{\beta}$.
 \end{proof}
 
 We will however work with the asymptotic formulation of $\beta$ throughout this database, as it makes the proofs somewhat cleaner.
@@ -271,40 +271,85 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
 \end{proof}
 
 
+
+\begin{table}[ht]
+    \caption{Huxley table 17.1.}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    $\beta_0(\alpha)$  & $X$ & $Y$ \\
+    \hline
+    $\frac{4+39\alpha}{60}$ & $\frac{7}{12}$ & $\frac{517}{873} = 0.5922\dots$ \\
+    \hline
+    $\frac{29+42\alpha}{120}$ & $\frac{65}{114}$ & $\frac{7}{12} = 0.5833\dots$ \\
+    \hline
+    $\frac{89+285\alpha}{570}$ & $\frac{49}{114}$ & $\frac{65}{114} = 0.5701\dots$ \\
+    \hline
+    $\frac{11+78\alpha}{120}$ & $\frac{5}{12}$ & $\frac{49}{114} = 0.4298\dots$ \\
+    \hline
+    $\frac{13+21\alpha}{60}$ & $\frac{356}{873}$ & $\frac{5}{12} = 0.4166\dots$ \\
+    \hline
+    $\frac{4+103\alpha}{128}$ & $\frac{12}{31}$ & $\frac{356}{873} = 0.4546\dots$ \\
+    \hline
+    $\frac{29+173\alpha}{280}$ & $\frac{227}{601}$ & $\frac{12}{31} = 0.3870\dots$ \\
+    \hline
+    $\frac{89+908\alpha}{1282}$ & $\frac{423}{1295}\dots$ & $\frac{227}{601} = 0.3777\dots$ \\
+    \hline
+    $\frac{11+191\alpha}{244}$ & $\frac{87}{275}$ & $\frac{423}{1295} = 0.3266\dots$ \\
+    \hline
+    $\frac{13+94\alpha}{146}$ & $\frac{1424}{4747}$ & $\frac{87}{275} = 0.3163\dots$\\
+    \hline
+    $\frac{4+235\alpha}{264}$ & $\frac{120}{419}$ & $\frac{1424}{4747}=0.2999\dots$ \\
+    \hline
+    $\frac{49+1351\alpha}{1614}$ & $\frac{967}{3428}$ & $\frac{120}{419} = 0.2863\dots$ \\
+    \hline
+    $\frac{29+464\alpha}{600}$ & $\frac{199}{716}$ & $\frac{967}{3428} = 0.2820\dots$ \\
+    \hline
+    $\frac{89+2243\alpha}{2706}$ & $\frac{19}{74}$ & $\frac{199}{716} = 0.2779\dots$ \\
+    \hline
+    $\frac{11+428\alpha}{492}$ & $\frac{161}{646}$ & $\frac{19}{74} = 0.2567\dots$ \\
+    \hline
+    $\frac{13+253\alpha}{318}$ & $\frac{2848}{12173} =0.2339\dots$ & $\frac{161}{646} = 0.2492\dots$ \\
+    \hline
+    \end{tabular}
+    \end{table}\label{huxley-table-1}
+
+    \begin{table}[ht]
+        \caption{Huxley table 19.1.}
+        \centering
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{|c|c|c|}
+        \hline
+        $\beta_0(\alpha)$  & $X$ & $Y$ \\
+        \hline
+        $\frac{89+285\alpha}{570}$ & $\frac{106822}{246639}$ & $\frac{139817}{246639}=0.5668\dots$ \\
+        \hline
+        $\frac{2387+17972\alpha}{27290}$ & $\frac{675}{1574}$ & $\frac{106822}{246639}=0.4331\dots$ \\
+        \hline
+        $\frac{2819+19177\alpha}{29855}$ & $\frac{699371}{1647930}$ & $\frac{675}{1574}=0.4288\dots$ \\
+        \hline
+        $\frac{11897+88442\alpha}{134680}$ & $\frac{156527}{370694}$ & $\frac{699371}{1647930}=0.4243\dots$ \\
+        \hline
+        $\frac{113+897\alpha}{1345}$ & $\frac{263}{638}$ & $\frac{156527}{370694} = 0.4222\dots$ \\
+        \hline
+        $\frac{491+3624\alpha}{5530}$ & $\frac{143}{349}$ & $\frac{263}{638} = 0.4122\dots$ \\
+        \hline
+        $\frac{569+1053\alpha}{2800}$ & $\frac{307}{761}$ & $\frac{143}{349} = 0.4097\dots$ \\
+        \hline
+        $\frac{1273+2484\alpha}{6410}$ & $\frac{68682}{171139}$ & $\frac{307}{761} = 0.4034\dots$ \\
+        \hline
+        $\frac{4+103\alpha}{128}$ & $\frac{12}{31}$ & $\frac{68682}{171139}=0.4013\dots$ \\
+        \hline
+        $\frac{29+173\alpha}{280}$ & $\frac{227}{601}=0.3777\dots$ & $\frac{12}{31} = 0.3870\dots$ \\
+        \hline
+        \end{tabular}
+\end{table}\label{huxley-table-2}
+
+
 % Area, Lattice points and Exponential sums
-\begin{theorem}[1996 Huxley table]\label{huxley-table}\uses{beta-def}  One can bound $\beta(\alpha)$ by
-    \begin{align*}
-        \frac{4+39\alpha}{60} & \hbox{ for } \frac{7}{12} \leq \alpha \leq \frac{517}{873} \\
-        \frac{29+42\alpha}{120} & \hbox{ for } \frac{65}{114} \leq \alpha \leq \frac{7}{12} \\
-        \frac{89+285\alpha}{570} & \hbox{ for } \frac{49}{114} \leq \alpha \leq \frac{65}{114} \\
-        \frac{11+78\alpha}{120} & \hbox{ for } \frac{5}{12} \leq \alpha \leq \frac{49}{114} \\
-        \frac{13+21\alpha}{60} & \hbox{ for } \frac{356}{873} \leq \alpha \leq \frac{5}{12} \\
-        \frac{4+103\alpha}{128} & \hbox{ for } \frac{12}{31} \leq \alpha \leq \frac{356}{873} \\
-        \frac{29+173\alpha}{280} & \hbox{ for } \frac{227}{601} \leq \alpha \leq \frac{12}{31} \\
-        \frac{89+908\alpha}{1282} & \hbox{ for } \frac{423}{1295} \leq \alpha \leq \frac{227}{601} \\
-        \frac{11+191\alpha}{244} & \hbox{ for } \frac{87}{275} \leq \alpha \leq \frac{423}{1295} \\
-        \frac{13+94\alpha}{146} & \hbox{ for } \frac{1424}{4747} \leq \alpha \leq \frac{87}{275} \\
-        \frac{4+235\alpha}{264} & \hbox{ for } \frac{120}{419} \leq \alpha \leq \frac{1424}{4747} \\
-        \frac{49+1351\alpha}{1614} & \hbox{ for } \frac{967}{3428} \leq \alpha \leq \frac{120}{419} \\
-        \frac{29+464\alpha}{600} & \hbox{ for } \frac{199}{716} \leq \alpha \leq \frac{967}{3428} \\
-        \frac{89+2243\alpha}{2706} & \hbox{ for } \frac{19}{74} \leq \alpha \leq \frac{199}{716} \\
-        \frac{11+428\alpha}{492} & \hbox{ for } \frac{161}{646} \leq \alpha \leq \frac{19}{74} \\
-        \frac{13+253\alpha}{318} & \hbox{ for } \frac{2848}{12173} \leq \alpha \leq \frac{161}{646}.
-    \end{align*}
-    and also
-    \begin{align*}
-        \frac{89+285\alpha}{570} & \hbox{ for } \frac{106822}{246639} \leq \alpha \leq \frac{139817}{246639} \\
-        \frac{2387+17972\alpha}{27290} & \hbox{ for } \frac{1033325}{2642746} \leq \alpha \leq \frac{106822}{246639} \\
-        \frac{2819+19177\alpha}{29855} & \hbox{ for } \frac{699371}{1647930} \leq \alpha \leq \frac{1033325}{2642746} \\
-        \frac{11897+88442\alpha}{134680} & \hbox{ for } \frac{156527}{370694} \leq \alpha \leq \frac{699371}{1647930} \\
-        \frac{113+897\alpha}{1345} & \hbox{ for } \frac{263}{638} \leq \alpha \leq \frac{156527}{370694} \\
-        \frac{491+3624\alpha}{5530} & \hbox{ for } \frac{143}{349} \leq \alpha \leq \frac{263}{638} \\
-        \frac{569+1053\alpha}{2800} & \hbox{ for } \frac{307}{761} \leq \alpha \leq \frac{143}{349} \\
-        \frac{1273+2484\alpha}{6410} & \hbox{ for } \frac{68682}{171139} \leq \alpha \leq \frac{307}{761} \\
-        \frac{4+103\alpha}{128} & \hbox{ for } \frac{12}{31} \leq \alpha \leq \frac{68682}{171139} \\
-        \frac{29+173\alpha}{280} & \hbox{ for } \frac{227}{601} \leq \alpha \leq \frac{12}{31}.
-    \end{align*}
-    \end{theorem}
+\begin{theorem}[1996 Huxley table]\label{huxley-table}\uses{beta-def}  One can bound $\beta(\alpha)$ by $\beta_0(\alpha)$ for $X \leq \alpha \leq Y$ for $\beta_0, X, Y$ given by Tables \ref{huxley-table-1}, \ref{huxley-table-2}.
+\end{theorem}
 
 
 \literature
@@ -428,14 +473,72 @@ See \cite[Theorem~1]{heathbrown_new_2017}.
 See \cite[Equation~(3.18)]{bourgain_decoupling_2017}.
 \end{proof}
 
-\begin{theorem}[Heath-Brown 2020 bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$, then
+\begin{theorem}[Heath-Brown 2020 bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
 $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{8}{9} \alpha).$$
 \end{theorem}
 
 {\bf TODO: implement this in python}
 
+\begin{theorem}[Combined bound]  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
+\end{theorem}
 
+\begin{proof} See \cite[Table 3]{trudgian-yang}.
+\end{proof}
+
+\begin{table}[ht]
+    \def\arraystretch{1.3}
+    \centering
+    \caption{Bounds on $\beta(\alpha)$ of the form $\beta(\alpha) \le \beta_0(\alpha), \;(X \le \alpha \le Y)$}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    $\beta_0(\alpha)$ & $X$ & $Y$ & Reference\\
+    \hline
+    $ \frac{13}{414} + \frac{359}{414} \alpha $ & $ 0 $ & $ \frac{2848}{12173} = 0.2339\ldots $ & Exponent pair $A^2(\frac{13}{84}, \frac{55}{84})$\\
+    \hline
+    $\frac{13}{318} + \frac{253}{318} \alpha$ & $\frac{2848}{12173}$ & $\frac{161}{646} = 0.2492\ldots$ & \multirow{6}{*}{Table \ref{huxley-table-1}}\\
+    \cline{1-3}
+    $\frac{11}{492} + \frac{107}{123} \alpha$ & $\frac{161}{646}$ & $\frac{19}{74} = 0.2567\ldots$ & \\
+    \cline{1-3}
+    $ \frac{89}{2706} + \frac{2243}{2706} \alpha $ & $ \frac{19}{74} $ & $ \frac{199}{716} = 0.2779\ldots $ & \\
+    \cline{1-3}
+    $ \frac{29}{600} + \frac{58}{75} \alpha $ & $ \frac{199}{716} $ & $ \frac{967}{3428} = 0.2820\ldots $ & \\
+    \cline{1-3}
+    $ \frac{49}{1614} + \frac{1351}{1614} \alpha $ & $ \frac{967}{3428} $ & $ \frac{120}{419} = 0.2863\ldots $ & \\
+    \cline{1-3}
+    $ \frac{1}{66} + \frac{235}{264} \alpha $ & $ \frac{120}{419} $ & $ \frac{1328}{4447} = 0.2986\ldots $ & \\
+    \hline
+    $ \frac{13}{194} + \frac{139}{194} \alpha $ & $ \frac{1328}{4447} $ & $ \frac{104}{343} = 0.3032\ldots $ & Exponent pair $A(\frac{13}{84}, \frac{55}{84})$\\
+    \hline
+    $ \frac{13}{146} + \frac{47}{73} \alpha $ & $ \frac{104}{343} $ & $ \frac{87}{275} = 0.3163\ldots $ & \multirow{5}{*}{Table \ref{huxley-table-1}}\\
+    \cline{1-3}
+    $ \frac{11}{244} + \frac{191}{244} \alpha $ & $ \frac{87}{275} $ & $ \frac{423}{1295} = 0.3266\ldots $ & \\
+    \cline{1-3}
+    $ \frac{89}{1282} + \frac{454}{641} \alpha $ & $ \frac{423}{1295} $ & $ \frac{227}{601} = 0.3777\ldots $ & \\
+    \cline{1-3}
+    $ \frac{29}{280} + \frac{173}{280} \alpha $ & $ \frac{227}{601} $ & $ \frac{12}{31} = 0.3870\ldots $ & \\
+    \cline{1-3}
+    $ \frac{1}{32} + \frac{103}{128} \alpha $ & $ \frac{12}{31} $ & $ \frac{1508}{3825} = 0.3942\ldots $ & \\
+    \hline
+    $ \frac{18}{199} + \frac{521}{796} \alpha $ & $ \frac{1508}{3825} $ & $ \frac{62831}{155153} = 0.4049\ldots $ & Sargos \cite{sargos_points_1995}\\
+    \hline
+    $ \frac{569}{2800} + \frac{1053}{2800} \alpha $ & $ \frac{62831}{155153} $ & $ \frac{143}{349} = 0.4097\ldots $ & \multirow{3}{*}{Table \ref{huxley-table-2}}\\
+    \cline{1-3}
+    $ \frac{491}{5530} + \frac{1812}{2765} \alpha $ & $ \frac{143}{349} $ & $ \frac{263}{638} = 0.4122\ldots $ & \\
+    \cline{1-3}
+    $ \frac{113}{1345} + \frac{897}{1345} \alpha $ & $ \frac{263}{638} $ & $ \frac{1673}{4038} = 0.4143\ldots $ & \\
+    \hline
+    $ \frac{2}{9} + \frac{1}{3} \alpha $ & $ \frac{1673}{4038} $ & $ \frac{5}{12} = 0.4166\ldots $ & \multirow{3}{*}{Theorem \ref{beta-Bourgain}}\\
+    \cline{1-3}
+    $ \frac{1}{12} + \frac{2}{3} \alpha $ & $ \frac{5}{12} $ & $ \frac{3}{7} = 0.4285\ldots $ & \\
+    \cline{1-3}
+    $ \frac{13}{84} + \frac{1}{2} \alpha $ & $ \frac{3}{7} $ & $ \frac{1}{2}$ & \\
+    \hline
+    \end{tabular}
+    \label{huxley_table_ranges}
+    \end{table}
+
+{\bf TODO: implement this in Python}
+
+{\bf TODO: state the Sargos result above as a lemma and a line of python code}
 
 {\bf TODO: provide a graphic of the best bounds available of beta, compared against the classical van der Corput bounds}
-
-{\bf TODO: replicate the $\beta$ table from \cite{trudgian-yang}}
