@@ -97,7 +97,7 @@ def exp_pair_examples():
     print('Proof complexity:', eph.proof_complexity(), 'Proof date:', eph.proof_date())
     
     print()
-    print(f'Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest possible proof')
+    print(f'Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest proof')
     eph = ep.find_best_proof(frac(3,40), frac(31,40), hypotheses, Proof_Optimization_Method.COMPLEXITY)
     eph.recursively_list_proofs()
     print('Proof complexity:', eph.proof_complexity(), 'Proof date:', eph.proof_date())

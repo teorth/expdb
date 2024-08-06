@@ -13,8 +13,6 @@ from reference import *
 
 ###############################################################################
 # Object representing a large value bound for a certain domain on (\sigma, \tau)
-# The life cycle of this object is as follows:
-#   1. Created with 
 class Large_Value_Estimate:
     
     # parameters:
