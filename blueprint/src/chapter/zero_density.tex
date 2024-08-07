@@ -409,7 +409,7 @@ One can also use bounds on $\mu$ to obtain zero density theorems:
 $$ \A(\sigma) \leq \mu(\alpha) \frac{2(3\sigma-1-2\alpha)}{(2\sigma-1-\alpha)(\sigma-\alpha)}.$$
 \end{lemma}
 
-\begin{corollary}\label{ivic-zero-density-large}\uses{zero-def}\cite[Theorem 11.3]{ivic} For any $9/10 \leq \sigma \leq 1$ and $1/2 \leq \alpha \leq 1$ one has
+\begin{corollary}\label{ivic-zero-density-large}\uses{zero-def}\cite{montgomery_topics_1971}, \cite[Theorem 11.3]{ivic} For any $9/10 \leq \sigma \leq 1$ and $1/2 \leq \alpha \leq 1$ one has
     $$ \A(\sigma)(1-\sigma) \leq \frac{7}{6} \mu(5\sigma-4).$$
 In particular, for $152/155 \leq \sigma \leq 1$, one has
 $$ \A(\sigma) \leq \min( 35/36, 1600 (1-\sigma)^{1/2} ).$$
@@ -456,6 +456,11 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 
 \begin{proof}\uses{gzd}  Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; $m=3$ and arbitrary $(k,\ell)$ for the second claim; and $m=4$ and arbitrary $(k,\ell)$ for the third claim.
 \end{proof}
+
+The first bound has been improved:
+
+\begin{theorem}[2000 Bourgain zero density theorem]\label{bourgain-zero-density-2000}\uses{zero-def} One has $\A(\sigma) \leq 3/2\sigma$ for $3734/4694 \leq \sigma \leq 1$.
+\end{theorem}
 
 \begin{lemma}[Preliminary large values theorem]\label{a-ivt}\uses{lv-def}  If $1/2 \leq \sigma \leq 1$ and $\tau < 8\sigma-5$, then
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 6\tau/5 + (20-32\sigma)/5 ).$$
@@ -522,7 +527,7 @@ from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \
 
 The range of the second bound in Lemma \ref{ivic-zero-density} was recently extended:
 
-\begin{theorem}[Chen-Debruyne-Vidas density theorem]\cite{chen_debruyne_vindas_density_2024}  For any $279/314 \leq \sigma \leq 17/18$, one has $\A(\sigma) \leq \frac{24}{30\sigma-11}$.
+\begin{theorem}[Chen-Debruyne-Vidas density theorem]\label{cdv-density}\cite{chen_debruyne_vindas_density_2024}  For any $279/314 \leq \sigma \leq 17/18$, one has $\A(\sigma) \leq \frac{24}{30\sigma-11}$.
 \end{theorem}
 
 The following result appears in an unpublished preprint of Kerr:
@@ -537,7 +542,7 @@ The current best known zero density estimates (excepting the unpublished result 
 \begin{table}[ht]
     \def\arraystretch{1.3}
     \centering
-    \caption{Upper bounds on $\A(\sigma)$}
+    \caption{Current best upper bound on $\A(\sigma)$}
     \begin{tabular}{|c|c|c|}
     \hline
     $\A(\sigma)$ bound & Range & Reference\\
@@ -550,13 +555,15 @@ The current best known zero density estimates (excepting the unpublished result 
     \hline
     $2$ & $\frac{25}{32} \le \sigma \le \frac{11}{14} = 0.7857\ldots$ & Theorem \ref{bourgain-density} \\
     \hline
-    $\frac{9}{7\sigma - 1}$ & $\frac{11}{14} < \sigma < \frac{3831}{4791} = 0.7996\ldots$ & Theorem \ref{hb-density} \\
+    $\frac{9}{7\sigma - 1}$ & $\frac{11}{14} < \sigma < \frac{3734}{4694} = 0.7954\ldots$ & Theorem \ref{hb-density} \\
+    \hline
+    $\frac{3}{2\sigma}$ & $\frac{3734}{4694} \le \sigma < \frac{3831}{4791} = 0.7996$ & Theorem \ref{bourgain-zero-density-2000} \\
     \hline
     $\frac{3}{2\sigma}$ & $\frac{3831}{4791} \le \sigma < \frac{7}{8} = 0.875$ & Theorem \ref{further_ivic_zero} \\
     \hline
     $\frac{3}{10\sigma - 7}$ & $\frac{7}{8} \le \sigma < \frac{279}{314} = 0.8885\ldots$ & Theorem \ref{hb-density}\\
     \hline
-    $\frac{24}{30\sigma - 11}$ & $\frac{279}{314} \le \sigma < \frac{155}{174} = 0.8908\ldots$ & Chen--Debruyne--Vindas \cite{chen_debruyne_vindas_density_2024}  \\
+    $\frac{24}{30\sigma - 11}$ & $\frac{279}{314} \le \sigma < \frac{155}{174} = 0.8908\ldots$ & Theorem \ref{cdv-density}  \\
     \hline
     $\frac{24}{30\sigma - 11}$& $\frac{155}{174} \le \sigma \le \frac{9}{10} = 0.9$ & Theorem \ref{ivic-zero-density}\\
     \hline
@@ -581,5 +588,91 @@ The current best known zero density estimates (excepting the unpublished result 
 {\bf TODO: provide a Python function for this}
 
 
+For completeness, we list in Table \ref{zero_density_historical} some historical zero density theorems not already covered, which have now been superceded by more recent estimates.
 
-{\bf TODO: record historical zero density estimates, as well as log-free zero density estimates for $\sigma$ near $1/2$ or near $1$.}
+\begin{table}[ht]
+    \def\arraystretch{1.3}
+    \centering
+    \caption{Historical upper bounds on $\A(\sigma)$}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    $\A(\sigma)$ bound & Range & Reference\\
+    \hline
+    $4\sigma$ & $\frac{1}{2} \leq \sigma \le 1$ & Carlson \cite{carlson_uber_1921}\\
+    \hline
+    $2$ & $4/5 \leq \sigma \leq 1$ & Montgomery \cite{montgomery_1969} \\
+    \hline
+    $2$ & $0.8080 \leq \sigma \leq 1$ & Forti--Viola \cite{forti-viola} \\
+    \hline
+    $\frac{39}{115\sigma-75}$ & $55/67 \leq \sigma \leq 189/230$ & Huxley \cite{huxley_large_1973} \\
+    \hline
+    $2$ & $189/230 \leq \sigma \leq 78/89$ & Huxley \cite{huxley_large_1973} \\
+    \hline
+    $\frac{48}{37(2\sigma-1)}$ & $78/89 \leq \sigma \leq 61/74$ & Huxley \cite{huxley_large_1973} \\
+    \hline
+    $\frac{3}{2\sigma}$ & $37/42 \leq \sigma \leq 1$ & Huxley \cite{huxley_large_1975a}\\
+    \hline
+    $\frac{48}{37(2\sigma-1)}$ & $61/74 \leq \sigma \leq 37/42$ & Huxley \cite{huxley_large_1975a}\\
+    \hline
+    $2$ & $0.80119 \leq \sigma \leq 1$ & Huxley \cite{huxley_large_1975a}\\
+    \hline
+    $2$ & $4/5 \leq \sigma \leq 1$ & Huxley \cite{huxley_large_1975b}\\
+    \hline
+    $\frac{6}{5\sigma-1}$ & $67/87 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_note_1979} \\
+    \hline
+    $\frac{3}{34\sigma-25}$ & $28/37 \leq \sigma \leq 74/95$ & Ivi\'c \cite{ivic_note_1979} \\
+    \hline
+    $\frac{9}{7\sigma-1}$ & $74/95 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_note_1979} \\
+    \hline
+    $\frac{3}{2\sigma}$ & $4/5 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_note_1979} \\
+    \hline
+    $\frac{68}{98\sigma-47}$ & $115/166 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_note_1979} \\
+    \hline
+    $\frac{3}{2\sigma}$ & $3831/4791 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_exponent_pairs}  \\
+    \hline
+    $\frac{9}{7\sigma-1}$ & $41/53 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_exponent_pairs} \\
+    \hline
+    $\frac{6}{5\sigma-1}$ & $13/17 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_exponent_pairs} \\
+    \hline
+    $\frac{4}{2\sigma+1}$ & $17/18 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_exponent_pairs} \\
+    \hline
+    $\frac{24}{30\sigma-11}$ & $155/174 \leq \sigma \leq 17/18$ & Ivi\'c \cite{ivic_exponent_pairs} \\
+    \hline
+    $\frac{3}{7\sigma-4}$ & $3/4 \leq \sigma \leq 10/13$ & Ivi\'c \cite{ivic_topics_1983} \\
+    \hline
+    $\frac{9}{8\sigma-2}$ & $10/13 \leq \sigma \leq 1$ & Ivi\'c \cite{ivic_topics_1983} \\
+    \hline
+    $\frac{15}{22\sigma-10}$ & $10/13 \leq \sigma \leq 5/6$ & Ivi\'c \cite{ivic_zero_1984} \\
+    \hline
+    $\frac{3k}{(3k-2)\sigma+2-k}$ & $\frac{9k^2 -3k + 2}{12k^2 -5k + 2} \leq \sigma \leq 1$; $k \geq 2$ & Ivi\'c \cite{ivic_zero_1984} \\
+    \hline
+    $58.05 (1-\sigma)^{1/2}$ & $1/2 \leq \sigma \leq 1$ & Ford \cite{FordZeta} \\
+    \hline
+    $6.42 (1-\sigma)^(1/2)$ & $9/10 \leq \sigma \leq 1$ & Heath-Brown \cite{heathbrown_new_2017}
+    \end{tabular}
+    \label{zero_density_historical}
+    \end{table}
+
+{\bf TODO: enter this table into literature.py}
+
+\section{Estimates for \texorpdfstring{$\sigma$}{sigma} very close to \texorpdfstring{$1/2$}{1/2} or \texorpdfstring{$1$}{1}}
+
+Some additional estimates were established for $\sigma$ sufficiently close to $1/2$ or $1$.
+
+Tur\'an \cite{turan} introduced the power sum method to establish
+$$ A(1-\eta) \leq 2 + \eta^{0.14}$$
+for $\eta$ small enough. Hal\'asz and Tur\'an \cite{halasz_distribution_1969} combined this method with the large values approach of Hal\'asz \cite{halasz_1968} to improve the bound to
+\begin{equation}\label{a-eta}
+  A(1-\eta) \leq C \eta^{1/2}
+\end{equation}
+with $C = 12,000$ for sufficiently small $\eta$.  See \cite{pintz_2022} for an alternate proof of these results.
+
+The constant $C$ in \eqref{a-eta} was improved to $1304.37$ by Montgomery \cite[Theorem 12.3]{montgomery_topics_1971} (see also the remark after \cite[(11.97)]{ivic} for a correction), to $58.05$ by Ford \cite{FordZeta}, to $5.03$ by Heath-Brown \cite{heathbrown_new_2017} (the latter exploiting the resolution of the Vinogradov mean value conjecture \cite{bourgain-demeter-guth}), and to any $C > 3\sqrt{2}=4.242\dots$ in \cite{pintz_density_2023}. See also an explicit version at \cite{bellotti}.
+
+``Log-free'' zero density estimates of the form
+$$ N(1-\eta,T) \ll T^{B\eta}$$
+for various $B$ were established starting with the work of Linnik \cite{linnik-1,linnik-2} and developed further in \cite{turan}, \cite{fogels}, \cite{bombieri_1974}, \cite{jutila_linnik}, \cite{gallagher_large_sieve}, \cite{graham_1978}, \cite{heath_brown_least_prime}. An explicit version of such estimates may be found in \cite{bellotti_2024}.
+
+There is some work establishing bounds on $N(\sigma,T)$ for $\sigma$ very close to $1/2$, although these bounds do not make further improvements on $\A(\sigma)$.  Specifically, bounds of the form
+$$ N(\sigma,T) \ll T^{1-\theta(2\sigma-1)} \log T$$
+were established for $\theta=1/8$ by Selberg \cite{selberg_1946} (see \cite{simonic} for an explicit version), any $0 < \theta < 1/2$ by Jutila \cite{jutila-critical}, and any $0 < \theta < 4/7$ by Conrey (claimed in \cite{conrey_at_1989}, with a full proof given in \cite{baluyot_thesis}).  Note that the density hypothesis would follow if we could establish the claim for all $0 < \theta < 1$, but an improvement to Ingham's bound (Theorem \ref{thm:ingham_zero_density2}) would only occur once $\theta$ exceeded $2/3$.
