@@ -149,6 +149,41 @@ def prove_jutila_zero_density(verbose=True):
         ]
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Jutila')
 
+# Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
+def prove_heathbrown_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown')
+
+# Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
+def prove_heathbrown_zero_density2(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Heath-Brown"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    zdts = []
+    zdts.append(prove_zero_density(new_hyps, verbose, frac(20,23), 'part 1/2 of the second Heath-Brown'))
+    zdts.append(prove_zero_density(new_hyps, verbose, frac(22,23), 'part 2/2 of the second Heath-Brown'))
+    return zdts
+
 # Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
 def prove_guth_maynard_zero_density(verbose=True):
     new_hyps = [
@@ -167,6 +202,8 @@ def prove_all():
     prove_ingham_zero_density()
     prove_huxley_zero_density()
     prove_jutila_zero_density()
+    prove_heathbrown_zero_density()
+    prove_heathbrown_zero_density2()
     prove_guth_maynard_zero_density()
 
 prove_all()

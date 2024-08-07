@@ -295,6 +295,9 @@ In fact, we can do better:
 
 \begin{theorem}[Heath-Brown zero density theorem]\label{hb-density} \cite{heathbrown_zero_1979}\uses{zero-def} For $11/14 \leq \sigma < 1$, one has $\A(\sigma) \leq \frac{9}{7\sigma - 1}$ (in particular, this recovers Theorem \ref{jutila-density} range).  For any $3/4 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \max(\frac{3}{10\sigma-7}, \frac{4}{4\sigma-1})$ (which is a superior bound when $\sigma \geq 20/23$).
 \end{theorem}
+\derived
+\code{prove_heathbrown_zero_density()
+prove_heathbrown_zero_density2()}
 
 \begin{proof}\uses{zero-large-cor2, jutila-lvt, hb-12, hb-opt} For the first estimate, we apply Corollary \ref{zero-large-cor2} with $\tau_0 := \frac{7\sigma-1}{3}$.  To verify \eqref{lvo}, we apply the $k=3$ version of Theorem \ref{jutila-lvt}, which gives
 $$ \LV(\sigma,\tau) \leq \max \bigg( 2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg).$$
