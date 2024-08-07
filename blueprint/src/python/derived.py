@@ -52,9 +52,13 @@ def prove_exponent_pair(k, l):
     hypotheses.add_hypotheses(compute_best_beta_bounds(hypotheses))
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
-    print(f"Proof of the exponent pair ({k}, {l}) exponent pair")
-    eph = next(h for h in new_exp_pairs if h.data.k == k and h.data.l == l)
-    eph.recursively_list_proofs()
+    eph = next((h for h in new_exp_pairs if h.data.k == k and h.data.l == l), None)
+    if eph is not None:
+        print()
+        print(f"Proof of the exponent pair ({k}, {l}) exponent pair:")
+        eph.recursively_list_proofs()
+    else:
+        print('Failed to prove the exponent pair ({k}, {l}).')
 
 def prove_heathbrown_exponent_pairs():
 
@@ -79,35 +83,166 @@ def prove_heathbrown_exponent_pairs():
         print(ep)
 
 # Find the shortest proof of the exponent pair (k, l)
-def best_proof_of_exponent_pair(k, l):
+def best_proof_of_exponent_pair(k, l, verbose=True):
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.DATE
     )
-    hyp.recursively_list_proofs()
-
+    if verbose:
+        print()
+        if hyp is not None:
+            print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+            hyp.recursively_list_proofs()
+        else:
+            print(f'Failed to prove the exponent pair ({k}, {l}).')
+        
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.COMPLEXITY
     )
-    hyp.recursively_list_proofs()
+    if verbose:
+        print()
+        if hyp is not None:
+            print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+            hyp.recursively_list_proofs()
+        else:
+            print(f'Failed to prove the exponent pair ({k}, {l}).')
+        
+    return hyp
 
-def prove_ingham_zero_density_estimate():
+
+# Given additional_hypotheses, a list of new hypothesis (other than classical results),
+# find the best density estimate as a piecewise function, then if 'verbose' is true
+# displays the proof of the piece containing 'sigma'. 
+def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)):
     hypotheses = Hypothesis_Set()
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Ingham zero density estimate'))
-    lv_estimates = [lv.large_value_estimate_L2]
-    zlv_estimates = literature.list_hypotheses(
-        hypothesis_type="Zeta large value estimate"
-    )
-    density_estimates = zd.compute_zero_density_estimate(
-        lv_estimates, zlv_estimates, RationalFunction.parse("2 - x")
-    )
+    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
+    for k in range(2, 10):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    hypotheses.add_hypotheses(additional_hypotheses)
+    
+    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
+    
+    if verbose and len(zdes) > 0:
+        # for h in zdes:
+        #     print(h.data)
+        hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
+        if hyp is not None:
+            print()
+            print(f'Found proof of {name}\'s zero-density estimate')
+            hyp.recursively_list_proofs()
+    return zdes
+    
+# Prove Ingham's zero density estimate A(s) < 3/(1-s)
+def prove_ingham_zero_density(verbose=True):
+    return prove_zero_density([], verbose, frac(1,2), 'Ingham')
 
-    pass
+# Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
+def prove_huxley_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate',
+            keywords='Huxley'
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(7,8), 'Huxley')
+
+# Prove Jutila's proof of the density hypothesis for s > 11/14.
+def prove_jutila_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate', 
+            keywords='Jutila, k = 3'
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Jutila')
+
+# Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
+def prove_heathbrown_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown')
+
+# Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
+def prove_heathbrown_zero_density2(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Heath-Brown"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    zdts = []
+    zdts.append(prove_zero_density(new_hyps, verbose, frac(20,23), 'part 1/2 of the second Heath-Brown'))
+    zdts.append(prove_zero_density(new_hyps, verbose, frac(22,23), 'part 2/2 of the second Heath-Brown'))
+    return zdts
+
+# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
+def prove_guth_maynard_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Guth, Maynard"
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(3,4), "Guth--Maynard")
+
+# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
+def prove_extended_heathbrown_zero_density(verbose=True):
+    
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    
+    # Create a hypothesis representing the (3/40, 31/40) exponent pair
+    hs = Hypothesis_Set()
+    hs.add_hypothesis(
+        ep.derived_exp_pair(
+            frac(3,40), frac(31,40), 
+            'See best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))', 
+            {})
+        )
+    
+    # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
+    # which will be used to calculate the best zeta large value estimate
+    new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
+    
+    for h in new_hyps:
+        h.recursively_list_proofs()
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5))
+
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
-    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_heathbrown_exponent_pairs()
-    # prove_ingham_zero_density_estimate()
+    prove_ingham_zero_density()
+    prove_huxley_zero_density()
+    prove_jutila_zero_density()
+    prove_heathbrown_zero_density()
+    prove_heathbrown_zero_density2()
+    prove_guth_maynard_zero_density()
+    # prove_extended_heathbrown_zero_density()
 
 prove_all()

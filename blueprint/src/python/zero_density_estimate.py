@@ -23,7 +23,26 @@ import time
 
 ###############################################################################
 # Object representing an estimate on A(\sigma) represented as a piecewise affine
-# function.
+# function. 
+#
+# The life cycle of this object is:
+# 1) Creation with expr (string), interval (Interval)
+# 2) As needed, lazily parse expr to create bound (RationalFunction) that handles 
+# evaluations
+# 3) Once bound is set, expr is only used for stringify methods
+#
+# When creating derived zero-density estimates, occasionally it is more convenient
+# to initialise with the bound object directly. In that case, use the static 
+# from_rational_func function to create the an instance which sets expr to the 
+# default __str__ representation of RationalFunction, which may or may not coincide
+# with the original expr used to generate the bound object in the first place. 
+# This should cause any circular reference problems (only potential display 
+# inconsistencies) since, once the bound object is initialised, the expr object 
+# is not used for computation. 
+# 
+# In the future, we will probably move to a canonical model with a guaranteed 
+# one-to-one correspondence between expr and bound. At present this is challenging 
+# since for each rational function there are multiple possible valid representations. 
 class Zero_Density_Estimate:
 
     # parameters:
@@ -42,7 +61,7 @@ class Zero_Density_Estimate:
         self.bound = None
 
     def __repr__(self):
-        return f"{self.expr} on {self.interval}"
+        return f"A(x)(1-x) \leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         if self.bound is None:
@@ -58,11 +77,17 @@ class Zero_Density_Estimate:
 
     # -------------------------------------------------------------------------
     # Static methods
+    
     def from_rational_func(rf, interval):
         if not isinstance(rf, RF):
             raise ValueError("Parameter rf must be of type RationalFunction")
 
-        zde = Zero_Density_Estimate("", interval)
+        zde = Zero_Density_Estimate(str(rf), interval)
+        zde.bound = rf
+        return zde
+
+
+###############################################################################
 
 def derived_zero_density_estimate(data, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
@@ -236,7 +261,7 @@ def approximate_best_zero_density_estimate(hypotheses):
 #
 # for s in sigma_interval, returning the result as a piecewise function.
 # Returns: list of (RationalFunction, Interval) tuples.
-def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper, title=None):
+def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
 
     # Keep track of which hypothesis each piece came from
     lookup = []
@@ -248,7 +273,10 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper, titl
 
     # debugging only - for extending Heath-Brown's estimates
     # fn = Piecewise(pieces)
-    # fn.plot_domain(xlim=(7/8, 1), ylim=(tau_lower, tau_upper), title=title)
+    # print('debugging:', tau_lower, tau_upper)
+    # for f in fn.pieces:
+    #     print(f)
+    # fn.plot_domain(xlim=(7/8, 1), ylim=(tau_lower, tau_upper), title='Debugging')
 
     # Critical points are partition the interval sigma_interval into subintervals
     # s_i, with the property that
@@ -350,41 +378,48 @@ def max_RF(crits, faces):
 #
 # for all s \in sigma_interval, as a piecewise RationalFunction. This function
 # should return the same result as approximate_best_zero_density_estimate.
-def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
+def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
 
     s_lim = (sigma_interval.x0, sigma_interval.x1)
-
-    start_time = time.time()
+    
+    if debug:
+        start_time = time.time()
+        
     # Get large value bounds
     hyps = lv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (tau0, 2 * tau0))
     )
-
-    print(time.time() - start_time, "s")
-    start_time = time.time()
-    print(f"computing sup LV with {len(hyps)} estimates")
+    
+    if debug:
+        print(time.time() - start_time, "s")
+        start_time = time.time()
+        print(f"computing sup LV with {len(hyps)} estimates")
 
     sup1 = compute_sup_LV_on_tau(
-        hyps, sigma_interval, tau0, 2 * tau0, title="LV(x, y) estimates"
+        hyps, sigma_interval, tau0, 2 * tau0
     )
 
-    print(time.time() - start_time, "s")
-    start_time = time.time()
+    if debug:
+        print(time.time() - start_time, "s")
+        start_time = time.time()
 
     # Get zeta large value bounds
     hyps = zlv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
     )
-
-    print(time.time() - start_time, "s")
-    start_time = time.time()
-    print(f"computing sup LVZ with {len(hyps)} estimates")
+    
+    print()
+    if debug:
+        print(time.time() - start_time, "s")
+        start_time = time.time()
+        print(f"computing sup LVZ with {len(hyps)} estimates")
 
     sup2 = compute_sup_LV_on_tau(
-        hyps, sigma_interval, frac(2), tau0, title="LV_{\zeta}(x, y) estimates"
+        hyps, sigma_interval, frac(2), tau0
     )
-
-    print(time.time() - start_time, "ms")
+    
+    if debug:
+        print(time.time() - start_time, "s")
 
     # Compute the maximum as a piecewise function
     crits = set(s[1].x0 for s in sup1)
@@ -421,7 +456,20 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
             # Merge
             s1[1].x1 = s2[1].x1
             soln.pop(i)
-    return soln
+    
+    # pack into Hypothesis
+    hyps = []
+    for s in soln:
+        proof = f'Follows from {len(s[2][0])} large value estimates and {len(s[2][1])} zeta large value estimates'
+        deps = s[2][0]          # the LV dependencies
+        deps.extend(s[2][1])    # the LVZ dependencies
+        hyps.append(derived_zero_density_estimate(
+            Zero_Density_Estimate.from_rational_func(s[0], s[1]), 
+            proof, 
+            deps
+        ))
+    return hyps
+
 # Computes the zero-density estimate obtained from
 #
 # A(s) \leq 3m / ((3m - 2) s + 2 - m)

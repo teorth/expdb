@@ -62,9 +62,13 @@ def derived_bound_zeta_LV(bound, proof, deps):
 
 
 # Compute the set of best zeta large values estimates using the hypotheses
-def best_large_value_estimate(hypotheses, domain):
+def best_large_value_estimate(hypotheses, domain=None):
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("hypotheses must be of type Hypothesis_Set")
+
+    # Default domain (\sigma, \tau) \in [1/2, 1] x [2, TAU_UPPER_LIMIT]
+    if domain is None:
+        domain = Polytope.rect((frac(1, 2), frac(1)), (2, Constants.TAU_UPPER_LIMIT))
 
     # Generate set of LV estimates (original + transformed)
     lv_estimates = list(

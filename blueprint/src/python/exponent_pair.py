@@ -194,7 +194,7 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
     dependencies = [beta_bound[i] for i in dep_indices]
     # Keep track of the existing set of exponent pairs,
     known_ephs = hypothesis_set.list_hypotheses("Exponent pair")
-    known_eps = {(p.data.k, p.data.l) for p in known_ephs}
+    known_eps = {(p.data.k, p.data.l):p for p in known_ephs}
     all_eps = [e for e in known_ephs]
     
     for i in range(len(conv.vertices)):

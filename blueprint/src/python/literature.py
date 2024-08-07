@@ -47,7 +47,7 @@ def add_beta_bound_huxley_kolesnik_1991():
                 Affine(frac(17, 22), frac(1, 22), Interval("[2/5, 1/2]")),
             ]
         ),
-        rm.refs["huxley_exponential_1991"],
+        rm.get("huxley_exponential_1991"),
     )
 
 
@@ -61,12 +61,12 @@ def add_beta_bound_huxley_1993():
         Affine(frac(7, 20), frac(13, 60), Interval("[0, 49/144]")).max_with(
             [Affine(frac(13, 20), frac(11, 120), Interval("[0, 49/144]"))]
         ),
-        rm.refs["huxley_exponential_1993"],
+        rm.get("huxley_exponential_1993"),
     )
     bbeta.add_beta_bound(
         literature,
         [Affine(frac(1, 2), frac(89, 570), Interval("[49/144, 1/2]"))],
-        rm.refs["huxley_exponential_1993"],
+        rm.get("huxley_exponential_1993"),
     )
 
 
@@ -84,7 +84,7 @@ def add_beta_bound_huxley_1993_3():
             Affine(frac(173, 280), frac(29, 280), Interval("[227/601, 12/31]")),
             Affine(frac(103, 128), frac(4, 128), Interval("[12/31, 1]")),
         ],
-        rm.refs["huxley_exponential_1993"],
+        rm.get("huxley_exponential_1993"),
     )
 
 
@@ -113,11 +113,36 @@ def add_beta_bound_huxley_1996():
             Affine(frac(42, 120), frac(29, 120), Interval("[65/114, 7/12)")),
             Affine(frac(39, 60), frac(4, 60), Interval("[7/12, 517/873]")),
         ],
-        rm.refs["huxley_area_1996"],
+        rm.get("huxley_area_1996"),
     )
 
 
 add_beta_bound_huxley_1996()
+
+
+# Sargos (1995) Theorem 2.4 and Lemma 2.6
+def add_beta_bound_sargos_1995():
+    bbeta.add_beta_bound(
+        literature,    
+        Affine(1 - 3*frac(4,40), frac(3,40), Interval("[0, 1]")).max_with([
+            Affine(frac(7,8), 0, Interval("[0, 1]")),
+            Affine(frac(1,3) + frac(4,6), -frac(1,6), Interval("[0, 1]")),
+            Affine(frac(0), frac(0), Interval("[0, 1]"))
+            ]),
+        rm.get("sargos_points_1995")
+        )
+    bbeta.add_beta_bound(
+        literature,    
+        Affine(1 - frac(4,14), frac(1,14), Interval("[0, 1]")).max_with([
+            Affine(frac(5,6), 0, Interval("[0, 1]")),
+            Affine(frac(1,3) + frac(4,6), -frac(1,6), Interval("[0, 1]")),
+            Affine(frac(0), frac(0), Interval("[0, 1]"))
+            ]),
+        rm.get("sargos_points_1995")
+        )
+    
+add_beta_bound_sargos_1995()
+
 
 
 # Huxley (1996) "Area, Lattice points and Exponential sums" Table 19.2
@@ -155,7 +180,7 @@ def add_beta_bound_huxley_1996_2():
                 Interval("[106822/246639, 139817/246639]"),
             ),
         ],
-        rm.refs["huxley_area_1996"],
+        rm.get("huxley_area_1996"),
     )
 
 
@@ -172,7 +197,7 @@ def add_beta_bound_huxley_kolesnik_2001():
                 Affine(frac(13, 40), frac(9, 40), Interval("[2/5, 1/2]")),
             ]
         ),
-        rm.refs["huxley_exponential_2001"],
+        rm.get("huxley_exponential_2001"),
     )
 
 
@@ -187,7 +212,7 @@ def add_beta_bound_robert_sargos_2002():
         Affine(frac(9, 13), frac(1, 13), Interval("[0, 1]")).max_with(
             [Affine(frac(28, 13), frac(-7, 13), Interval("[0, 1]"))]
         ),
-        rm.refs["robert_fourth_2002"],
+        rm.get("robert_fourth_2002"),
     )
 
 
@@ -303,6 +328,42 @@ def add_beta_bound_bourgain_2017():
 
 
 add_beta_bound_bourgain_2017()
+
+
+
+def add_beta_bound_transform_sargos_1995():
+    def transform(hypothesis):
+        domain = Interval(0, frac(1,2), True, True)
+        pieces = Affine(
+            (6 * k + 5 * l + 2) / (2 * (5 * k + 3 * l + 2)),
+            (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
+            domain,
+        ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
+        
+        for p in pieces:
+            hypotheses.append(
+                derived_bound_beta(
+                    p,
+                    f"Follows from Sargos (1995) and the exponent pair {eph.data}",
+                    {eph},
+                )
+            )
+        raise NotImplementedError() # TODO
+        
+    literature.add_hypothesis(
+        Hypothesis(
+            'Sargos (1995) beta transform',
+            'Upper bound on beta transform',
+            bbeta.Bound_Beta_Transform(
+                'Sargos (1995) beta transform',
+                transform
+                ),
+            'See Sargos (1995)',
+            Reference.get('sargos_points_1995')
+            )
+        )
+
+
 
 ########################################################################################
 # Known exponent pairs in the literature. As a convention we only record bounds
