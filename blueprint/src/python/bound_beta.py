@@ -26,6 +26,14 @@ class Bound_beta:
         return f"\\beta(x) \\leq {self.bound}"
 
 
+class Bound_Beta_Transform:
+    def __init__(self, name, transform):
+        self.name = name
+        self.transform = transform
+    
+    def __repr__(self):
+        return self.name
+    
 ###############################################################################
 
 
@@ -116,7 +124,7 @@ def exponent_pairs_to_beta_bounds(hypothesis_set):
             (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
             domain,
         ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
-
+        
         for p in pieces:
             hypotheses.append(
                 derived_bound_beta(
@@ -125,7 +133,7 @@ def exponent_pairs_to_beta_bounds(hypothesis_set):
                     {eph},
                 )
             )
-
+            
     return hypotheses
 
 

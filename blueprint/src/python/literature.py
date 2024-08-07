@@ -304,6 +304,42 @@ def add_beta_bound_bourgain_2017():
 
 add_beta_bound_bourgain_2017()
 
+
+
+def add_beta_bound_transform_sargos_1995():
+    def transform(hypothesis):
+        domain = Interval(0, frac(1,2), True, True)
+        pieces = Affine(
+            (6 * k + 5 * l + 2) / (2 * (5 * k + 3 * l + 2)),
+            (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
+            domain,
+        ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
+        
+        for p in pieces:
+            hypotheses.append(
+                derived_bound_beta(
+                    p,
+                    f"Follows from Sargos (1995) and the exponent pair {eph.data}",
+                    {eph},
+                )
+            )
+        raise NotImplementedError() # TODO
+        
+    literature.add_hypothesis(
+        Hypothesis(
+            'Sargos (1995) beta transform',
+            'Upper bound on beta transform',
+            bbeta.Bound_Beta_Transform(
+                'Sargos (1995) beta transform',
+                transform
+                ),
+            'See Sargos (1995)',
+            Reference.get('sargos_points_1995')
+            )
+        )
+
+
+
 ########################################################################################
 # Known exponent pairs in the literature. As a convention we only record bounds
 # (k, l) satisfying l >= k + 1/2, since if (k, l) is an exponent pair, the

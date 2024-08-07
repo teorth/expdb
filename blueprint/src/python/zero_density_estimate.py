@@ -273,7 +273,10 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
 
     # debugging only - for extending Heath-Brown's estimates
     # fn = Piecewise(pieces)
-    # fn.plot_domain(xlim=(7/8, 1), ylim=(tau_lower, tau_upper), title=title)
+    # print('debugging:', tau_lower, tau_upper)
+    # for f in fn.pieces:
+    #     print(f)
+    # fn.plot_domain(xlim=(7/8, 1), ylim=(tau_lower, tau_upper), title='Debugging')
 
     # Critical points are partition the interval sigma_interval into subintervals
     # s_i, with the property that
@@ -405,6 +408,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
     )
     
+    print()
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()

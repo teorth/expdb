@@ -83,32 +83,36 @@ def prove_heathbrown_exponent_pairs():
         print(ep)
 
 # Find the shortest proof of the exponent pair (k, l)
-def best_proof_of_exponent_pair(k, l):
+def best_proof_of_exponent_pair(k, l, verbose=True):
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.DATE
     )
-    if hyp is not None:
+    if verbose:
         print()
-        print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
-        hyp.recursively_list_proofs()
-    else:
-        print('Failed to prove the exponent pair ({k}, {l}).')
+        if hyp is not None:
+            print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+            hyp.recursively_list_proofs()
+        else:
+            print(f'Failed to prove the exponent pair ({k}, {l}).')
         
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.COMPLEXITY
     )
-    if hyp is not None:
+    if verbose:
         print()
-        print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
-        hyp.recursively_list_proofs()
-    else:
-        print('Failed to prove the exponent pair ({k}, {l}).')
+        if hyp is not None:
+            print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+            hyp.recursively_list_proofs()
+        else:
+            print(f'Failed to prove the exponent pair ({k}, {l}).')
+        
+    return hyp
 
 
 # Given additional_hypotheses, a list of new hypothesis (other than classical results),
 # find the best density estimate as a piecewise function, then if 'verbose' is true
 # displays the proof of the piece containing 'sigma'. 
-def prove_zero_density(additional_hypotheses, verbose, sigma, name):
+def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)):
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
     for k in range(2, 10):
@@ -118,6 +122,8 @@ def prove_zero_density(additional_hypotheses, verbose, sigma, name):
     zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
     
     if verbose and len(zdes) > 0:
+        # for h in zdes:
+        #     print(h.data)
         hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
         if hyp is not None:
             print()
@@ -188,11 +194,43 @@ def prove_heathbrown_zero_density2(verbose=True):
 def prove_guth_maynard_zero_density(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
-            hypothesis_type='Large value estimate', 
-            keywords='Guth, Maynard'
+            hypothesis_type="Large value estimate", 
+            keywords="Guth, Maynard"
             )
         ]
-    return prove_zero_density(new_hyps, verbose, frac(3,4), 'Guth--Maynard')
+    return prove_zero_density(new_hyps, verbose, frac(3,4), "Guth--Maynard")
+
+# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
+def prove_extended_heathbrown_zero_density(verbose=True):
+    
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Jutila, k = 3"
+            ),
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    
+    # Create a hypothesis representing the (3/40, 31/40) exponent pair
+    hs = Hypothesis_Set()
+    hs.add_hypothesis(
+        ep.derived_exp_pair(
+            frac(3,40), frac(31,40), 
+            'See best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))', 
+            {})
+        )
+    
+    # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
+    # which will be used to calculate the best zeta large value estimate
+    new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
+    
+    for h in new_hyps:
+        h.recursively_list_proofs()
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5))
+
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
@@ -205,5 +243,6 @@ def prove_all():
     prove_heathbrown_zero_density()
     prove_heathbrown_zero_density2()
     prove_guth_maynard_zero_density()
+    # prove_extended_heathbrown_zero_density()
 
 prove_all()

@@ -327,6 +327,8 @@ with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more 
 
 \begin{theorem}[Improved Heath-Brown zero density theorem]\label{hb-density2}\uses{zero-def} For any $1/2 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \frac{3}{10\sigma-7}$.
 \end{theorem}
+\derived
+\code{prove_extended_heathbrown_zero_density()}
 
 \begin{proof}\uses{zero-large-cor3, 3-40, hb-opt, lvz-exp}  We apply Corollary \ref{zero-large-cor3} with $\tau_0 := 10\sigma-7$.  The claim \eqref{lvo} again follows from
     Theorem \ref{hb-opt} and \eqref{obvious} as in the proof of Theorem \ref{hb-density}.  Meanwhile, from Lemma \ref{3-40} and Corollary \ref{lvz-exp} we have $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \frac{3}{40} \tau + \frac{7}{10}$, or equivalently $\tau < \frac{4}{3} (10\sigma-7)$, which then immediately gives \eqref{lvoz}.
