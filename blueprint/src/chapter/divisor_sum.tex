@@ -58,20 +58,21 @@ For larger $k$, estimates typically make use of the following relationship with 
 
 Using Lemma \ref{mas}, the following bounds were obtained:
 
-\begin{theorem}\cite{heathbrown_mean_1981} For $4 \le k \le 8$, one has
+\begin{theorem}\label{heathbrown-alpha-1981}\uses{divisor-def,mas}\cite{heathbrown_mean_1981} For $4 \le k \le 8$, one has
 \[
 \alpha_k \leq \frac{3k-4}{4k}.
 \]
 \end{theorem}
 
-\begin{theorem}\cite{ivic_ouellet_1989} One has
+\begin{theorem}\label{ivic-alpha-1989}\cite{ivic_ouellet_1989}\uses{divisor} One has
 \begin{align*}
 \alpha_{10} \le 27/40,\qquad \alpha_{11} &\le 0.6957,\qquad \alpha_{12} \le 0.7130,\qquad \alpha_{13} \le 0.7306,\\
 \alpha_{14} \le 0.7461,\qquad \alpha_{15} &\le 0.75851,\qquad \alpha_{16} \le 0.7691,\qquad \alpha_{17} \le 0.7785,\\
 \alpha_{18} \le 0.7868,\qquad \alpha_{19} &\le 0.7942,\qquad \alpha_{20} \le 0.8009.
 \end{align*}
 \end{theorem}
-\begin{theorem}\cite[Theorem 13.12]{ivic}\uses{mas}  One can bound $\alpha_k$ by
+
+\begin{theorem}\label{ivic-alpha}\cite[Theorem 13.12]{ivic}\uses{mas,divisor-def}  One can bound $\alpha_k$ by
     \begin{align*}
         (3k-4)/4k & \hbox{ for } 4 \leq k \leq 8 \\
         35/54 & \hbox{ for } k = 9 \\
@@ -84,19 +85,22 @@ Using Lemma \ref{mas}, the following bounds were obtained:
     \end{align*}
 \end{theorem}
 
-\begin{theorem}[\cite{bellotti_generalised_2023}]For integer $k \ge 30$, one has
+\begin{theorem}\label{bellotti}\uses{divisor-def}  \cite{bellotti_generalised_2023} For integer $k \ge 30$, one has
 \[
 \alpha_k \leq 1 - 1.421(k - 1.18)^{-2/3}.
 \]
 Moreover, $\alpha_k \leq 1 - 1.889k^{-2/3}$ for sufficiently large $k$.
 \end{theorem}
+
 For completeness we record the historical progression in bounds for $\alpha_k$.
-\begin{lemma}[Piltz bound]For $k \ge 1$, one has
+
+\begin{lemma}[Piltz bound]\label{piltz-alpha}\uses{divisor-def}
+    For $k \ge 1$, one has
 \[
 \alpha_k \le 1 - \frac{1}{k}.
 \]
 \end{lemma}
-\begin{lemma}[Voronoi, Landau bound]
+\begin{lemma}[Voronoi, Landau bound]\label{voronoi-alpha}\uses{divisor-def}
 For $k \ge 2$, one has
 \[
 \alpha_k \leq 1 - \frac{2}{k + 1}.
@@ -106,7 +110,7 @@ For $k \ge 2$, one has
 See Voronoi \cite{voronoi_sur_1903} for $k = 2$ and Landau \cite{landau_uber_1912} for $k \ge 3$.
 \end{proof}
 
-\begin{lemma}[Hardy--Littlewood bound]
+\begin{lemma}[Hardy--Littlewood bound]\label{hl-alpha}\uses{divisor-def}
 For $k \ge 4$, one has
 \[
 \alpha_k \leq 1 - \frac{3}{k + 2}.
@@ -116,7 +120,7 @@ For $k \ge 4$, one has
 See \cite{hardy_littlewood_approximate_1923}. The original proof relied on the assumption that $\mu(1/2) \le 1/6$ which was published later.
 \end{proof}
 
-\begin{lemma}[van der Corput first bound on $\alpha_2$]
+\begin{lemma}[van der Corput first bound on $\alpha_2$]\label{vdc-alpha-2}\uses{divisor-def}
 One has $\alpha_2 \le 33/100$.
 \end{lemma}
 \begin{proof}
@@ -124,21 +128,21 @@ See van der Corput \cite{van_der_corput_verscharfung_1922}.
 \end{proof}
 
 
-\begin{lemma}[van der Corput second bound on $\alpha_2$]
+\begin{lemma}[van der Corput second bound on $\alpha_2$]\label{vdc-alpha-2}\uses{divisor-def}
 One has $\alpha_2 \le 27/82$.
 \end{lemma}
 \begin{proof}
 See van der Corput \cite{van_der_corput_zum_1928}.
 \end{proof}
 
-\begin{lemma}[Walfisz bound on $\alpha_3$]
+\begin{lemma}[Walfisz bound on $\alpha_3$]\label{walfisz-alpha-3}\uses{divisor-def}
 One has $\alpha_3 \le 43/87$.
 \end{lemma}
 \begin{proof}
 See Walfisz \cite{walfisz_uber_1926}.
 \end{proof}
 
-\begin{lemma}[Atkinson bound on $\alpha_3$]
+\begin{lemma}[Atkinson bound on $\alpha_3$]\label{atkinson-alpha-3}\uses{divisor-def}
 One has $\alpha_3 \le 37/75$.
 \end{lemma}
 \begin{proof}
@@ -146,49 +150,49 @@ See Atkinson \cite{atkinson_divisor_1941}.
 \end{proof}
 
 
-\begin{lemma}[Richert, Tsung bound]
+\begin{lemma}[Richert, Tsung bound]\label{richert-alpha-2}\uses{divisor-def}
 One has $\alpha_2 \le 15/46$.
 \end{lemma}
 \begin{proof}
 Proved independently by Chih \cite{chih_on_1950} and Richert \cite{richert_verschrfung_1953}.
 \end{proof}
 
-\begin{lemma}[Y\"{u}h bound on $\alpha_3$]
+\begin{lemma}[Y\"{u}h bound on $\alpha_3$]\label{yuh-alpha-3}\uses{divisor-def}
 One has $\alpha_3 \le 14/29$.
 \end{lemma}
 \begin{proof}
 See Y\"{u}h \cite{yuh_divisor_1958}.
 \end{proof}
 
-\begin{lemma}[Y\"{u}h--Wu bound on $\alpha_3$]
+\begin{lemma}[Y\"{u}h--Wu bound on $\alpha_3$]\label{yuh-wu-alpha-3}\uses{divisor-def}
 One has $\alpha_3 \le 8/17$.
 \end{lemma}
 \begin{proof}
 See Y\"{u}h--Wu \cite{yuh_wu_divisor_1962}.
 \end{proof}
 
-\begin{lemma}[Chen bound on $\alpha_3$]
+\begin{lemma}[Chen bound on $\alpha_3$]\label{chen-alpha-3}\uses{divisor-def}
 One has $\alpha_3 \le 5/11$.
 \end{lemma}
 \begin{proof}
 See Chen \cite{chen_divisor_1965}.
 \end{proof}
 
-\begin{lemma}[Kolesnik first bound on $\alpha_2$]
+\begin{lemma}[Kolesnik first bound on $\alpha_2$]\label{kolesnik-alpha-2-first}\uses{divisor-def}
 One has $\alpha_2 \le 12/37$.
 \end{lemma}
 \begin{proof}
 See Kolesnik \cite{kolesnik_improvement_1969}.
 \end{proof}
 
-\begin{lemma}[Kolesnik second bound on $\alpha_2$]
+\begin{lemma}[Kolesnik second bound on $\alpha_2$]\label{kolesnik-alpha-2-second}\uses{divisor-def}
 One has $\alpha_2 \le 346/1067$.
 \end{lemma}
 \begin{proof}
 See Kolesnik \cite{kolesnik_1973}.
 \end{proof}
 
-\begin{lemma}[Kolesnik first bound on $\alpha_3$]
+\begin{lemma}[Kolesnik first bound on $\alpha_3$]\label{kolesnik-alpha-3-first}\uses{divisor-def}
 One has $\alpha_3 \le 43/96$.
 \end{lemma}
 \begin{proof}
@@ -196,7 +200,7 @@ See Kolesnik \cite{kolesnik}.
 \end{proof}
 
 
-\begin{lemma}[Kolesnik third bound on $\alpha_2$]
+\begin{lemma}[Kolesnik third bound on $\alpha_2$]\label{kolesnik-alpha-2-third}\uses{divisor-def}
 One has $\alpha_2 \le 35/108$.
 \end{lemma}
 \begin{proof}
@@ -204,7 +208,7 @@ See Kolesnik \cite{kolesnik_order_1982}.
 \end{proof}
 
 
-\begin{lemma}[Huxley bound]
+\begin{lemma}[Huxley bound]\label{huxley-alpha}\uses{divisor-def}
 One has $\alpha_2 \le 131/416$.
 \end{lemma}
 \begin{proof}
@@ -212,7 +216,7 @@ See Huxley \cite{huxley_exponential_2003}
 {\bf TODO: link this up with exponential sum bounds?}
 \end{proof}
 
-\begin{lemma}[Heath-Brown bound for large $k$]
+\begin{lemma}[Heath-Brown bound for large $k$]\label{hb-alpha-large}\uses{divisor-def}
 For any $k \ge 1$, one has
 \[
 \alpha_k \le 1 - 0.849k^{-2/3}.
@@ -221,4 +225,3 @@ For any $k \ge 1$, one has
 \begin{proof}
 See Heath-Brown \cite{heathbrown_new_2017}.
 \end{proof}
-{\bf TODO: list known bounds on $\alpha_k$}
