@@ -376,7 +376,7 @@ one can again check that \eqref{40} implies \eqref{rot}.
 
 It is remarked in \cite{bourgain_remarks_1995} that further zero density estimates could be obtained by using additional exponent pairs, such as the Huxley--Watt exponent pair $(9/56, 37/56)$ from Theorem \ref{line-sym}.
 
-\begin{lemma}\label{ivic-zero-density}\uses{zero-def}\cite[Theorem 11.2]{ivic} We have
+\begin{lemma}\label{ivic-zero-density}\uses{zero-def}\cite{ivic_exponent_1980}, \cite[Theorem 11.2]{ivic} We have
     $$ \A(\sigma) \leq \frac{4}{2\sigma+1}$$
     for $17/18 \leq \sigma \leq 1$, and
     $$ \A(\sigma) \leq \frac{24}{30\sigma-11}$$
@@ -433,7 +433,7 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 \ref{zero-large-cor2} with $\tau_0 := \frac{(3m-2)\sigma+2-m}{m}$ after a routine calculation.
 \end{proof}
 
-\begin{corollary}\label{further_ivic_zero}\uses{zero-def}\cite[Theorem 11.4]{ivic} One can bound $\A(\sigma$) by
+\begin{corollary}\label{further_ivic_zero}\uses{zero-def}\cite{ivic_exponent_1980}, \cite[Theorem 11.4]{ivic} One can bound $\A(\sigma$) by
 \begin{align*}
  \frac{3}{2\sigma} &\hbox{ for } \frac{3831}{4791} \leq \sigma \leq 1;\\
  \frac{9}{7\sigma-1} &\hbox{ for } \frac{41}{53} \leq \sigma \leq 1; \\
@@ -451,7 +451,7 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 \begin{proof} See \cite[(11.95)]{ivic}.
 \end{proof}
 
-\begin{corollary}[Zero density estimates for $\sigma$ close to $3/4$]\uses{zero-def}\cite[Theorem 11.5]{ivic}  One has $\A(\sigma) \leq \frac{3}{7\sigma-4}$ for $3/4 \leq \sigma \leq 10/13$, and $\A(\sigma) \leq \frac{9}{8\sigma-2}$ for $10/13 \leq \sigma \leq 1$.
+\begin{corollary}[Zero density estimates for $\sigma$ close to $3/4$]\label{ivic-near-34}\uses{zero-def}\cite[Theorem 11.5]{ivic}  One has $\A(\sigma) \leq \frac{3}{7\sigma-4}$ for $3/4 \leq \sigma \leq 10/13$, and $\A(\sigma) \leq \frac{9}{8\sigma-2}$ for $10/13 \leq \sigma \leq 1$.
 \end{corollary}
 
 \begin{proof}\uses{a-ivt, montgomery-subdivide,lvz-4, zero-large-cor2}  For $3/4 \leq \sigma \leq 10/13$, we see from Lemma \ref{a-ivt} that the bound
@@ -506,6 +506,67 @@ from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \
 
 
 {\bf we should be able to do better with subdivision!}
+
+The range of the second bound in Lemma \ref{ivic-zero-density} was recently extended:
+
+\begin{theorem}[Chen-Debruyne-Vidas density theorem]\cite{chen_debruyne_vindas_density_2024}  For any $279/314 \leq \sigma \leq 17/18$, one has $\A(\sigma) \leq \frac{24}{30\sigma-11}$.
+\end{theorem}
+
+The following result appears in an unpublished preprint of Kerr:
+
+\begin{proposition}\label{kerr-prop}\cite[Theorems 6, 7]{kerr} One has $\A(\sigma) \leq \frac{3}{2\sigma}$ for $\sigma \geq 23/29$, and
+$$\A(\sigma) \leq \\max( \frac{36}{138\sigma-89}, \frac{114\sigma-79}{(1-\sigma)(138\sigma-89)} )$$
+for $127/168 \leq \sigma \leq 107/138$.
+\end{proposition}
+
+The current best known zero density estimates (excepting the unpublished result in Proposition \ref{kerr-prop}) are summarized in Table \ref{zero_density_estimates_table}.
+
+\begin{table}[ht]
+    \def\arraystretch{1.3}
+    \centering
+    \caption{Upper bounds on $\A(\sigma)$}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    $\A(\sigma)$ bound & Range & Reference\\
+    \hline
+    $\frac{3}{2 - \sigma}$ & $\frac{1}{2} \leq \sigma \le \frac{7}{10} = 0.7$ & Theorem \ref{thm:ingham_zero_density2}\\
+    \hline
+    $\frac{15}{3+5\sigma}$ & $\frac{7}{10} \leq \sigma < \frac{13}{17} = 0.7647\ldots$ & Theorem \ref{guth-maynard-density}\\
+    \hline
+    $\frac{6}{5\sigma - 1}$ & $\frac{13}{17} \le \sigma < \frac{25}{32} = 0.78125$ & Theorem \ref{further_ivic_zero} \\
+    \hline
+    $2$ & $\frac{25}{32} \le \sigma \le \frac{11}{14} = 0.7857\ldots$ & Theorem \ref{bourgain-density} \\
+    \hline
+    $\frac{9}{7\sigma - 1}$ & $\frac{11}{14} < \sigma < \frac{3831}{4791} = 0.7996\ldots$ & Theorem \ref{hb-density} \\
+    \hline
+    $\frac{3}{2\sigma}$ & $\frac{3831}{4791} \le \sigma < \frac{7}{8} = 0.875$ & Theorem \ref{further_ivic_zero} \\
+    \hline
+    $\frac{3}{10\sigma - 7}$ & $\frac{7}{8} \le \sigma < \frac{279}{314} = 0.8885\ldots$ & Theorem \ref{hb-density}\\
+    \hline
+    $\frac{24}{30\sigma - 11}$ & $\frac{279}{314} \le \sigma < \frac{155}{174} = 0.8908\ldots$ & Chen--Debruyne--Vindas \cite{chen_debruyne_vindas_density_2024}  \\
+    \hline
+    $\frac{24}{30\sigma - 11}$& $\frac{155}{174} \le \sigma \le \frac{9}{10} = 0.9$ & Theorem \ref{ivic-zero-density}\\
+    \hline
+    $\frac{3}{10\sigma - 7}$ & $\frac{9}{10} < \sigma \le \frac{47}{50} = 0.94$ & Theorem \ref{hb-density2}\\
+    \hline
+    $\frac{4}{30\sigma - 25}$ & $\frac{47}{50} < \sigma \le \frac{23}{24} = 0.9583\ldots$ & Corollary \ref{bourgain-zero-density} \\
+    \hline
+    $\frac{3}{24\sigma - 20}$ & $\frac{23}{24} < \sigma < \frac{39}{40} = 0.975$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\frac{2}{15\sigma - 12}$ & $\frac{39}{40} \leq \sigma < \frac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\frac{3}{40 \sigma - 35}$ & $\frac{41}{42} \leq \sigma < \frac{59}{60} = 0.9833\ldots$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\dfrac{3}{n(1 - 2(n - 1)(1 - \sigma))}$ &
+    \begin{tabular}{@{}c@{}}$1 - \frac{1}{2n(n - 1)} \le \sigma < 1 - \frac{1}{2n(n + 1)}$\\(for integer $n \ge 6$)\end{tabular} & Theorem \ref{pintz-density} \\
+    \hline
+    \end{tabular}
+    \label{zero_density_estimates_table}
+    \end{table}
+
+{\bf TODO: double check this is indeed the optimum function thus far}
+{\bf TODO: provide a Python function for this}
+
 
 
 {\bf TODO: record historical zero density estimates, as well as log-free zero density estimates for $\sigma$ near $1/2$ or near $1$.}
