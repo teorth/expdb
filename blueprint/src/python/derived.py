@@ -106,19 +106,19 @@ def best_proof_of_exponent_pair(k, l):
 
 def prove_ingham_zero_density_estimate():
     hypotheses = Hypothesis_Set()
-    lv_estimates = [lv.large_value_estimate_L2]
-    zlv_estimates = literature.list_hypotheses(
-        hypothesis_type="Zeta large value estimate"
-    )
-    density_estimates = zd.compute_zero_density_estimate(
-        lv_estimates, zlv_estimates, RationalFunction.parse("2 - x")
-    )
-    print(density_estimates)
+    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
+    for k in range(2, 10):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
+    if len(zdes) > 0 and zdes[0] is not None:
+        hyp = zdes[0]
+        print(f'Found proof of Ingham\'s zero-density estimate with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+        hyp.recursively_list_proofs()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
-    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
+    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_heathbrown_exponent_pairs()
     prove_ingham_zero_density_estimate()
 

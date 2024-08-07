@@ -197,7 +197,7 @@ def covers(estimate, xlim, ylim):
 # Given a list of Piecewise objects, compute their minimum over a given domain
 # Returns result as a list of hypotheses, created using the constructor function
 def piecewise_min(estimates, domain, constructor):
-
+    
     # Compute bounds and crop domains (taking care not the alter the original estimates
     # objects)
     bounds = [e.data.bound for e in estimates]
@@ -208,7 +208,7 @@ def piecewise_min(estimates, domain, constructor):
     # No combination required - just crop a copy of the pieces to the required domain
     if len(estimates) == 1:
         parent = estimates[0]
-        return constructor(Piecewise(bounds), f"Follows from {parent.name}", {parent})
+        return [constructor(bounds[0], f"Follows from {parent.name}", {parent})]
 
     # Temporarily set the 'label' field of all estimates, and create a lookup table
     lookup = {}
