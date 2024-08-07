@@ -15,10 +15,10 @@ as $x \to \infty$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(
 \end{lemma}
 
 
-\begin{lemma}[Lower bound]\label{divisor-lower}\uses{divisor-def} $\alpha_k \geq \frac{1}{2} - \frac{1}{2k}$ for all $k$.
+\begin{lemma}[Lower bound]\label{divisor-lower}\uses{divisor-def}One has $\alpha_k \geq \frac{1}{2} - \frac{1}{2k}$ for all $k \geq 1$. 
 \end{lemma}
 
-\begin{proof} See \cite{hardy_divisor_1916, szego-walfisz-I, szego-walfisz-II}.
+\begin{proof} See Hardy \cite{hardy_divisor_1916}.
 \end{proof}
 
 It is conjectured that this lower bound is in fact an equality.
@@ -44,5 +44,103 @@ Using Lemma \ref{mas}, the following bounds were obtained:
     \end{align*}
 \end{theorem}
 
+For completeness we record the historical progression in bounds for $\alpha_k$.  
+\begin{lemma}[Piltz bound]For $k \ge 1$, one has
+\[
+\alpha_k \le 1 - \frac{1}{k}.
+\]
+\end{lemma}
+\begin{lemma}[Voronoi, Landau bound]
+For $k \ge 2$, one has
+\[
+\alpha_k \leq 1 - \frac{2}{k + 1}.
+\]
+\end{lemma}
+\begin{proof}
+See Voronoi \cite{voronoi_sur_1903} for $k = 2$ and Landau \cite{landau_uber_1912} for $k \ge 3$. 
+\end{proof}
 
+\begin{lemma}[Hardy--Littlewood bound]
+For $k \ge 4$, one has
+\[
+\alpha_k \leq 1 - \frac{3}{k + 2}.
+\]
+\end{lemma}
+\begin{proof}
+See \cite{hardy_littlewood_approximate_1923}. The original proof relied on the assumption that $\mu(1/2) \le 1/6$ which was published later. 
+\end{proof}
+
+\begin{lemma}[van der Corput bound 1]
+One has $\alpha_2 \le 33/100$. 
+\end{lemma}
+\begin{proof}
+See van der Corput \cite{van_der_corput_verscharfung_1922}.
+\end{proof}
+
+
+\begin{lemma}[van der Corput bound 2]
+One has $\alpha_2 \le 27/82$. 
+\end{lemma}
+\begin{proof}
+See van der Corput \cite{van_der_corput_zum_1928}.
+\end{proof}
+
+\begin{lemma}[Walfisz bound]
+One has $\alpha_3 \le 43/87$.
+\end{lemma}
+\begin{proof}
+See Walfisz \cite{walfisz_uber_1926}.
+\end{proof}
+
+\begin{lemma}[Atkinson bound]
+One has $\alpha_3 \le 37/75$.
+\end{lemma}
+\begin{proof}
+See Atkinson \cite{atkinson_divisor_1941}.
+\end{proof}
+
+
+\begin{lemma}[Richert, Tsung bound]
+One has $\alpha_2 \le 15/46$. 
+\end{lemma}
+\begin{proof}
+Proved independently by Chih \cite{chih_on_1950} and Richert \cite{richert_verschrfung_1953}.
+\end{proof}
+
+\begin{lemma}[Y\"{u}h bound on $\alpha_3$]
+One has $\alpha_3 \le 14/29$. 
+\end{lemma}
+\begin{proof}
+See Y\"{u}h \cite{yuh_divisor_1958}.
+\end{proof}
+
+\begin{lemma}[Kolesnik bound 1]
+One has $\alpha_2 \le 12/37$. 
+\end{lemma}
+\begin{proof}
+See Kolesnik \cite{kolesnik_improvement_1969}.
+\end{proof}
+
+\begin{lemma}[Kolesnik bound 2]
+One has $\alpha_2 \le 346/1067$. 
+\end{lemma}
+\begin{proof}
+See Kolesnik \cite{kolesnik_1973}.
+\end{proof}
+
+\begin{lemma}[Kolesnik bound 3]
+One has $\alpha_2 \le 35/108$. 
+\end{lemma}
+\begin{proof}
+See Kolesnik \cite{kolesnik_order_1982}.
+\end{proof}
+
+
+\begin{lemma}[Huxley bound]
+On has $\alpha_2 \le 131/416$.
+\end{lemma}
+\begin{proof}
+See Huxley \cite{huxley_exponential_2003}
+{\bf TODO: link this up with exponential sum bounds?}
+\end{proof}
 {\bf TODO: list known bounds on $\alpha_k$}
