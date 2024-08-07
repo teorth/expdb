@@ -14,9 +14,9 @@ As usual, we have a non-asymptotic formulation of $\LV_\zeta(\sigma,\tau)$:
 
 \begin{lemma}[Asymptotic form of large value exponent at zeta]\label{lvz-asymp}\uses{lvz-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$, and $\rho \geq 0$  be fixed.  Then the following are equivalent:
     \begin{itemize}
-    \item[(i)] $\LV_\zeta(\sigma,\tau) \leq \rho$.
-    \item[(ii)] For every $\eps>0$ there exists $C,\delta>0$ such that if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a zeta large value pattern with $N > C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, and $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, then one has
-    $$ |W| \leq C N^{\rho+\eps}.$$
+        \item[(i)] $\LV_\zeta(\sigma,\tau) \leq \rho$.
+        \item[(ii)] For every $\eps>0$ there exists $C,\delta>0$ such that if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a zeta large value pattern with $N > C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, and $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, then one has
+              $$ |W| \leq C N^{\rho+\eps}.$$
     \end{itemize}
 \end{lemma}
 
@@ -28,7 +28,7 @@ The proof of Lemma \ref{lvz-asymp} proceeds as in previous sections and is omitt
         \item[(ii)] (Trivial bound) For any $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$, we have $\LV_\zeta(\sigma,\tau) \leq \tau$.
         \item[(iii)] (Domination by large values)  We have $\LV_\zeta(\sigma,\tau) \leq \LV(\sigma,\tau)$ for all $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$.
         \item[(iv)] (Reflection) For $1/2 \leq \sigma \leq 1$ and $\tau > 1$, one has
-        $$ \sup_{\sigma \leq \sigma' \leq 1} \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma'-\frac{1}{2}), \frac{\tau}{\tau-1}\right) + \frac{1}{\tau-1} (\sigma'-\sigma) = \frac{1}{\tau-1} \sup_{\sigma \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma).$$
+              $$ \sup_{\sigma \leq \sigma' \leq 1} \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma'-\frac{1}{2}), \frac{\tau}{\tau-1}\right) + \frac{1}{\tau-1} (\sigma'-\sigma) = \frac{1}{\tau-1} \sup_{\sigma \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma).$$
     \end{itemize}
 \end{lemma}
 
@@ -37,77 +37,77 @@ The proof of Lemma \ref{lvz-asymp} proceeds as in previous sections and is omitt
 
 We note that in practice, bounds for $\LV_\zeta(\sigma',\tau)+\sigma'$ are monotone decreasing\footnote{This reflects the fact that large value theorems usually relate to $p^{\mathrm{th}}$ moment bounds for $p \geq 1$ (e.g., $p = 2, 4, 6, 12$) rather than for $0 < p < 1$.} in $\sigma'$, so the reflection property in Lemma \ref{lvz-basic}(iv) morally simplifies\footnote{Alternatively, one can redefine $\LV_\zeta$ to use smooth cutoffs in the $n$ variable rather than rough cutoffs $1_I(n)$, in which case one can obtain the analogue of \eqref{lvz-reflect} rigorously, but we will not do so here.} to
 \begin{equation}\label{lvz-reflect}
-     \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1}\right) = \frac{1}{\tau-1} \LV_\zeta(\sigma,\tau).
+    \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1}\right) = \frac{1}{\tau-1} \LV_\zeta(\sigma,\tau).
 \end{equation}
 
 {\bf TODO: implement a python method for reflection}
 
 \begin{proof}  The claims (i), (ii) are obvious.  The claim (iii) is clear by setting $a_n = 1_I$ in Definition \ref{lv-def}.
 
-Now we turn to (iv).  By symmetry it suffices to prove the upper bound.  Actually it suffices to just show
-$$ \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1}\right) \leq \frac{1}{\tau-1} \sup_{\sigma \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)$$
-as this easily implies the general upper bound.
+    Now we turn to (iv).  By symmetry it suffices to prove the upper bound.  Actually it suffices to just show
+    $$ \LV_\zeta\left(\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2}), \frac{\tau}{\tau-1}\right) \leq \frac{1}{\tau-1} \sup_{\sigma \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)$$
+    as this easily implies the general upper bound.
 
-Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a zeta large value pattern with
-$N$ unbounded, $T= N^{\frac{\tau}{\tau-1}+o(1)}$, and $V = N^{\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2})+o(1)}$. By definition, it suffices to show the bound
-\begin{equation}\label{r-targ}
-    |W| \ll N^{\frac{1}{\tau-1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)+o(1)}.
-\end{equation}
-for some $\sigma \leq \sigma' \leq 1$.
-By definition, $a_n = 1_I(n)$. By a Fourier expansion of $(n/N)^{1/2}$ in $\log n$, we can bound
-$$ |\sum_{n \in I} n^{-it_r}| \ll_A N^{1/2} \int_\R |\sum_{n \in I} n^{-1/2-it}| (1 + |t-t_r|)^{-A}\ dt$$
-and hence by the pigeonhole principle, we can find $t' = t + O(N^{o(1)})$ for each $t \in W$ such that
-$$ |\sum_{n \in I} n^{-1/2-it'}| \gg N^{-1/2-o(1)} V$$
-for $t \in W$.  By refining $W$ by $N^{o(1)}$ if necessary, we may assume that the $t'$ are $1$-separated.
+    Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a zeta large value pattern with
+    $N$ unbounded, $T= N^{\frac{\tau}{\tau-1}+o(1)}$, and $V = N^{\frac{1}{2} + \frac{1}{\tau-1} (\sigma-\frac{1}{2})+o(1)}$. By definition, it suffices to show the bound
+    \begin{equation}\label{r-targ}
+        |W| \ll N^{\frac{1}{\tau-1} (\LV_\zeta(\sigma',\tau) + \sigma'-\sigma)+o(1)}.
+    \end{equation}
+    for some $\sigma \leq \sigma' \leq 1$.
+    By definition, $a_n = 1_I(n)$. By a Fourier expansion of $(n/N)^{1/2}$ in $\log n$, we can bound
+    $$ |\sum_{n \in I} n^{-it_r}| \ll_A N^{1/2} \int_\R |\sum_{n \in I} n^{-1/2-it}| (1 + |t-t_r|)^{-A}\ dt$$
+    and hence by the pigeonhole principle, we can find $t' = t + O(N^{o(1)})$ for each $t \in W$ such that
+    $$ |\sum_{n \in I} n^{-1/2-it'}| \gg N^{-1/2-o(1)} V$$
+    for $t \in W$.  By refining $W$ by $N^{o(1)}$ if necessary, we may assume that the $t'$ are $1$-separated.
 
-Now we use the approximate functional equation
-$$ \zeta(1/2+it') = \sum_{n \leq x} n^{-1/2-it'} + \chi(1/2+it') \sum_{m \leq t' / 2\pi x} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
-for $x \sim N$; see \cite[Theorem 4.1]{ivic}.  Applying this to the two endpoints of $I$ and subtracting, we conclude that
-$$ \sum_{n \in I} n^{-1/2-it'} =\chi(1/2+it') \sum_{m \in J_{t'}} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
-where $J_{t'} := \{ m: t' / 2\pi m \in I \}$. Since $\chi(1/2+it')$ has magnitude one, we conclude that
-$$ |\sum_{m \in J_r} m^{-1/2-it'}| \gg N^{-1/2-o(1)} V.$$
-Writing $M := T/N = N^{\frac{1}{\tau-1}+o(1)}$, we see that $J_r \subset [M/10, 10M]$ and
-$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \gg M^{1/2} N^{-1/2-o(1)} V = M^{\sigma+o(1)}.$$
-Performing a Fourier expansion of $(M/m)^{1/2} 1_{J_r}(m)$ (smoothed out at scale $O(1)$) in $\log m$, we can bound
-$$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \ll \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1 + T^{-10}$$
-and hence
-$$ \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1  \gg M^{\sigma+o(1)}.$$
-If we let $E$ denote the set of $t_1 \in [T/10, 10T]$ for which $|\sum_{m \in [M/10,10M]} m^{-it_1}| \geq M^{\sigma-o(1)}$ for a suitably chosen $o(1)$ error, then we have
-$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt  \gg M^{\sigma+o(1)}.$$
-Summing in $t'$, we obtain
-$$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}|\ dt_1  \gg M^{\sigma+o(1)} R$$
-and so by dyadic pigeonholing we can find $M^{\sigma-o(1)} \ll V'' \ll M$ and a $1$-separated subset $W''$ of $E$ such that
-$$ |\sum_{m \in [M/10,10M]} m^{-it''}|\ dt \asymp V''$$
-for all $t'' \in W''$, and
-$$ V'' |W''| \gg M^{\sigma+o(1)} |W|.$$
-By passing to a subsequence we may assume that $V'' = M^{\sigma'+o(1)}$ for some $\sigma \leq \sigma' \leq 1$. Partitioning $[M/10,10M]$ into a bounded number of intervals each of which lies in a dyadic range $[M',2M']$ for some $M' \asymp M$, and using Definition \ref{lvz-def}, we have
-$$ |W''|  \ll M^{\LV_\zeta(\sigma',\tau)+o(1)}$$
-and \eqref{r-targ} follows.
+    Now we use the approximate functional equation
+    $$ \zeta(1/2+it') = \sum_{n \leq x} n^{-1/2-it'} + \chi(1/2+it') \sum_{m \leq t' / 2\pi x} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
+    for $x \sim N$; see \cite[Theorem 4.1]{ivic}.  Applying this to the two endpoints of $I$ and subtracting, we conclude that
+    $$ \sum_{n \in I} n^{-1/2-it'} =\chi(1/2+it') \sum_{m \in J_{t'}} m^{-1/2+it'} + O(N^{-1/2}) + O((T/N)^{-1/2})$$
+    where $J_{t'} := \{ m: t' / 2\pi m \in I \}$. Since $\chi(1/2+it')$ has magnitude one, we conclude that
+    $$ |\sum_{m \in J_r} m^{-1/2-it'}| \gg N^{-1/2-o(1)} V.$$
+    Writing $M := T/N = N^{\frac{1}{\tau-1}+o(1)}$, we see that $J_r \subset [M/10, 10M]$ and
+    $$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \gg M^{1/2} N^{-1/2-o(1)} V = M^{\sigma+o(1)}.$$
+    Performing a Fourier expansion of $(M/m)^{1/2} 1_{J_r}(m)$ (smoothed out at scale $O(1)$) in $\log m$, we can bound
+    $$ |\sum_{m \in J_r} (M/m)^{1/2} m^{-it'}| \ll \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1 + T^{-10}$$
+    and hence
+    $$ \int_{T/10}^{10T} |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt_1  \gg M^{\sigma+o(1)}.$$
+    If we let $E$ denote the set of $t_1 \in [T/10, 10T]$ for which $|\sum_{m \in [M/10,10M]} m^{-it_1}| \geq M^{\sigma-o(1)}$ for a suitably chosen $o(1)$ error, then we have
+    $$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}| (1 + |t_1-t'|)^{-1}\ dt  \gg M^{\sigma+o(1)}.$$
+    Summing in $t'$, we obtain
+    $$ \int_E |\sum_{m \in [M/10,10M]} m^{-it_1}|\ dt_1  \gg M^{\sigma+o(1)} R$$
+    and so by dyadic pigeonholing we can find $M^{\sigma-o(1)} \ll V'' \ll M$ and a $1$-separated subset $W''$ of $E$ such that
+    $$ |\sum_{m \in [M/10,10M]} m^{-it''}|\ dt \asymp V''$$
+    for all $t'' \in W''$, and
+    $$ V'' |W''| \gg M^{\sigma+o(1)} |W|.$$
+    By passing to a subsequence we may assume that $V'' = M^{\sigma'+o(1)}$ for some $\sigma \leq \sigma' \leq 1$. Partitioning $[M/10,10M]$ into a bounded number of intervals each of which lies in a dyadic range $[M',2M']$ for some $M' \asymp M$, and using Definition \ref{lvz-def}, we have
+    $$ |W''|  \ll M^{\LV_\zeta(\sigma',\tau)+o(1)}$$
+    and \eqref{r-targ} follows.
 \end{proof}
 
 Note in comparison with $\LV(\sigma,\tau)$, that $\LV_\zeta(\sigma,\tau)$ can be $-\infty$, and is indeed conjectured to do so whenever $\sigma>1/2$ and $\tau \geq 1$. Indeed:
 
 \begin{lemma}[Characterization of negative infinite value]\label{lvz-infty}\uses{lvz-def}  Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. Then the following are equivalent:
-\begin{itemize}
-\item[(i)] $\LV_\zeta(\sigma,\tau)=-\infty$.
-\item[(ii)] $\LV_\zeta(\sigma,\tau) < 0$.
-\item[(iii)] There exists a fixed $\eps>0$ such that if $N$ is unbounded and $I$ is a subinterval of $[N, 2N]$, then one has
-$$ \sum_{n \in I} n^{-it} \ll N^{\sigma-\eps+o(1)}$$
-whenever $|t| = N^{\tau+o(1)}$.
-\end{itemize}
+    \begin{itemize}
+        \item[(i)] $\LV_\zeta(\sigma,\tau)=-\infty$.
+        \item[(ii)] $\LV_\zeta(\sigma,\tau) < 0$.
+        \item[(iii)] There exists a fixed $\eps>0$ such that if $N$ is unbounded and $I$ is a subinterval of $[N, 2N]$, then one has
+              $$ \sum_{n \in I} n^{-it} \ll N^{\sigma-\eps+o(1)}$$
+              whenever $|t| = N^{\tau+o(1)}$.
+    \end{itemize}
 \end{lemma}
 
 \begin{proof} Clearly (i) implies (ii).
-If (iii) holds, then in any zeta large value pattern
-$(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$, $W$ is necessarily empty, giving (i). Conversely, if (i) fails, then there must be $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$ with $W$ non-empty, contradicting (ii).
+    If (iii) holds, then in any zeta large value pattern
+    $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$, $W$ is necessarily empty, giving (i). Conversely, if (i) fails, then there must be $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded and $V = N^{\sigma+o(1)}$ with $W$ non-empty, contradicting (ii).
 \end{proof}
 
 \begin{corollary}\label{beta-zeta-vanish}\uses{lvz-def}  If $\tau \geq 0$ is fixed then $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \tau \beta(1/\tau)$ is fixed. For instance, by \eqref{beta-1}, one has $\LV_\zeta(\sigma,1)=-\infty$ whenever $\sigma > 1/2$ is fixed.
 \end{corollary}
 
 \begin{proof}\uses{lvz-infty, beta-alpha} Suppose one has data $N, I$  obeying the hypotheses of Lemma \ref{lvz-infty}(iii), then by \eqref{beta-alpha} (with $\alpha = 1/\tau$) one has
-$$ \sum_{n \in I} n^{-it} \ll |t|^{\beta(1/\tau)+o(1)} = N^{\tau \beta(1/\tau)+o(1)}$$
-and the claim follows from Lemma \ref{lvz-infty}.
+    $$ \sum_{n \in I} n^{-it} \ll |t|^{\beta(1/\tau)+o(1)} = N^{\tau \beta(1/\tau)+o(1)}$$
+    and the claim follows from Lemma \ref{lvz-infty}.
 \end{proof}
 
 \begin{corollary}\label{lvz-mu}\uses{lvz-def, zeta-grow-def}  If $\tau > 0$ and $1/2 \leq \sigma_0 \leq 1$ are fixed, then $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \sigma_0 + \tau \mu(\sigma_0)$.
@@ -117,9 +117,9 @@ and the claim follows from Lemma \ref{lvz-infty}.
     $$ \zeta(\sigma_0 + it) \ll |t|^{\mu(\sigma_0) + o(1)}$$
     for unbounded $t$.  By standard arguments (see \cite[(8.13)]{ivic}), this implies that
     $$ \sum_{n \in I} \frac{1}{n^{\sigma_0+it}} \ll |t|^{\mu(\sigma_0) + o(1)}$$
-as $N \to \infty$, if $I \subset [N,2N]$ and $|t| = N^{\tau+o(1)}$.  By partial summation this gives
-$$ \sum_{n \in I} n^{-it} \ll N^{\sigma_0} |t|^{\mu(\sigma_0) + o(1)} = N^{\sigma_0 + \tau \mu(\sigma_0) + o(1)}.$$
-The claim now follows from Lemma \ref{lvz-infty}.
+    as $N \to \infty$, if $I \subset [N,2N]$ and $|t| = N^{\tau+o(1)}$.  By partial summation this gives
+    $$ \sum_{n \in I} n^{-it} \ll N^{\sigma_0} |t|^{\mu(\sigma_0) + o(1)} = N^{\sigma_0 + \tau \mu(\sigma_0) + o(1)}.$$
+    The claim now follows from Lemma \ref{lvz-infty}.
 \end{proof}
 
 \begin{corollary}\label{lvz-exp}\uses{exp-pair-def, lvz-def} If $(k,\ell)$ is an exponent pair, then $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $1/2 \leq \sigma \leq 1$, $\tau \geq 0$ are fixed quantities with $\sigma > k \tau + \ell - k$.
@@ -142,18 +142,18 @@ For completeness, we now work out the values of $\LV_\zeta(\sigma,\tau)$ in the 
 
 \begin{proof}\uses{lvz-basic, l2-int, l2-mvt}  The upper bound $\LV_\zeta(1/2,\tau) \leq \tau$  follows from Lemma \ref{lvz-basic}(ii), so it suffices to prove the lower bound.  Accordingly, let $N$ be unbounded, let $T  = CN$ for a large fixed constant $C$, and set $I := [N,2N]$.  In the case $\sigma=1$, we see from the $L^2$ mean value theorem (Lemma \ref{l2-int}) that the expression $\sum_{n \in I} n^{-it}$ has an $L^2$ mean of $\asymp N^{1/2}$ for $t \in [T,2T]$; on other hand, from \eqref{beta-1} we also have an $L^\infty$ norm of $O(N^{1/2+o(1)})$.  We conclude that $|\sum_{n \in I} n^{-it}| \gg N^{1/2+o(1)}$ for $t$ in a subset of $[T,2T]$ of measure $T^{1-o(1)}$, and hence on a $1$-separated subset of cardinality $\gg T^{1-o(1)}$.  This gives the claim $\LV(1/2,1) \geq 1$.
 
-Next, we establish the $\tau \geq 2$ case.
-Let $N$ be unbounded, set $T := N^\tau$, and set $I := [N,2N]$.  From Lemma \ref{l2-int} we see that the $L^2$ mean of $\sum_{n \in I} n^{-it}$ is $\asymp N^{1/2}$.  Also, by squaring this Dirichlet series and applying Lemma \ref{l2-int} again we see that the $L^4$ mean is $O(N^{1/2+o(1)})$.  We may now argue as before to give the desired claim $\LV(1/2,\tau) \geq \tau$.
+    Next, we establish the $\tau \geq 2$ case.
+    Let $N$ be unbounded, set $T := N^\tau$, and set $I := [N,2N]$.  From Lemma \ref{l2-int} we see that the $L^2$ mean of $\sum_{n \in I} n^{-it}$ is $\asymp N^{1/2}$.  Also, by squaring this Dirichlet series and applying Lemma \ref{l2-int} again we see that the $L^4$ mean is $O(N^{1/2+o(1)})$.  We may now argue as before to give the desired claim $\LV(1/2,\tau) \geq \tau$.
 
-Finally we need to handle the case $1 < \tau < 2$. By Lemma \ref{lvz-basic}(iv) with $\sigma=1/2$ we have
-$$ \LV_\zeta\left(\frac{1}{2}, \frac{\tau}{\tau-1}\right) = \frac{1}{\tau-1}  \sup_{1/2 \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-1/2).$$
-By the $\tau \geq 2$ case, the left-hand side is at least $\tau/(\tau-1)$, thus
-$$ \sup_{1/2 \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-1/2) \geq \tau.$$
-On the other hand, from Theorem \ref{l2-mvt} and Lemma \ref{lvz-basic}(iii) we have
-$$ \LV_\zeta(\sigma',\tau) + \sigma'-1/2 \leq \tau + 1/2 - \sigma'.$$
-We conclude that the supremum is in fact attained asymptotically at $\sigma'=1/2$, in the sense that
-$$ \limsup_{\sigma' \to 1/2^+} \LV_\zeta(\sigma',\tau) + \sigma'-1/2 \geq \tau.$$
-By the monotonicity of $\LV_\zeta$ in $\sigma$, this implies that $\LV_\zeta(1/2,\tau) \geq \tau$, as required.
+    Finally we need to handle the case $1 < \tau < 2$. By Lemma \ref{lvz-basic}(iv) with $\sigma=1/2$ we have
+    $$ \LV_\zeta\left(\frac{1}{2}, \frac{\tau}{\tau-1}\right) = \frac{1}{\tau-1}  \sup_{1/2 \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-1/2).$$
+    By the $\tau \geq 2$ case, the left-hand side is at least $\tau/(\tau-1)$, thus
+    $$ \sup_{1/2 \leq \sigma' \leq 1} (\LV_\zeta(\sigma',\tau) + \sigma'-1/2) \geq \tau.$$
+    On the other hand, from Theorem \ref{l2-mvt} and Lemma \ref{lvz-basic}(iii) we have
+    $$ \LV_\zeta(\sigma',\tau) + \sigma'-1/2 \leq \tau + 1/2 - \sigma'.$$
+    We conclude that the supremum is in fact attained asymptotically at $\sigma'=1/2$, in the sense that
+    $$ \limsup_{\sigma' \to 1/2^+} \LV_\zeta(\sigma',\tau) + \sigma'-1/2 \geq \tau.$$
+    By the monotonicity of $\LV_\zeta$ in $\sigma$, this implies that $\LV_\zeta(1/2,\tau) \geq \tau$, as required.
 \end{proof}
 
 \begin{lemma}[Value at $\tau<1$]\label{lvz-small-tau}\uses{lvz-def} If $0 \leq \tau < 1$, then $\LV_\zeta(\sigma,\tau)$ is equal to $-\infty$ for $\sigma > 1-\tau$ and equal to $\tau$ for $\sigma \leq 1-\tau$.
@@ -166,7 +166,7 @@ By the monotonicity of $\LV_\zeta$ in $\sigma$, this implies that $\LV_\zeta(1/2
 One can use exponent pairs to control $\LV_\zeta(\sigma,\tau)$:
 
 \begin{lemma}[From exponent pairs to zeta large values estimate]\label{zeta-from-exp}\uses{lvz-def, exp-pair-def}\cite[Theorem 8.2]{ivic} If $(k,\ell)$ is an exponent pair with $k>0$, then for any $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ one has
-$$ \LV_\zeta(\sigma,\tau) \leq \max( \tau - 6(\sigma-1/2), \frac{k+\ell}{k} \tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2) ).$$
+    $$ \LV_\zeta(\sigma,\tau) \leq \max( \tau - 6(\sigma-1/2), \frac{k+\ell}{k} \tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2) ).$$
 \end{lemma}
 
 Typical examples of exponent pairs that can be used here include $(1/2,1/2)$, $(13/31, 16/31)=BAB^2A^2(1/6,2/3)$, $(4/11,6/11)$ (a convex combination of $(1/2,1/2)$ and $(2/7,4/7)$), $(2/7,4/7) = BA(1/6,2/3)$, $(5/24, 15/24)$ (a convex combination of $(1/6,2/3)$ and $(4/18, 11/18)$), and $(4/18,11/18) = BABA(1/6,2/3)$: see \cite[Corollary 8.1, 8.2]{ivic}.
@@ -180,8 +180,8 @@ A useful connection between large values estimates and large values estimates fo
 Note from Lemma \ref{beta-zeta-vanish} one could also impose the restriction $\sigma' \leq \tau' \beta(1/\tau')$ in the supremum if desired, at which point one recovers Theorem \ref{montgomery-lv}.  Similarly, from Corollary \ref{lvz-mu} one could also impose the restriction $\sigma' \leq \sigma_0 + \tau' \mu(\sigma_0)$ for any fixed $1/2 \leq \sigma_0 \leq 1$.
 
 \begin{proof} It suffices to show that
- $$ \LV(\sigma,\tau) \leq \max\left(2-2\sigma, 1 - 2\sigma + \sup_{\stackrel{1 \leq \tau' \leq \tau}{1/2 \leq \sigma' \leq 1}}  \sigma' + \min(\LV_\zeta(\sigma',\tau'), \LV(\sigma,\tau)) \right)$$
-since the terms with $\sigma' < 2\sigma-1$ are less than the left-hand side and can thus be dropped.
+    $$ \LV(\sigma,\tau) \leq \max\left(2-2\sigma, 1 - 2\sigma + \sup_{\stackrel{1 \leq \tau' \leq \tau}{1/2 \leq \sigma' \leq 1}}  \sigma' + \min(\LV_\zeta(\sigma',\tau'), \LV(\sigma,\tau)) \right)$$
+    since the terms with $\sigma' < 2\sigma-1$ are less than the left-hand side and can thus be dropped.
     We repeat the proof of Lemma \ref{montgomery-lv}.  We can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N$ unbounded, $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, and $|W| = N^{\LV(\sigma,\tau)+o(1)}$, and we have
     $$ |W|V \leq N^{1/2} \left|\sum_{t,t' \in W} c_t \overline{c_{t'}} \sum_{n \in [N,2N]} n^{i(t-t')} \right|^{1/2}$$
     for some $1$-bounded $c_t$, and hence by the triangle inequality
@@ -198,7 +198,7 @@ since the terms with $\sigma' < 2\sigma-1$ are less than the left-hand side and 
     The case $\sigma' < 1/2$ is dominated by that of $\sigma'=1/2$.  The claim now follows.
 \end{proof}
 
-\begin{corollary}[Converting a bound on $\mu$ to a large values theorem]\label{mu-lv}\uses{lv-def, zeta-grow-def}  If $1/2 \leq \sigma, \sigma' \leq 1$, and $\tau \geq 0$ are fixed, then
+\begin{corollary}[Converting a bound on $\mu$ to a large values theorem]\label{mu-lv}\uses{lv-def, zeta-grow-def}  If $1/2 \leq \sigma \leq 1$, $\sigma' \leq 1$, and $\tau \geq 0$ are fixed, then
     $$\LV(\sigma,\tau) \leq \max\left( 2-2\sigma, 2 - 2\sigma + \tau - \frac{2\sigma-1-\sigma'}{\mu(\sigma')} \right).$$
     In particular, the Montgomery conjecture holds for $\tau \leq \frac{2\sigma-1-\sigma'}{\mu(\sigma')}$.
 \end{corollary}
@@ -206,27 +206,59 @@ since the terms with $\sigma' < 2\sigma-1$ are less than the left-hand side and 
 \begin{proof}\uses{montgomery-subdivide, hl-improv, lvz-mu} By Lemma \ref{montgomery-subdivide} it suffices to verify the claim for $\tau < \frac{2\sigma-1-\sigma'}{\mu(\sigma')}$.  The claim now follows from Lemma \ref{hl-improv} and Corollary \ref{lvz-mu}.
 \end{proof}
 
+
 \begin{theorem}[Hal\'asz-Tur\'an large values theorem]\label{htlv}\cite[Theorem 1]{halasz_distribution_1969} On the Lindel\"of hypothesis, one has the Montgomery conjecture whenever $\sigma > 3/4$.
 \end{theorem}
 
 \begin{proof}\uses{mu-lv}  Immediate from Corollary \ref{mu-lv}, since $\mu(1/2)=0$ in this case.
 \end{proof}
 
-A typical application of the Hal\'asz-Montgomery inequality is
+\begin{theorem}[First Ivic large values theorem]\label{ivic-lvt-82}\uses{lv-def}\cite[Lemma 8.2]{ivic}  If $\tau \geq 0$ and $1/2 < \sigma < \sigma' < 1$ are fixed, then
+    $$ \LV(\sigma', \tau) \leq \max( 2 - 2\sigma', \tau - f(\sigma) (\sigma'-\sigma) )$$
+    where $f(\sigma)$ is equal to
+    \begin{align*}
+        \frac{2}{3-4\sigma}    & \hbox{ for } 1/2 < \sigma \leq 2/3;        \\
+        \frac{10}{7-8\sigma}   & \hbox{ for } 2/3 \leq \sigma \leq 11/14;   \\
+        \frac{34}{15-16\sigma} & \hbox{ for } 11/14 \leq \sigma \leq 13/15; \\
+        \frac{98}{31-32\sigma} & \hbox{ for } 13/15 \leq \sigma \leq 57/62; \\
+        \frac{5}{1-\sigma}     & \hbox{ for } 57/62 \leq \sigma < 1.
+    \end{align*}
+    In particular, the Montgomery conjecture holds for this choice of $\sigma'$ if
+    $$ \tau \leq \sup_{1/2 < \sigma < \sigma'} f(\sigma) (\sigma'-\sigma) + 2 - 2 \sigma'.$$
+\end{theorem}
 
-\begin{lemma}[Ivic large values theorem]\label{ivic-lvt}\cite[(11.40)]{ivic}\uses{lv-def, montgomery-subdivide}  For any $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$, one has
+\begin{proof} We set $\theta$ to equal
+$$ (3\sigma-2)/(2\sigma-1) \hbox{ for } 1/2 < \sigma \leq 2/3;$$
+$$ (9\sigma-6)/(4\sigma-1) \hbox{ for } 2/3 \leq \sigma \leq 11/14;$$
+$$ (25\sigma-16)/(8\sigma+1) \hbox{ for } 11/14 \leq \sigma \leq 13/15;$$
+$$ (65\sigma-40)/(16\sigma+9) \hbox{ for } 13/15 \leq \sigma \leq 57/62;$$
+$$ (12\sigma-7)/(2\sigma+3) \hbox{ for } 57/62 \leq \sigma < 1,$$
+and then from the bounds $\mu(1/2) \leq 1/6$, $\mu(5/7) \leq 1/14$, $\mu(5/6) \leq 1/30$ one can bound $\mu(\theta)$ by the quantity $c(\theta)$, defined to equal
+$$ 1/2 - \theta \hbox{ for } \theta \leq 0$$
+$$ (3-4\theta)/6 \hbox{ for } 0 \leq \theta \leq 1/2$$
+$$ (7-8\theta)/18 \hbox{ for } 1/2 \leq \theta \leq 5/7$$
+$$ (15-16\theta)/50 \hbox{ for } 5/7 \leq \theta \leq 5/6$$
+$$ (1-\theta)/5 \hbox{ for } 5/6 \leq \theta \leq 1.$$
+By Corollary \ref{mu-lv}, we have $\LV(\sigma',\tau) \leq 2-2\sigma'$ for
+$$ \tau \leq \frac{2\sigma'-1-\theta}{c(\theta)}.$$
+The right-hand side can be computed to equal $f(\sigma)(\sigma'-\sigma) + 2 - 2\sigma'$, giving the claim.
+\end{proof}
+
+Another typical application of the Hal\'asz-Montgomery inequality is
+
+\begin{lemma}[Second Ivic large values theorem]\label{ivic-lvt}\cite[(11.40)]{ivic}\uses{lv-def, montgomery-subdivide}  For any $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$, one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, \tau + 9-12\sigma, 3\tau + 19(3-4\sigma)/2).$$
-In particular, optimizing using subdivision (Lemma \ref{montgomery-subdivide}) we have
-$$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6}\right).$$
-This implies the Montgomery conjecture for
-$$ \tau \leq \min( 10\sigma-7, 12 \sigma - \frac{53}{6}).$$
+    In particular, optimizing using subdivision (Lemma \ref{montgomery-subdivide}) we have
+    $$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6}\right).$$
+    This implies the Montgomery conjecture for
+    $$ \tau \leq \min( 10\sigma-7, 12 \sigma - \frac{53}{6}).$$
 \end{lemma}
 
 \begin{proof}\uses{hl-improv, zeta-from-exp}  Write $\rho := \LV(\sigma,\tau)$, and let $\eps>0$ be arbitrary. By Lemma \ref{hl-improv}, we may assume without loss of generality that
-$$ \rho \leq \max( 2-2\sigma, 1-2\sigma + \sigma' + \min( \rho, \LV_\zeta(\sigma',\tau')) ) + \eps$$
-for some $1/2 \leq \sigma' \leq 1$ and $1 \leq \tau' \leq \tau$.  On the other hand, from Lemma \ref{zeta-from-exp} applied to the exponent pair $(2/7,4/7)$, and bounding $\tau'$ by $\tau$, one has
-$$ \LV_\zeta(\sigma',\tau') \leq \max( \tau-6(\sigma'-1/2), 3\tau - 19(\sigma'-1/2))$$
-and thus on taking convex combinations
-$$ \min(\rho,\LV_\zeta(\sigma',\tau')) \leq \max( \frac{5}{6}\rho + \frac{1}{6} \tau - (\sigma'-1/2), \frac{18}{19} \rho + \frac{3}{19} \tau - (\sigma'-1/2) ),$$
-hence $\rho$ is bounded by either $2 - 2 \sigma$, $1 - 2\sigma + \frac{5}{6}\rho + \frac{1}{6} \tau + \frac{1}{2}$, or $1-2\sigma + \frac{18}{19} \rho + \frac{3}{19} \tau + \frac{1}{2}$.  The claim then follows after solving for $\rho$.
+    $$ \rho \leq \max( 2-2\sigma, 1-2\sigma + \sigma' + \min( \rho, \LV_\zeta(\sigma',\tau')) ) + \eps$$
+    for some $1/2 \leq \sigma' \leq 1$ and $1 \leq \tau' \leq \tau$.  On the other hand, from Lemma \ref{zeta-from-exp} applied to the exponent pair $(2/7,4/7)$, and bounding $\tau'$ by $\tau$, one has
+    $$ \LV_\zeta(\sigma',\tau') \leq \max( \tau-6(\sigma'-1/2), 3\tau - 19(\sigma'-1/2))$$
+    and thus on taking convex combinations
+    $$ \min(\rho,\LV_\zeta(\sigma',\tau')) \leq \max( \frac{5}{6}\rho + \frac{1}{6} \tau - (\sigma'-1/2), \frac{18}{19} \rho + \frac{3}{19} \tau - (\sigma'-1/2) ),$$
+    hence $\rho$ is bounded by either $2 - 2 \sigma$, $1 - 2\sigma + \frac{5}{6}\rho + \frac{1}{6} \tau + \frac{1}{2}$, or $1-2\sigma + \frac{18}{19} \rho + \frac{3}{19} \tau + \frac{1}{2}$.  The claim then follows after solving for $\rho$.
 \end{proof}
