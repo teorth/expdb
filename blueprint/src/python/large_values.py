@@ -273,13 +273,11 @@ def best_large_value_estimate(hypotheses, domain=None):
         hypothesis_type="Large value estimate transform"
     )
 
-    print(len(lves))
     # Generate set of LV estimates (original + transformed)
     lv_estimates = list(lves)
     for tr_hyp in lv_transforms:
         lv_estimates.extend([tr_hyp.data.transform(lve) for lve in lves])
 
-    print(len(lv_estimates))
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
 
 

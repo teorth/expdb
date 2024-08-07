@@ -104,22 +104,91 @@ def best_proof_of_exponent_pair(k, l):
     else:
         print('Failed to prove the exponent pair ({k}, {l}).')
 
-def prove_ingham_zero_density_estimate():
+# Prove Ingham's zero density estimate A(s) < 3/(1-s)
+def prove_ingham_zero_density(verbose=True):
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
     for k in range(2, 10):
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
     zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
-    if len(zdes) > 0 and zdes[0] is not None:
+    if verbose and len(zdes) > 0 and zdes[0] is not None:
         hyp = zdes[0]
-        print(f'Found proof of Ingham\'s zero-density estimate with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+        print()
+        print('Found proof of Ingham\'s zero-density estimate with complexity '
+              f'= {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
         hyp.recursively_list_proofs()
+    return zdes
+
+# Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
+def prove_huxley_zero_density(verbose=True):
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
+    for k in range(2, 10):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    hypotheses.add_hypotheses(
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate',
+            keywords='Huxley'
+            )
+        )
+    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
+    if verbose and len(zdes) > 0:
+        print()
+        print('Found proof of Huxley\'s zero-density estimate')
+        for hyp in zdes:
+            hyp.recursively_list_proofs()
+    return zdes
+
+# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
+def prove_guth_maynard_zero_density(verbose=True):
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
+    for k in range(2, 10):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    hypotheses.add_hypotheses(
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate', 
+            keywords='Guth, Maynard'
+            )
+        )
+    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
+    if verbose and len(zdes) > 0:
+        hyp = next((h for h in zdes if h.data.interval.contains(frac(3,4))), None)
+        if hyp is not None:
+            print()
+            print('Found proof of Guth--Maynard\'s zero-density estimate')
+            hyp.recursively_list_proofs()
+    return zdes
+
+# Prove Jutila's proof of the density hypothesis for s > 11/14.
+def prove_jutila_zero_density(verbose=True):
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
+    for k in range(2, 10):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    hypotheses.add_hypotheses(
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate', 
+            keywords='Jutila, k = 3'
+            )
+        )
+    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
+    if verbose and len(zdes) > 0:
+        hyp = next((h for h in zdes if h.data.interval.contains(frac(9,10))), None)
+        if hyp is not None:
+            print()
+            print('Found proof of Jutila\'s zero-density estimate')
+            hyp.recursively_list_proofs()
+    return zdes
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
-    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
-    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_heathbrown_exponent_pairs()
-    prove_ingham_zero_density_estimate()
+    prove_ingham_zero_density()
+    prove_huxley_zero_density()
+    prove_jutila_zero_density()
+    prove_guth_maynard_zero_density()
 
 prove_all()

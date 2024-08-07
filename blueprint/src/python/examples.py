@@ -281,61 +281,6 @@ def plot(zdt, hypotheses, title=None):
 
 def zero_density_estimates_examples():
 
-    # hypotheses = Hypothesis_Set() # Start with an empty hypothesis set
-
-    # # Large value estimates
-    # hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    # for k in range(2, 10):
-    #     hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
-
-    # # Zeta large value estimates
-    # hypotheses.add_hypotheses(zlv.get_trivial_zlv())
-
-    # # Test Ingham zero density estimate
-    # # zd.approximate_sup_LV_on_tau(hypotheses, lambda s: 2 - s)
-    # zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1,2), 1))
-    # print('Verifying Ingham\'s zero-density estimate')
-    # for s in zdt:
-    #     print(f'\t{s[0]} for x \in {s[1]}, which depends on:')
-    #     for h in s[2]:
-    #         h.recursively_list_proofs(2)
-    # plot(zdt, 'Ingham zero density estimate')
-
-    # # Test Huxley zero density estimate
-    # hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type='Large value estimate', keywords='Huxley'))
-    # # zd.approximate_sup_LV_on_tau(hypotheses, lambda s: -1 + 3 * s)
-    # zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1,2), 1))
-    # print('Verifying Huxley\'s zero-density estimate')
-    # print('A(x)(1-x) \leq')
-    # for s in zdt:
-    #     print(f'\t{s[0]} for x \in {s[1]}, which depends on:')
-    #     for h in s[2]:
-    #         h.recursively_list_proofs(2)
-    # plot(zdt, 'Huxley zero density estimate')
-
-    # # Test Guth--Maynard zero density estimate
-    # hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type='Large value estimate', keywords='Guth, Maynard'))
-    # # zd.approximate_sup_LV_on_tau(hypotheses, lambda s: frac(3,5) + s)
-    # zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1,2), 1))
-    # print('Verifying Guth--Maynard\'s zero-density estimate')
-    # print('A(x)(1-x) \leq')
-    # for s in zdt:
-    #     print(f'\t{s[0]} for x \in {s[1]}, which depends on:')
-    #     for h in s[2]:
-    #         h.recursively_list_proofs(2)
-    # plot(zdt, 'Guth--Maynard zero density estimate')
-
-    # hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type='Large value estimate', keywords='Jutila, k = 3'))
-    # # zd.approximate_sup_LV_on_tau(hypotheses, lambda s: frac(3,2))
-    # zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1,2), 1))
-    # print('Verifying Jutila\'s zero-density estimate')
-    # print('A(x)(1-x) \\leq')
-    # for s in zdt:
-    #     print(f'\t{s[0]} for x \in {s[1]}, which depends on:')
-    #     for h in s[2]:
-    #         h.recursively_list_proofs(2)
-    # plot(zdt, 'Jutila zero density estimate')
-
     # Reset
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
