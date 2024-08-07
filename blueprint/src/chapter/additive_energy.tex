@@ -64,12 +64,30 @@ We remark that (v) can also be proven using \cite[Lemma 4.8, (4.2)]{cladek-tao}.
 We will also study the following related quantity.  Given a set $W$ and a scale $N>1$, let $S(N,W)$ denote the \emph{double zeta sum}
 $$ S(N,W) := \sum_{t,t' \in W} |\sum_{n \in [N,2N]} n^{-i(t-t')}|^2.$$
 We caution that this normalization differs from the one in \cite{ivic}, where $n^{-1/2-i(t-t')}$ is used in place of $n^{-i(t-t')}$.  This sum may also be rearranged as
-$$ S(N,W) = \sum_{n,m \in [N,2N]} |R_W(n/m)|^2$$
+\begin{equation}\label{snw}
+ S(N,W) = \sum_{n,m \in [N,2N]} |R_W(n/m)|^2
+\end{equation}
 where $R_W$ is the exponential sum
 $$ R_W(x) := \sum_{t \in W} x^{it}.$$
 From the first formula it is clear that $S(N,W)$ is monotone non-decreasing in $W$, and from the second formula one has the triangle inequality
 $$ S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}$$
 when the $W_i$ are disjoint, and hence also when they are not assumed to be disjoint, thanks to the monotonicity.
+
+The following Cauchy--Schwarz inequality is also useful:
+
+\begin{lemma}[Cauchy--Schwarz and double $\zeta$-sums]\label{cauchy-schwarz}\uses{energy-def} \cite[Lemma 3.4]{bourgain_dirichlet_2000} If $W,W'$ are finite sets of reals, $N>1$, and $a_n$ is a $1$-bounded sequence for $n \in [N,2N]$, then
+\begin{equation}\label{ttww}
+     \sum_{t \in W, t' \in W'} |\sum_{n \in [N,2N]} a_n n^{-it}|^2 \leq S(N,W)^{1/2} S(N,W')^{1/2}.
+\end{equation}
+In particular
+$$ \sum_{t \in W} |\sum_{n \in [N,2N]} a_n n^{-it}|^2 \leq S(N,W).$$
+\end{lemma}
+
+\begin{proof}  The left-hand side of \eqref{ttww} can be rewritten as
+    $$ \sum_{n,m \in [N,2N]} a_n \overline{a_m} \overline{R_W}(n/m) R_{W'}(n/m).$$
+The claim is now immediate from \eqref{snw} and the Cauchy--Schwarz inequality.
+\end{proof}
+
 
 To relate $S(N,W)$ to $E_1(W)$, we first observe the following lemma, implicit in \cite{heath_brown_consecutive_II} and made more explicit in \cite[Lemma 11.4]{guth-maynard}.
 

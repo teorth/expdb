@@ -189,20 +189,30 @@ Additionally, for $\sigma=2/3$ one can take $A = 9.6187\dots$, for $\sigma = 7/1
 
 \section{Large values of \texorpdfstring{$\zeta$}{zeta} moments}
 
-It is also of interest to control large values of the moments.  For fixed $1/2 \leq \sigma \leq 1$, $A \geq 0$, and $h \geq 0$, let $M(\sigma,A,h)$ be the least (fixed) exponent for which the bound
-$$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| \geq T^h} |\zeta(\sigma+it)|^A\ dt \ll T^{M(\sigma,A,h)+o(1)}.$$
+It is also of interest to control large values of the moments.
+
+\begin{definition}\label{mixed-moment-def}
+    For fixed $1/2 \leq \sigma \leq 1$, $A \geq 0$, and $h \geq 0$, let $M(\sigma,A, \geq h)$ be the least (fixed) exponent for which the bound
+$$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| \geq T^h} |\zeta(\sigma+it)|^A\ dt \ll T^{M(\sigma,A,h)+o(1)}$$
+holds for unbounded $T$.
+Similarly, let $M(\sigma,A,\leq h)$ be the least exponent for which
+$$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| < T^h} |\zeta(\sigma+it)|^A\ dt \ll T^{M(\sigma,A,h)+o(1)}$$
+holds for unbounded $T$.
+\end{definition}
+
 A modification of the proof of the upper bound in Lemma \ref{mad} reveals that
 \begin{equation}\label{msah}
-    M(\sigma_0,A,h) \leq \sup_{\tau \geq 2; \sigma \geq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
+    M(\sigma_0,A,\geq h) \leq \sup_{\tau \geq 2; \sigma \geq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
 \end{equation}
 That is to say, any bound of the form
 $$ \LV_\zeta(\sigma,\tau) \leq M \tau - A (\sigma - \sigma_0)$$
 whenever $\tau \geq 2$ and $\sigma \geq 1/2, h\tau$, gives rise to a bound
-$$ M(\sigma_0,A,h) \leq M.$$
+$$ M(\sigma_0,A,\geq h) \leq M.$$
+Similarly for $M(\sigma_0,A,\geq h)$, in which we replace the condition $\sigma \geq h\tau$ by $\sigma \leq h\tau$.
 
-A typical result concerning $M(\sigma_0,A,h)$ is as follows.
+A typical result concerning $M(\sigma_0,A,\geq h)$ is as follows.
 
-\begin{lemma}\label{ivic-6-large}\cite[(8.56)]{ivic} $M(1/2, 6, 11/72) \leq 1$.
+\begin{lemma}\label{ivic-6-large}\cite[(8.56)]{ivic}\uses{mixed-moment-def} $M(1/2, 6, \geq 11/72) \leq 1$.
 \end{lemma}
 
 \begin{proof}\uses{zeta-from-exp} Applying Lemma \ref{zeta-from-exp} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ we have
@@ -212,14 +222,14 @@ $$ \LV_\zeta(\sigma,\tau) \leq \tau - 6(\sigma-1/2)$$
 if $\sigma - 1/2 \geq 11 \tau/72$, giving the claim.
 \end{proof}
 
-\begin{lemma}\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def} Suppose that $M(1/2,A,h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
+\begin{lemma}\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def, mixed-moment-def} Suppose that $M(1/2,A,\geq h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
     $$ \LV(\sigma,\tau) \leq \max( \alpha + 2 - 2 \sigma, -\alpha + \tau + A/2 - 2A (\sigma-1/2))$$
 whenever $1/2 \leq \sigma \leq 1$, $\tau > 0$, and $0 \leq \alpha \leq 1-\sigma$ is such that
 $$ \sigma - \frac{1}{2} > \frac{\tau h}{2} + \frac{1}{4}.$$
 \end{lemma}
 
-\begin{lemma}\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def}  Suppose that $M(1/2,6,h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
-$$ A(\sigma) \leq \max( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}).$$
+\begin{lemma}\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def, mixed-moment-def}  Suppose that $M(1/2,6,\geq h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
+$$ \A(\sigma) \leq \max( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}).$$
 \end{lemma}
 
 It is remarked in \cite{bourgain_remarks_1995} that this proposition could lead to some improvements in current zero density estimate bounds.
