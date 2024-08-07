@@ -61,7 +61,7 @@ class Zero_Density_Estimate:
         self.bound = None
 
     def __repr__(self):
-        return f"{self.expr} on {self.interval}"
+        return f"A(x)(1-x) \leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         if self.bound is None:

@@ -104,82 +104,60 @@ def best_proof_of_exponent_pair(k, l):
     else:
         print('Failed to prove the exponent pair ({k}, {l}).')
 
-# Prove Ingham's zero density estimate A(s) < 3/(1-s)
-def prove_ingham_zero_density(verbose=True):
+
+# Given additional_hypotheses, a list of new hypothesis (other than classical results),
+# find the best density estimate as a piecewise function, then if 'verbose' is true
+# displays the proof of the piece containing 'sigma'. 
+def prove_zero_density(additional_hypotheses, verbose, sigma, name):
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
     for k in range(2, 10):
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    hypotheses.add_hypotheses(additional_hypotheses)
+    
     zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
-    if verbose and len(zdes) > 0 and zdes[0] is not None:
-        hyp = zdes[0]
-        print()
-        print('Found proof of Ingham\'s zero-density estimate with complexity '
-              f'= {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
-        hyp.recursively_list_proofs()
+    
+    if verbose and len(zdes) > 0:
+        hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
+        if hyp is not None:
+            print()
+            print(f'Found proof of {name}\'s zero-density estimate')
+            hyp.recursively_list_proofs()
     return zdes
+    
+# Prove Ingham's zero density estimate A(s) < 3/(1-s)
+def prove_ingham_zero_density(verbose=True):
+    return prove_zero_density([], verbose, frac(1,2), 'Ingham')
 
 # Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
 def prove_huxley_zero_density(verbose=True):
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
-    for k in range(2, 10):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
-    hypotheses.add_hypotheses(
+    new_hyps = [
         literature.find_hypothesis(
             hypothesis_type='Large value estimate',
             keywords='Huxley'
             )
-        )
-    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
-    if verbose and len(zdes) > 0:
-        print()
-        print('Found proof of Huxley\'s zero-density estimate')
-        for hyp in zdes:
-            hyp.recursively_list_proofs()
-    return zdes
-
-# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
-def prove_guth_maynard_zero_density(verbose=True):
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
-    for k in range(2, 10):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
-    hypotheses.add_hypotheses(
-        literature.find_hypothesis(
-            hypothesis_type='Large value estimate', 
-            keywords='Guth, Maynard'
-            )
-        )
-    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
-    if verbose and len(zdes) > 0:
-        hyp = next((h for h in zdes if h.data.interval.contains(frac(3,4))), None)
-        if hyp is not None:
-            print()
-            print('Found proof of Guth--Maynard\'s zero-density estimate')
-            hyp.recursively_list_proofs()
-    return zdes
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(7,8), 'Huxley')
 
 # Prove Jutila's proof of the density hypothesis for s > 11/14.
 def prove_jutila_zero_density(verbose=True):
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(lv.large_value_estimate_L2)
-    for k in range(2, 10):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
-    hypotheses.add_hypotheses(
+    new_hyps = [
         literature.find_hypothesis(
             hypothesis_type='Large value estimate', 
             keywords='Jutila, k = 3'
             )
-        )
-    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1))
-    if verbose and len(zdes) > 0:
-        hyp = next((h for h in zdes if h.data.interval.contains(frac(9,10))), None)
-        if hyp is not None:
-            print()
-            print('Found proof of Jutila\'s zero-density estimate')
-            hyp.recursively_list_proofs()
-    return zdes
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Jutila')
+
+# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
+def prove_guth_maynard_zero_density(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type='Large value estimate', 
+            keywords='Guth, Maynard'
+            )
+        ]
+    return prove_zero_density(new_hyps, verbose, frac(3,4), 'Guth--Maynard')
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
