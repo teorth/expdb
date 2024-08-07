@@ -52,9 +52,13 @@ def prove_exponent_pair(k, l):
     hypotheses.add_hypotheses(compute_best_beta_bounds(hypotheses))
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
-    print(f"Proof of the exponent pair ({k}, {l}) exponent pair")
-    eph = next(h for h in new_exp_pairs if h.data.k == k and h.data.l == l)
-    eph.recursively_list_proofs()
+    eph = next((h for h in new_exp_pairs if h.data.k == k and h.data.l == l), None)
+    if eph is not None:
+        print()
+        print(f"Proof of the exponent pair ({k}, {l}) exponent pair:")
+        eph.recursively_list_proofs()
+    else:
+        print('Failed to prove the exponent pair ({k}, {l}).')
 
 def prove_heathbrown_exponent_pairs():
 
@@ -83,16 +87,25 @@ def best_proof_of_exponent_pair(k, l):
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.DATE
     )
-    hyp.recursively_list_proofs()
-
+    if hyp is not None:
+        print()
+        print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+        hyp.recursively_list_proofs()
+    else:
+        print('Failed to prove the exponent pair ({k}, {l}).')
+        
     hyp = ep.find_best_proof(
         frac(3, 40), frac(31, 40), literature, Proof_Optimization_Method.COMPLEXITY
     )
-    hyp.recursively_list_proofs()
+    if hyp is not None:
+        print()
+        print(f'Found proof of ({k}, {l}) with complexity = {hyp.proof_complexity()} and date = {hyp.proof_date()}:')
+        hyp.recursively_list_proofs()
+    else:
+        print('Failed to prove the exponent pair ({k}, {l}).')
 
 def prove_ingham_zero_density_estimate():
     hypotheses = Hypothesis_Set()
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Ingham zero density estimate'))
     lv_estimates = [lv.large_value_estimate_L2]
     zlv_estimates = literature.list_hypotheses(
         hypothesis_type="Zeta large value estimate"
@@ -100,14 +113,13 @@ def prove_ingham_zero_density_estimate():
     density_estimates = zd.compute_zero_density_estimate(
         lv_estimates, zlv_estimates, RationalFunction.parse("2 - x")
     )
-
-    pass
+    print(density_estimates)
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))
-    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_heathbrown_exponent_pairs()
-    # prove_ingham_zero_density_estimate()
+    prove_ingham_zero_density_estimate()
 
 prove_all()

@@ -236,7 +236,7 @@ def approximate_best_zero_density_estimate(hypotheses):
 #
 # for s in sigma_interval, returning the result as a piecewise function.
 # Returns: list of (RationalFunction, Interval) tuples.
-def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper, title=None):
+def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
 
     # Keep track of which hypothesis each piece came from
     lookup = []
