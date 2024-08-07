@@ -156,7 +156,36 @@ Additionally, for $\sigma=2/3$ one can take $A = 9.6187\dots$, for $\sigma = 7/1
 \begin{proof}\uses{zeta-from-exp, ivic-lvt-82, mad} This is a computation using Lemma \ref{zeta-from-exp}, Theorem \ref{ivic-lvt-82}, and Lemma \ref{mad}; see \cite{ivic} for details.
 \end{proof}
 
-{\bf TODO: report the improvements from \cite{trudgian-yang}.}
+\begin{theorem}\label{M_bound_larger_A}\uses{zeta-grow-def}\cite[Theorems 2.1, 2.2]{trudgian-yang}
+    We have
+    \[
+    M(1/2, A) \leq \begin{cases}
+        (16A + 35)/114 ,& \frac{866}{65} \leq A < 14, \\
+         (176677A + 358428)/1246476 ,& 14 \leq A < \frac{122304}{7955} = 15.37\ldots, \\
+         (779A + 1398)/5422 ,& \frac{122304}{7955} \leq A < \frac{910020}{58699} = 15.50\ldots, \\
+         3(1661A + 2856)/34532 ,& \frac{910020}{58699} \leq A < \frac{9604}{593} = 16.19\ldots, \\
+         (405277A + 677194)/2800950 ,& \frac{9604}{593} \leq A < \frac{629068}{35731} = 17.60\ldots, \\
+         (40726597A + 64268678)/280113282 ,& \frac{629068}{35731} \leq A < \frac{13789}{709} = 19.44\ldots, \\
+         3(46A + 49)/926 ,& \frac{13789}{709} \leq A < \frac{204580}{10333} = 19.79\ldots,\\
+         (3475A + 3236)/23168 ,& \frac{204580}{10333} \leq A < \frac{4252}{195} = 21.80\ldots, \\
+         7(39945A + 33704)/1857036 ,& \frac{4252}{195} \leq A < \frac{812348}{30267} = 26.83\ldots, \\
+         (37A + 24)/244 ,& \frac{812348}{30267} \leq A < \frac{440}{13} = 33.84\ldots, \\
+         (31A - 24)/196 ,& \frac{440}{13} \leq A < \frac{203087}{4742} = 42.82\ldots, \\
+         7(31519A - 33704)/1385180 ,& \frac{203087}{4742} \leq A < \frac{3516129}{65729} = 53.49\ldots, \\
+        1 + 13(A - 6)/84 ,& \frac{3516129}{65729} \leq A.
+    \end{cases}
+    \]
+   and also
+   \[
+    M(1/2, 12 + \delta) \le 2 + \frac{\delta}{8} + \frac{3\sqrt{510}}{7568}\delta^{3/2},\qquad 0 < \delta \le \frac{86}{65}.
+    \]
+\end{theorem}
+    In particular, we have
+    \begin{align*}
+    M(1/2,13) &\le 2.1340,&M(1/2,14) &\le 2.2720,&M(1/2,15) &\le 2.4137,\\
+    M(1/2,16) &\le 2.5570,&M(1/2,17) &\le 2.7016,&M(1/2,18) &\le 2.8466.
+\end{align*}
+
 
 \section{Large values of \texorpdfstring{$\zeta$}{zeta} moments}
 
