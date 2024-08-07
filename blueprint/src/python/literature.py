@@ -144,6 +144,7 @@ def add_beta_bound_sargos_1995():
 add_beta_bound_sargos_1995()
 
 
+
 # Huxley (1996) "Area, Lattice points and Exponential sums" Table 19.2
 def add_beta_bound_huxley_1996_2():
     bbeta.add_beta_bound(
