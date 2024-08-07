@@ -127,7 +127,7 @@ from which the result follows.
 
 \begin{theorem}[Montgomery large values theorem]\label{montgomery-lv}\uses{beta-def, lv-def} If $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ is such that
 \begin{equation}\label{tab}
-\sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau < 2\sigma - 1
+\sup_{1 \leq \tau' \leq \tau} \beta(1/\tau') \tau' < 2\sigma - 1
 \end{equation}
 (this condition is vacuous for $\tau < 1$) then the Montgomery conjecture \eqref{mont-conj} holds for this choice of parameters.
 \end{theorem}
@@ -282,17 +282,3 @@ $$ \rho \leq 4\alpha_1 + 3 - 4 \sigma,$$
 giving the claim.
 \end{proof}
 
-
-\begin{theorem}[Ivic large values theorem]\label{ivic-lvt-82}\cite[Lemma 8.2]{ivic}  If $\tau \geq 0$ and $1/2 < \sigma < \sigma' < 1$ are fixed, then
-$$ \LV(\sigma', \tau) \leq \max( 2 - 2\sigma', \tau - f(\sigma) (\sigma'-\sigma) )$$
-where $f(\sigma)$ is equal to
-\begin{align*}
-\frac{2}{3-4\sigma} &\hbox{ for } 1/2 < \sigma \leq 2/3; \\
-\frac{10}{7-8\sigma} &\hbox{ for } 2/3 \leq \sigma \leq 11/14; \\
-\frac{34}{15-16\sigma} &\hbox{ for } 11/14 \leq \sigma \leq 13/15; \\
-\frac{98}{31-32\sigma} &\hbox{ for } 13/15 \leq \sigma \leq 57/62; \\
-\frac{5}{1-\sigma} &\hbox{ for } 57/62 \leq \sigma < 1.
-\end{align*}
-In particular, the Montgomery conjecture holds for this choice of $\sigma'$ if
-$$ \tau \leq \sup_{1/2 < \sigma < \sigma'} f(\sigma) (\sigma'-\sigma) + 2 - 2 \sigma'.$$
-\end{theorem}

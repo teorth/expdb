@@ -105,6 +105,22 @@ Note the discontinuity at $1$.  Despite this, we have:
 
 We record the classical bounds on $\beta$:
 
+\begin{lemma}[Van der Corput $A$ process for $\beta$]\label{vdca-beta}\uses{beta-def} If $0 \leq \alpha \leq 2/3$ and $h \geq 0$ then
+$$ 2\beta(\alpha) \leq \max( 2\alpha - h, 2h, \alpha - h + \sup_{2\alpha-1 \leq h' \leq h} ((h'+1-\alpha)\beta(\frac{\alpha}{h'+1-\alpha})+h')).$$
+\end{lemma}
+
+\begin{proof}  By definition, there exists an unbounded $T$, $N = T^{\alpha+o(1)}$, $F$ a model phase function, and $I \subset [N,2N]$ such that
+    $$ \sum_{n \in I} e(T F(n/N)) = T^{\beta(\alpha)+o(1)}.$$
+Applying \cite[(2.54)]{ivic} with $H := T^h$, as well as the ensuing computations to dispose of the $j \ll T/N^2$ terms, one then has
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{T/N^2 \ll j \ll H} |\sum_{n \in I \cap I-j} e(T (f(n+j/N) - f(n/N)))|$$
+and hence by the pigeonhole principle
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap I-h} e(T (f(n+j/N) - f(n/N)))|$$
+for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  By Definition \ref{beta-def}, one has
+$$ \sum_{n \in I \cap I-h} e(T (f(n+j/N) - f(n/N))) \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
+and the claim follows after evaluating all terms as powers of $T$.
+\end{proof}
+
+
 \begin{proposition}[Van der Corput inequality]\label{beta-vdc}\uses{beta-def} For any natural number $k \geq 2$ and any $\alpha>0$, one has
     $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-k\alpha}{2^k-2}, (1 - 2^{2-k})\alpha - \frac{1-\alpha}{2^k-2}\right).$$
     Thus for instance when $k=2$ we have
@@ -122,7 +138,7 @@ We record the classical bounds on $\beta$:
 
 This form of upper bound of $\beta(\alpha)$ - as the maximum of a finite number of linear functions of $\alpha$ - is extremely common in the literature.
 
-\begin{proof} Follows from \cite[Theorem 8.20]{ik}.
+\begin{proof}\uses{vdca-beta} Follows from \cite[Theorem 8.20]{ik}. It is also possible to prove this by induction on $k$ using Lemma \ref{vdca-beta}.
 \end{proof}
 
     \begin{corollary}[Optimizing the van der Corput inequality]\label{vdc-opt}\uses{beta-def}  For any $\alpha > 0$ one has
@@ -271,6 +287,13 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
 \end{proof}
 
 
+\begin{theorem}[1995 Sargos bound]\label{sargos_1995}\cite[Th\'eor\`eme 2.4, Lemme 2.6]{sargos_points_1995}  For any $0 \leq \alpha \leq 1$, one has
+$$ \beta(\alpha) \leq \max(\alpha + \frac{3(1-4\alpha)}{40}, \frac{7}{8} \alpha, \frac{1}{3}\alpha - \frac{1-4\alpha}{6}, 0)$$
+and
+$$ \beta(\alpha) \leq \max(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alpha, \frac{1}{3}\alpha - \frac{1-4\alpha}{6}, 0).$$
+\end{theorem}
+
+{\bf TODO: implement this in python}
 
 \begin{table}[ht]
     \caption{Huxley table 17.1.}
@@ -356,7 +379,7 @@ See \cite[Theorem~3]{huxley_exponential_1993}.
 \code{add_beta_bound_huxley_1996()}\\
 \code{add_beta_bound_huxley_1996_2()}
 
-\begin{proof} See \cite[Table 17.1, Table 19.2]{huxley_area_1996}.
+\begin{proof} See \cite[Table 17.1, Table 19.2]{huxley_area_1996} (and also \cite[\S 3.0.2, 3.0.3]{trudgian-yang} for some verification of the technical conditions on the phase).
 \end{proof}
 
 
@@ -387,7 +410,7 @@ See \cite[Theorem~1]{robert_fourth_2002}.
 
 
 % An analog of van der Corput’s A4-process for exponential sums
-\begin{theorem}[Sargos bound]\label{sargos-bound}\uses{beta-def}  For any $\alpha > 0$ one has
+\begin{theorem}[Sargos 2003 bound]\label{sargos-bound}\uses{beta-def}  For any $\alpha > 0$ one has
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-8\alpha}{204}, -\frac{95(1-8\alpha)}{204}\right)$$
 and
 $$ \beta(\alpha) \leq \max\left( \alpha + \frac{7(1-9\alpha)}{2640}, -\frac{1001(1-9\alpha)}{2640}\right).$$
@@ -479,7 +502,7 @@ $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{
 
 {\bf TODO: implement this in python}
 
-\begin{theorem}[Combined bound]  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
+\begin{theorem}[Combined bound]\label{combined-bound}\uses{beta-def}  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
 \end{theorem}
 
 \begin{proof} See \cite[Table 3]{trudgian-yang}.
@@ -519,7 +542,7 @@ $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{
     \hline
     $ \frac{1}{32} + \frac{103}{128} \alpha $ & $ \frac{12}{31} $ & $ \frac{1508}{3825} = 0.3942\ldots $ & Table \ref{huxley-table-1}\\
     \hline
-    $ \frac{18}{199} + \frac{521}{796} \alpha $ & $ \frac{1508}{3825} $ & $ \frac{62831}{155153} = 0.4049\ldots $ & Sargos \cite{sargos_points_1995}\\
+    $ \frac{18}{199} + \frac{521}{796} \alpha $ & $ \frac{1508}{3825} $ & $ \frac{62831}{155153} = 0.4049\ldots $ & Exponent pair $D(\frac{13}{84}, \frac{55}{84})$\\
     \hline
     $ \frac{569}{2800} + \frac{1053}{2800} \alpha $ & $ \frac{62831}{155153} $ & $ \frac{143}{349} = 0.4097\ldots $ & Table \ref{huxley-table-2}\\
     \hline
