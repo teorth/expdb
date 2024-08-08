@@ -332,38 +332,6 @@ add_beta_bound_bourgain_2017()
 
 
 
-def add_beta_bound_transform_sargos_1995():
-    def transform(hypothesis):
-        domain = Interval(0, frac(1,2), True, True)
-        pieces = Affine(
-            (6 * k + 5 * l + 2) / (2 * (5 * k + 3 * l + 2)),
-            (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
-            domain,
-        ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
-        
-        for p in pieces:
-            hypotheses.append(
-                derived_bound_beta(
-                    p,
-                    f"Follows from Sargos (1995) and the exponent pair {eph.data}",
-                    {eph},
-                )
-            )
-        raise NotImplementedError() # TODO
-        
-    literature.add_hypothesis(
-        Hypothesis(
-            'Sargos (1995) beta transform',
-            'Upper bound on beta transform',
-            bbeta.Bound_Beta_Transform(
-                'Sargos (1995) beta transform',
-                transform
-                ),
-            'See Sargos (1995)',
-            Reference.get('sargos_points_1995')
-            )
-        )
-
 
 
 ########################################################################################
@@ -537,33 +505,66 @@ def C_transform(hypothesis):  # Sargos 2003 transform
     )
 
 
+# Sargos 1995 transform: exp pair -> list of beta bounds
+def D_transform(hypothesis):
+    
+    if hypothesis.hypothesis_type != "Exponent pair":
+        raise ValueError("Parameter hypothesis must be of type Exponent pair")
+        
+    k = hypothesis.data.k
+    l = hypothesis.data.l
+    domain = Interval(0, frac(1,2), True, True)
+    pieces = Affine(
+        (6 * k + 5 * l + 2) / (2 * (5 * k + 3 * l + 2)),
+        (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
+        domain,
+    ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
+    
+    return [
+        bbeta.derived_bound_beta(
+                p,
+                "Follows from Sargos (1995) and the exponent pair {hypothesis.data}",
+                {hypothesis},
+            )
+        for p in pieces
+        ]
+
 literature.add_hypothesis(
     Hypothesis(
-        f"van der Corput A transform",
+        "van der Corput A transform",
         "Exponent pair transform",
-        Transform(f"van der Corput A transform", A_transform),
+        Transform("van der Corput A transform", A_transform),
         "See [van der Corput, 1920]",
-        Reference.make(f"Weyl--van der Corput", 1920),
+        Reference.make("Weyl--van der Corput", 1920),
     )
 )
 literature.add_hypothesis(
     Hypothesis(
-        f"van der Corput B transform",
+        "van der Corput B transform",
         "Exponent pair transform",
-        Transform(f"van der Corput B transform", B_transform),
+        Transform("van der Corput B transform", B_transform),
         "See [van der Corput, 1920]",
-        Reference.make(f"van der Corput", 1920),
+        Reference.make("van der Corput", 1920),
     )
 )
 literature.add_hypothesis(
     Hypothesis(
-        f"Sargos C transform",
+        "Sargos C transform",
         "Exponent pair transform",
-        Transform(f"Sargos C transform", C_transform),
+        Transform("Sargos C transform", C_transform),
         "See [Sargos, 2003]",
         rm.get("sargos_analog_2003"),
     )
 )
+literature.add_hypothesis(
+    Hypothesis(
+        "Sargos D transform",
+        "Exponent pair to beta bound transform",
+        Transform("Sargos D transform", D_transform),
+        'See [Sargos, 1995]',
+        rm.get('sargos_points_1995'),
+        )
+    )
 
 ########################################################################################
 # We now list the known upper bounds on $\mu$ in the literature.
