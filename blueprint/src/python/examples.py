@@ -366,13 +366,13 @@ def more_zero_density_examples():
     zd.optimise_bourgain_zero_density_estimate()
 
 def all_examples():
-    # mu_bound_examples()
-    # exp_pair_examples()
-    # beta_bound_examples()
+    mu_bound_examples()
+    exp_pair_examples()
+    beta_bound_examples()
     # large_values_examples()
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    more_zero_density_examples()
+    #more_zero_density_examples()
 
 all_examples()

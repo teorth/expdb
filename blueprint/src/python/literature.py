@@ -13,6 +13,7 @@ import zero_density_estimate as zd
 from functions import RationalFunction as RF, Interval as Itvl
 import os.path
 from reference import *
+from transform import Transform
 
 # literature will contain all the bounds that are directly drawn from the literature
 literature = Hypothesis_Set()
@@ -505,10 +506,8 @@ def add_exp_pairs_up_to(hypothesis_list, year):
 # List of exponent pair transforms (maps of exponent pair -> exponent pair) in
 # the literature, e.g. the van der Corput A/B transforms.
 
-
-def A_transform(
-    hypothesis,
-):  # van der Corput A transform (weyl-van der Corput inequality)
+# van der Corput A transform (weyl-van der Corput inequality)
+def A_transform(hypothesis):  
     pair = hypothesis.data
     return derived_exp_pair(
         pair.k / (2 * pair.k + 2),
@@ -542,7 +541,7 @@ literature.add_hypothesis(
     Hypothesis(
         f"van der Corput A transform",
         "Exponent pair transform",
-        Exp_pair_transform(f"van der Corput A transform", A_transform),
+        Transform(f"van der Corput A transform", A_transform),
         "See [van der Corput, 1920]",
         Reference.make(f"Weyl--van der Corput", 1920),
     )
@@ -551,7 +550,7 @@ literature.add_hypothesis(
     Hypothesis(
         f"van der Corput B transform",
         "Exponent pair transform",
-        Exp_pair_transform(f"van der Corput B transform", B_transform),
+        Transform(f"van der Corput B transform", B_transform),
         "See [van der Corput, 1920]",
         Reference.make(f"van der Corput", 1920),
     )
@@ -560,7 +559,7 @@ literature.add_hypothesis(
     Hypothesis(
         f"Sargos C transform",
         "Exponent pair transform",
-        Exp_pair_transform(f"Sargos C transform", C_transform),
+        Transform(f"Sargos C transform", C_transform),
         "See [Sargos, 2003]",
         rm.get("sargos_analog_2003"),
     )

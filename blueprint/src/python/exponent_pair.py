@@ -29,25 +29,6 @@ class Exp_pair:
         return NotImplemented
 
 
-# An object that represents a transform mapping exponent pairs to exponent pairs
-# E.g. the van der Corput A, B transform.
-class Exp_pair_transform:
-    # Parameters:
-    #   - name: (string type) the unique label for this exponent pair transform
-    #   - func: (function Hypothesis -> Hypothesis) a function mapping a Hypothesis
-    #           object of type 'Exponent Pair' and returning a Hypothesis object
-    #           of type 'Exponent Pair' obtained after applying the transformation
-    #           once
-    def __init__(self, name, func):
-        if not isinstance(name, str):
-            raise "name must be of type string"
-        self.name = name
-        self.transform = func
-
-    def __repr__(self):
-        return self.name
-
-
 ########################################################################################
 # Constructors for exponent pairs
 
