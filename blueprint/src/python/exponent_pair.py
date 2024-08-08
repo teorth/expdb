@@ -138,7 +138,8 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
 
     # Compute the best bound on beta - (imported bound_beta.py method)
     beta_bound = compute_best_beta_bounds(hypothesis_set)
-    # If there are no beta bounds, or it does not cover the entire [1/2, 1]
+    
+    # If there are no beta bounds, or it does not cover the entire [0, 1/2]
     # interval, then there are no exponent pairs generated
     if len(beta_bound) == 0 or (
         beta_bound[0].data.bound.domain.x0 > 0
@@ -157,11 +158,7 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
     conv = ConvexHull(np.array(points))
 
     # Precompute the dependencies. Currently every beta bound that is on the boundary
-    # of the convex hull is included in the dependencies for every exponent pair.
-    # TODO: However, it is likely that for most exponent pairs we can get away with
-    # a much smaller list of dependencies. One way to measure "desirability" of
-    # a set of dependencies is to minimise the date of the most recent result in
-    # such the dependency set
+    # of the convex hull is included in the dependencies for every exponent pair
     dep_indices = set()
     for v in conv.vertices:
         if v >= 2:  # skip the placeholder vertices:
