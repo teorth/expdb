@@ -52,7 +52,7 @@ def mu_bound_examples():
         f"Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
     )
     add_exp_pairs_all(hypotheses)
-    add_exp_pair_transforms_all(hypotheses)
+    hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type="Exponent pair transform"))
     ans = prove_mu_bound(frac(3, 4), frac(8, 63), hypotheses)
     print(f"Recursive dependencies used to prove '{ans}':")
     ans.recursive_dependencies().list_proofs()
@@ -93,6 +93,9 @@ def exp_pair_examples():
     )
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
     )
     hypotheses.add_hypotheses(
         ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
@@ -153,6 +156,9 @@ def beta_bound_examples():
     )
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
     )
     print(
         "\tTotal exponent pairs:",
@@ -260,10 +266,10 @@ def plot(zdt, hypotheses, title=None):
 
     for i in range(N):
         sigma = 1 / 2 + 1 / 2 * i / N
-        A = next((p[0].at(sigma) for p in zdt if p[1].contains(sigma)), 0)
+        A = next((p.data.at(sigma) for p in zdt if p.data.interval.contains(sigma)), 0)
         xs.append(sigma)
         computed_zdt.append(A / (1 - sigma))
-        literature_zdt.append(min(h.data.at(sigma) for h in hypotheses))
+        literature_zdt.append(min(h.data.at(sigma) for h in hypotheses if h.data.interval.contains(sigma)))
 
     plt.figure(dpi=1200)
     plt.xlabel("σ")
@@ -276,7 +282,6 @@ def plot(zdt, hypotheses, title=None):
         plt.title(title)
     plt.legend(loc="lower left")
     plt.show()
-    plt.savefig("../test.png")
 
 
 def zero_density_estimates_examples():
@@ -308,11 +313,8 @@ def zero_density_estimates_examples():
     zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(5))
     print("Best-known vs computed zero-density estimate")
     print("A(x)(1-x) \\leq")
-    for s in zdt:
-        print(f"\t{s[0]} for x \\in {s[1]}, which depends on:")
-        # for hyps in s[2]:
-        #     for h in hyps:
-        #         h.recursively_list_proofs(2)
+    for h in zdt:
+        h.recursively_list_proofs()
     plot(
         zdt,
         literature.list_hypotheses(hypothesis_type="Zero density estimate"),
@@ -351,10 +353,8 @@ def zero_density_estimates_examples2():
     zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1, 2), 1))
     print("Verifying Heath-Brown's zero-density estimate")
     print("A(x)(1-x) \\leq")
-    for s in zdt:
-        print(f"\t{s[0]} for x \\in {s[1]}, which depends on:")
-        for h in s[2]:
-            h.recursively_list_proofs(2)
+    for h in zdt:
+        h.recursively_list_proofs()
     plot(zdt, "Heath-Brown zero density estimate")
 
     hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
@@ -366,13 +366,13 @@ def more_zero_density_examples():
     zd.optimise_bourgain_zero_density_estimate()
 
 def all_examples():
-    # mu_bound_examples()
-    # exp_pair_examples()
-    # beta_bound_examples()
+    mu_bound_examples()
+    exp_pair_examples()
+    beta_bound_examples()
     # large_values_examples()
     # zeta_large_values_examples()
-    # zero_density_estimates_examples()
+    zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    more_zero_density_examples()
+    #more_zero_density_examples()
 
 all_examples()

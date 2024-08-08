@@ -171,6 +171,9 @@ The claim follows.
     In particular, one has the Montgomery conjecture for $\tau < 4 \sigma - 2$.
 \end{theorem}
 
+\literature
+\code{add_huxley_large_values_estimate()}
+
 \begin{proof}\uses{exp-lv, vdc-class}  Apply Corollary \ref{exp-lv} with the pair $(k,\ell) = (1/2,1/2)$ from Lemma \ref{vdc-class}.
 \end{proof}
 
@@ -182,11 +185,14 @@ The claim follows.
     \[
     \LV(\sigma, \tau) \le \max\left(2 - 2\sigma, \frac{11}{12}\rho + \frac{3}{2} + \frac{\tau}{6} - 2\sigma\right)
     \]
-    \end{theorem}
+\end{theorem}
 
-    \begin{proof}
+\literature
+\code{add_heath_brown_large_values_estimate()}
+
+\begin{proof}
     Follows from \cite[Lemma~1]{heathbrown_zero_1979}.
-    \end{proof}
+\end{proof}
 
 \begin{theorem}[Heath-Brown large values theorem, optimized]\label{hb-opt}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.   One has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 10 + \tau - 13 \sigma).$$
@@ -232,6 +238,9 @@ In particular, the Montgomery conjecture holds for
 $$ \tau \leq \min( (4-2/k)\sigma - (2-2/k), (8k-2)\sigma - 6k + 2).$$
 \end{theorem}
 
+\literature
+\code{add_julita_large_values_estimate()}
+
 \begin{proof} See \cite[(1.4)]{jutila_zero_density_1977} (setting $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, and $G \leq N$).  We remark that this form is an optimized form of the inequality after (3.2) in Jutila's paper, which in our notation would read that
 $$ 2\LV(\sigma,\tau) + 2\sigma \leq \max \left(2 + \rho, \frac{3}{2} + \left(2 - \frac{1}{k}\right)\rho + \rho + \frac{1}{2k}\max\left(k(\tau-1), \frac{\rho+\tau}{2}\right), 2\rho + 1\right)$$
 whenever $\LV(\sigma,\tau) \leq \rho$.  The optimization follows from Lemma \ref{montgomery-subdivide} and routine calculations.
@@ -240,6 +249,9 @@ whenever $\LV(\sigma,\tau) \leq \rho$.  The optimization follows from Lemma \ref
 \begin{theorem}[Guth--Maynard large values theorem]\label{guth-maynard-lvt}\uses{lv-def} One has
 $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
+
+\literature
+\code{add_guth_maynard_large_values_estimate()}
 
 \begin{proof}
 See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{guth-maynard-lvt-again}

@@ -27,7 +27,7 @@ class Large_Value_Estimate:
     def __repr__(self):
         return "LV(x, y) \leq " + str(self.bound)
 
-
+    
 class Large_Value_Estimate_Transform:
 
     def __init__(self, transform):
@@ -181,7 +181,7 @@ def raise_to_power_hypothesis(k):
 
 ###############################################################################
 
-
+# Debugging functions
 def covers(estimate, xlim, ylim):
     N = 100
     for xi in range(1, N):
@@ -193,6 +193,8 @@ def covers(estimate, xlim, ylim):
                     print(p)
                 raise ValueError(f"{x}, {y}")
 
+
+###############################################################################
 
 # Given a list of Piecewise objects, compute their minimum over a given domain
 # Returns result as a list of hypotheses, created using the constructor function
@@ -281,10 +283,44 @@ def best_large_value_estimate(hypotheses, domain=None):
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
 
 
-# Try to prove the given large value estimate (hypothesis) by assuming the hypotheses
-# in hypothesis_set
-def prove_large_value_estimate(hypothesis, hypothesis_set):
+# Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic 
+# properties (ii) of Large value estimates section) to obtain a better large 
+# value estimate. 
+# 
+# If the large value estimate is unchanged, returns None. Otherwise, the new 
+# large value estimate is returned as a Hypothesis
+def apply_huxley_subdivision(hypothesis):
     if not isinstance(hypothesis, Hypothesis):
-        raise ValueError("Parameter hypothesis must be of type Hypothesis")
-    if not isinstance(hypothesis_set, Hypothesis_Set):
-        raise ValueError("Parameter hypothesis_set must be of type Hypothesis_Set")
+        raise ValueError('Parameter hypothesis must be of type Hypothesis')
+    if hypothesis.hypothesis_type != 'Large value estimate':
+        raise ValueError('Parameter hypothesis must be a Hypothesis of type "Large value estimate"')
+        
+    # Iterate through the pieces, extracting the facets (which are just lines) 
+    # then compute their projection onto the \sigma space
+    for p in lv_hypothesis.data.bound.pieces:
+        p = pieces[k]
+        # Compute vertices and facets of the domain
+        verts = p.domain.get_vertices()
+        incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
+        constraints = p.domain.get_constraints()
+
+        # Iterate through the edges
+        for i in range(len(constraints)):
+            c = constraints[i].coefficients
+            vs = [verts[j] for j in incidences[i]]
+            sub = Interval(min(v[0] for v in vs), max(v[0] for v in vs), True, True)
+            if sub.length() > 0:
+                faces.append((RF([-c[1], -c[0]], [c[2]]), p, sub, lookup[k]))
+                
+    raise NotImplementedError()
+    
+
+
+
+
+
+
+
+
+
+

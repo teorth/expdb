@@ -148,8 +148,18 @@ def run_polytope_tests():
         (0, -1),
     }
 
-
+def run_setminus_test():
+    A = Polytope.rect((0, 5), (0, 5))
+    B = Polytope.rect((1, 2), (1, 2))
+    
+    A_minus_B = A.set_minus(B)
+    
+    assert not any(p.contains((1.5, 1.5)) for p in A_minus_B)
+    assert any(p.contains((3, 3)) for p in A_minus_B)
+    
+    
+run_polytope_tests()
 run_V_init_test()
 run_polytope_edge_tests()
 run_3_way_union_test()
-run_polytope_tests()
+run_setminus_test()

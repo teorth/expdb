@@ -117,12 +117,7 @@ class Polytope:
         self.rays = None
 
     def __copy__(self):
-        p = Polytope([])  # Construct an empty polytope temporarily
-        p.mat = self.mat.copy()
-        p.polyhedron = cdd.Polyhedron(p.mat)
-        p.vertices = None
-        p.rays = None
-        return p
+        return Polytope._from_mat(self.mat.copy())
 
     def __repr__(self):
         def to_str(row, is_lin):
@@ -163,7 +158,7 @@ class Polytope:
         )
 
     # -------------------------------------------------------------------------
-    # internal functions
+    # internal/private functions
 
     # Check if the point x satisfies the inequality or equality given in row
     # row_index of the given matrix
@@ -171,7 +166,16 @@ class Polytope:
         r = matrix[row_index]
         s = r[0] + sum(r[i + 1] * x[i] for i in range(len(x)))
         return (s == 0) if row_index in matrix.lin_set else (s >= 0)
-
+    
+    # Construct a Polytope object directly from a matrix instead of from constraints
+    def _from_mat(matrix):
+        p = Polytope([])  # Construct an empty polytope temporarily
+        p.mat = matrix
+        p.polyhedron = cdd.Polyhedron(matrix)
+        p.vertices = None
+        p.rays = None
+        return p
+        
     # -------------------------------------------------------------------------
     # Static public functions
 
@@ -253,7 +257,7 @@ class Polytope:
         p.mat = H
         p.polyhedron = poly
         p.vertices = copy.copy(verts)  # Shallow copy is fine for now
-        p.rays = None
+        p.rays = []
         return p
 
     # -------------------------------------------------------------------------
@@ -355,18 +359,48 @@ class Polytope:
 
         return Polytope(mat, canonicalize=True)
 
-    # Computes A \ B where A is this polytope and B is another polytope
-    def set_minus(self, other):
+
+    # Computes A \ B where A is this polytope and B is another polytope. Returns 
+    # a list of polytopes that are guaranteed to be disjoint, and whose union 
+    # equals A \ B. Note that since this polytope implementation ignores boundaries
+    # we ignore any possible ambiguity regarding whether points lying on the 
+    # boundary of the resulting polytopes belong to A \ B. 
+    def set_minus(self, other, simplify=True):
         if not isinstance(other, Polytope):
             raise ValueError("Parameter other must be of type Polytope")
-        # A \ B = A intersect (B complement)
-        mat = self.mat.copy()
-        mat.extend(
-            [[-x for x in r] for r in other.mat if r not in other.lin_set], linear=False
-        )
-        # ignore linear constraint since we do not consider boundaries
-        # mat.extend([r for r in other.mat if r in other.lin_set], linear=True)
-        return Polytope(mat, canonicalize=True)
+        
+        # Iterate through the constraints of B. For each constraint, take its 
+        # complement, then add the original constraint to the set of constraints
+        # for the new region. All linear constraints are ignored (see above for 
+        # rationale)
+        A = self.mat
+        B = other.mat
+
+        polys = []
+        for i in range(B.row_size):
+            if i in B.lin_set: continue
+            c = B[i]
+            print(c)
+            # Invert the constraint c then compute A \intersect c'
+            c_comp = [-x for x in c]
+            A_copy = A.copy()
+            A_copy.extend([c_comp], linear=False)
+            if simplify:
+                A_copy.canonicalize()
+
+            part = Polytope._from_mat(A_copy)
+            if simplify:
+                if not part.is_empty(include_boundary=False):
+                    polys.append(part)
+            else:
+                polys.append(part)
+
+            # For the next part
+            if i < B.row_size - 1:
+                A.extend([c])
+
+        return polys
+
 
     # Returns whether this polytope intersects with a plane. Parameter plane must
     # be of type Hyperplane
@@ -388,8 +422,10 @@ class Polytope:
                 sign = new_sign
         return False
 
+
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
-    # This is determined by checking the number of vertices in its V representation
+    # This is currently determined by checking the number of vertices in its V representation
+    # - however, solving a LP may be faster
     def is_empty(self, include_boundary=True):
         if self.vertices is None:
             self.compute_V_rep()
@@ -399,3 +435,5 @@ class Polytope:
 
         # If not including boundary, strict subspace vertex regions are considered empty
         return len(self.vertices) <= self.dimension()
+
+
