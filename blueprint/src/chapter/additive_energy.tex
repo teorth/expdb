@@ -70,7 +70,9 @@ We caution that this normalization differs from the one in \cite{ivic}, where $n
 where $R_W$ is the exponential sum
 $$ R_W(x) := \sum_{t \in W} x^{it}.$$
 From the first formula it is clear that $S(N,W)$ is monotone non-decreasing in $W$, and from the second formula one has the triangle inequality
-$$ S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}$$
+\begin{equation}\label{S-triangle}
+S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}
+\end{equation}
 when the $W_i$ are disjoint, and hence also when they are not assumed to be disjoint, thanks to the monotonicity.
 
 The following Cauchy--Schwarz inequality is also useful:
@@ -189,7 +191,7 @@ Thus these exponents are upper bounds for the additive energy of large values of
 
 As usual, we have an equivalent non-asymptotic definition of the large value energy region:
 
-\begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{energy-def} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{lv-edef} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(\sigma,\tau,\rho,\rho^*) \in \Energy$.
     \item[(ii)] For every $\eps>0$ and $C > 0$, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$,
@@ -202,22 +204,29 @@ As usual, we have an equivalent non-asymptotic definition of the large value ene
 
 This lemma is proven by a routine expansion of the definitions, and is omitted.
 
-\begin{lemma}[Basic properties]\label{lve-basic}\
+\begin{lemma}[Basic properties]\label{lve-basic}\uses{lv-edef}\
     \begin{itemize}
         \item[(i)] (Monotonicity in $\sigma$) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
         $(\sigma',\tau',\rho,\rho^*,s) \in \Energy$ for all $1/2 \leq \sigma' \leq \sigma$ and $\tau' \geq \tau$.
-        \item[(ii)] (Subdivision) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ and $0 \leq \tau' \leq \tau$, then there exists $(\sigma,\tau', \rho', (\rho')^*,s') \in \Energy$ such that
-        $$\rho' \leq \rho \leq \rho' + \tau - \tau'$$
-        and
-        $$(\rho')^* + (\rho-\rho') \leq \rho^* \leq \rho' + 3(\rho-\rho').$$
-        and
-        $$s' \leq s \leq s' + 2(\rho-\rho').$$
+        \item[(ii)] (Subdivision) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ and $0 \leq \tau' \leq \tau$, then amongst all tuples $(\sigma,\tau', \rho', (\rho')^*,s') \in \Energy$ with $\rho' \leq \rho$, $(\rho')^* \leq \rho^*$, and $s' \leq s$, there exists a tuple with
+        $$\rho \leq \rho' + \tau - \tau';$$
+        there exists a tuple with
+        $$\rho^* \leq \rho' + 3\min(\rho-\rho',\tau-\tau');$$
+        and there exists a tuple with
+        $$s \leq s' + 2\min(\rho-\rho',\tau-\tau').$$
+        (But it may not be the same tuple that satisfies all three properties.)
         \item[(iii)]  (Trivial bounds) If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, one has
         $$ 2\rho, 4\rho-\tau \leq \rho^* \leq 3 \rho.$$
     \end{itemize}
 \end{lemma}
 
-\begin{proof}  ...
+\begin{proof}  The claim (i) is trivial, so we turn to (ii).  By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N > 1$ unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$.  We now partition $J$ into $N^{\tau-\tau'+o(1)}$ subintervals $I$ of length $N^{\tau'+o(1)}$, and subdivide $W$ into $W_I$ accordingly.  By dyadically pigeonholing, we can then subdivide this collection $I$ of intervals into $N^{o(1)}$ subcollections, where on each subcollection there exists fixed $\rho', (\rho')^*, s'$ such that $|W_I| = N^{\rho'+o(1)}$, $E_1(W_I) = N^{(\rho')^* + o(1)}$, and $S(N,W_I) = N^{s'+o(1)}$.  Since $W_I \subset W$, this forces $\rho' \leq \rho$, $(\rho')^* \leq \rho^*$, and $s' \leq s$.  From Definition \ref{lv-edef} we see that $(\sigma,\tau', \rho', (\rho')^*,s') \in \Energy$.
+
+By the pigeonhole principle, one of these subcollections must contribute at least $N^{-o(1)}$ of the cardinality of $W$.  Since there are at most $N^{\tau-\tau'+o(1)}$ intervals in this collection, we must have $\rho \leq \rho' + \tau - \tau'$ in this case.
+
+By Lemma \ref{add-energy}(iii), we also know that a (possibly different subcollection) must contribute at least $N^{-o(1)}$ of the additive energy of $W$.  The number of intervals in this subcollection is at most $\min( N^{\tau-\tau'+o(1)}, N^{\rho-\rho'+o(1)})$.  Applying Lemma \ref{add-energy}(iii) again, we conclude $\rho^* \leq (\rho^*)' + 3\min(\rho-\rho',\tau-\tau')$.
+
+Finally, from \eqref{S-triangle}, we know that a (possibly yet another subcollection) must contribute at least $N^{-o(1)}$ of the double zeta sum $S(N,W)$. The number of intervals in this subcollection is at most $\min( N^{\tau-\tau'+o(1)}, N^{\rho-\rho'+o(1)})$.  Applying Lemma \ref{S-triangle}(iii) again, we conclude $s \leq s' + 2\min(\rho-\rho',\tau-\tau')$.
 \end{proof}
 
 
