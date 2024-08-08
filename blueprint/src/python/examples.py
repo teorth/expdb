@@ -52,7 +52,7 @@ def mu_bound_examples():
         f"Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
     )
     add_exp_pairs_all(hypotheses)
-    add_exp_pair_transforms_all(hypotheses)
+    hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type="Exponent pair transform"))
     ans = prove_mu_bound(frac(3, 4), frac(8, 63), hypotheses)
     print(f"Recursive dependencies used to prove '{ans}':")
     ans.recursive_dependencies().list_proofs()

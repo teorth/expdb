@@ -156,7 +156,7 @@ class Hypothesis_Set:
         return list(self.hypotheses)
 
     def list_proofs(self):
-        for hypothesis in self.to_set():
+        for hypothesis in self:
             print(hypothesis.desc_with_proof())
 
     # Adds a single hypothesis to the hypothesis set.
