@@ -377,11 +377,11 @@ class Polytope:
         B = other.mat
         
         polys = []
-        for i in range(len(B)):
+        for i in range(B.row_size):
             if i in B.lin_set: 
                 continue
             c = B[i]
-            
+            print(c)
             # Invert the constraint c then compute A \intersect c'
             c_comp = [-x for x in c]
             A_copy = A.copy()
@@ -397,8 +397,8 @@ class Polytope:
                 polys.append(part)
                 
             # For the next part
-            if i < len(B) - 1:
-                A.extend(c)
+            if i < B.row_size - 1:
+                A.extend([c])
                 
         return polys
 
