@@ -243,6 +243,6 @@ def prove_all():
     prove_heathbrown_zero_density()
     prove_heathbrown_zero_density2()
     prove_guth_maynard_zero_density()
-    # prove_extended_heathbrown_zero_density()
+    #prove_extended_heathbrown_zero_density()
 
 prove_all()

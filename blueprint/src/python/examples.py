@@ -95,6 +95,9 @@ def exp_pair_examples():
         literature.list_hypotheses(hypothesis_type="Exponent pair transform")
     )
     hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
+    )
+    hypotheses.add_hypotheses(
         ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
     )
     hyps = ep.compute_convex_hull(hypotheses)
@@ -153,6 +156,9 @@ def beta_bound_examples():
     )
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
     )
     print(
         "\tTotal exponent pairs:",
@@ -308,11 +314,8 @@ def zero_density_estimates_examples():
     zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(5))
     print("Best-known vs computed zero-density estimate")
     print("A(x)(1-x) \\leq")
-    for s in zdt:
-        print(f"\t{s[0]} for x \\in {s[1]}, which depends on:")
-        # for hyps in s[2]:
-        #     for h in hyps:
-        #         h.recursively_list_proofs(2)
+    for h in zdt:
+        h.recursively_list_proofs()
     plot(
         zdt,
         literature.list_hypotheses(hypothesis_type="Zero density estimate"),
@@ -351,10 +354,8 @@ def zero_density_estimates_examples2():
     zdt = zd.compute_best_zero_density_estimate(hypotheses, Interval(frac(1, 2), 1))
     print("Verifying Heath-Brown's zero-density estimate")
     print("A(x)(1-x) \\leq")
-    for s in zdt:
-        print(f"\t{s[0]} for x \\in {s[1]}, which depends on:")
-        for h in s[2]:
-            h.recursively_list_proofs(2)
+    for h in zdt:
+        h.recursively_list_proofs()
     plot(zdt, "Heath-Brown zero density estimate")
 
     hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
@@ -371,7 +372,7 @@ def all_examples():
     beta_bound_examples()
     # large_values_examples()
     # zeta_large_values_examples()
-    # zero_density_estimates_examples()
+    zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     #more_zero_density_examples()
 

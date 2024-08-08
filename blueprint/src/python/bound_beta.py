@@ -103,6 +103,7 @@ def exponent_pairs_to_beta_bounds(hypothesis_set):
 
     hypotheses = []
     ephs = hypothesis_set.list_hypotheses(hypothesis_type="Exponent pair")
+    transforms = hypothesis_set.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
 
     domain = Interval(0, frac(1, 2), True, True)
     for eph in ephs:
@@ -111,28 +112,14 @@ def exponent_pairs_to_beta_bounds(hypothesis_set):
         hypotheses.append(
             derived_bound_beta(
                 Affine(l - k, k, domain),
-                f"Follows from the exponent pair {eph.data}.",
+                f'Follows from "{eph.name}"',
                 {eph},
             )
         )
-
-        # Sargos (1995) Theorem 7.1 -
-        # TODO: add this to the literature
-        # TODO: include an exponent pair transform as a literature hypothesis
-        pieces = Affine(
-            (6 * k + 5 * l + 2) / (2 * (5 * k + 3 * l + 2)),
-            (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
-            domain,
-        ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
         
-        for p in pieces:
-            hypotheses.append(
-                derived_bound_beta(
-                    p,
-                    f"Follows from Sargos (1995) and the exponent pair {eph.data}",
-                    {eph},
-                )
-            )
+        # Append all beta bounds obtained via transformations 
+        for tr in transforms:
+            hypotheses.extend(tr.data.transform(eph))
             
     return hypotheses
 

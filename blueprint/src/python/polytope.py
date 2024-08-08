@@ -253,7 +253,7 @@ class Polytope:
         p.mat = H
         p.polyhedron = poly
         p.vertices = copy.copy(verts)  # Shallow copy is fine for now
-        p.rays = None
+        p.rays = []
         return p
 
     # -------------------------------------------------------------------------

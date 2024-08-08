@@ -523,7 +523,7 @@ def D_transform(hypothesis):
     return [
         bbeta.derived_bound_beta(
                 p,
-                "Follows from Sargos (1995) and the exponent pair {hypothesis.data}",
+                f'Follows from "{hypothesis.name}" and taking the Sargos D transform',
                 {hypothesis},
             )
         for p in pieces
@@ -561,7 +561,7 @@ literature.add_hypothesis(
         "Sargos D transform",
         "Exponent pair to beta bound transform",
         Transform("Sargos D transform", D_transform),
-        'See [Sargos, 1995]',
+        'See [Sargos, 1995] Theorem 7.1',
         rm.get('sargos_points_1995'),
         )
     )
