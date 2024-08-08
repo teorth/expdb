@@ -119,6 +119,17 @@ giving the claim.
 \derived
 \code{van_der_corput_pair()}
 
+\begin{corollary}[Additional exponent pairs]\label{add-exponential}  The pairs
+$$ \left(\frac{13}{31}, \frac{16}{31}\right), (\frac{4}{11},\frac{6}{11}), (\frac{2}{7},\frac{4}{7}), (\frac{5}{24},\frac{15}{24}), (\frac{4}{18},\frac{11}{18})$$
+are all exponent pairs.
+\end{corollary}
+
+{\bf TODO: add a derivation to illustrate the code}
+
+\begin{proof}\uses{vdc-a, vdc-b, exp-pair-closed, vdc-class} We have $(2/7,4/7) = BA(1/6,2/3)$, $(4/18,11/18) = BABA(1/6,2/3)$, and $(13/31, 16/31)=BAB^2A^2(1/6,2/3)$, so these cases follow from Propositions \ref{vdc-class}, \ref{vdc-a}, \ref{vdc-b}. Finally, $(4/11,6/11)$ is a convex combination of $(1/2,1/2)$ and $(2/7,4/7)$, and $(5/24, 15/24)$ is a convex combination of $(1/6,2/3)$ and $(4/18, 11/18)$, so these cases follow from Corollary \ref{exp-pair-closed}.
+\end{proof}
+
+
 \begin{theorem}[Exponent pairs on the line of symmetry]\label{line-sym}\uses{exp-pair-def} $(k,k+1/2)$ is an exponent pair for
 \begin{itemize}
 \item[(i)] $k = 9/56$ \cite[Theorem~1]{huxley_exponential_1988};

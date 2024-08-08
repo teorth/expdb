@@ -106,17 +106,17 @@ Note the discontinuity at $1$.  Despite this, we have:
 We record the classical bounds on $\beta$:
 
 \begin{lemma}[Van der Corput $A$ process for $\beta$]\label{vdca-beta}\uses{beta-def} If $0 \leq \alpha \leq 2/3$ and $h \geq 0$ then
-$$ 2\beta(\alpha) \leq \max( 2\alpha - h, 2h, \alpha - h + \sup_{2\alpha-1 \leq h' \leq h} ((h'+1-\alpha)\beta(\frac{\alpha}{h'+1-\alpha})+h')).$$
+$$ 2\beta(\alpha) \leq \max\left( 2\alpha - h, 2h, \alpha - h + \sup_{2\alpha-1 \leq h' \leq h} \left((h'+1-\alpha)\beta\left(\frac{\alpha}{h'+1-\alpha}\right)+h'\right)\right).$$
 \end{lemma}
 
 \begin{proof}  By definition, there exists an unbounded $T$, $N = T^{\alpha+o(1)}$, $F$ a model phase function, and $I \subset [N,2N]$ such that
     $$ \sum_{n \in I} e(T F(n/N)) = T^{\beta(\alpha)+o(1)}.$$
 Applying \cite[(2.54)]{ivic} with $H := T^h$, as well as the ensuing computations to dispose of the $j \ll T/N^2$ terms, one then has
-$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{T/N^2 \ll j \ll H} |\sum_{n \in I \cap I-j} e(T (f(n+j/N) - f(n/N)))|$$
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{T/N^2 \ll j \ll H} |\sum_{n \in I \cap I-j} e(T (F((n+j)/N) - F(n/N)))|$$
 and hence by the pigeonhole principle
-$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap I-h} e(T (f(n+j/N) - f(n/N)))|$$
-for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  By Definition \ref{beta-def}, one has
-$$ \sum_{n \in I \cap I-h} e(T (f(n+j/N) - f(n/N))) \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N)))|$$
+for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  One can verify that $-\frac{1}{\sigma} \frac{N}{j} (F(u+j/N)-F(u))$ is a model phase function.  Thus, by Definition \ref{beta-def}, one has
+$$ \sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N)))) \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
 and the claim follows after evaluating all terms as powers of $T$.
 \end{proof}
 
@@ -215,7 +215,7 @@ We remark that this corollary also follows from Proposition \ref{vdc-class}.
 
 
 % Exponential sums and the Riemann zeta function II
-\begin{theorem}[Watt bound]\label{beta-Watt}\uses{beta-def} For any $3/7 \le \alpha \le 1/2$, one has
+\begin{theorem}[1989 Watt bound]\label{beta-Watt}\uses{beta-def} For any $3/7 \le \alpha \le 1/2$, one has
     \[
     \beta(\alpha) \le \frac{89}{560} + \frac{1}{2}\alpha.
     \]
@@ -318,7 +318,7 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
     \hline
     $\frac{29+173\alpha}{280}$ & $\frac{227}{601}$ & $\frac{12}{31} = 0.3870\dots$ \\
     \hline
-    $\frac{89+908\alpha}{1282}$ & $\frac{423}{1295}\dots$ & $\frac{227}{601} = 0.3777\dots$ \\
+    $\frac{89+908\alpha}{1282}$ & $\frac{423}{1295}$ & $\frac{227}{601} = 0.3777\dots$ \\
     \hline
     $\frac{11+191\alpha}{244}$ & $\frac{87}{275}$ & $\frac{423}{1295} = 0.3266\dots$ \\
     \hline
@@ -398,7 +398,7 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
 
 
 %  A Fourth Derivative Test for Exponential Sums
-\begin{theorem}[Robert--Sargos bound]\label{beta-RS}\uses{beta-def}  For any $\alpha > 0$ one has
+\begin{theorem}[2002 Robert--Sargos bound]\label{beta-RS}\uses{beta-def}  For any $\alpha > 0$ one has
     $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-4\alpha}{13}, -\frac{7(1-4\alpha)}{13}\right).$$
 \end{theorem}
 
@@ -441,7 +441,7 @@ See \cite[Proposition~1, Theorem~1]{huxley_exponential_2005}.
 
 
 % On the fourth derivative test for exponential sums
-\begin{theorem}[Robert bound]\label{beta-R}\uses{beta-def} For any $0 < \alpha \le 3/7$ one has
+\begin{theorem}[2016 Robert bound]\label{beta-R}\uses{beta-def} For any $0 < \alpha \le 3/7$ one has
 \[
 \beta(\alpha) \le \max\left(\alpha + \frac{1 - 4\alpha}{12}, \frac{11}{12}\alpha\right).
 \]
@@ -455,7 +455,7 @@ See \cite[Proposition~1, Theorem~1]{huxley_exponential_2005}.
 See \cite[Theorem~1]{robert_fourth_2016}.
 \end{proof}
 
-\begin{theorem}[Second Robert bound]\label{beta-R2}\uses{beta-def} If $k \geq 4$ and $\alpha \geq -(1-k\alpha) \frac{k-1}{2k-3}$ then
+\begin{theorem}[Second 2016 Robert bound]\label{beta-R2}\uses{beta-def} If $k \geq 4$ and $\alpha \geq -(1-k\alpha) \frac{k-1}{2k-3}$ then
 $$ \beta(\alpha) \leq \alpha + \max( \frac{1-k\alpha}{2(k-1)(k-2)}, -\frac{1}{2(k-1)(k-2)}).$$
 \end{theorem}
 
@@ -466,7 +466,7 @@ $$ \beta(\alpha) \leq \alpha + \max( \frac{1-k\alpha}{2(k-1)(k-2)}, -\frac{1}{2(
 \end{proof}
 
 
-\begin{theorem}[Heath-Brown bound]\label{beta-HB}\uses{beta-def}  For any $\alpha > 0$ and any natural number $k \geq 3$ one has
+\begin{theorem}[2017 Heath-Brown bound]\label{beta-HB}\uses{beta-def}  For any $\alpha > 0$ and any natural number $k \geq 3$ one has
 $$ \beta(\alpha) \leq \alpha + \max\left( \frac{1-k\alpha}{k(k-1)}, -\frac{\alpha}{k(k-1)}, -\frac{2\alpha}{k(k-1)} - \frac{2(1-k\alpha)}{k^2(k-1)}\right).$$
 \end{theorem}
 
@@ -478,7 +478,7 @@ See \cite[Theorem~1]{heathbrown_new_2017}.
 \end{proof}
 
 
-\begin{theorem}[Bourgain bound]\label{beta-Bourgain}\uses{beta-def} One has
+\begin{theorem}[2017 Bourgain bound]\label{beta-Bourgain}\uses{beta-def} One has
 \[
 \beta(\alpha) \le \begin{cases}
 \displaystyle\frac{2}{9} + \frac{1}{3}\alpha,&\displaystyle\frac{1}{3} < \alpha \le \frac{5}{12},\\
@@ -497,7 +497,7 @@ See \cite[Theorem~1]{heathbrown_new_2017}.
 See \cite[Equation~(3.18)]{bourgain_decoupling_2017}.
 \end{proof}
 
-\begin{theorem}[Heath-Brown 2020 bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
+\begin{theorem}[2020 Heath-Brown bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
 $$ \beta(\alpha) \leq \max\left( \alpha\left(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}\right), \frac{8}{9} \alpha\right).$$
 \end{theorem}
 
@@ -560,11 +560,10 @@ $$ \beta(\alpha) \leq \max\left( \alpha\left(1 - \frac{4\alpha-1}{4(4\alpha-1)+8
     \end{tabular}
     \label{huxley_table_ranges}
     \end{table}
-    
+
 \literature
 \code{add_beta_bound_trudgian_yang_2024()}
 
-{\bf TODO: state the Sargos result above as a lemma and a line of python code}
 
 \begin{figure}
     \centering

@@ -738,7 +738,7 @@ def add_guth_maynard_large_values_estimate():
 
 add_huxley_large_values_estimate()
 add_heath_brown_large_values_estimate()
-add_jutila_large_values_estimate()
+add_jutila_large_values_estimate(Constants.LARGE_VALUES_TRUNCATION)
 add_guth_maynard_large_values_estimate()
 
 ########################################################################################

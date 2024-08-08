@@ -101,11 +101,17 @@ $$ \mu(\ell-k) \leq k.$$
 \begin{proof}\uses{mu-beta, beta-duality}  Immediate from Lemma \ref{mu-beta} and Lemma \ref{beta-duality}.  See also \cite[(7.57)]{ivic}.
 \end{proof}
 
-\begin{conjecture}[Lindelof hypothesis]\label{LH}\uses{zeta-grow-def} One has $\mu(1/2)=0$.
+\begin{conjecture}[Lindel\"of hypothesis]\label{LH}\uses{zeta-grow-def} One has $\mu(1/2)=0$.
 \end{conjecture}
 
 \python{bound_mu}
 \code{bound_mu_Lindelof()}
+
+\begin{lemma}\label{exp-pair_implies_lindelof}\uses{exp-pair-conj, LH}  The exponent pair conjecture implies the Lindel\"of hypothesis.
+\end{lemma}
+
+\begin{proof}\uses{exp-pair-mu} Immediate from Corollary \ref{exp-pair-mu}.
+\end{proof}
 
 \begin{proposition}[Conjectured value of $\mu$]\label{mu-conj}\uses{zeta-grow-def, LH}  We have the lower bound
 \begin{equation}\label{muh}
@@ -125,7 +131,7 @@ for large $T$, giving the claim.
 
 \section{Known bounds on \texorpdfstring{$\mu$}{mu}}
 
-\begin{theorem}[Historical bounds]\label{mu-hist}\uses{zeta-grow-def}  The bounds on $\mu(\sigma)$ given by Table \ref{mu-table} are known.
+\begin{theorem}[Historical bounds]\label{mu-hist}\uses{zeta-grow-def}  The upper bounds on $\mu(\sigma)$ given by Table \ref{mu-table} are known.
 \end{theorem}
 
 \begin{table}[ht]
