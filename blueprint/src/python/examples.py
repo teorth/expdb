@@ -266,10 +266,10 @@ def plot(zdt, hypotheses, title=None):
 
     for i in range(N):
         sigma = 1 / 2 + 1 / 2 * i / N
-        A = next((p[0].at(sigma) for p in zdt if p[1].contains(sigma)), 0)
+        A = next((p.data.at(sigma) for p in zdt if p.data.interval.contains(sigma)), 0)
         xs.append(sigma)
         computed_zdt.append(A / (1 - sigma))
-        literature_zdt.append(min(h.data.at(sigma) for h in hypotheses))
+        literature_zdt.append(min(h.data.at(sigma) for h in hypotheses if h.data.interval.contains(sigma)))
 
     plt.figure(dpi=1200)
     plt.xlabel("σ")
