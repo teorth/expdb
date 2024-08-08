@@ -702,37 +702,44 @@ def add_bounds_mu_as_of(hypothesis_set, year):
 ########################################################################################
 # List of large value estimates in the literature
 
-# Huxley large values theorem: LV(\sigma, \tau) \leq max(2 - 2\sigma, 4 - 6\sigma + \tau)
-literature.add_hypothesis(
-    lv.literature_bound_LV_max([[2, -2, 0], [4, -6, 1]], rm.get("Huxley"))
-)
-
-# Heath-Brown large values theorem: LV(\sigma, \tau) \leq max(2 - 2\sigma, 10 - 13\sigma + \tau)
-literature.add_hypothesis(
-    lv.literature_bound_LV_max(
-        [[2, -2, 0], [10, -13, 1]], rm.get("heathbrown_zero_1979")
+# Huxley large values theorem: LV(s, t) \leq max(2 - 2s, 4 - 6s + t)
+def add_huxley_large_values_estimate():
+    literature.add_hypothesis(
+        lv.literature_bound_LV_max([[2, -2, 0], [4, -6, 1]], rm.get("Huxley"))
     )
-)
 
-# Jutila large values theorem:
-# LV(\sigma, \tau) \leq \max(2 - 2\sigma,
-#                           (4 - 2/k) - (6 - 2/k)\sigma + \tau,
-#                           6k - 8k\sigma + \tau)
-for k in range(1, 10):
+# Heath-Brown large values theorem: LV(s, t) \leq max(2 - 2s, 10 - 13s + t)
+def add_heath_brown_large_values_estimate():
     literature.add_hypothesis(
         lv.literature_bound_LV_max(
-            [[2, -2, 0], [4 - frac(2, k), -(6 - frac(2, k)), 1], [6 * k, -8 * k, 1]],
-            rm.get("jutila_zero_density_1977"),
-            params=f" with k = {k}",
+            [[2, -2, 0], [10, -13, 1]], rm.get("heathbrown_zero_1979")
         )
     )
 
-# Guth-Maynard (2024) large values theorem: LV(\sigma, \tau) \leq max(2 - 2\sigma, 18/5 - 4\sigma, \tau + 12/5 - 4\sigma)
-literature.add_hypothesis(
-    lv.literature_bound_LV_max(
-        [[2, -2, 0], [frac(18, 5), -4, 0], [frac(12, 5), -4, 1]], rm.get("guth-maynard")
+# Jutila large values theorem:
+# LV(s, t) \leq \max(2 - 2s, (4 - 2/k) - (6 - 2/k)s + t, 6k - 8ks + t)
+def add_julita_large_values_estimate(K):
+    for k in range(1, K):
+        literature.add_hypothesis(
+            lv.literature_bound_LV_max(
+                [[2, -2, 0], [4 - frac(2, k), -(6 - frac(2, k)), 1], [6 * k, -8 * k, 1]],
+                rm.get("jutila_zero_density_1977"),
+                params=f" with k = {k}",
+            )
+        )
+
+# Guth-Maynard (2024) large values theorem: LV(s, t) \leq max(2 - 2s, 18/5 - 4s, t + 12/5 - 4s)
+def add_guth_maynard_large_values_estimate():
+    literature.add_hypothesis(
+        lv.literature_bound_LV_max(
+            [[2, -2, 0], [frac(18, 5), -4, 0], [frac(12, 5), -4, 1]], rm.get("guth-maynard")
+        )
     )
-)
+
+add_huxley_large_values_estimate()
+add_heath_brown_large_values_estimate()
+add_julita_large_values_estimate()
+add_guth_maynard_large_values_estimate()
 
 ########################################################################################
 # List of zeta large value estimates in the literature

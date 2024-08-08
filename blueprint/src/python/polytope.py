@@ -359,6 +359,7 @@ class Polytope:
 
         return Polytope(mat, canonicalize=True)
 
+
     # Computes A \ B where A is this polytope and B is another polytope. Returns 
     # a list of polytopes that are guaranteed to be disjoint, and whose union 
     # equals A \ B. Note that since this polytope implementation ignores boundaries
@@ -372,14 +373,12 @@ class Polytope:
         # complement, then add the original constraint to the set of constraints
         # for the new region. All linear constraints are ignored (see above for 
         # rationale)
-        
         A = self.mat
         B = other.mat
-        
+
         polys = []
         for i in range(B.row_size):
-            if i in B.lin_set: 
-                continue
+            if i in B.lin_set: continue
             c = B[i]
             print(c)
             # Invert the constraint c then compute A \intersect c'
@@ -388,19 +387,20 @@ class Polytope:
             A_copy.extend([c_comp], linear=False)
             if simplify:
                 A_copy.canonicalize()
-                
+
             part = Polytope._from_mat(A_copy)
             if simplify:
                 if not part.is_empty(include_boundary=False):
                     polys.append(part)
             else:
                 polys.append(part)
-                
+
             # For the next part
             if i < B.row_size - 1:
                 A.extend([c])
-                
+
         return polys
+
 
     # Returns whether this polytope intersects with a plane. Parameter plane must
     # be of type Hyperplane
@@ -422,8 +422,10 @@ class Polytope:
                 sign = new_sign
         return False
 
+
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
-    # This is determined by checking the number of vertices in its V representation
+    # This is currently determined by checking the number of vertices in its V representation
+    # - however, solving a LP may be faster
     def is_empty(self, include_boundary=True):
         if self.vertices is None:
             self.compute_V_rep()
@@ -433,3 +435,5 @@ class Polytope:
 
         # If not including boundary, strict subspace vertex regions are considered empty
         return len(self.vertices) <= self.dimension()
+
+
