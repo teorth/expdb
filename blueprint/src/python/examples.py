@@ -282,7 +282,6 @@ def plot(zdt, hypotheses, title=None):
         plt.title(title)
     plt.legend(loc="lower left")
     plt.show()
-    plt.savefig("../test.png")
 
 
 def zero_density_estimates_examples():

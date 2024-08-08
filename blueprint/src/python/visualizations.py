@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from literature import *
 
 
 def van_der_corput(k, alpha):
@@ -92,4 +93,39 @@ def van_der_corput_plot2():
     plt.show()
 
 
-van_der_corput_plot2()
+def beta_bound_plot():
+    hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
+
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Upper bound on beta")
+    )
+    best_beta_bounds = compute_best_beta_bounds(hypotheses)
+    
+    alpha_range = np.linspace(0, 1/2, 500)
+
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(
+        alpha_full_range,
+        [optimized_van_der_corput(alpha) for alpha in alpha_full_range],
+        label=f"Optimized van der Corput bound on beta",
+    )
+    plt.plot(
+        alpha_range, [alpha for alpha in alpha_range], label=f"Trivial upper bound"
+    )
+    plt.plot(
+        alpha_full_range,
+        [conjectured_bound(alpha) for alpha in alpha_full_range],
+        label=f"Conjectured value",
+    )
+    plt.xlabel("alpha")
+    plt.ylabel("beta(alpha)")
+    plt.title("Classical bounds on beta(alpha)")
+    plt.legend()
+    plt.grid(True)
+    plt.ylim(0, 1)
+    plt.show()
+    print(best_beta_bounds)
+    
+#van_der_corput_plot2()
+beta_bound_plot()

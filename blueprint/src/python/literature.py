@@ -308,7 +308,7 @@ def add_beta_bound_heath_brown_2017(K):
                     Affine(1, frac(-2, k * k * (k - 1)), Interval("[0, 1]")),
                 ]
             ),
-            rm.refs["heathbrown_new_2017"],
+            rm.get("heathbrown_new_2017"),
         )
 
 
@@ -324,7 +324,7 @@ def add_beta_bound_bourgain_2017():
             Affine(frac(2, 3), frac(1, 12), Interval("[5/12, 3/7)")),
             Affine(frac(1, 2), frac(13, 84), Interval("[3/7, 1/2]")),
         ],
-        rm.refs["bourgain_decoupling_2017"],
+        rm.get("bourgain_decoupling_2017"),
     )
 
 
@@ -332,6 +332,20 @@ add_beta_bound_bourgain_2017()
 
 
 
+def add_beta_bound_trudgian_yang_2024():
+    # Other bounds on beta are stated in the LaTeX blueprint, however they have 
+    # already been added to the beta bounds literature
+    bbeta.add_beta_bound(
+        literature,
+        [
+            Affine(frac(359, 414), frac(13, 414), Interval("[0, 2848/12173)")),
+            Affine(frac(139, 194), frac(13, 194), Interval("[1328/4447, 104/343)")),
+            Affine(frac(521, 796), frac(18, 199), Interval("[1508/3825, 62831/155153]")),
+        ],
+        rm.get("trudgian-yang"),
+    )
+    
+add_beta_bound_trudgian_yang_2024()
 
 
 ########################################################################################

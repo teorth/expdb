@@ -498,7 +498,7 @@ See \cite[Equation~(3.18)]{bourgain_decoupling_2017}.
 \end{proof}
 
 \begin{theorem}[Heath-Brown 2020 bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
-$$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{8}{9} \alpha).$$
+$$ \beta(\alpha) \leq \max\left( \alpha\left(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}\right), \frac{8}{9} \alpha\right).$$
 \end{theorem}
 
 {\bf TODO: implement this in python}
@@ -560,8 +560,9 @@ $$ \beta(\alpha) \leq \max( \alpha(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}), \frac{
     \end{tabular}
     \label{huxley_table_ranges}
     \end{table}
-
-{\bf TODO: implement this in Python}
+    
+\literature
+\code{add_beta_bound_trudgian_yang_2024()}
 
 {\bf TODO: state the Sargos result above as a lemma and a line of python code}
 
