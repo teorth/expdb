@@ -95,7 +95,7 @@ def van_der_corput_plot2():
 
 def beta_bound_plot():
     hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
-
+    hypotheses.add_hypothesis(trivial_beta_bound_1)
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Upper bound on beta")
     )
@@ -104,16 +104,16 @@ def beta_bound_plot():
     alpha_range = np.linspace(0, 1/2, 500)
     plt.figure(figsize=(10, 6))
     plt.plot(
-        alpha_range,
-        [optimized_van_der_corput(alpha) for alpha in alpha_range],
-        label=f"van der Corput bound on beta",
-    )
-    plt.plot(
         alpha_range, 
         [min(b.data.bound.at(alpha) for b in best_beta_bounds 
              if b.data.bound.domain.contains(alpha))
              for alpha in alpha_range], 
         label=f"Computed best upper bound on beta"
+    )
+    plt.plot(
+        alpha_range,
+        [optimized_van_der_corput(alpha) for alpha in alpha_range],
+        label=f"van der Corput bound on beta",
     )
     plt.xlabel("alpha")
     plt.ylabel("beta(alpha)")
@@ -122,6 +122,11 @@ def beta_bound_plot():
     plt.grid(True)
     plt.ylim(0, 1/2)
     plt.show()
+    
+    for b in best_beta_bounds:
+        print(b.data)
+    print(min(b.data.bound.at(0) for b in best_beta_bounds 
+             if b.data.bound.domain.contains(0)))
     
 #van_der_corput_plot2()
 beta_bound_plot()

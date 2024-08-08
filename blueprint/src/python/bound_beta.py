@@ -71,7 +71,7 @@ def classical_bound_beta(bound):
     return Hypothesis(
         f"Classical bound on \\beta",
         "Upper bound on beta",
-        bound,
+        Bound_beta(bound),
         f"Classical",
         Reference.classical(),
     )
