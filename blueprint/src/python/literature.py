@@ -124,7 +124,7 @@ add_beta_bound_huxley_1996()
 # Sargos (1995) Theorem 2.4 and Lemma 2.6
 def add_beta_bound_sargos_1995():
     bbeta.add_beta_bound(
-        literature,    
+        literature,
         Affine(1 - 3*frac(4,40), frac(3,40), Interval("[0, 1]")).max_with([
             Affine(frac(7,8), 0, Interval("[0, 1]")),
             Affine(frac(1,3) + frac(4,6), -frac(1,6), Interval("[0, 1]")),
@@ -133,7 +133,7 @@ def add_beta_bound_sargos_1995():
         rm.get("sargos_points_1995")
         )
     bbeta.add_beta_bound(
-        literature,    
+        literature,
         Affine(1 - frac(4,14), frac(1,14), Interval("[0, 1]")).max_with([
             Affine(frac(5,6), 0, Interval("[0, 1]")),
             Affine(frac(1,3) + frac(4,6), -frac(1,6), Interval("[0, 1]")),
@@ -141,7 +141,7 @@ def add_beta_bound_sargos_1995():
             ]),
         rm.get("sargos_points_1995")
         )
-    
+
 add_beta_bound_sargos_1995()
 
 
@@ -333,7 +333,7 @@ add_beta_bound_bourgain_2017()
 
 
 def add_beta_bound_trudgian_yang_2024():
-    # Other bounds on beta are stated in the LaTeX blueprint, however they have 
+    # Other bounds on beta are stated in the LaTeX blueprint, however they have
     # already been added to the beta bounds literature
     bbeta.add_beta_bound(
         literature,
@@ -344,7 +344,7 @@ def add_beta_bound_trudgian_yang_2024():
         ],
         rm.get("trudgian-yang"),
     )
-    
+
 add_beta_bound_trudgian_yang_2024()
 
 
@@ -489,7 +489,7 @@ def add_exp_pairs_up_to(hypothesis_list, year):
 # the literature, e.g. the van der Corput A/B transforms.
 
 # van der Corput A transform (weyl-van der Corput inequality)
-def A_transform(hypothesis):  
+def A_transform(hypothesis):
     pair = hypothesis.data
     return derived_exp_pair(
         pair.k / (2 * pair.k + 2),
@@ -521,10 +521,10 @@ def C_transform(hypothesis):  # Sargos 2003 transform
 
 # Sargos 1995 transform: exp pair -> list of beta bounds
 def D_transform(hypothesis):
-    
+
     if hypothesis.hypothesis_type != "Exponent pair":
         raise ValueError("Parameter hypothesis must be of type Exponent pair")
-        
+
     k = hypothesis.data.k
     l = hypothesis.data.l
     domain = Interval(0, frac(1,2), True, True)
@@ -533,7 +533,7 @@ def D_transform(hypothesis):
         (5 * k + l + 2) / (8 * (5 * k + 3 * l + 2)),
         domain,
     ).max_with([Affine(frac(2, 3), frac(1, 12), domain)])
-    
+
     return [
         bbeta.derived_bound_beta(
                 p,
@@ -718,7 +718,7 @@ def add_heath_brown_large_values_estimate():
 
 # Jutila large values theorem:
 # LV(s, t) \leq \max(2 - 2s, (4 - 2/k) - (6 - 2/k)s + t, 6k - 8ks + t)
-def add_julita_large_values_estimate(K):
+def add_jutila_large_values_estimate(K):
     for k in range(1, K):
         literature.add_hypothesis(
             lv.literature_bound_LV_max(
@@ -738,7 +738,7 @@ def add_guth_maynard_large_values_estimate():
 
 add_huxley_large_values_estimate()
 add_heath_brown_large_values_estimate()
-add_julita_large_values_estimate()
+add_jutila_large_values_estimate()
 add_guth_maynard_large_values_estimate()
 
 ########################################################################################
