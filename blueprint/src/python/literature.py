@@ -738,7 +738,7 @@ def add_guth_maynard_large_values_estimate():
 
 add_huxley_large_values_estimate()
 add_heath_brown_large_values_estimate()
-add_julita_large_values_estimate()
+add_julita_large_values_estimate(10)
 add_guth_maynard_large_values_estimate()
 
 ########################################################################################
