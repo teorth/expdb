@@ -688,7 +688,7 @@ We can now state a rough heuristic as to what zero density estimates to expect f
 \begin{heuristic}[Predicting a zero density estimate from a large value theorem]\label{lv-heuristic}\uses{lv-def, zero-def} Suppose that $1/2 \leq \sigma \leq 1$ and $\tau_0 \geq 1$ are such that one can prove $\LV(\sigma, \tau_0) \leq 3-3\sigma$ (i.e., the Montgomery conjecture holds here with a multiplicative loss of $3/2$).  Then in principle, one can hope to prove $\A(\sigma) \leq 3/\tau_0$.  Conversely, if one cannot prove $\LV(\sigma, \tau_0) \leq 3-3\sigma$, then the bound $\A(\sigma) \leq 3/\tau_0$ is likely out of reach.
 \end{heuristic}
 
-We justify this heuristic as follows, though we stress that the arguments that follow are not fully rigorous.  In the first part, we simply apply Corollary \ref{zero-large-cor2}.  In practice, the \eqref{lvo} is often more delicate than \eqref{lvoz} and ends up being the limiting factor for the bounds; furthermore, within \eqref{lvo}, it is the right endpoint $\tau=\tau_0$ of the range $2\tau_0/3 \leq \tau \leq \tau_0$ that ends up being the bottleneck; but this is precisely the claimed criterion $\LV(\sigma, \tau_0) \leq 3-3\sigma$.  We remark that in some cases (particularly for $\sigma$ close to one), the estimate \eqref{lvoz} ends up being more of the bottleneck than \eqref{lvo}, and so one should view $3/\tau_0$ here as a theoretical upper limit of methods rather than as a guaranteed bound.
+We justify this heuristic as follows, though we stress that the arguments that follow are not fully rigorous.  In the first part, we simply apply Corollary \ref{zero-large-cor2}.  In practice, the \eqref{lvo} is often more delicate than \eqref{lvoz} and ends up being the limiting factor for the bounds; furthermore, within \eqref{lvo}, it is the right endpoint $\tau=\tau_0$ of the range $2\tau_0/3 \leq \tau \leq \tau_0$ that ends up being the bottleneck; but this is precisely the claimed criterion $\LV(\sigma, \tau_0) \leq 3-3\sigma$.  We remark that in some cases (particularly for $\sigma$ close to one), the estimate \eqref{lvoz} ends up being more of the bottleneck than \eqref{lvo}, and so one should view $3/\tau_0$ here as a theoretical upper limit of methods rather than as a guaranteed bound.  (In particular, the need to also establish the bound $\LV_\zeta(\sigma, \frac{4}{3}\tau_0-\eps) < 4-4\sigma$ for $\eps>0$ small can sometimes be a more limiting factor.)
 
 Conversely, suppose that
 \begin{equation}\label{lst3}
@@ -724,7 +724,7 @@ In Table \ref{zero_density_heuristic} we list some examples in which the heurist
     \hline
     Lemma \ref{a-ivt-1}, $m=4$ & $\frac{10\sigma-2}{4}$ & $\frac{6}{5\sigma-1}$ & Corollary \ref{further_ivic_zero} \\
     \hline
-    Lemma \ref{a-ivt} & $7\sigma-4$ & $\frac{3}{7\sigma-4}$ Corollary \ref{ivic-near-34} \\
+    Lemma \ref{a-ivt} & $7\sigma-4$ & $\frac{3}{7\sigma-4}$ & orollary \ref{ivic-near-34} \\
     \hline
     Lemma \ref{a-ivt} & $\frac{8\sigma-2}{3}$ & $\frac{9}{8\sigma-2}$ & Corollary \ref{ivic-near-34} \\
     \hline
