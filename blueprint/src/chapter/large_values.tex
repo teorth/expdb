@@ -262,7 +262,7 @@ See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{gut
 \end{proof}
 
 \begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt}\uses{lv-def} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho := \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
-$$ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma)$$
+$$ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma)$$
 or else there exists $s \geq 0$ such that
 \begin{equation}\label{rs}
 \begin{split}
@@ -281,7 +281,7 @@ for a certain non-empty set $S$.  After passing to a subsequence, we can ensure 
 \end{proof}
 
 \begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\uses{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
-$$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, 2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
+$$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
 \end{corollary}
 
 \begin{proof}\uses{bourgain-lvt}  With $\rho \leq 1$ and $\tau \leq 3/2$, the $2\rho+1$ and $5\rho/4+\tau/2$ terms in the previous theorem are dominated by $\rho+2$, so the inequality \eqref{rs} simplifies to

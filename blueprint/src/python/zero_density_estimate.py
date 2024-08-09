@@ -463,6 +463,51 @@ def ep_to_zd(hypotheses):
 
     return zdts
 
+def approximate_bourgain_zero_density_estimate():
+    
+    sigma_range = (25/32, 11/14)
+    tau_range = (1, 3/2)
+
+    N = 100
+    max_A = 0
+    for i in range(N):
+        for j in range(N):
+            sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
+            tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
+
+            sigma = frac(25,32)
+            #print((24 * sigma - 18) / (2 * sigma - 1))
+            tau = frac(3,2)
+            if tau < (24 * sigma - 18) / (2 * sigma - 1):
+                continue
+
+            if tau < 4 * (1 + sigma) / 5:
+                alpha1 = tau / 3 - frac(2,3) * (7 * sigma - 5)
+                alpha2 = 0
+            else:
+                alpha1 = tau/8 - (9 * sigma - 7) / 2
+                alpha2 = frac(5,4) * tau - 1 - sigma
+            
+            rho_bound = max(
+                alpha2 + 2 - 2 * sigma,
+                alpha1 + alpha2 / 2 + 2 - 2*sigma,
+                -alpha2 + 2 * tau + 4 - 8 * sigma,
+                2 * alpha1 + tau + 12 - 16 * sigma,
+                4 * alpha1 + 3 - 4 * sigma
+            )
+            A = rho_bound / (1 - sigma) / tau
+            if A > max_A:
+                max_A = A
+            print(sigma, tau, alpha1, alpha2, rho_bound, A)
+            print(
+                alpha2 + 2 - 2 * sigma, 
+                alpha1 + alpha2 / 2 + 2 - 2*sigma, 
+                -alpha2 + 2 * tau + 4 - 8 * sigma, 
+                2 * alpha1 + tau + 12 - 16 * sigma,
+                4 * alpha1 + 3 - 4 * sigma)
+    print(max_A)
+
+
 def optimise_bourgain_zero_density_estimate():
 
     # The domain of definition is (sigma, tau, alpha1, alpha2) jointly satisfying
