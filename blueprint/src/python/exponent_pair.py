@@ -213,6 +213,15 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
     return all_eps
 
 
+# Returns whether point p lies in the triangle with vertices a, b, c (all points 
+# two-dimensional)
+def in_triangle(a, b, c, p):
+     d = ((b[1] - c[1])*(a[0] - c[0]) + (c[0] - b[0])*(a[1] - c[1]))
+     x = ((b[1] - c[1])*(p[0] - c[0]) + (c[0] - b[0])*(p[1] - c[1]))
+     y = ((c[1] - a[1])*(p[0] - c[0]) + (a[0] - c[0])*(p[1] - c[1]))
+     return 0 <= x and x <= d and 0 <= y and y <= d and x + y <= d;
+
+
 # Find a proof of the exponent pair (k, l), assuming a set of hypotheses. 
 # If deep_search is true, then all points inside the convex hull (not 
 # just the vertices on the boundary) are searched. This tends to return
@@ -223,7 +232,7 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
 def find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True):
     hcpy = copy.copy(hypotheses)
     hcpy.add_hypotheses(beta_bounds_to_exponent_pairs(hcpy))
-    hcpy.add_hypotheses(compute_exp_pairs(hcpy))
+    hcpy.add_hypotheses(compute_exp_pairs(hcpy, prune=True))
     if len(hcpy.list_hypotheses(hypothesis_type="Exponent pair")) == 0:
         return None
     verts = compute_convex_hull(hcpy)
@@ -233,16 +242,21 @@ def find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True):
     conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in verts])
     if conv.contains([k, l]):
         if reduce_dependencies:
-            # Instead of including all vertices of the convex hull, include only the
-            # minimal set
+            # Instead of including all vertices of the convex hull, include only 
+            # the three vertices defining a triangle containing the exponent pair. 
+            # This becomes an optimisation problem: given points p_1, ..., p_N,
+            # and their associated values v_1, ..., v_N, find the triangle with 
+            # vertices (p_a, p_b, p_c) containing (k, l) such that 
+            # v_a + v_b + v_c is minimal. 
             lowest_comp = float("inf")
             best_tri = None
             if deep_search:
                 verts = hcpy.list_hypotheses(hypothesis_type="Exponent pair")
-            print("searching", len(verts))
             for tri in itertools.combinations(verts, 3):
-                conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in tri])
-                if conv.contains([k, l]):
+                if in_triangle((tri[0].data.k, tri[0].data.l),
+                               (tri[1].data.k, tri[1].data.l),
+                               (tri[2].data.k, tri[2].data.l),
+                               (k, l)):
                     comp = sum(v.proof_complexity() for v in tri)
                     if comp < lowest_comp:
                         lowest_comp = comp
