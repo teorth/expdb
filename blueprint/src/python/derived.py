@@ -84,8 +84,11 @@ def prove_heathbrown_exponent_pairs():
 
 # Find the shortest proof of the exponent pair (k, l)
 def best_proof_of_exponent_pair(k, l, proof_method=Proof_Optimization_Method.DATE, verbose=True):
+    hypothesis = copy.copy(literature)
+    hypothesis.add_hypothesis(ep.trivial_exp_pair)
+
     hyp = ep.find_best_proof(
-        k, l, literature, proof_method
+        k, l, hypothesis, proof_method
     )
     if verbose:
         print()
@@ -221,14 +224,15 @@ def prove_extended_heathbrown_zero_density(verbose=True):
 
 def prove_exponent_pairs():
     # prove_heathbrown_exponent_pairs()
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
-    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
     best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
     best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
     best_proof_of_exponent_pair(frac(2, 7), frac(4, 7))
     best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
     best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
+    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
+    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
     prove_ingham_zero_density()
@@ -242,6 +246,6 @@ def prove_zero_density_estimates():
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     prove_exponent_pairs()
-    prove_zero_density_estimates()
+    #prove_zero_density_estimates()
 
 prove_all()

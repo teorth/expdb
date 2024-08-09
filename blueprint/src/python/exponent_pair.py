@@ -229,50 +229,55 @@ def in_triangle(a, b, c, p):
 # Unfortunately, this can be slow for large hypothesis sets. 
 # If reduce_dependencies is true, then only the dependencies crucial to the
 # proof are returned
-def find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True):
-    hcpy = copy.copy(hypotheses)
-    hcpy.add_hypotheses(beta_bounds_to_exponent_pairs(hcpy))
-    hcpy.add_hypotheses(compute_exp_pairs(hcpy, prune=True))
-    if len(hcpy.list_hypotheses(hypothesis_type="Exponent pair")) == 0:
-        return None
-    verts = compute_convex_hull(hcpy)
+def construct_proof(k, l, hypotheses, reduce_dependencies=True, deep_search=True):
+    
+    ephs = hypotheses.list_hypotheses(hypothesis_type="Exponent pair")
+    if len(ephs) == 0: return None
+    
+    # First check if the exact exponent pair is in the set, since that 
+    # only takes O(n) time
+    hyp = next((h for h in ephs if (h.data.k, h.data.l) == (k, l)), None)
+    if hyp is not None: return hyp
 
-    # Performance optimisation: check first that the exponent pair (k, l) lies
-    # in the convex hull of all the exponent pairs
+    # Compute the convex hull to check if it contains the desired exponent 
+    # If not - exit early
+    verts = compute_convex_hull(hypotheses)
     conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in verts])
-    if conv.contains([k, l]):
-        if reduce_dependencies:
-            # Instead of including all vertices of the convex hull, include only 
-            # the three vertices defining a triangle containing the exponent pair. 
-            # This becomes an optimisation problem: given points p_1, ..., p_N,
-            # and their associated values v_1, ..., v_N, find the triangle with 
-            # vertices (p_a, p_b, p_c) containing (k, l) such that 
-            # v_a + v_b + v_c is minimal. 
-            lowest_comp = float("inf")
-            best_tri = None
-            if deep_search:
-                verts = hcpy.list_hypotheses(hypothesis_type="Exponent pair")
-            for tri in itertools.combinations(verts, 3):
-                if in_triangle((tri[0].data.k, tri[0].data.l),
-                               (tri[1].data.k, tri[1].data.l),
-                               (tri[2].data.k, tri[2].data.l),
-                               (k, l)):
-                    comp = sum(v.proof_complexity() for v in tri)
-                    if comp < lowest_comp:
-                        lowest_comp = comp
-                        best_tri = tri
+    if not conv.contains([k, l]): return None
 
-            proof = "Follows from convexity and the exponent pairs " + ", ".join(
-                f"({v.data.k}, {v.data.l})" for v in best_tri
-            )
-            return derived_exp_pair(k, l, proof, set(best_tri))
-        else:
-            proof = "Follows from convexity and the exponent pairs " + ", ".join(
-                f"({v.data.k}, {v.data.l})" for v in verts
-            )
-            return derived_exp_pair(k, l, proof, set(verts))
+    # The exponent pair is contained in the convex hull - if reduce_dependencies,
+    # is set to false, return the entire hull as dependencies
+    if not reduce_dependencies:
+        proof = "Follows from convexity and the exponent pairs " + ", ".join(
+            f"({v.data.k}, {v.data.l})" for v in verts)
+        return derived_exp_pair(k, l, proof, set(verts))
+    
+    # Otherwise, instead of including all vertices of the convex hull, include only 
+    # the three vertices defining a triangle containing the exponent pair. 
+    # This becomes an optimisation problem: given points p_1, ..., p_N,
+    # and their associated values v_1, ..., v_N, find the triangle with 
+    # vertices (p_a, p_b, p_c) containing (k, l) such that v_a + v_b + v_c is minimal. 
+    lowest_comp = float("inf")
+    best_tri = None
 
-    return None
+    # If deep search is selected, we need to include all exponent pairs in the 
+    # hypothesis set, not just those on the boundary of the convex hull
+    if deep_search: verts = ephs
+
+    # Perform a naive brute-force search in O(n^3) time
+    for tri in itertools.combinations(verts, 3):
+        if in_triangle((tri[0].data.k, tri[0].data.l),
+                        (tri[1].data.k, tri[1].data.l),
+                        (tri[2].data.k, tri[2].data.l),
+                        (k, l)):
+            comp = sum(v.proof_complexity() for v in tri)
+            if comp < lowest_comp:
+                lowest_comp = comp
+                best_tri = tri
+
+    proof = "Follows from convexity and the exponent pairs " + ", ".join(
+            f"({v.data.k}, {v.data.l})" for v in best_tri)
+    return derived_exp_pair(k, l, proof, set(best_tri))
 
 
 # This method attempts to prove that (k, l) is an exponent pair from the
@@ -301,13 +306,17 @@ def find_best_proof(k, l, hypotheses, method=Proof_Optimization_Method.DATE):
             hyps = Hypothesis_Set(
                 h
                 for h in hypotheses
-                if h.reference.year() == "Unknown date" or h.reference.year() <= year
+                if (h.reference.year() == "Unknown date" or h.reference.year() <= year)
             )
             # Only proceed if there are new hypotheses
             if len(hyps) == num_hypotheses:
                 continue
             num_hypotheses = len(hyps)
-            eph = find_proof(k, l, hyps, deep_search=False, reduce_dependencies=True)
+
+            # Compute the set of exponent pairs known as of the current "year"
+            hyps.add_hypotheses(beta_bounds_to_exponent_pairs(hyps))
+            hyps.add_hypotheses(compute_exp_pairs(hyps, prune=True))
+            eph = construct_proof(k, l, hyps, reduce_dependencies=True, deep_search=False)
             if eph is not None:
                 return eph
         return None
@@ -316,15 +325,36 @@ def find_best_proof(k, l, hypotheses, method=Proof_Optimization_Method.DATE):
     # of dependencies
     elif method == Proof_Optimization_Method.COMPLEXITY:
         # In general, this optimisation is difficult, and the optimal solution 
-        # is not guaranteed. 
-        # Fortunately, we may take advantage of the fact that (k, l) should be
-        # contained in a triangle.
-        return find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True)
+        # is not guaranteed. The current (heuristic) method is to try two approaches. 
+        # 1. First, start with all known exponent pairs, and iteratively apply 
+        # transformations until their convex hull contains the desired exponent pair
+        # In particular, no beta bounds are considered at this stage. There is also 
+        # no pruning at each stage, since there may be low-complexity exponent pairs 
+        # lying away from the boundary of the convex hull at any time. 
+        MAX_ITERATIONS = 10
+        hyps = copy.copy(hypotheses)
+        for i in range(MAX_ITERATIONS):
+            hyps.add_hypotheses(compute_exp_pairs(hyps, search_depth=1, prune=False))
+            eph = construct_proof(k, l, hyps, reduce_dependencies=True, deep_search=True)
+            if eph is not None:
+                return eph
+
+        # 2. If that above approach fails, then start with all baseline 
+        # hypotheses (i.e. those hypothesis with complexity 1), including beta bounds 
+        # and their implied exponent pairs. 
+        hyps = copy.copy(hypotheses)
+        hyps.add_hypotheses(beta_bounds_to_exponent_pairs(hyps))
+        for i in range(MAX_ITERATIONS):
+            hyps.add_hypotheses(compute_exp_pairs(hyps, search_depth=1, prune=False))
+            eph = construct_proof(k, l, hyps, reduce_dependencies=True, deep_search=True)
+            if eph is not None:
+                return eph
+        return None
 
     elif method == Proof_Optimization_Method.NONE:
-        hcpy = copy.copy(hypotheses)
-        hcpy.add_hypotheses(beta_bounds_to_exponent_pairs(hcpy))
-        hcpy.add_hypotheses(compute_exp_pairs(hcpy))
-        verts = compute_convex_hull(hcpy)
+        hyps = copy.copy(hypotheses)
+        hyps.add_hypotheses(beta_bounds_to_exponent_pairs(hyps))
+        hyps.add_hypotheses(compute_exp_pairs(hyps, prune=True))
+        return construct_proof(k, l, hypotheses, deep_search=False, reduce_dependencies=False)
     else:
         raise NotImplementedError()

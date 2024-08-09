@@ -489,38 +489,57 @@ def add_exp_pairs_up_to(hypothesis_list, year):
 # the literature, e.g. the van der Corput A/B transforms.
 
 # van der Corput A transform (weyl-van der Corput inequality)
-def A_transform(hypothesis):
+def A_transform_function(hypothesis):
     pair = hypothesis.data
     return derived_exp_pair(
         pair.k / (2 * pair.k + 2),
         frac(1, 2) + pair.l / (2 * pair.k + 2),
         f'Follows from "{hypothesis.name}" and taking the van der Corput A transform',
-        {hypothesis},
+        {hypothesis, A_transform_hypothesis},
+    )
+A_transform_hypothesis = Hypothesis(
+        "van der Corput A transform",
+        "Exponent pair transform",
+        Transform("van der Corput A transform", A_transform_function),
+        "See [van der Corput, 1920]",
+        Reference.make("Weyl--van der Corput", 1920),
     )
 
 
-def B_transform(hypothesis):  # van der Corput B transform (Poisson summation)
+def B_transform_function(hypothesis):  # van der Corput B transform (Poisson summation)
     pair = hypothesis.data
     return derived_exp_pair(
         pair.l - frac(1, 2),
         pair.k + frac(1, 2),
         f'Follows from "{hypothesis.name}" and taking the van der Corput B transform',
-        {hypothesis},
+        {hypothesis, B_transform_hypothesis},
+    )
+B_transform_hypothesis = Hypothesis(
+        "van der Corput B transform",
+        "Exponent pair transform",
+        Transform("van der Corput B transform", B_transform_function),
+        "See [van der Corput, 1920]",
+        Reference.make("van der Corput", 1920),
     )
 
-
-def C_transform(hypothesis):  # Sargos 2003 transform
+def C_transform_function(hypothesis):  # Sargos 2003 transform
     pair = hypothesis.data
     return derived_exp_pair(
         pair.k / (12 * (1 + 4 * pair.k)),
         (11 * (1 + 4 * pair.k) + pair.l) / (12 * (1 + 4 * pair.k)),
         f'Follows from "{hypothesis.name}" and taking the Sargos C transform',
-        {hypothesis},
+        {hypothesis, C_transform_hypothesis},
+    )
+C_transform_hypothesis = Hypothesis(
+        "Sargos C transform",
+        "Exponent pair transform",
+        Transform("Sargos C transform", C_transform_function),
+        "See [Sargos, 2003]",
+        rm.get("sargos_analog_2003"),
     )
 
-
 # Sargos 1995 transform: exp pair -> list of beta bounds
-def D_transform(hypothesis):
+def D_transform_function(hypothesis):
 
     if hypothesis.hypothesis_type != "Exponent pair":
         raise ValueError("Parameter hypothesis must be of type Exponent pair")
@@ -538,47 +557,24 @@ def D_transform(hypothesis):
         bbeta.derived_bound_beta(
                 p,
                 f'Follows from "{hypothesis.name}" and taking the Sargos D transform',
-                {hypothesis},
+                {hypothesis, D_transform_hypothesis},
             )
         for p in pieces
         ]
-
-literature.add_hypothesis(
-    Hypothesis(
-        "van der Corput A transform",
-        "Exponent pair transform",
-        Transform("van der Corput A transform", A_transform),
-        "See [van der Corput, 1920]",
-        Reference.make("Weyl--van der Corput", 1920),
-    )
-)
-literature.add_hypothesis(
-    Hypothesis(
-        "van der Corput B transform",
-        "Exponent pair transform",
-        Transform("van der Corput B transform", B_transform),
-        "See [van der Corput, 1920]",
-        Reference.make("van der Corput", 1920),
-    )
-)
-literature.add_hypothesis(
-    Hypothesis(
-        "Sargos C transform",
-        "Exponent pair transform",
-        Transform("Sargos C transform", C_transform),
-        "See [Sargos, 2003]",
-        rm.get("sargos_analog_2003"),
-    )
-)
-literature.add_hypothesis(
-    Hypothesis(
+D_transform_hypothesis = Hypothesis(
         "Sargos D transform",
         "Exponent pair to beta bound transform",
-        Transform("Sargos D transform", D_transform),
+        Transform("Sargos D transform", D_transform_function),
         'See [Sargos, 1995] Theorem 7.1',
         rm.get('sargos_points_1995'),
         )
-    )
+    
+
+literature.add_hypothesis(A_transform_hypothesis)
+literature.add_hypothesis(B_transform_hypothesis)
+literature.add_hypothesis(C_transform_hypothesis)
+literature.add_hypothesis(D_transform_hypothesis)
+
 
 ########################################################################################
 # We now list the known upper bounds on $\mu$ in the literature.
