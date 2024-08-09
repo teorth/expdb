@@ -9,6 +9,9 @@ class Constants:
     # The maximum number of exponent pairs in a series we will consider
     EXP_PAIR_TRUNCATION = 20
 
+    # The maximum number of large value theorems in a series we will consider
+    LARGE_VALUES_TRUNCATION = 20
+
     # The maximum value of the alpha parameter (reciprocal of tau)
     ALPHA_UPPER_LIMIT = frac(100, 1)
 

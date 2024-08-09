@@ -13,12 +13,12 @@ holds for all $T \geq C$.
 \begin{itemize}
 \item[(i)] $M(\sigma,A)$ is convex in $\sigma$.
 \item[(ii)] For any $\sigma$, $a (M(\sigma,1/a)-1)$ is convex non-increasing in $a$.
-\item[(iii)] $M(\sigma,A)=0$ for all $A \geq 0$ and $\sigma \geq 1$.
-\item[(iv)] $M(1/2,A)=0$ for all $0 \leq A \leq 4$.
-\item[(v)] $M(\sigma,A) \geq 0$ for all $1/2 \leq \sigma \leq 1$ and $A \geq 0$.
+\item[(iii)] $M(\sigma,A)=1$ for all $A \geq 0$ and $\sigma \geq 1$.
+\item[(iv)] $M(1/2,A)=1$ for all $0 \leq A \leq 4$.
+\item[(v)] $M(\sigma,A) \geq 1$ for all $1/2 \leq \sigma \leq 1$ and $A \geq 0$.
 \item[(vi)] $M(\sigma,0) = 1$ for all $\sigma$.
 \item[(vii)] $M(1-\sigma,A) = M(1-\sigma,A) + (1/2-\sigma) A$ for all $\sigma \in \R$ and $A \geq 0$.
-\item[(viii)] For any $\sigma$, $a(M(\sigma,1/a)-1)$ converges to $\mu(\sigma)$ as $a \to 0$.  In particular, $M(\sigma,A) \leq A \mu(\sigma) + 1$ for all $\sigma \geq 0$ and $A \geq 0$.
+\item[(viii)] For any $\sigma$, $a(M(\sigma,1/a)-1)$ converges to $\mu(\sigma)$ as $a \to 0$.  In particular (by previous properties), $M(\sigma,A) \leq A \mu(\sigma) + 1$ for all $\sigma \geq 0$ and $A \geq 0$, and also $M(\sigma,A) \leq M(\sigma,A_0) + \mu(\sigma)(A-A_0)$ for $\sigma \geq 0$ and $A \geq A_0 \geq 0$.
 \end{itemize}
 \end{lemma}
 
@@ -43,7 +43,7 @@ $$ \mu(\sigma+\eps/2) \leq \mu(\sigma)-\delta/2 + O(1/A).$$
 Sending $A$ to infinity and $\eps$ to zero, we obtain a contradiction.
 \end{proof}
 
-\begin{corollary}\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic} If the Lindelof hypothesis holds, then $M(\sigma,A) = \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
+\begin{corollary}\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindelof hypothesis holds, then $M(\sigma,A) = \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
 \end{corollary}
 
 Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds.  From Lemma \ref{zeta-moment-basic} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
@@ -200,26 +200,46 @@ $$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| < T^h} |\zeta(\sigma+it)|^A\ dt \ll
 holds for unbounded $T$.
 \end{definition}
 
-A modification of the proof of the upper bound in Lemma \ref{mad} reveals that
-\begin{equation}\label{msah}
-    M(\sigma_0,A,\geq h) \leq \sup_{\tau \geq 2; \sigma \geq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
+\begin{lemma}\label{mad-variant}\uses{mixed-moment-def, lvz-def}  If $1/2 \leq \sigma_0 \leq 1$, $A \geq 1$, and $h \geq 0$ are fixed, then
+    \begin{equation}\label{msah}
+        M(\sigma_0,A,\geq h) \leq \sup_{\tau \geq 2; \sigma \geq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
+    \end{equation}
+and
+\begin{equation}\label{msah-2}
+    M(\sigma_0,A,\leq h) \leq \sup_{\tau \geq 2; \sigma \leq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
 \end{equation}
 That is to say, any bound of the form
 $$ \LV_\zeta(\sigma,\tau) \leq M \tau - A (\sigma - \sigma_0)$$
 whenever $\tau \geq 2$ and $\sigma \geq 1/2, h\tau$, gives rise to a bound
 $$ M(\sigma_0,A,\geq h) \leq M.$$
 Similarly for $M(\sigma_0,A,\geq h)$, in which we replace the condition $\sigma \geq h\tau$ by $\sigma \leq h\tau$.
-
-A typical result concerning $M(\sigma_0,A,\geq h)$ is as follows.
-
-\begin{lemma}\label{ivic-6-large}\cite[(8.56)]{ivic}\uses{mixed-moment-def} $M(1/2, 6, \geq 11/72) \leq 1$.
 \end{lemma}
 
-\begin{proof}\uses{zeta-from-exp} Applying Lemma \ref{zeta-from-exp} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ we have
-$$  \LV_\zeta(\sigma,\tau) \leq \min( \tau - 6(\sigma-1/2), 15\tau/4 - 24 (\sigma-1/2) ).$$
-In particular, we have
+\begin{proof} This is a routine modification of the proof of Lemma \ref{mad}.
+\end{proof}
+
+\begin{corollary}\label{ivic-split}\uses{mixed-moment-def, exp-pair-def}  If $(k,\ell)$ is an exponent pair with $k > 0$, then
+    $$ M(1/2,6, \geq h) \leq 1$$
+and
+$$ M\left(1/2,\frac{2(1+2k+2\ell)}{k}, \leq h\right) \leq \frac{k+\ell}{k}$$
+where
+$$ h := \frac{\ell}{2+4l-2k}.$$
+\end{corollary}
+
+\begin{proof}\uses{zeta-from-exp, mad-variant} From Lemma \ref{zeta-from-exp} with the exponent pair $(k,\ell)$ we have
+$$ \LV_\zeta(\sigma,\tau) \leq \min( \tau - 6(\sigma-1/2), \frac{k+\ell}{k}\tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2) ).$$
+In particular, for $\sigma-1/2 \leq h\tau$ one has
 $$ \LV_\zeta(\sigma,\tau) \leq \tau - 6(\sigma-1/2)$$
-if $\sigma - 1/2 \geq 11 \tau/72$, giving the claim.
+and for $\sigma-1/2 \geq h\tau$ one has
+$$ \frac{k+\ell}{k}\tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2).$$
+The claim then follows from Lemma \ref{mad-variant}.
+\end{proof}
+
+
+\begin{corollary}\label{ivic-6-large}\cite[(8.56)]{ivic}\uses{mixed-moment-def} $M(1/2, 6, \geq 11/72) \leq 1$ and $M(1/2,24, \leq 11/72) \leq 15/4$.
+\end{corollary}
+
+\begin{proof}\uses{zeta-from-exp, add-exponential} Apply Corollary \ref{ivic-split} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ from Corollary \ref{add-exponential}.
 \end{proof}
 
 \begin{lemma}\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def, mixed-moment-def} Suppose that $M(1/2,A,\geq h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
@@ -229,7 +249,15 @@ $$ \sigma - \frac{1}{2} > \frac{\tau h}{2} + \frac{1}{4}.$$
 \end{lemma}
 
 \begin{lemma}\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def, mixed-moment-def}  Suppose that $M(1/2,6,\geq h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
-$$ \A(\sigma) \leq \max( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}).$$
+$$ \A(\sigma) \leq \max\left( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}\right).$$
 \end{lemma}
 
 It is remarked in \cite{bourgain_remarks_1995} that this proposition could lead to some improvements in current zero density estimate bounds.
+
+\begin{lemma}[Chen-Debruyne-Vidas large values theorem]\label{cdv-lv}\uses{lv-def, mixed-moment-def}\cite[Lemma A.1]{chen_debruyne_vindas_density_2024}  Let $1/2 \leq \sigma \leq 1$ and $\tau \geq \frac{30\sigma-11}{8}$ be fixed. Let $q_0, A_0, q_1, A_1, h$ be fixed quantities such that $M(1/2,q_0, \geq h) \leq A_0$ and $M(1/2,q_0, \leq h) \leq A_1$.  Suppose that $\rho \leq \LV(\sigma,\tau)$ is such that
+    $$ \frac{24(1-\sigma)}{30\sigma-11} \tau \leq \rho \leq 1.$$
+Then for any $\alpha_1 \geq 0$ and $0 \leq \alpha_2 \leq \tau$, one has
+$$ \rho \leq \max( 2-2\sigma+\alpha_2, -2\alpha_1-(A_0-1)\alpha_2 +A_0 \tau + (3-4\sigma)q_0/2, -2\alpha_1+(A_1-1)\alpha_2+A_1\tau +(3-4\sigma)q_1/2, 8\alpha_1/7+4\alpha_2/7 +16(1-\sigma)/7 +6(10\sigma-9)\tau/7(30\sigma-11), 16\alpha_1/3+4(3-4\sigma)/3 + 2(10\sigma-9)\tau/(30\sigma-11), 5\alpha_1/3+\alpha_2/6+2(3-4\sigma)/3+(1/3 + (10\sigma-9)/(30\sigma-11))\tau).$$
+\end{lemma}
+
+In \cite{chen_debruyne_vindas_density_2024} this lemma is applied with $(q_0,A_0) = (6,1)$ and $(q_1,A_1) = (19,3)$ with $h = 2/13$, which follows from Corollary \ref{ivic-split} applied to the exponent pair $(2/7,4/7) = BA(1/6,2/3)$ from Corollary \ref{add-exponential}.

@@ -213,13 +213,16 @@ def beta_bounds_to_exponent_pairs(hypothesis_set):
     return all_eps
 
 
-# Find a proof of the exponent pair (k, l), assuming a set of hypotheses. If
-# optimize is true, then the least complex proof will be returned (complexity
-# measured using the complexity function)
-def find_proof(k, l, hypotheses, optimize=True):
+# Find a proof of the exponent pair (k, l), assuming a set of hypotheses. 
+# If deep_search is true, then all points inside the convex hull (not 
+# just the vertices on the boundary) are searched. This tends to return
+# the least complex proof (measured in terms of dependencies) is returned. 
+# Unfortunately, this can be slow for large hypothesis sets. 
+# If reduce_dependencies is true, then only the dependencies crucial to the
+# proof are returned
+def find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True):
     hcpy = copy.copy(hypotheses)
-    b = beta_bounds_to_exponent_pairs(hcpy)
-    hcpy.add_hypotheses(b)
+    hcpy.add_hypotheses(beta_bounds_to_exponent_pairs(hcpy))
     hcpy.add_hypotheses(compute_exp_pairs(hcpy))
     if len(hcpy.list_hypotheses(hypothesis_type="Exponent pair")) == 0:
         return None
@@ -229,11 +232,14 @@ def find_proof(k, l, hypotheses, optimize=True):
     # in the convex hull of all the exponent pairs
     conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in verts])
     if conv.contains([k, l]):
-        if optimize:
+        if reduce_dependencies:
             # Instead of including all vertices of the convex hull, include only the
             # minimal set
             lowest_comp = float("inf")
             best_tri = None
+            if deep_search:
+                verts = hcpy.list_hypotheses(hypothesis_type="Exponent pair")
+            print("searching", len(verts))
             for tri in itertools.combinations(verts, 3):
                 conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in tri])
                 if conv.contains([k, l]):
@@ -287,7 +293,7 @@ def find_best_proof(k, l, hypotheses, method=Proof_Optimization_Method.DATE):
             if len(hyps) == num_hypotheses:
                 continue
             num_hypotheses = len(hyps)
-            eph = find_proof(k, l, hyps)
+            eph = find_proof(k, l, hyps, deep_search=False, reduce_dependencies=True)
             if eph is not None:
                 return eph
         return None
@@ -295,10 +301,11 @@ def find_best_proof(k, l, hypotheses, method=Proof_Optimization_Method.DATE):
     # Generate a proof of the exponent pair (k, l) by minimising the complexity
     # of dependencies
     elif method == Proof_Optimization_Method.COMPLEXITY:
-        # In general, this optimisation is difficult.
+        # In general, this optimisation is difficult, and the optimal solution 
+        # is not guaranteed. 
         # Fortunately, we may take advantage of the fact that (k, l) should be
         # contained in a triangle.
-        return find_proof(k, l, hypotheses)
+        return find_proof(k, l, hypotheses, deep_search=True, reduce_dependencies=True)
 
     elif method == Proof_Optimization_Method.NONE:
         hcpy = copy.copy(hypotheses)

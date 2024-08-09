@@ -1,5 +1,7 @@
 \chapter{Large value estimates}
 
+The theory of zero density estimates for the Riemann zeta function (and other $L$-functions) rests on the study of what will be called \emph{large value patterns} in this blueprint.
+
 \begin{definition}[Large value pattern]\label{large-pattern-def} A \emph{large value pattern} is a tuple $(N, T, V, (a_n)_{n \in [N,2N]}, J, W)$, where $N > 1$ and $T, V > 0$ are real numbers, $a_n$ is a $1$-bounded sequence on $[N,2N]$, $J$ is an interval of length $T$, and $W$ is a $1$-separated subset of $J$ such that
 \begin{equation}\label{V-large}
         \left|\sum_{n \in [N,2N]} a_n n^{-it} \right| \geq V
@@ -10,6 +12,8 @@ A \emph{Zeta large value pattern} is a large value pattern in which $J = [T,2T]$
 \end{definition}
 
 The choice of interval $J$ is not too important for a large value pattern, since one can translate $J$ and $W$ by any shift $t_0$ if we also modulate the coefficients $a_n$ by $n^{it_0}$ to compensate.  However, this modulation freedom is not available for zeta large value patterns, as it destroys the form $a_n = 1_I(n)$ of the coefficients.  The cardinality $|W|$ of $W$ is traditionally called $R$ in the literature.
+
+It is common in the literature to relax the $1$-boundedness hypothesis on $a_n$ slightly, for instance to $a_n \ll T^{o(1)}$, but this does not significantly affect the analysis here.  Similarly, the $1$-separation hypothesis is sometimes strengthened slightly to a $\lambda$-separation hypothesis for some $\lambda = T^{o(1)}$, but again this does not make much difference.  For some estimates, the uniform bound on $a_n$ can be relaxed to an $\ell^2$ hypothesis $\sum_{n \in [N,2N]} |a_n|^2 \ll N$ (and this second moment is traditionally called $G$ in the literature), but we will not study such relaxations systematically here, as they are less relevant for the theory of zero density estimates.
 
 \begin{definition}[Large value exponent]\label{lv-def}\uses{large-value-pattern} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed. We define $\LV(\sigma,\tau)$ to be the least fixed quantity for which the following claim is true: whenever $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value pattern with $N>1$ unbounded, $T = N^{\tau+o(1)}$, and $V = N^{\sigma+o(1)}$, then
 $$ |W| \ll N^{\LV(\sigma,\tau)+o(1)}.$$
@@ -107,7 +111,9 @@ and the claim then follows.
 
 \section{Known upper bounds on \texorpdfstring{$\LV(\sigma,\tau)$}{LV(sigma,tau)}}
 
-Upper bounds on $\LV(\sigma,\tau)$ in the literature tend to be piecewise linear functions of $\sigma$ and $\tau$.  Listed below are some examples of such bounds.
+Similarly to upper bounds on $\beta(\alpha)$, upper bounds on $\LV(\sigma,\tau)$ in the literature (also known as \emph{large value theorems}) tend to be piecewise linear functions of $\sigma$ and $\tau$.  Such bounds often tend to be convex initially (i.e., the maximum of several linear functions), but when one combines multiple large value theorems together, the bound is usually neither convex nor concave, though it often remains piecewise linear, and continuous in $\tau$ (though jump discontinuities in $\sigma$ are possible).
+
+Listed below are some examples of such bounds.
 
 \begin{theorem}[$L^2$ mean value theorem]\label{l2-mvt}\uses{lv-def} For any fixed $1/2 \leq \sigma \leq 1$ and $\tau\geq 0$ one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 1 + \tau - 2 \sigma).$$
@@ -168,7 +174,7 @@ The claim follows.
 
 \begin{theorem}[Huxley large values theorem]\label{huxley-lv}\cite[Equation~(2.9)]{Huxley}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  Then one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 4 + \tau - 6 \sigma).$$
-    In particular, one has the Montgomery conjecture for $\tau < 4 \sigma - 2$.
+    In particular, one has the Montgomery conjecture for $\tau \leq 4 \sigma - 2$.
 \end{theorem}
 
 \literature
@@ -187,9 +193,6 @@ The claim follows.
     \]
 \end{theorem}
 
-\literature
-\code{add_heath_brown_large_values_estimate()}
-
 \begin{proof}
     Follows from \cite[Lemma~1]{heathbrown_zero_1979}.
 \end{proof}
@@ -198,6 +201,10 @@ The claim follows.
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 10 + \tau - 13 \sigma).$$
 In particular, the Montgomery conjecture holds for $\tau \leq 11 \sigma - 8$.
 \end{theorem}
+
+
+\literature
+\code{add_heath_brown_large_values_estimate()}
 
 \begin{proof}\uses{heath_brown-lv-prelim, montgomery-subdivide}  By Lemma \ref{montgomery-subdivide} it suffices to show that $\LV(\sigma,\tau) \leq 2-2\sigma$ for $\tau \leq 11\sigma-8$.  From the previous theorem, and setting $\rho = \LV(\sigma,\tau)$, we have either
 $$ \LV(\sigma,\tau) \leq 2-2\sigma$$
@@ -216,16 +223,13 @@ and the claim follows.  (See also the arguments in the first paragraph of \cite[
     for any positive integer $k$.
     \end{lemma}
 
-\begin{proof} Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $N \geq 1$ be unbounded, $T = N^{\tau + o(1)}$, and $V = N^{\sigma + o(1)}$. By \cite[Lemma~6]{heathbrown_large_1979} we have
-    $$ (|W| V)^2 \ll T^{o(1)}( |W|N + |W|^2 N^{1/2} + |W|^{2-1/2k} T^{1/2} + |W|^{2-3/8k} N^{1/2} T^{1/4k}) N.$$
-    Thus one must have one of
-$$ (|W| N^\sigma)^2 \ll |W|N^{2+o(1)},$$
-$$ (|W| N^\sigma)^2 \ll |W|^2 N^{3/2+o(1)}$$
-$$ (|W| N^\sigma)^2 \ll |W|^{2-1/2k} N^{\tau/2+1+o(1)},$$
-$$ (|W| N^\sigma)^2 \ll |W|^{2-3/8k} N^{\tau/4k + 3/2+ o(1)}.$$
-The third estimate is not possible asymptotically since $\sigma > 3/4$.  Rearranging the other estimates to solve for $|W|$, and using we conclude that
-$$ |W| \ll \max\left( N^{2-2\sigma+o(1)}, N^{k\tau + k(2-4\sigma)+o(1), 2\tau/3 + k(12-16\sigma)/3 + o(1)}\right),$$
-and the claim follows.
+\begin{proof} Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $N \geq 1$ be unbounded, $T = N^{\tau + o(1)}$,  $V = N^{\sigma + o(1)}$, and $|W| = N^{\rho+o(1)}$. By \cite[Lemma~6]{heathbrown_large_1979} we have
+    $$ (|W| V)^2 \ll T^{o(1)}( |W|N + |W|^2 N^{1/2} + |W|^{2-1/2k} T^{1/2} + |W|^{2-3/8k} N^{1/2} T^{1/4k}) N$$
+and thus
+$$ 2(\rho + \sigma) \leq \max( \rho+1, 2\rho+1/2, (2-1/2k)\rho + \tau/2, (2-3/8k)\rho + 1/2 + \tau/4k).$$
+Since $\sigma > 3/4$, we can delete the second term $2\rho+1/2$ on the right-hand side. Solving for $\rho$, we conclude that
+$$ \rho \leq \max( 2-2\sigma, k\tau + k(2-4\sigma), 2\tau/3 + k(12-16\sigma)/3 ),$$
+and taking suprema in $\rho$, we obtain the claim.
 \end{proof}
 
 \begin{theorem}[Jutila large values theorem]\label{jutila-lvt}\uses{lv-def}  For any integer $k \geq 1$, one has
@@ -239,7 +243,7 @@ $$ \tau \leq \min( (4-2/k)\sigma - (2-2/k), (8k-2)\sigma - 6k + 2).$$
 \end{theorem}
 
 \literature
-\code{add_julita_large_values_estimate()}
+\code{add_jutila_large_values_estimate(Constants.LARGE_VALUES_TRUNCATION)}
 
 \begin{proof} See \cite[(1.4)]{jutila_zero_density_1977} (setting $V = N^{\sigma+o(1)}$, $T = N^{\tau+o(1)}$, and $G \leq N$).  We remark that this form is an optimized form of the inequality after (3.2) in Jutila's paper, which in our notation would read that
 $$ 2\LV(\sigma,\tau) + 2\sigma \leq \max \left(2 + \rho, \frac{3}{2} + \left(2 - \frac{1}{k}\right)\rho + \rho + \frac{1}{2k}\max\left(k(\tau-1), \frac{\rho+\tau}{2}\right), 2\rho + 1\right)$$
@@ -295,13 +299,6 @@ giving the claim.
 \end{proof}
 
 
-\begin{lemma}[Chen-Debruyne-Vidas large values theorem]\label{cdv-lv}\uses{lv-def, mixed-moment-def}\cite[Lemma A.1]{cdv}  Let $1/2 \leq \sigma \leq 1$ and $\tau \geq \frac{30\sigma-11}{8}$ be fixed. Let $q_0, A_0, q_1, A_1, h$ be fixed quantities such that $M(1/2,q_0, \geq h) \leq A_0$ and $M(1/2,q_0, \leq h) \leq A_1$.  Suppose that $\rho \leq \LV(\sigma,\tau)$ is such that
-    $$ \frac{24(1-\sigma)}{30\sigma-11} \tau \leq \rho \leq 1.$$
-Then for any $\alpha_1 \geq 0$ and $0 \leq \alpha_2 \leq \tau$, one has
-$$ \rho \leq \max( 2-2\sigma+\alpha_2, -2\alpha_1-(A_0-1)\alpha_2 +A_0 \tau + (3-4\sigma)q_0/2, -2\alpha_1+(A_1-1)\alpha_2+A_1\tau +(3-4\sigma)q_1/2, 8\alpha_1/7+4\alpha_2/7 +16(1-\sigma)/7 +6(10\sigma-9)\tau/7(30\sigma-11), 16\alpha_1/3+4(3-4\sigma)/3 + 2(10\sigma-9)\tau/(30\sigma-11), 5\alpha_1/3+\alpha_2/6+2(3-4\sigma)/3+(1/3 + (10\sigma-9)/(30\sigma-11))\tau).$$
-\end{lemma}
-
-In \cite{cdv-lv} this lemma is applied with $(q_0,A_0) = (6,1)$ and $(q_1,A_1) = (19,3)$, with $h = 2/13$; this is justified by \cite[Cor 8.1, (3.81)]{ivic}.
 
 The preprint of Kerr \cite{kerr} contains additional large value theorems:
 
@@ -322,4 +319,3 @@ The preprint of Kerr \cite{kerr} contains additional large value theorems:
     $$ \rho \leq \max(2-2\sigma+\alpha, 4\tau/3 +23/3 - 12\sigma - 2\alpha/3, 2\tau/3 + 14/3 - 20/3 ).$$
 \end{itemize}
 \end{lemma}
-
