@@ -363,7 +363,7 @@ def zero_density_estimates_examples2():
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
 
 def more_zero_density_examples():
-    zd.approximate_bourgain_zero_density_estimate()
+    zd.approx_optimise_bourgain_zero_density_estimate()
     #zd.optimise_bourgain_zero_density_estimate()
 
 def all_examples():

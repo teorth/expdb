@@ -15,6 +15,7 @@ import large_values as lv
 import matplotlib.pyplot as plt
 from reference import Reference
 import sympy
+import scipy.optimize
 import zeta_large_values as zlv
 
 
@@ -463,49 +464,75 @@ def ep_to_zd(hypotheses):
 
     return zdts
 
-def approximate_bourgain_zero_density_estimate():
+def approx_optimise_bourgain_zero_density_estimate():
     
-    sigma_range = (25/32, 11/14)
-    tau_range = (1, 3/2)
+    sigma_range = (frac(25,32), frac(11,14))
+    tau_range = (1, frac(3,2))
 
     N = 100
     max_A = 0
-    for i in range(N):
-        for j in range(N):
-            sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
+
+    sigmas = []
+    As = []
+    for i in range(N + 1):
+        # for each sigma, compute the tau limits 
+        sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
+        #tau_lower = min(frac(3,2), (24 * sigma - 18) / (2 * sigma - 1))
+        tau_lower = min(frac(3,2), frac(136,8) * sigma - frac(95,8))
+        A_max = 0
+        tau_argmax = 0
+        slacks = None
+
+        for j in range(N + 1):
             tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
-
-            sigma = frac(25,32)
-            #print((24 * sigma - 18) / (2 * sigma - 1))
-            tau = frac(3,2)
-            if tau < (24 * sigma - 18) / (2 * sigma - 1):
-                continue
-
-            if tau < 4 * (1 + sigma) / 5:
-                alpha1 = tau / 3 - frac(2,3) * (7 * sigma - 5)
-                alpha2 = 0
-            else:
-                alpha1 = tau/8 - (9 * sigma - 7) / 2
-                alpha2 = frac(5,4) * tau - 1 - sigma
+            if tau < tau_lower: continue
             
-            rho_bound = max(
-                alpha2 + 2 - 2 * sigma,
-                alpha1 + alpha2 / 2 + 2 - 2*sigma,
-                -alpha2 + 2 * tau + 4 - 8 * sigma,
-                2 * alpha1 + tau + 12 - 16 * sigma,
-                4 * alpha1 + 3 - 4 * sigma
-            )
-            A = rho_bound / (1 - sigma) / tau
-            if A > max_A:
-                max_A = A
-            print(sigma, tau, alpha1, alpha2, rho_bound, A)
-            print(
-                alpha2 + 2 - 2 * sigma, 
-                alpha1 + alpha2 / 2 + 2 - 2*sigma, 
-                -alpha2 + 2 * tau + 4 - 8 * sigma, 
-                2 * alpha1 + tau + 12 - 16 * sigma,
-                4 * alpha1 + 3 - 4 * sigma)
-    print(max_A)
+            # Treating sigma, tau as fixed, solve the LP
+            # min (a1, a2)
+            #       max {f1(a1,a2), f2(a1,a2), ... , f5(a1,a2)} 
+            # s.t. 
+            #       a1 >= 0, 
+            #       a2 >= 0
+            # 
+            # which is equivalent to the LP 
+            # 
+            # min (a1, a2, M) 
+            #       M
+            # s.t. 
+            #       M >= f1(a1,a2), ..., M >= f5(a1,a2),
+            #       a1 >= 0, 
+            #       a2 >= 0
+
+            # objective function is u(a1, a2, M) := M
+            obj_func = [0, 0, 1]
+            # Constraints of the form Ax \leq b
+            Ab = [
+                ([0, 1, -1], -2 + 2 * sigma),               # a2 + (2 - 2s) < M
+                ([1, frac(1,2), -1], -2 + 2 * sigma),       # a1 + a2/2 + (2 - 2s) < M
+                ([0, -1, -1], -(2 * tau + 4 - 8 * sigma)),  # -a2 + (2t + 4 - 8s) < M
+                ([-2, 0, -1], -(tau + 12 - 16 * sigma)),    # -2a1 + (t + 12 - 16s) < M
+                ([4, 0, -1], -(3 - 4 * sigma))              # 4a1 + (3 - 4s) < M
+            ]
+            A = [r[0] for r in Ab]
+            b = [r[1] for r in Ab]
+
+            res = scipy.optimize.linprog(obj_func, A_ub=A, b_ub=b)
+            if res.success:
+                A_bound = res.fun / (1 - sigma) / tau
+                if A_bound > A_max:
+                    A_max = A_bound
+                    tau_argmax = tau0
+            else:
+                print('Warning: linprog did not succeed')
+            
+            # Save for the plot later 
+            
+
+        sigmas.append(sigma)
+        As.append(A_max)
+
+    plt.plot(sigmas, As)
+    plt.show()
 
 
 def optimise_bourgain_zero_density_estimate():
