@@ -166,10 +166,10 @@ For completeness, we now work out the values of $\LV_\zeta(\sigma,\tau)$ in the 
 One can use exponent pairs to control $\LV_\zeta(\sigma,\tau)$:
 
 \begin{lemma}[From exponent pairs to zeta large values estimate]\label{zeta-from-exp}\uses{lvz-def, exp-pair-def}\cite[Theorem 8.2]{ivic} If $(k,\ell)$ is an exponent pair with $k>0$, then for any $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ one has
-    $$ \LV_\zeta(\sigma,\tau) \leq \max( \tau - 6(\sigma-1/2), \frac{k+\ell}{k} \tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2) ).$$
+    $$ \LV_\zeta(\sigma,\tau) \leq \max\left( \tau - 6(\sigma-1/2), \frac{k+\ell}{k} \tau - \frac{2(1+2k+2\ell)}{k} (\sigma-1/2) \right).$$
 \end{lemma}
 
-Typical examples of exponent pairs that can be used here include $(1/2,1/2)$, $(13/31, 16/31)=BAB^2A^2(1/6,2/3)$, $(4/11,6/11)$ (a convex combination of $(1/2,1/2)$ and $(2/7,4/7)$), $(2/7,4/7) = BA(1/6,2/3)$, $(5/24, 15/24)$ (a convex combination of $(1/6,2/3)$ and $(4/18, 11/18)$), and $(4/18,11/18) = BABA(1/6,2/3)$: see \cite[Corollary 8.1, 8.2]{ivic}.
+By applying this lemma to the exponent pairs in Corollary \ref{add-exponential}, one recovers the bounds in \cite[Corollary 8.1, 8.2]{ivic} (up to epsilon losses in the exponents).
 
 A useful connection between large values estimates and large values estimates for the zeta function is the following strengthening of Theorem \ref{montgomery-lv}.
 
@@ -251,12 +251,12 @@ Another typical application of the Hal\'asz-Montgomery inequality is
     In particular, optimizing using subdivision (Lemma \ref{montgomery-subdivide}) we have
     $$ \LV(\sigma,\tau) \leq \max\left( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6}\right).$$
     This implies the Montgomery conjecture for
-    $$ \tau \leq \min( 10\sigma-7, 12 \sigma - \frac{53}{6}).$$
+    $$ \tau \leq \min\left( 10\sigma-7, 12 \sigma - \frac{53}{6}\right).$$
 \end{lemma}
 
-\begin{proof}\uses{hl-improv, zeta-from-exp}  Write $\rho := \LV(\sigma,\tau)$, and let $\eps>0$ be arbitrary. By Lemma \ref{hl-improv}, we may assume without loss of generality that
+\begin{proof}\uses{hl-improv, zeta-from-exp, add-exponential}  Write $\rho := \LV(\sigma,\tau)$, and let $\eps>0$ be arbitrary. By Lemma \ref{hl-improv}, we may assume without loss of generality that
     $$ \rho \leq \max( 2-2\sigma, 1-2\sigma + \sigma' + \min( \rho, \LV_\zeta(\sigma',\tau')) ) + \eps$$
-    for some $1/2 \leq \sigma' \leq 1$ and $1 \leq \tau' \leq \tau$.  On the other hand, from Lemma \ref{zeta-from-exp} applied to the exponent pair $(2/7,4/7)$, and bounding $\tau'$ by $\tau$, one has
+    for some $1/2 \leq \sigma' \leq 1$ and $1 \leq \tau' \leq \tau$.  On the other hand, from Lemma \ref{zeta-from-exp} applied to the exponent pair $(2/7,4/7)$ from Lemma \ref{add-exponential}, and bounding $\tau'$ by $\tau$, one has
     $$ \LV_\zeta(\sigma',\tau') \leq \max( \tau-6(\sigma'-1/2), 3\tau - 19(\sigma'-1/2))$$
     and thus on taking convex combinations
     $$ \min(\rho,\LV_\zeta(\sigma',\tau')) \leq \max( \frac{5}{6}\rho + \frac{1}{6} \tau - (\sigma'-1/2), \frac{18}{19} \rho + \frac{3}{19} \tau - (\sigma'-1/2) ),$$
