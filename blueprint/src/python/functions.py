@@ -25,7 +25,7 @@ class Interval:
     #                   False), then the upper limit x1 is included in the interval.
     #
     # Scheme 2: (expr), with parameters
-    #   - expt (string type) a string expression like (a, b) or [a, b]
+    #   - expr (string type) a string expression like (a, b) or [a, b]
     def __init__(self, x0, x1=None, include_lower=True, include_upper=False):
 
         if isinstance(x0, str):
@@ -53,7 +53,7 @@ class Interval:
         return f"{lower_bracket}{self.x0},{self.x1}{upper_bracket}"
 
     def __eq__(self, other):
-        # Add empty intervals are considered equal
+        # All empty intervals are considered equal
         if self.is_empty() and other.is_empty():
             return True
         return (

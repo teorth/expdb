@@ -724,6 +724,27 @@ def add_jutila_large_values_estimate(K):
             )
         )
 
+# Bourgain large-values theorem with optimal choices of \alpha_1, \alpha_2 given by 
+# \alpha_1 = 10/3 - 14s/3 + t/3  for  t \leq 4(1 + s)/5
+# \alpha_1 = 7/2 - 9s/2 + t/8    o/w
+#
+# \alpha_2 = 0                   for  t \leq 4(1 + s)/5
+# \alpha_2 = -1 - s + 5t/4       o/w
+# 
+# These choices give the large values estimate (upon substitution into (Bourgain, 2000)
+# Lemma 4.60):
+# LV(s, t) \leq (16 - 20 s + t) / 3  for t \leq 4(1 + s)/5
+#               5 - 7 s + 3t / 4     o/w
+# which equals 
+# LV(s, t) \leq max((16 - 20 s + t) / 3, 5 - 7 s + 3t / 4)
+# TODO: impose the condition that \rho \leq 1, \tau \leq 7/2
+def add_bourgain_large_values_estimate():
+    literature.add_hypotheses(
+        lv.literature_bound_LV_max(
+            [[frac(16,3), -frac(20,3), frac(1,3)], [5, -7, frac(3,4)]], rm.get("bourgain_large_2000")
+        )
+    )
+
 # Guth-Maynard (2024) large values theorem: LV(s, t) \leq max(2 - 2s, 18/5 - 4s, t + 12/5 - 4s)
 def add_guth_maynard_large_values_estimate():
     literature.add_hypothesis(
@@ -735,6 +756,7 @@ def add_guth_maynard_large_values_estimate():
 add_huxley_large_values_estimate()
 add_heath_brown_large_values_estimate()
 add_jutila_large_values_estimate(Constants.LARGE_VALUES_TRUNCATION)
+add_bourgain_large_values_estimate()
 add_guth_maynard_large_values_estimate()
 
 ########################################################################################
