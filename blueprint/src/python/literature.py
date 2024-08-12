@@ -730,10 +730,18 @@ def add_jutila_large_values_estimate(K):
 #
 # \alpha_2 = 0                   for  t \leq 4(1 + s)/5
 # \alpha_2 = -1 - s + 5t/4       o/w
+# 
+# These choices give the large values estimate (upon substitution into (Bourgain, 2000)
+# Lemma 4.60):
+# LV(s, t) \leq (16 - 20 s + t) / 3  for t \leq 4(1 + s)/5
+#               5 - 7 s + 3t / 4     o/w
+# which equals 
+# LV(s, t) \leq max((16 - 20 s + t) / 3, 5 - 7 s + 3t / 4)
+# TODO: impose the condition that \rho \leq 1, \tau \leq 7/2
 def add_bourgain_large_values_estimate():
     literature.add_hypotheses(
         lv.literature_bound_LV_max(
-            [[2, -2, 0], [5, -7, frac(3,4)]], rm.get("bourgain_large_2000")
+            [[frac(16,3), -frac(20,3), frac(1,3)], [5, -7, frac(3,4)]], rm.get("bourgain_large_2000")
         )
     )
 

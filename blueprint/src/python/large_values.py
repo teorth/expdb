@@ -282,6 +282,14 @@ def best_large_value_estimate(hypotheses, domain=None):
 
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
 
+
+# Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by 
+# s \in sigma_range
+# t \in tau_range(s)
+def prove_LV_on_tau_bound(hypotheses, f, sigma_range, tau_range):
+    pass
+
+
 # Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic 
 # properties (ii) of Large value estimates section) to obtain a better large 
 # value estimate. 

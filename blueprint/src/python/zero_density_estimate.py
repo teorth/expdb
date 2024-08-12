@@ -273,7 +273,6 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
     )
     
-    print()
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -334,6 +333,19 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
             deps
         ))
     return hyps
+
+# Tries to prove the zero-density estimate 
+# A(sigma) \leq Abound (sigma in sigma_interval)
+# using Corollary 11.8
+def prove_density_estimate(hypothesis, Abound, sigma_interval):
+
+    # Try to prove that LV(s, t) / t \leq 3(1 - s)/tau0 = (1 - s) * Abound in the range 
+    # 2/3 tau0 \leq t \leq tau0
+    lv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
+    zlv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
+
+    pass
+
 
 # Computes the zero-density estimate obtained from
 #

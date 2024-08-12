@@ -363,10 +363,37 @@ def zero_density_estimates_examples2():
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
 
 def more_zero_density_examples():
-    hyp = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
-    print(hyp.data)
-    #zd.approx_optimise_bourgain_zero_density_estimate()
-    #zd.optimise_bourgain_zero_density_estimate()
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
+    hypotheses.add_hypotheses(
+        literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
+    )
+    hypotheses.add_hypotheses(
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", keywords="Jutila, k = 3"
+        )
+    )
+    for k in range(2, 15):
+        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+    # Zeta large value estimates
+    hypotheses.add_hypothesis(
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", keywords="Heath-Brown"
+        )
+    )
+    
+    zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(3))
+    print("Best-known vs computed zero-density estimate")
+    print("A(x)(1-x) \\leq")
+    for h in zdt:
+        print(h.data)
+        if h.data.interval.contains(0.785):
+            h.recursively_list_proofs()
+    plot(
+        zdt,
+        literature.list_hypotheses(hypothesis_type="Zero density estimate"),
+        "Best zero density estimate",
+    )
 
 def all_examples():
     # mu_bound_examples()
