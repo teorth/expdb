@@ -261,31 +261,52 @@ $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma)
 See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{guth-maynard-lvt-again}
 \end{proof}
 
+{\bf note: the next few results should be moved to the additive energy section, as they rely on double zeta sum estimates.}
+
 \begin{theorem}[Bourgain large values theorem]\label{bourgain-lvt}\uses{lv-def} \cite{bourgain_large_2000} Let $1/2 < \sigma < 1$ and $\tau > 0$, and let $\rho := \LV(\sigma,\tau)$.  Let $\alpha_1, \alpha_2 \geq 0$ be real numbers.  Then either
-$$ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma)$$
+\begin{equation}\label{rho1}
+ \rho \leq \min( \alpha_2 + 2 - 2 \sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma)
+\end{equation}
 or else there exists $s \geq 0$ such that
 \begin{equation}\label{rs}
 \begin{split}
-     &\frac{1}{2}\max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2) + \frac{1}{2}\max(s+2, 2s+1) \geq \\
+     &\frac{1}{2}\max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2) + \frac{1}{2}\max(s+2, 2s+1, 5s/4 + \tau/2) \geq \\
 		&\qquad\max( -2\alpha_1 + 2\sigma + s + \rho, -\alpha_1 - \alpha_2/2 + 2\sigma + s/2 + 3\rho/2).
 \end{split}
 \end{equation}
 \end{theorem}
 
-\begin{proof}  By Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $N \geq 1$, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$.  Now set $\delta_1 := N^{-\alpha_1}$, $\delta_2 := N^{-\alpha_2}$.  Applying \cite[(4.41), (4.42), (4.55), (4.57)]{bourgain_large_2000} (noting that as we are not imposing the restriction $N > T^{2/3+\eps}$ in \cite[Lemma 3.7]{bourgain_large_2000}, that an additional term of $R^{5/4} T^{1/2}$ must be added to the right-hand side), we conclude that either
-$$ |W| \leq \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16},$$
-or one can bound the quantity
-$$ T^{-\eps} \delta_1^2 V^2 |S| |W| + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} |W|^{3/2}$$
+\begin{proof}  By Definition \ref{lv-def}, we can find a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,R)$ with $N>1$ unbounded, $N \geq 1$, $T = N^{\tau+o(1)}$, $|R| = N^{\rho+o(1)}$, $V = N^{\sigma+o(1)}$; we use $R$ here instead of $W$ to be consistent with the notation from \cite{bourgain_2000}.  Now set $\delta_1 := N^{-\alpha_1}$, $\delta_2 := N^{-\alpha_2}$.  From \cite[(4.41), (4.42)]{bourgain_2000}, one has the inequality
+    $$ |R| \leq |R^{(1)}| + |R^{(2)}|$$
+    for certain sets $R^{(1)}$ and $R^{(2)}$ with the former set obeying the bound
+$$ |R^{(1)}| \ll \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16}.$$
+Hence, we either have
+$$ |R| \ll \delta_2^{-1} N^2 V^{-2} + \delta_2 T^2 N^4 V^{-8} + \delta_1^2 T N^{12} V^{-16}$$
+which implies \eqref{rho-1}, or else
+\begin{equation}\label{rr}
+    |R| \ll |R^{(2)}|.
+\end{equation}
+Henceforth we assume that \eqref{rr} holds. From \cite[(4.53), (4.54)]{bourgain_2000} we may upper bound
+\begin{equation}\label{Exp-1}
+     T^{-\eps} \delta' (\delta'')^2 V^2 |S| |R^{(2)}| + T^{-\eps} \delta_1 V^2 |S|^{1/2} \sum_\alpha |R_\alpha|^{3/2}
+\end{equation}
 by
-$$ T^\eps (|W|N^2 + |W|^2 N + |W|^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N)^{1/2}$$
-for a certain non-empty set $S$.  After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s \geq 1$, and the claim follows.
+\begin{equation}\label{Exp-2}
+    \ll T^\eps S(N,R^{(2)})^{1/2} S(N,S)^{1/2}
+\end{equation}
+for arbitrarily small fixed $\eps$, some $\delta',\delta''>0$ with $\delta' > T^{-\eps} (\delta_1/\delta'')^2$ (see \cite[(4.37)]{bourgain_2000}), some set $S$ (which will be non-empty by \cite[(4.47)]{bourgain_2000}), and some sets $R_\alpha$ defined in \cite[(4.39)]{bourgain_2000}, where the double zeta sums $S(N,W)$ are defined in \eqref{snw}.  Applying Lemma \ref{lv-edef}, the latter expression is bounded by
+$$ \ll T^\eps (|R|N^2 + |R|^2 N + |R|^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N + |S|^{5/4} T^{1/2})^{1/2}.$$
+Meanwhile, from \cite[(4.57)]{bourgain_2000}, the expression \eqref{Exp-1} is bounded from below by
+$$ \gg T^{-2\eps} (\delta_1^2 V^2 |S| |R| + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} |R|^{3/2}).$$
+After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s > 0$.
+Combining these bounds and writing all expressions as powers of $N$, we obtain the claim (after sending $\eps \to 0$).
 \end{proof}
 
 \begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\uses{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\tau \leq 3/2$ and $\rho \leq 1$.  Then
 $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
 \end{corollary}
 
-\begin{proof}\uses{bourgain-lvt}  With $\rho \leq 1$ and $\tau \leq 3/2$, the $2\rho+1$ and $5\rho/4+\tau/2$ terms in the previous theorem are dominated by $\rho+2$, so the inequality \eqref{rs} simplifies to
+\begin{proof}\uses{bourgain-lvt}  With $\tau \leq 3/2$, $5s/4+\tau/2$ is bounded by $5s/4+3/4$ which is a convex combination of $s+2$ and $2s+1$, and so this term can be dropped; similarly for $5\rho/4+\tau/2$.  Since $\rho \leq 1$, the $2\rho+1$ term can also be dropped, so the inequality \eqref{rs} simplifies to
 $$(\rho+2)/2 + \max(s+2, 2s+1)/2 \geq
     \max( -2\alpha_1 + 2\sigma + s + \rho, -\alpha_1 - \alpha_2/2 + 2\sigma + s/2 + 3\rho/2).$$
 Thus either
