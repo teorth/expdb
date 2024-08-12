@@ -302,9 +302,11 @@ After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $
 Combining these bounds and writing all expressions as powers of $N$, we obtain the claim (after sending $\eps \to 0$).
 \end{proof}
 
-\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\uses{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume$\rho \leq \min(1, 4-2\tau)$.  Then
+\begin{corollary}[Bourgain large values theorem, simplified version]\label{borg-lv-simp}\uses{lv-def} \cite[Lemma 4.60]{bourgain_large_2000} Let the notation be as above, but additionally assume $\rho \leq \min(1, 4-2\tau)$.  Then
 $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma).$$
 \end{corollary}
+
+In \cite{bourgain_large_2000} this bound is only established in the case $\tau \leq 3/2$ (in which case the condition on $\rho$ simplifies to $\rho \leq 1$, and the final term $4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma$ simplifies to $4\alpha_1 + 3 -4\sigma$), but the argument extends to the $\tau > 3/2$ case without significant difficulty.
 
 \begin{proof}\uses{bourgain-lvt}  With $\rho \leq \min(1-4-2\tau)$, $5\rho/4+\tau/2+1$ and $2\rho+1$ are both bounded by $\rho+2$, hence
 $$ \max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2 + 1) = \rho+2.$$
