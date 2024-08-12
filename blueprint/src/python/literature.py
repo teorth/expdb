@@ -568,7 +568,7 @@ D_transform_hypothesis = Hypothesis(
         'See [Sargos, 1995] Theorem 7.1',
         rm.get('sargos_points_1995'),
         )
-    
+
 
 literature.add_hypothesis(A_transform_hypothesis)
 literature.add_hypothesis(B_transform_hypothesis)
@@ -724,18 +724,18 @@ def add_jutila_large_values_estimate(K):
             )
         )
 
-# Bourgain large-values theorem with optimal choices of \alpha_1, \alpha_2 given by 
+# Bourgain large-values theorem with optimal choices of \alpha_1, \alpha_2 given by
 # \alpha_1 = 10/3 - 14s/3 + t/3  for  t \leq 4(1 + s)/5
 # \alpha_1 = 7/2 - 9s/2 + t/8    o/w
 #
 # \alpha_2 = 0                   for  t \leq 4(1 + s)/5
 # \alpha_2 = -1 - s + 5t/4       o/w
-# 
+#
 # These choices give the large values estimate (upon substitution into (Bourgain, 2000)
 # Lemma 4.60):
 # LV(s, t) \leq (16 - 20 s + t) / 3  for t \leq 4(1 + s)/5
 #               5 - 7 s + 3t / 4     o/w
-# which equals 
+# which equals
 # LV(s, t) \leq max((16 - 20 s + t) / 3, 5 - 7 s + 3t / 4)
 # TODO: impose the condition that \rho \leq 1, \tau \leq 7/2
 def add_bourgain_large_values_estimate():
@@ -986,3 +986,5 @@ zd.add_zero_density(
 zd.add_zero_density(
     literature, "15 / (3 + 5 * x)", Itvl(frac(1, 2), 1), rm.get("guth-maynard")
 )
+
+
