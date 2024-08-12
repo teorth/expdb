@@ -270,7 +270,7 @@ See \cite[Theorem~1.1]{guth-maynard}. We reprove this result in Theorem \ref{gut
 or else there exists $s \geq 0$ such that
 \begin{equation}\label{rs}
 \begin{split}
-     &\frac{1}{2}\max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2) + \frac{1}{2}\max(s+2, 2s+1, 5s/4 + \tau/2) \geq \\
+     &\frac{1}{2}\max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2 + 1) + \frac{1}{2}\max(s+2, 2s+1, 5s/4 + \tau/2 + 1) \geq \\
 		&\qquad\max( -2\alpha_1 + 2\sigma + s + \rho, -\alpha_1 - \alpha_2/2 + 2\sigma + s/2 + 3\rho/2).
 \end{split}
 \end{equation}
@@ -294,8 +294,8 @@ by
 \begin{equation}\label{Exp-2}
     \ll T^\eps S(N,R^{(2)})^{1/2} S(N,S)^{1/2}
 \end{equation}
-for arbitrarily small fixed $\eps$, some $\delta',\delta''>0$ with $\delta' > T^{-\eps} (\delta_1/\delta'')^2$ (see \cite[(4.37)]{bourgain_large_2000}), some set $S$ (which will be non-empty by \cite[(4.47)]{bourgain_large_2000}), and some sets $R_\alpha$ defined in \cite[(4.39)]{bourgain_2000}, where the double zeta sums $S(N,W)$ are defined in \eqref{snw}.  Applying Lemma \ref{lv-edef}, the latter expression is bounded by
-$$ \ll T^\eps (|R|N^2 + |R|^2 N + |R|^{5/4} T^{1/2})^{1/2} (|S| N^2 + |S|^2 N + |S|^{5/4} T^{1/2})^{1/2}.$$
+for arbitrarily small fixed $\eps$, some $\delta',\delta''>0$ with $\delta' > T^{-\eps} (\delta_1/\delta'')^2$ (see \cite[(4.37)]{bourgain_large_2000}), some set $S$ (which will be non-empty by \cite[(4.47)]{bourgain_large_2000}), and some sets $R_\alpha$ defined in \cite[(4.39)]{bourgain_2000}, where the double zeta sums $S(N,W)$ are defined in \eqref{snw}.  Applying Lemma \ref{hb-double}, the latter expression is bounded by
+$$ \ll T^\eps (|R|N^2 + |R|^2 N + |R|^{5/4} T^{1/2} N)^{1/2} (|S| N^2 + |S|^2 N + |S|^{5/4} T^{1/2} N)^{1/2}.$$
 Meanwhile, from \cite[(4.57)]{bourgain_large_2000}, the expression \eqref{Exp-1} is bounded from below by
 $$ \gg T^{-2\eps} (\delta_1^2 V^2 |S| |R| + \delta_1 \delta_2^{1/2} V^2 |S|^{1/2} |R|^{3/2}).$$
 After passing to a subsequence, we can ensure that $|S| = N^{s+o(1)}$ for some $s > 0$.
@@ -306,7 +306,7 @@ Combining these bounds and writing all expressions as powers of $N$, we obtain t
 $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 3-4\sigma).$$
 \end{corollary}
 
-\begin{proof}\uses{bourgain-lvt}  With $\tau \leq 3/2$, $5s/4+\tau/2$ is bounded by $5s/4+3/4$ which is a convex combination of $s+2$ and $2s+1$, and so this term can be dropped; similarly for $5\rho/4+\tau/2$.  Since $\rho \leq 1$, the $2\rho+1$ term can also be dropped, so the inequality \eqref{rs} simplifies to
+\begin{proof}\uses{bourgain-lvt}  With $\tau \leq 3/2$, $5s/4+\tau/2+1$ is bounded by $5s/4+7/4$ which is a convex combination of $s+2$ and $2s+1$, and so this term can be dropped; similarly for $5\rho/4+\tau/2$.  Since $\rho \leq 1$, the $2\rho+1$ term can also be dropped, so the inequality \eqref{rs} simplifies to
 $$(\rho+2)/2 + \max(s+2, 2s+1)/2 \geq
     \max( -2\alpha_1 + 2\sigma + s + \rho, -\alpha_1 - \alpha_2/2 + 2\sigma + s/2 + 3\rho/2).$$
 Thus either
