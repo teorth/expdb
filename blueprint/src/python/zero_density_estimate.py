@@ -467,21 +467,18 @@ def ep_to_zd(hypotheses):
 def approx_optimise_bourgain_zero_density_estimate():
     
     sigma_range = (frac(25,32), frac(11,14))
-    tau_range = (1, frac(3,2))
+    tau_range = (1, 1.7)
 
-    N = 100
+    TOL = 1e-6
+    N = 500
     max_A = 0
 
-    sigmas = []
-    As = []
+    regions = {}
     for i in range(N + 1):
         # for each sigma, compute the tau limits 
         sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
         #tau_lower = min(frac(3,2), (24 * sigma - 18) / (2 * sigma - 1))
-        tau_lower = min(frac(3,2), frac(136,8) * sigma - frac(95,8))
-        A_max = 0
-        tau_argmax = 0
-        slacks = None
+        tau_lower = min(frac(3,2), 48 * (8 * sigma ** 2 - 10 * sigma + 3) / (25 * sigma - 17))
 
         for j in range(N + 1):
             tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
@@ -507,31 +504,58 @@ def approx_optimise_bourgain_zero_density_estimate():
             obj_func = [0, 0, 1]
             # Constraints of the form Ax \leq b
             Ab = [
-                ([0, 1, -1], -2 + 2 * sigma),               # a2 + (2 - 2s) < M
-                ([1, frac(1,2), -1], -2 + 2 * sigma),       # a1 + a2/2 + (2 - 2s) < M
-                ([0, -1, -1], -(2 * tau + 4 - 8 * sigma)),  # -a2 + (2t + 4 - 8s) < M
-                ([-2, 0, -1], -(tau + 12 - 16 * sigma)),    # -2a1 + (t + 12 - 16s) < M
-                ([4, 0, -1], -(3 - 4 * sigma))              # 4a1 + (3 - 4s) < M
+                ([0, 1, -1], -2 + 2 * sigma),               # f1(s, t) = a2 + (2 - 2s) < M
+                ([1, frac(1,2), -1], -2 + 2 * sigma),       # f2(s, t) = a1 + a2/2 + (2 - 2s) < M
+                ([0, -1, -1], -(2 * tau + 4 - 8 * sigma)),  # f3(s, t) = -a2 + (2t + 4 - 8s) < M
+                ([-2, 0, -1], -(tau + 12 - 16 * sigma)),    # f4(s, t) = -2a1 + (t + 12 - 16s) < M
+                ([4, 0, -1], -(3 - 4 * sigma))              # f5(s, t) = 4a1 + (3 - 4s) < M
             ]
             A = [r[0] for r in Ab]
             b = [r[1] for r in Ab]
 
             res = scipy.optimize.linprog(obj_func, A_ub=A, b_ub=b)
-            if res.success:
-                A_bound = res.fun / (1 - sigma) / tau
-                if A_bound > A_max:
-                    A_max = A_bound
-                    tau_argmax = tau0
-            else:
+            if not res.success:
                 print('Warning: linprog did not succeed')
+
+            # check against Bourgain's choice of (sigma, tau)
+            if tau > 4 * (1 + sigma) / 5:
+                bourgain_alpha1 = tau / 8 - (9 * sigma - 7) / 2
+                bourgain_alpha2 = 5 * tau / 4 - (1 + sigma)
+            else:
+                bourgain_alpha1 = tau / 3 - 2 / 3 * (7 * sigma - 5)
+                bourgain_alpha2 = 0
             
+            assert abs(res.x[0] - bourgain_alpha1) < TOL and \
+                    abs(res.x[1] - bourgain_alpha2) < TOL
+
+
             # Save for the plot later 
+            equations = []
+            a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M")
+            if res.slack[0] < TOL:
+                equations.append(a2 + 2 - 2 * s - M)
+            if res.slack[1] < TOL:
+                equations.append(a1 + a2 / 2 + (2 - 2 * s) - M)
+            if res.slack[2] < TOL:
+                equations.append(-a2 + (2 * t + 4 - 8 * s) - M)
+            if res.slack[3] < TOL:
+                equations.append(-2 * a1 + (t + 12 - 16 * s) - M)
+            if res.slack[4] < TOL:
+                equations.append(4 * a1 + (3 - 4 * s) - M)
             
+            key = str(equations)
+            if key not in regions:
+                regions[key] = []
+            regions[key].append((sigma, tau))
 
-        sigmas.append(sigma)
-        As.append(A_max)
-
-    plt.plot(sigmas, As)
+    for key in regions:
+        xs = [v[0] for v in regions[key]]
+        ys = [v[1] for v in regions[key]]
+        plt.plot(xs, ys, label=key)
+    plt.legend()
+    plt.xlabel("sigma")
+    plt.ylabel("tau")
+    plt.title("Bourgain's LV(sigma, tau) estimate: equations governing the optimal choices of alpha_1, alpha_2")
     plt.show()
 
 
