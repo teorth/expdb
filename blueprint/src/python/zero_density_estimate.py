@@ -478,8 +478,8 @@ def ep_to_zd(hypotheses):
 
 def approx_optimise_bourgain_zero_density_estimate():
     
-    sigma_range = (frac(25,32), frac(11,14))
-    tau_range = (1, 1.7)
+    sigma_range = (frac(25,32), 1)
+    tau_range = (1, 3)
 
     TOL = 1e-6
     N = 500
@@ -494,7 +494,7 @@ def approx_optimise_bourgain_zero_density_estimate():
 
         for j in range(N + 1):
             tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
-            if tau < tau_lower: continue
+            #if tau < tau_lower: continue
             
             # Treating sigma, tau as fixed, solve the LP
             # min (a1, a2)
@@ -520,10 +520,12 @@ def approx_optimise_bourgain_zero_density_estimate():
                 ([1, frac(1,2), -1], -2 + 2 * sigma),       # f2(s, t) = a1 + a2/2 + (2 - 2s) < M
                 ([0, -1, -1], -(2 * tau + 4 - 8 * sigma)),  # f3(s, t) = -a2 + (2t + 4 - 8s) < M
                 ([-2, 0, -1], -(tau + 12 - 16 * sigma)),    # f4(s, t) = -2a1 + (t + 12 - 16s) < M
-                ([4, 0, -1], -(3 - 4 * sigma))              # f5(s, t) = 4a1 + (3 - 4s) < M
+                ([4, 0, -1], -(2 + max(1, 2 * tau - 2) - 4 * sigma)),# f5(s, t) = 4a1 + (2 + max(1, 2t - 2) - 4s) < M
+                ([-1, 0, 0], 0),                             # a1 >= 0
+                ([0, -1, 0], 0)                             # a2 >= 0
             ]
             A = [r[0] for r in Ab]
-            b = [r[1] for r in Ab]
+            b = [r[1] for r in Ab] 
 
             res = scipy.optimize.linprog(obj_func, A_ub=A, b_ub=b)
             if not res.success:
@@ -537,23 +539,25 @@ def approx_optimise_bourgain_zero_density_estimate():
                 bourgain_alpha1 = tau / 3 - 2 / 3 * (7 * sigma - 5)
                 bourgain_alpha2 = 0
             
-            assert abs(res.x[0] - bourgain_alpha1) < TOL and \
-                    abs(res.x[1] - bourgain_alpha2) < TOL
+            # assert abs(res.x[0] - bourgain_alpha1) < TOL and abs(res.x[1] - bourgain_alpha2) < TOL
 
 
             # Save for the plot later 
             equations = []
-            a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M")
             if res.slack[0] < TOL:
-                equations.append(a2 + 2 - 2 * s - M)
+                equations.append("a2 + 2 - 2s = M")
             if res.slack[1] < TOL:
-                equations.append(a1 + a2 / 2 + (2 - 2 * s) - M)
+                equations.append("a1 + a2/2 + 2 - 2s = M")
             if res.slack[2] < TOL:
-                equations.append(-a2 + (2 * t + 4 - 8 * s) - M)
+                equations.append("-a2 + 2t + 4 - 8s = M")
             if res.slack[3] < TOL:
-                equations.append(-2 * a1 + (t + 12 - 16 * s) - M)
+                equations.append("-2a1 + t + 12 - 16s = M")
             if res.slack[4] < TOL:
-                equations.append(4 * a1 + (3 - 4 * s) - M)
+                equations.append("4a1 + 2 + max(1, 2t - 2) - 4s = M")
+            if res.slack[5] < TOL:
+                equations.append("a1 = 0")
+            if res.slack[6] < TOL:
+                equations.append("a2 = 0")
             
             key = str(equations)
             if key not in regions:
@@ -561,9 +565,10 @@ def approx_optimise_bourgain_zero_density_estimate():
             regions[key].append((sigma, tau))
 
     for key in regions:
-        xs = [v[0] for v in regions[key]]
-        ys = [v[1] for v in regions[key]]
-        plt.plot(xs, ys, label=key)
+        if len(regions[key]) > 0:
+            xs = [v[0] for v in regions[key]]
+            ys = [v[1] for v in regions[key]]
+            plt.plot(xs, ys, label=key)
     plt.legend()
     plt.xlabel("sigma")
     plt.ylabel("tau")
