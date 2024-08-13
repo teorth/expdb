@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from polytope import *
 from reference import *
 import itertools
+import time
 
 
 ###############################################################################
@@ -352,19 +353,40 @@ def optimize_bourgain_large_value_estimate():
         a1_defn = [-mat[0][5], -mat[0][2], -mat[0][3]] # C + A s + B t
         a2_defn = [-mat[1][5], -mat[1][2], -mat[1][3]] # C + A s + B t
 
-        fns = []
+        # Hack to ensure uniqueness (using the fact that tuples are hashable)
+        fns = set()
         for i in range(6):
             fn = [eqns[i][5], eqns[i][2], eqns[i][3]]
-            fn = [fn[i] + fn[0] * a1_defn[i] + fn[1] * a2_defn[i] for i in range(len(fn))]
-            fns.append(fn)
+            fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
+            fns.add(fn)
         
         # Compute maximum
-        func = max_of(fns, domain)
-        a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
-        a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
-        hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {})))
+        print(f'computing maximum of {len(fns)} pieces')
+        start_time = time.time()
+        func = max_of([list(fn) for fn in fns], domain)
+        a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st") + ' = 0'
+        a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st") + ' = 0'
+        hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
+        
+        for p in func.pieces:
+            print(p)
+        print('computed in ', (time.time() - start_time), 'ms')
 
-    return piecewise_min(hypotheses, domain, derived_bound_LV)
+    print('computing piecewise min of ', len(hypotheses))
+    best_lv_estimate = piecewise_min(hypotheses, domain, derived_bound_LV)
+
+    pieces = []
+    for h in best_lv_estimate:
+        for p in h.data.bound.pieces:
+            pieces.append(p)
+
+    # debugging
+    fn = Piecewise(pieces)
+    for f in fn.pieces:
+        print(f)
+    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Debugging')
+
+    return best_lv_estimate
 
 
 # Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by 

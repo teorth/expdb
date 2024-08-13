@@ -404,7 +404,7 @@ def all_examples():
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     # more_zero_density_examples()
-    # zd.approx_optimise_bourgain_zero_density_estimate()
-    lv.optimize_bourgain_large_value_estimate()
+    zd.approx_optimise_bourgain_zero_density_estimate()
+    # lv.optimize_bourgain_large_value_estimate()
 
 all_examples()

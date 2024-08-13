@@ -482,7 +482,7 @@ def approx_optimise_bourgain_zero_density_estimate():
     tau_range = (1, 3)
 
     TOL = 1e-6
-    N = 500
+    N = 1000
     max_A = 0
 
     regions = {}
@@ -494,7 +494,11 @@ def approx_optimise_bourgain_zero_density_estimate():
 
         for j in range(N + 1):
             tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
-            #if tau < tau_lower: continue
+
+            # In this region, we cannot guarantee that rho \leq 1 using Jutila's k = 3 
+            # estimate - for now just ignore the region
+            if max(2 - 2 * sigma, tau + 18 - 24 * sigma) > min(1, 4 - 2 * tau): 
+                continue
             
             # Treating sigma, tau as fixed, solve the LP
             # min (a1, a2)
@@ -569,7 +573,7 @@ def approx_optimise_bourgain_zero_density_estimate():
             xs = [v[0] for v in regions[key]]
             ys = [v[1] for v in regions[key]]
             plt.plot(xs, ys, label=key)
-    plt.legend()
+    plt.legend(loc="lower right")
     plt.xlabel("sigma")
     plt.ylabel("tau")
     plt.title("Bourgain's LV(sigma, tau) estimate: equations governing the optimal choices of alpha_1, alpha_2")
