@@ -294,7 +294,7 @@ We apply Corollary \ref{zero-large-cor} with $\tau_0 := 3/2$, then it suffices t
 
 In fact, we can do better:
 
-\begin{theorem}[Heath-Brown zero density theorem]\label{hb-density} \cite{heathbrown_zero_1979}\uses{zero-def} For $11/14 \leq \sigma < 1$, one has $\A(\sigma) \leq \frac{9}{7\sigma - 1}$ (in particular, this recovers Theorem \ref{jutila-density} range).  For any $3/4 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \max(\frac{3}{10\sigma-7}, \frac{4}{4\sigma-1})$ (which is a superior bound when $\sigma \geq 20/23$).
+\begin{theorem}[Heath-Brown zero density theorem]\label{hb-density} \cite{heathbrown_zero_1979}\uses{zero-def} For $11/14 \leq \sigma < 1$, one has $\A(\sigma) \leq \frac{9}{7\sigma - 1}$ (in particular, this recovers Theorem \ref{jutila-density}).  For any $3/4 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \max(\frac{3}{10\sigma-7}, \frac{4}{4\sigma-1})$ (which is a superior bound when $\sigma \geq 20/23$).
 \end{theorem}
 \derived
 \code{prove_heathbrown_zero_density()
@@ -349,7 +349,9 @@ In view of Theorem \ref{jutila-density} (or Theorem \ref{hb-density}), we may as
 for all $1 \leq \tau \leq 3/2$.
 
 From the $k=3$ case of Theorem \ref{jutila-lvt} we have
-$$\rho \leq \max \bigg(2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg)$$
+\begin{equation}\label{rhomax}
+    \rho \leq \max \bigg(2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg)
+\end{equation}
 which in the $\sigma < 11/14$ regime simplifies to
 \begin{equation}\label{r0-start}
 \rho \leq \max(2-2\sigma, \tau + 18-24\sigma)
@@ -372,6 +374,76 @@ We now divide into cases.  First suppose that $\tau \leq \frac{4(1+\sigma)}{5}$.
 
 Now suppose that $\tau > \frac{4(1+\sigma)}{5}$.  In this case we choose $\alpha_1 = \frac{\tau}{8} - \frac{9\sigma-7}{2}$ and $\alpha_2 = \frac{5\tau}{4} - (1+\sigma)$, which can be checked to be nonnegative using the hypotheses on $\sigma,\tau$.  In this case
 one can again check that \eqref{40} implies \eqref{rot}.
+\end{proof}
+
+We can improve this bound as follows:
+
+\begin{theorem}[Improved Bourgain density hypothesis bound] For $38/49 \leq \sigma \leq 4/5$, one has $\A(\sigma) \leq \frac{9}{8(2\sigma-1)}$.
+\end{theorem}
+
+\begin{proof}  We apply Corollary \ref{zer-large-cor3} with $\tau_0 := \frac{8(2\sigma-1)}{3}$.  For future reference we note that
+\begin{equation}\label{slope}
+    \frac{1}{3} < \frac{3-3\sigma}{\tau_0} < \frac{1}{2}
+\end{equation}
+in this range.   It suffices to show that
+\begin{equation}\label{lv-st}
+ \LV(\sigma,\tau) \leq \frac{\tau}{\tau_0} (3-3\sigma)
+\end{equation}
+for $2\tau_0/3 \leq \tau \leq \tau_0$, as well as
+\begin{equation}\label{lvz-st}
+\LV_\zeta(\sigma,\tau) \leq \frac{\tau}{\tau_0} (3-3\sigma)
+\end{equation}
+for $2 \leq \tau < 4\tau_0/3$.
+For \eqref{lvz-st} we use the twelth moment bound in Theorem \ref{hb-12}.  Since the slope of
+$2\tau - 12 (\sigma-1/2)$ in $\tau$ exceeds that of $\frac{\tau}{\tau_0} (3-3\sigma)$ by \eqref{slope}, it suffices to check the bound at the endpoint, i.e., to show that
+$$ 8\tau_0/3 - 12 (\sigma-1/2) \leq 4 -4\sigma$$
+or equivalently $\tau_0 \leq \frac{3(4\sigma-1)}{4}$, which one can easily check to be the case.
+
+Now we prove \eqref{lv-st}.  Set $\rho := \LV(\sigma,\tau)$.  From the $k=3$ case of Theorem \ref{jutila-lvt} we again have
+\eqref{rhomax}, which implies the required bound $\rho \leq \frac{\tau}{\tau_0}(3-3\sigma)$ unless one has
+\begin{equation}\label{tau-lower}
+    \tau \geq - \max( \frac{10-16\sigma}{3}, 18-24\sigma) / (1 - \frac{3-3\sigma}{\tau_0})
+\end{equation}
+In this regime, one can also check from \eqref{rhomax} that
+$$ \rho \leq \min(1, 4-2\tau)$$
+(with room to spare) so we may apply Corollary \ref{borg-lv-simp} to obtain
+\begin{equation}\label{40-alt}
+    \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma)
+\end{equation}
+for any $\alpha_1, \alpha_2 \geq 0$.
+
+As in the proof of Theorem \ref{bourgain-density}, we set
+$$ \alpha_2 := \max( \frac{5\tau}{4} - (1+\sigma), 0)$$
+and
+$$ \alpha_1 := \frac{\tau}{3} - \frac{2}{3} (7\sigma-5) - \alpha_2/6.$$
+With this choice, the expressions $\alpha_1+\alpha_2/2 + 2-2\sigma$ and $-2\alpha_1 + \tau + 12 - 16 \sigma$ are both equal to
+$\frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3}$, while $-\alpha_2 + 2\tau+4-8\sigma$ is equal to
+$$ \frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3} - \frac{4}{3} (\alpha_2 - \frac{5\tau}{4} - (1+\sigma))$$
+which is less than or equal to the previous expression by definition of $\alpha_2$.  Finally, the expression
+$4\alpha_1 + 1+\max(2,2\tau-2)-4\sigma$ is equal to
+$$ \frac{4\tau}{3} + \frac{46-68\sigma}{3} + \max(1,2\tau-2) - \frac{2\alpha_2}{3}.$$
+Thus it remains to show the bounds
+\begin{equation}\label{bound-1}
+ \alpha_2 + 2 - 2 \sigma \leq \frac{\tau}{\tau_0} (3-3\sigma)
+\end{equation}
+\begin{equation}\label{taut}
+    \frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3} \leq \frac{\tau}{\tau_0} (3-3\sigma)
+\end{equation}
+and
+\begin{equation}\label{tar}
+    \frac{4\tau}{3} + \frac{46-68\sigma}{3}+ \max(1,2\tau-2) - \frac{2\alpha_2}{3} \leq \frac{\tau}{\tau_0} (3-3\sigma).
+\end{equation}
+For \eqref{bound-1}, we trivially have $2-2\sigma \leq \frac{\tau}{\tau_0}(3-3\sigma)$ since $\tau \geq 2\tau_0/3$, and the slope of $\frac{5\tau}{4} - (1+\sigma) + 2-2\sigma$ in $\tau$ certainly exceeds $\frac{3-3\sigma}{\tau_0}$ by \eqref{slope}, so it suffices to check the endpoint
+$$ \frac{5\tau_0}{4} - (1+\sigma) + 2-2\sigma \leq 3-3\sigma$$
+which one can check to be valid for $\sigma \leq 4/5$. Now we turn to \eqref{taut}.  From \eqref{slope} it suffices to show that
+$$ \frac{\tau_0}{3} + \frac{16-20\sigma}{3} + \frac{\frac{5\tau_0}{4} - (1+\sigma)}{3} \leq 3 -3 \sigma$$
+and
+$$ \frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{0}{3} \leq 2 -2 \sigma.$$
+The former is an identity, and the latter simplifies to $\tau \geq 14\sigma-10$, which one can check follows from \eqref{tau-lower} (with some room to spare) in the regime $38/49 \leq \sigma \leq 4/5$, giving the claim.  Finally, for \eqref{tar} it suffices to show that
+$$ \frac{4\tau}{3} + \frac{46-68\sigma}{3} - \frac{2(\frac{5\tau}{4} - (1+\sigma))}{3} \leq \frac{\tau}{\tau_0} (3-3\sigma)$$
+which by \eqref{slope} would follow from
+$$ \frac{4\tau_0}{3} + \frac{46-68\sigma}{3} + \max(1,2\tau_0-2) - \frac{2(\frac{5\tau_0}{4} - (1+\sigma))}{3} \leq 3-3\sigma$$
+and one can check that this applies for $\sigma \geq 38/49$.
 \end{proof}
 
 \begin{theorem}[Bourgain zero density theorem]\label{bourgain-zd}\cite[Proposition 3]{bourgain_remarks_1995}\uses{exp-pair-def, zero-def}  Let $(k,\ell)$ be an exponent pair with $k < 1/5$, $\ell > 3/5$, and $15\ell + 20k > 13$.  Then, for any $\sigma > \frac{\ell+1}{2(k+1)}$, one has
