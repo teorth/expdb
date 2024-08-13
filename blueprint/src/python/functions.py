@@ -541,7 +541,7 @@ class Piecewise:
         )
 
     # Simplify the function by computing unions of polytopes
-    def simplify(self):
+    def simplify(self, max_grouping=3):
 
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter n represents the
@@ -578,7 +578,7 @@ class Piecewise:
                 matchable[key] = {p}
 
         # For now - only match 2 - 3 at a time
-        for n in range(2, 4):
+        for n in range(2, max_grouping + 1):
             while iteration(matchable, n):
                 pass
 

@@ -289,7 +289,8 @@ def best_large_value_estimate(hypotheses, domain=None):
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
 
 
-# Optimise Bourgain's large value estimate 
+# Optimise Bourgain's large value estimate by choosing the best value of \alpha_1, \alpha_2 
+# in each subregion of (\sigma, \tau)
 def optimize_bourgain_large_value_estimate():
     # Variables are (in order)
     # [a1, a2, sigma, tau, M, constant]
@@ -323,7 +324,11 @@ def optimize_bourgain_large_value_estimate():
         mat = [[SympyHelper.to_frac(x) for x in res[0].row(i)] for i in range(rows)] # unpack 
 
         # Take advantage of the reduced row-echelon form
-        if mat[0][0] == 0 or mat[1][1] == 0: continue
+        if mat[0][0] == 0 or mat[1][1] == 0: 
+            print('skipping')
+            print([[str(v) for v in r] for r in mat])
+
+            continue
 
         # Scale if required (it shouldn't be required, but just in case)
         if mat[0][0] != 1:
@@ -337,12 +342,16 @@ def optimize_bourgain_large_value_estimate():
         if mat[0][4] != 0:
             if mat[2][4] == 0:
                 # Unsolvable for M
+                print('skipping 2')
+                print([[str(v) for v in r] for r in mat])
                 continue
             else:
                 r = mat[0][4] / mat[2][4]
                 mat[0] = [mat[0][i] - mat[2][i] * r for i in range(cols)]
         if mat[1][4] != 0:
             if mat[2][4] == 0:
+                print('skipping 3')
+                print([[str(v) for v in r] for r in mat])
                 continue
             else:
                 r = mat[1][4] / mat[2][4]
@@ -355,39 +364,30 @@ def optimize_bourgain_large_value_estimate():
         
         # This is the region where a1 >= 0, a2 >= 0
         region = Polytope([a1_defn, a2_defn]).intersect(domain)
-        neg_regions = domain.set_minus(region)
-        
-        # Hack to ensure uniqueness (using the fact that tuples are hashable)
-        fns = set()
-        for i in range(6):
-            fn = [eqns[i][5], eqns[i][2], eqns[i][3]]
-            fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
-            fns.add(fn)
-        
-        # Compute maximum
-        print(f'computing maximum of {len(fns)} pieces')
-        start_time = time.time()
-        func = max_of([list(fn) for fn in fns], region)
+
+        if not region.is_empty(include_boundary=False):
+            # Hack to ensure uniqueness (using the fact that tuples are hashable)
+            fns = set()
+            for i in range(6):
+                fn = [eqns[i][5], eqns[i][2], eqns[i][3]]
+                fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
+                fns.add(fn)
+            # Compute maximum
+            start_time = time.time()
+            func = max_of([list(fn) for fn in fns], region)
+            neg_regions = domain.set_minus(region)
+        else:
+            func = Piecewise([])
+            neg_regions = [domain]
+
         for reg in neg_regions:
             func.pieces.append(Affine2([10000000, 0, 0], reg))
-            
+        
+        for p in func.pieces:
+            print(p)
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
-        
-        if len(func.pieces) == 0:
-            print(c)
-            print('a1', Affine2.to_string(a1_defn, "st"))
-            print('a2', Affine2.to_string(a2_defn, "st"))
-            print(Polytope([a1_defn, a2_defn]))
-            print(domain)
-            print(Polytope([a1_defn, a2_defn]).intersect(domain))
-            print(neg_regions)
-            raise ValueError()
-            
-        for p in func.pieces:
-            print(p)
-        print('computed in ', (time.time() - start_time), 'ms')
 
     print('computing piecewise min of ', len(hypotheses))
     best_lv_estimate = piecewise_min(hypotheses, domain, derived_bound_LV)
@@ -396,8 +396,17 @@ def optimize_bourgain_large_value_estimate():
     for h in best_lv_estimate:
         for p in h.data.bound.pieces:
             pieces.append(p)
+        h.recursively_list_proofs()
+
+    fn = Piecewise(pieces)
+    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Before simplifying')
+
+    fn.simplify(5)
+    fn.simplify(5)
+    fn.simplify(5)
 
     # debugging
+    print('-----------------------------------------------------------------------------')
     fn = Piecewise(pieces)
     for f in fn.pieces:
         print(f)
