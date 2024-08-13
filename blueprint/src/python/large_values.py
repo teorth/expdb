@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from polytope import *
 from reference import *
+import itertools
+import time
 
 
 ###############################################################################
@@ -42,16 +44,20 @@ class Large_Value_Estimate_Transform:
 
 # Compute the maximum of a list of bounds represented in coefficient vector form
 # Returns the result as a piecewise function
-def max_of(bounds):
+# bounds (list of list) vectors a representing a function f(x) = a^Tx with the first 
+#                   coefficient denoting the constant term
+# domain (Polytope object) the (sigma, tau) domain of definition
+def max_of(bounds, domain=None):
 
     # The standard domain of definition is \sigma \in [1/2, 1], \tau \geq 0
-    domain_ineq = [
-        [-frac(1, 2), 1, 0],  # \sigma >= 1/2
-        [1, -1, 0],  # \sigma <= 1
-        [0, 0, 1],  # \tau >= 0
-        [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
-    ]
-    domain = Polytope(domain_ineq)
+    if domain is None:
+        domain_ineq = [
+            [-frac(1, 2), 1, 0],  # \sigma >= 1/2
+            [1, -1, 0],  # \sigma <= 1
+            [0, 0, 1],  # \tau >= 0
+            [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
+        ]
+        domain = Polytope(domain_ineq)
 
     # Construct affine objects to represent the bounds
     fns = [Affine2(b, domain) for b in bounds]
@@ -70,13 +76,13 @@ def max_of(bounds):
     regions = []
     for i in range(2 ** len(intersections)):
         b = bin(i)[2:].zfill(len(intersections))  # binary representation
-        s = list(domain_ineq)  # shallow copy
+        s = []
         for j in range(len(b)):
             if b[j] == "1":
                 s.append(intersections[j].constraint.coefficients)
             else:
                 s.append([-x for x in intersections[j].constraint.coefficients])
-        p = Polytope(s, canonicalize=True)
+        p = Polytope(s).intersect(domain)
         if not p.is_empty(include_boundary=False):
             regions.append(p)
 
@@ -281,6 +287,132 @@ def best_large_value_estimate(hypotheses, domain=None):
         lv_estimates.extend([tr_hyp.data.transform(lve) for lve in lves])
 
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
+
+
+# Optimise Bourgain's large value estimate by choosing the best value of \alpha_1, \alpha_2 
+# in each subregion of (\sigma, \tau)
+def optimize_bourgain_large_value_estimate():
+    # Variables are (in order)
+    # [a1, a2, sigma, tau, M, constant]
+    # Regions over (sigma, tau) are defined by solving a system of 3 equations 
+    # to obtain a1 = f(sigma, tau), a2 = g(sigma, tau) where f, g are linear. 
+    # The equations are given by 
+    eqns = [
+        [0, 1, -2, 0, -1, 2],            # a2 + 2 - 2s = M
+        [1, frac(1,2), -2, 0, -1, 2],    # a1 + a2/2 + 2 - 2s = M
+        [0, -1, -8, 2, -1, 4],           # -a2 + 2t + 4 - 8s = M
+        [-2, 0, -16, 1, -1, 12],         # -2a1 + t + 12 - 16s = M
+        [4, 0, -4, 0, -1, 3],            # 4a1 + 3 - 4s = M
+        [4, 0, -4, 2, -1, 0],            # 4a1 + 2t - 4s = M
+        [1, 0, 0, 0, 0, 0],              # a1 = 0
+        [0, 1, 0, 0, 0, 0],              # a2 = 0
+    ]
+
+    domain = Polytope.rect((frac(25,32), frac(1)), (frac(1), frac(3)))
+
+    # Sympy solvers give empty solution sets for these systems - so instead we
+    # (temporarily) use sympy's matrix rref computer
+    # a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M") 
+    # var = [a1, a2, s, t, M]
+    hypotheses = []
+    for c in itertools.combinations(eqns, 3):
+
+        print('-------------------')
+        mat = sympy.Matrix([eq for eq in c])
+        (rows, cols) = (len(c), len(c[0]))
+        res = mat.rref() # Compute reduced row-echelon form
+        mat = [[SympyHelper.to_frac(x) for x in res[0].row(i)] for i in range(rows)] # unpack 
+
+        # Take advantage of the reduced row-echelon form
+        if mat[0][0] == 0 or mat[1][1] == 0: 
+            print('skipping')
+            print([[str(v) for v in r] for r in mat])
+
+            continue
+
+        # Scale if required (it shouldn't be required, but just in case)
+        if mat[0][0] != 1:
+            d = mat[0][0]
+            mat[0] = [mat[0][i] / d for i in range(cols)]
+        if mat[1][1] != 1:
+            d = mat[1][1]
+            mat[1] = [mat[1][i] / d for i in range(cols)]
+
+        # Eliminate the M variable 
+        if mat[0][4] != 0:
+            if mat[2][4] == 0:
+                # Unsolvable for M
+                print('skipping 2')
+                print([[str(v) for v in r] for r in mat])
+                continue
+            else:
+                r = mat[0][4] / mat[2][4]
+                mat[0] = [mat[0][i] - mat[2][i] * r for i in range(cols)]
+        if mat[1][4] != 0:
+            if mat[2][4] == 0:
+                print('skipping 3')
+                print([[str(v) for v in r] for r in mat])
+                continue
+            else:
+                r = mat[1][4] / mat[2][4]
+                mat[1] = [mat[1][i] - mat[2][i] * r for i in range(cols)]
+
+        # Given the definitions of a1, a2, substitute into each of the 
+        # 6 functions under the max, computing their maximum in the domain 
+        a1_defn = [-mat[0][5], -mat[0][2], -mat[0][3]] # C + A s + B t
+        a2_defn = [-mat[1][5], -mat[1][2], -mat[1][3]] # C + A s + B t
+        
+        # This is the region where a1 >= 0, a2 >= 0
+        region = Polytope([a1_defn, a2_defn]).intersect(domain)
+
+        if not region.is_empty(include_boundary=False):
+            # Hack to ensure uniqueness (using the fact that tuples are hashable)
+            fns = set()
+            for i in range(6):
+                fn = [eqns[i][5], eqns[i][2], eqns[i][3]]
+                fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
+                fns.add(fn)
+            # Compute maximum
+            start_time = time.time()
+            func = max_of([list(fn) for fn in fns], region)
+            neg_regions = domain.set_minus(region)
+        else:
+            func = Piecewise([])
+            neg_regions = [domain]
+
+        for reg in neg_regions:
+            func.pieces.append(Affine2([10000000, 0, 0], reg))
+        
+        for p in func.pieces:
+            print(p)
+        a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
+        a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
+        hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
+
+    print('computing piecewise min of ', len(hypotheses))
+    best_lv_estimate = piecewise_min(hypotheses, domain, derived_bound_LV)
+
+    pieces = []
+    for h in best_lv_estimate:
+        for p in h.data.bound.pieces:
+            pieces.append(p)
+        h.recursively_list_proofs()
+
+    fn = Piecewise(pieces)
+    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Before simplifying')
+
+    fn.simplify(5)
+    fn.simplify(5)
+    fn.simplify(5)
+
+    # debugging
+    print('-----------------------------------------------------------------------------')
+    fn = Piecewise(pieces)
+    for f in fn.pieces:
+        print(f)
+    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Debugging')
+
+    return best_lv_estimate
 
 
 # Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by 

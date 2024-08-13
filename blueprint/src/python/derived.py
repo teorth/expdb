@@ -100,6 +100,16 @@ def best_proof_of_exponent_pair(k, l, proof_method=Proof_Optimization_Method.DAT
     return hyp
 
 
+######################################################################################
+
+def prove_bourgain_large_values_theorem():
+    lv.optimize_bourgain_large_value_estimate()
+
+
+
+######################################################################################
+
+
 # Given additional_hypotheses, a list of new hypothesis (other than classical results),
 # find the best density estimate as a piecewise function, then if 'verbose' is true
 # displays the proof of the piece containing 'sigma'. 
@@ -245,7 +255,8 @@ def prove_zero_density_estimates():
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
-    prove_exponent_pairs()
-    #prove_zero_density_estimates()
+    # prove_exponent_pairs()
+    # prove_zero_density_estimates()
+    prove_bourgain_large_values_theorem()
 
 prove_all()

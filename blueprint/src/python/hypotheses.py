@@ -86,7 +86,7 @@ class Hypothesis:
             for d in self.dependencies:
                 d.recursively_list_proofs(indentation + 1)
         else:
-            print("\t" * indentation + f"- [{self}]  i.e. {self.data}.")
+            print("\t" * indentation + f"- [{self}]  i.e. {self.data}. {self.proof}.")
 
     # Returns True if the hypothesis is of the given type and was established by the given year.
     def is_match(self, hypothesis_type="Any", year="Any"):

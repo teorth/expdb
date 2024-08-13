@@ -308,7 +308,7 @@ $$ \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\a
 
 In \cite{bourgain_large_2000} this bound is only established in the case $\tau \leq 3/2$ (in which case the condition on $\rho$ simplifies to $\rho \leq 1$, and the final term $4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma$ simplifies to $4\alpha_1 + 3 -4\sigma$), but the argument extends to the $\tau > 3/2$ case without significant difficulty.
 
-\begin{proof}\uses{bourgain-lvt}  With $\rho \leq \min(1-4-2\tau)$, $5\rho/4+\tau/2+1$ and $2\rho+1$ are both bounded by $\rho+2$, hence
+\begin{proof}\uses{bourgain-lvt}  With $\rho \leq \min(1,4-2\tau)$, $5\rho/4+\tau/2+1$ and $2\rho+1$ are both bounded by $\rho+2$, hence
 $$ \max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2 + 1) = \rho+2.$$
 Furthermore, $5s/4+\tau+1$ is a convex combination of $s+2$ and $2s + 2\tau-2$, hence
 $$\max(s+2, 2s+1, 5s/4 + \tau/2 + 1) \leq \max(s+2, 2s + \max(1,2\tau-2)).$$
@@ -325,6 +325,73 @@ or
 $$ \rho \leq 4\alpha_1 + 2 + \max(1,2\tau-2) - 4 \sigma,$$
 giving the claim.
 \end{proof}
+
+With the aid of computer assistance, one is able to produce an optimized version of the above large values theorem. We have 
+
+\begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, R)$ of Table \ref{optimised_bourgain_lve}, one has 
+\[
+\rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in R. 
+\]
+\end{corollary}
+
+\derived
+\code{prove_bourgain_large_values_theorem()}
+
+\begin{proof}
+Follows from substituting the specified values of $\alpha_1$ and $\alpha_2$ and a routine calculation. 
+\end{proof}
+\begin{table}[h]
+\def\arraystretch{1.8}
+\centering
+\caption{Bounds on $LV(\sigma, \tau)$}
+\begin{tabular}{|c|c|c|c|}
+\hline
+$\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $R$\\
+\hline
+$\frac{16}{3} - \frac{20}{3}\sigma + \frac{1}{3}\tau$ & $\frac{10}{3} - \frac{14}{3}\sigma + \frac{\tau}{3}$ & $0$ & $\max(1, 14\sigma-10) \le \tau \le \frac{4(1 + \sigma)}{5}$\\
+\hline
+$5 - 7\sigma + \frac{3}{4}\tau$ & $\frac{7}{2} - \frac{9}{2}\sigma + \frac{\tau}{8}$ & $-1 - \sigma + \frac{5}{4}\tau$ & 
+$\begin{aligned}
+8-8\sigma-\tau \ge 0,\\ 
+-\frac{25}{32}+\sigma \ge 0,\\
+-6+10\sigma-\frac{7}{6}\tau \ge 0,\\
+-4 - 4\sigma + 5\tau \ge 0.
+\end{aligned}$\\
+\hline
+$3 - 5\sigma + \tau$ & $\frac{9}{2} - \frac{11}{2}\sigma$ & $1 - 3\sigma + \tau$ & 
+$\begin{aligned} 
+-8+8\sigma+\tau &\ge 0,\\
+2-6\sigma+2\tau &\ge 0,\\
+-10+14\sigma-\frac{2}{3}\tau &\ge 0,\\
+6-2\sigma-2\tau &\ge 0.
+\end{aligned}$
+\\
+\hline
+$-4\sigma + 2\tau$ & $0$ & $1 - 3\sigma + \tau$ & $\begin{aligned}
+-6+2\sigma+2\tau &\ge 0,\\
+-2+2\sigma+\frac{1}{6}\tau &\ge 0,\\
+3-\tau &\ge 0,\\
+-\frac{25}{32}+\sigma &\ge 0,\\
+1-\sigma &\ge 0.
+\end{aligned}$\\
+\hline
+$8 - 12\sigma + \frac{4}{3}\tau$ & $ 2 - 2\sigma - \frac{1}{6}\tau$ & $6 - 10\sigma + \frac{4}{3}\tau$ & $\begin{aligned}
+15-21\sigma+\tau \ge 0,\\
+2-2\sigma-\frac{1}{6}\tau \ge 0,\\
+-\frac{25}{32}+\sigma \ge 0,\\
+6-10\sigma+\frac{7}{6}\tau \ge 0.\\
+\end{aligned}$\\
+\hline
+$2 - 2\sigma$ & $0$ & $0$ & $\begin{aligned}
+1-\sigma \ge 0,\\
+-10+14\sigma-\tau \ge 0,\\
+-1+\tau \ge 0,\\
+-2+6\sigma-2\tau \ge 0.
+\end{aligned}$\\
+\hline
+\end{tabular}
+\label{optimised_bourgain_lve}
+\end{table}
 
 
 The preprint of Kerr \cite{kerr} contains additional large value theorems:

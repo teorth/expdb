@@ -381,7 +381,7 @@ def more_zero_density_examples():
             hypothesis_type="Zeta large value estimate", keywords="Heath-Brown"
         )
     )
-    
+
     zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(3))
     print("Best-known vs computed zero-density estimate")
     print("A(x)(1-x) \\leq")
@@ -403,6 +403,8 @@ def all_examples():
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    more_zero_density_examples()
+    # more_zero_density_examples()
+    # zd.approx_optimise_bourgain_zero_density_estimate()
+    lv.optimize_bourgain_large_value_estimate()
 
 all_examples()
