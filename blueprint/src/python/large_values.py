@@ -318,9 +318,9 @@ def optimize_bourgain_large_value_estimate():
 
         print('-------------------')
         mat = sympy.Matrix([eq for eq in c])
-        (rows, cols) = sympy.shape(mat)
+        (rows, cols) = (len(c), len(c[0]))
         res = mat.rref() # Compute reduced row-echelon form
-        mat = [[x for x in res[0].row(i)] for i in range(rows)] # unpack 
+        mat = [[SympyHelper.to_frac(x) for x in res[0].row(i)] for i in range(rows)] # unpack 
 
         # Take advantage of the reduced row-echelon form
         if mat[0][0] == 0 or mat[1][1] == 0: continue
@@ -352,7 +352,11 @@ def optimize_bourgain_large_value_estimate():
         # 6 functions under the max, computing their maximum in the domain 
         a1_defn = [-mat[0][5], -mat[0][2], -mat[0][3]] # C + A s + B t
         a2_defn = [-mat[1][5], -mat[1][2], -mat[1][3]] # C + A s + B t
-
+        
+        # This is the region where a1 >= 0, a2 >= 0
+        region = Polytope([a1_defn, a2_defn]).intersect(domain)
+        neg_regions = domain.set_minus(region)
+        
         # Hack to ensure uniqueness (using the fact that tuples are hashable)
         fns = set()
         for i in range(6):
@@ -363,11 +367,24 @@ def optimize_bourgain_large_value_estimate():
         # Compute maximum
         print(f'computing maximum of {len(fns)} pieces')
         start_time = time.time()
-        func = max_of([list(fn) for fn in fns], domain)
-        a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st") + ' = 0'
-        a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st") + ' = 0'
+        func = max_of([list(fn) for fn in fns], region)
+        for reg in neg_regions:
+            func.pieces.append(Affine2([10000000, 0, 0], reg))
+            
+        a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
+        a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
         
+        if len(func.pieces) == 0:
+            print(c)
+            print('a1', Affine2.to_string(a1_defn, "st"))
+            print('a2', Affine2.to_string(a2_defn, "st"))
+            print(Polytope([a1_defn, a2_defn]))
+            print(domain)
+            print(Polytope([a1_defn, a2_defn]).intersect(domain))
+            print(neg_regions)
+            raise ValueError()
+            
         for p in func.pieces:
             print(p)
         print('computed in ', (time.time() - start_time), 'ms')

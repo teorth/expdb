@@ -105,7 +105,13 @@ class Polytope:
     # Parameters:
     #   - constraints: a list of lists, each of which has the form [a_0 a_1 ... a_d]
     #           representing the inequality a_0 + a_1 x_1 + ... + a_d x_d \geq 0
-    def __init__(self, constraints, linear=False, canonicalize=False):
+    def __init__(self, constraints, linear=False, canonicalize=False, debug=False):
+        
+        # There is a strange bug when constraint is a list of zeroes - where 
+        # the resulting matrix adds to the linset. Remove such redundant constraints
+        # before constructing the matrix 
+        constraints = [c for c in constraints if not all(ci == 0 for ci in c)]
+        
         self.mat = cdd.Matrix(constraints, linear=linear, number_type="fraction")
         self.mat.rep_type = cdd.RepType.INEQUALITY
         if canonicalize:
@@ -350,14 +356,25 @@ class Polytope:
     def intersect(self, other):
         if not isinstance(other, Polytope):
             raise ValueError("Parameter other must be of type Polytope")
+        
+        # Check redundant cases 
+        if self.num_constraints() == 0:
+            return copy.copy(other)
+        if other.num_constraints() == 0:
+            return copy.copy(self)
+        
         mat = self.mat.copy()
-
+        
         # TODO: check lin_set? Currently passes unit tests
         rows = [r for r in other.mat]
         if len(rows) > 0:
             mat.extend(rows, linear=False)
-
-        return Polytope(mat, canonicalize=True)
+        
+        mat.canonicalize()
+        
+        print(mat)
+        print(len(mat.lin_set))
+        return Polytope._from_mat(mat)
 
 
     # Computes A \ B where A is this polytope and B is another polytope. Returns 
@@ -373,14 +390,12 @@ class Polytope:
         # complement, then add the original constraint to the set of constraints
         # for the new region. All linear constraints are ignored (see above for 
         # rationale)
-        A = self.mat
+        A = self.mat.copy()
         B = other.mat
-
         polys = []
         for i in range(B.row_size):
             if i in B.lin_set: continue
             c = B[i]
-            print(c)
             # Invert the constraint c then compute A \intersect c'
             c_comp = [-x for x in c]
             A_copy = A.copy()
