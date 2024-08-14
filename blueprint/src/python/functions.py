@@ -459,7 +459,11 @@ class Piecewise:
             for j in range(0, i):
                 p = self.pieces[i]
                 q = self.pieces[j]
-                assert p.domain.intersect(q.domain).is_empty(include_boundary=False)
+                if not p.domain.intersect(q.domain).is_empty(include_boundary=False):
+                    print("Error: domain overlap")
+                    print(p.domain)
+                    print(q.domain)
+                    return False
 
         # Check that the function is defined everywhere - by sampling
         N = 100
@@ -467,7 +471,10 @@ class Piecewise:
             for j in range(N):
                 x = xlim[0] + (xlim[1] - xlim[0]) * i / N
                 y = ylim[0] + (ylim[1] - ylim[0]) * j / N
-                assert self.at([x, y]) is not None
+                if self.at([x, y]) is None:
+                    print("Error: undefined at", x, y)
+                    return False
+        return True
 
     # For 2-D functions only, plot the domain of the function
     def plot_domain(self, xlim, ylim, resolution=300, title=None):

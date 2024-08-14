@@ -264,6 +264,10 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, tau0, 2 * tau0
     )
 
+    print('sup 1')
+    for p in sup1:
+        print(p[0], p[1])
+        
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -281,6 +285,10 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     sup2 = compute_sup_LV_on_tau(
         hyps, sigma_interval, frac(2), tau0
     )
+    
+    print('sup 2')
+    for p in sup2:
+        print(p[0], p[1])
     
     if debug:
         print(time.time() - start_time, "s")

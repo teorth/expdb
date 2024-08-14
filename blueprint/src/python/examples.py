@@ -362,7 +362,7 @@ def zero_density_estimates_examples2():
     for k in range(2, 5):
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
 
-def more_zero_density_examples():
+def zero_density_estimates_examples3():
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hypotheses.add_hypotheses(
@@ -387,8 +387,6 @@ def more_zero_density_examples():
     print("A(x)(1-x) \\leq")
     for h in zdt:
         print(h.data)
-        if h.data.interval.contains(0.785):
-            h.recursively_list_proofs()
     plot(
         zdt,
         literature.list_hypotheses(hypothesis_type="Zero density estimate"),
@@ -403,8 +401,9 @@ def all_examples():
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    # more_zero_density_examples()
-    zd.approx_optimise_bourgain_zero_density_estimate()
-    
+    # zero_density_estimates_examples3()
+    h = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
+    h.data.bound.check((1/2, 1), (0, 5))
+    h.data.bound.plot_domain((1/2, 1), (0, 5))
 
 all_examples()
