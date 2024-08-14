@@ -148,12 +148,33 @@ montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjec
 
 def get_optimized_bourgain_lv_estimate(ref):
     pieces = [
+        # For now - assume that we can't say anthing about LV estimates
+        # for sigma < 25/32 and tau < 1
+        Affine2(
+            [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
+            Polytope([
+                [-frac(1,2), 1, 0],  # \sigma >= 1/2
+                [frac(25,32), -1, 0],  # \sigma <= 25/32
+                [-1, 0, 1],  # \tau >= 1
+                [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
+            ])
+        ),
+        Affine2(
+            [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
+            Polytope([
+                [-frac(1,2), 1, 0],  # \sigma >= 1/2
+                [1, -1, 0],  # \sigma <= 25/32
+                [0, 0, 1],  # \tau >= 0
+                [1, 0, -1],  # \tau <= 1
+            ])
+        ),
         Affine2(
             [frac(16,3), -frac(20,3), frac(1,3)],
             Polytope([
                 [10, -14, 1], # 10 - 14s + t >= 0
                 [-1, 0, 1], # -1 + t >= 0
-                [4, 4, -5] # 4/5 + 4/5s - t >= 0
+                [4, 4, -5], # 4/5 + 4/5s - t >= 0
+                [-frac(25,32), 1, 0]
             ])
         ),
         Affine2(
@@ -179,7 +200,7 @@ def get_optimized_bourgain_lv_estimate(ref):
             Polytope([
                 [-6, 2, 2],
                 [-2, 2, frac(1,6)],
-                [3, 0, -1],
+                [Constants.TAU_UPPER_LIMIT, 0, -1],
                 [-frac(25,32), 1, 0],
                 [1, -1, 0]
             ])

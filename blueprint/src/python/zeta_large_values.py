@@ -40,7 +40,7 @@ def literature_bound_ZLV_Max(bounds, ref, params=""):
         f"{ref.author()} ({ref.year()}) large value estimate{params}",
         "Zeta large value estimate",
         hyp.data,
-        "See [{ref.author(), ref.year()}]",
+        f"See [{ref.author(), ref.year()}]",
         ref,
     )
 
