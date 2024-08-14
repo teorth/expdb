@@ -338,8 +338,6 @@ with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more 
 \begin{theorem}[Bourgain result on density hypothesis]\label{bourgain-density}\uses{density-hypothesis} The density hypothesis holds for $\sigma > 25/32$.
 \end{theorem}
 
-{\bf Note: it appears the proof here may be optimized to go beyond the density hypothesis.  This will be a good test case of our python machinery.}
-
 \begin{proof}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
 
 In view of Theorem \ref{jutila-density} (or Theorem \ref{hb-density}), we may assume that $25/32 < \sigma < 11/14$.  Set $\rho := \LV(\sigma,\tau)$. As in the proof of Theorem \ref{jutila-density}, it suffices to show that
@@ -536,6 +534,8 @@ The first bound has been improved:
 
 \begin{theorem}[2000 Bourgain zero density theorem]\label{bourgain-zero-density-2000}\uses{zero-def}\cite{bourgain_dirichlet_2000} One has $\A(\sigma) \leq 3/2\sigma$ for $3734/4694 \leq \sigma \leq 1$.
 \end{theorem}
+
+However, this result is now superseded by Theorem \ref{bourgain-density-improved}.
 
 \begin{lemma}[Preliminary large values theorem]\label{a-ivt}\uses{lv-def}  If $1/2 \leq \sigma \leq 1$ and $\tau < 8\sigma-5$, then
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 6\tau/5 + (20-32\sigma)/5 ).$$
