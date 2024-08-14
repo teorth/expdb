@@ -256,7 +256,7 @@ def best_mu_bound_piecewise(sigma_interval, hypothesis_set):
                 Affine(
                     (b2.mu - b1.mu) / (b2.sigma - b1.sigma),
                     (b2.sigma * b1.mu - b1.sigma * b2.mu) / (b2.sigma - b1.sigma),
-                    Interval(max(sigma0, b1.sigma), min(sigma1, b2.sigma))
+                    interval
                 )
             )
     return mu_bounds
