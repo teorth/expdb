@@ -389,6 +389,14 @@ def optimize_bourgain_large_value_estimate():
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
 
+    # Ensure that hypotheses objects are complete 
+    print('Checking individual hypotheses')
+    for h in hypotheses:
+        print('Checking:')
+        for p in h.data.bound.pieces:
+            print('\t', p)
+        h.data.bound.check(xlim=(frac(25,32), 1), ylim=(1, 3))
+    
     print('computing piecewise min of ', len(hypotheses))
     best_lv_estimate = piecewise_min(hypotheses, domain, derived_bound_LV)
 
@@ -396,13 +404,11 @@ def optimize_bourgain_large_value_estimate():
     for h in best_lv_estimate:
         for p in h.data.bound.pieces:
             pieces.append(p)
-        h.recursively_list_proofs()
 
     fn = Piecewise(pieces)
-    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Before simplifying')
+    print('Checking max hypotheses')
+    fn.check(xlim=(frac(25,32), 1), ylim=(1, 3))
 
-    fn.simplify(5)
-    fn.simplify(5)
     fn.simplify(5)
 
     # debugging
