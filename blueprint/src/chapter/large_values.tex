@@ -327,7 +327,7 @@ giving the claim.
 \end{proof}
 
 With the aid of computer assistance, one is able to produce an optimized version of the above large values theorem. We have 
-
+ 
 \begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, R)$ of Table \ref{optimised_bourgain_lve}, one has 
 \[
 \rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in R. 
@@ -348,13 +348,19 @@ Follows from substituting the specified values of $\alpha_1$ and $\alpha_2$ and 
 \hline
 $\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $R$\\
 \hline
-$\frac{16}{3} - \frac{20}{3}\sigma + \frac{1}{3}\tau$ & $\frac{10}{3} - \frac{14}{3}\sigma + \frac{\tau}{3}$ & $0$ & $\max(1, 14\sigma-10) \le \tau \le \frac{4(1 + \sigma)}{5}$\\
+$\frac{16}{3} - \frac{20}{3}\sigma + \frac{1}{3}\tau$ & $\frac{10}{3} - \frac{14}{3}\sigma + \frac{\tau}{3}$ & $0$ & 
+$\begin{aligned}
+-1 + \tau \ge 0,\\
+10 - 14\sigma + \tau \ge 0,\\
+4 + 4\sigma - 5\tau \ge 0,
+-11 + 16\sigma - \tau \ge 0.
+\end{aligned}\\
 \hline
 $5 - 7\sigma + \frac{3}{4}\tau$ & $\frac{7}{2} - \frac{9}{2}\sigma + \frac{\tau}{8}$ & $-1 - \sigma + \frac{5}{4}\tau$ & 
 $\begin{aligned}
-8-8\sigma-\tau \ge 0,\\ 
--\frac{25}{32}+\sigma \ge 0,\\
--6+10\sigma-\frac{7}{6}\tau \ge 0,\\
+8 - 8\sigma - \tau \ge 0,\\ 
+-16 + 20\sigma + \frac{1}{3}\tau \ge 0,\\
+-6 + 10\sigma - \frac{7}{6}\tau \ge 0,\\
 -4 - 4\sigma + 5\tau \ge 0.
 \end{aligned}$\\
 \hline
@@ -387,6 +393,14 @@ $2 - 2\sigma$ & $0$ & $0$ & $\begin{aligned}
 -10+14\sigma-\tau \ge 0,\\
 -1+\tau \ge 0,\\
 -2+6\sigma-2\tau \ge 0.
+\end{aligned}$\\
+\hline
+$9 - 12\sigma + \frac{2}{3}\tau$ & $\frac{3}{2} - 2\sigma + \frac{1}{6}\tau$ & $11 - 16\sigma + \tau$ & $\begin{aligned}
+\frac{3}{2} - \tau \ge 0,\\
+-\frac{1}{2} + \sigma \ge 0,\\
+-1 + \tau \ge 0,\\
+\frac{11}{2} - 8\sigma + \frac{1}{2}\tau,\\
+16 - 20\sigma - \frac{1}{3}\tau \ge 0.
 \end{aligned}$\\
 \hline
 \end{tabular}

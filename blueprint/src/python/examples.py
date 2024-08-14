@@ -387,8 +387,6 @@ def zero_density_estimates_examples3():
     print("A(x)(1-x) \\leq")
     for h in zdt:
         print(h.data)
-        if h.data.interval.contains(0.785):
-            h.recursively_list_proofs()
     plot(
         zdt,
         literature.list_hypotheses(hypothesis_type="Zero density estimate"),
