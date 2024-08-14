@@ -29,7 +29,7 @@ class Large_Value_Estimate:
     def __repr__(self):
         return "LV(x, y) \leq " + str(self.bound)
 
-    
+
 class Large_Value_Estimate_Transform:
 
     def __init__(self, transform):
@@ -44,7 +44,7 @@ class Large_Value_Estimate_Transform:
 
 # Compute the maximum of a list of bounds represented in coefficient vector form
 # Returns the result as a piecewise function
-# bounds (list of list) vectors a representing a function f(x) = a^Tx with the first 
+# bounds (list of list) vectors a representing a function f(x) = a^Tx with the first
 #                   coefficient denoting the constant term
 # domain (Polytope object) the (sigma, tau) domain of definition
 def max_of(bounds, domain=None):
@@ -144,8 +144,75 @@ def conjectured_LV_estimate(bounds, name):
         Reference.conjectured(),
     )
 
-
 montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjecture")
+
+def get_optimized_bourgain_lv_estimate(ref):
+    pieces = [
+        Affine2(
+            [frac(16,3), -frac(20,3), frac(1,3)],
+            Polytope([
+                [10, -14, 1], # 10 - 14s + t >= 0
+                [-1, 0, 1], # -1 + t >= 0
+                [4, 4, -5] # 4/5 + 4/5s - t >= 0
+            ])
+        ),
+        Affine2(
+            [5, -7, frac(3,4)],
+            Polytope([
+                [8, -8, -1],
+                [-frac(25,32), 1, 0],
+                [-6, 10, -frac(7,6)],
+                [-4, -4, 5]
+            ])
+        ),
+        Affine2(
+            [3, -5, 1],
+            Polytope([
+                [-8, 8, 1],
+                [2, -6, 2],
+                [-10, 14, -frac(2,3)],
+                [6, -2, -2]
+            ])
+        ),
+        Affine2(
+            [0, -4, 2],
+            Polytope([
+                [-6, 2, 2],
+                [-2, 2, frac(1,6)],
+                [3, 0, -1],
+                [-frac(25,32), 1, 0],
+                [1, -1, 0]
+            ])
+        ),
+        Affine2(
+            [8, -12, frac(4,3)],
+            Polytope([
+                [15, -21, 1],
+                [2, -2, -frac(1,6)],
+                [-frac(25,32), 1, 0],
+                [6, -10, frac(7,6)]
+            ])
+        ),
+        Affine2(
+            [2, -2, 0],
+            Polytope([
+                [1, -1, 0],
+                [-10, 14, -1],
+                [-1, 0, 1],
+                [-2, 6, -2]
+            ])
+        )
+    ]
+    return Hypothesis(
+        f"{ref.author()} optimized large value estimate",
+        "Large value estimate",
+        Large_Value_Estimate(Piecewise(pieces)),
+        f"See [{ref.author()}, {ref.year()}]",
+        ref,
+    )
+
+
+
 
 ###############################################################################
 
@@ -205,7 +272,7 @@ def covers(estimate, xlim, ylim):
 # Given a list of Piecewise objects, compute their minimum over a given domain
 # Returns result as a list of hypotheses, created using the constructor function
 def piecewise_min(estimates, domain, constructor):
-    
+
     # Compute bounds and crop domains (taking care not the alter the original estimates
     # objects)
     bounds = [e.data.bound for e in estimates]
@@ -289,14 +356,14 @@ def best_large_value_estimate(hypotheses, domain=None):
     return piecewise_min(lv_estimates, domain, derived_bound_LV)
 
 
-# Optimise Bourgain's large value estimate by choosing the best value of \alpha_1, \alpha_2 
+# Optimise Bourgain's large value estimate by choosing the best value of \alpha_1, \alpha_2
 # in each subregion of (\sigma, \tau)
 def optimize_bourgain_large_value_estimate():
     # Variables are (in order)
     # [a1, a2, sigma, tau, M, constant]
-    # Regions over (sigma, tau) are defined by solving a system of 3 equations 
-    # to obtain a1 = f(sigma, tau), a2 = g(sigma, tau) where f, g are linear. 
-    # The equations are given by 
+    # Regions over (sigma, tau) are defined by solving a system of 3 equations
+    # to obtain a1 = f(sigma, tau), a2 = g(sigma, tau) where f, g are linear.
+    # The equations are given by
     eqns = [
         [0, 1, -2, 0, -1, 2],            # a2 + 2 - 2s = M
         [1, frac(1,2), -2, 0, -1, 2],    # a1 + a2/2 + 2 - 2s = M
@@ -312,7 +379,7 @@ def optimize_bourgain_large_value_estimate():
 
     # Sympy solvers give empty solution sets for these systems - so instead we
     # (temporarily) use sympy's matrix rref computer
-    # a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M") 
+    # a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M")
     # var = [a1, a2, s, t, M]
     hypotheses = []
     for c in itertools.combinations(eqns, 3):
@@ -321,10 +388,10 @@ def optimize_bourgain_large_value_estimate():
         mat = sympy.Matrix([eq for eq in c])
         (rows, cols) = (len(c), len(c[0]))
         res = mat.rref() # Compute reduced row-echelon form
-        mat = [[SympyHelper.to_frac(x) for x in res[0].row(i)] for i in range(rows)] # unpack 
+        mat = [[SympyHelper.to_frac(x) for x in res[0].row(i)] for i in range(rows)] # unpack
 
         # Take advantage of the reduced row-echelon form
-        if mat[0][0] == 0 or mat[1][1] == 0: 
+        if mat[0][0] == 0 or mat[1][1] == 0:
             print('skipping')
             print([[str(v) for v in r] for r in mat])
 
@@ -338,7 +405,7 @@ def optimize_bourgain_large_value_estimate():
             d = mat[1][1]
             mat[1] = [mat[1][i] / d for i in range(cols)]
 
-        # Eliminate the M variable 
+        # Eliminate the M variable
         if mat[0][4] != 0:
             if mat[2][4] == 0:
                 # Unsolvable for M
@@ -357,11 +424,11 @@ def optimize_bourgain_large_value_estimate():
                 r = mat[1][4] / mat[2][4]
                 mat[1] = [mat[1][i] - mat[2][i] * r for i in range(cols)]
 
-        # Given the definitions of a1, a2, substitute into each of the 
-        # 6 functions under the max, computing their maximum in the domain 
+        # Given the definitions of a1, a2, substitute into each of the
+        # 6 functions under the max, computing their maximum in the domain
         a1_defn = [-mat[0][5], -mat[0][2], -mat[0][3]] # C + A s + B t
         a2_defn = [-mat[1][5], -mat[1][2], -mat[1][3]] # C + A s + B t
-        
+
         # This is the region where a1 >= 0, a2 >= 0
         region = Polytope([a1_defn, a2_defn]).intersect(domain)
 
@@ -382,7 +449,7 @@ def optimize_bourgain_large_value_estimate():
 
         for reg in neg_regions:
             func.pieces.append(Affine2([10000000, 0, 0], reg))
-        
+
         for p in func.pieces:
             print(p)
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
@@ -415,26 +482,26 @@ def optimize_bourgain_large_value_estimate():
     return best_lv_estimate
 
 
-# Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by 
+# Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by
 # s \in sigma_range
 # t \in tau_range(s)
 def prove_LV_on_tau_bound(hypotheses, f, sigma_range, tau_range):
     pass
 
 
-# Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic 
-# properties (ii) of Large value estimates section) to obtain a better large 
-# value estimate. 
-# 
-# If the large value estimate is unchanged, returns None. Otherwise, the new 
+# Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic
+# properties (ii) of Large value estimates section) to obtain a better large
+# value estimate.
+#
+# If the large value estimate is unchanged, returns None. Otherwise, the new
 # large value estimate is returned as a Hypothesis
 def apply_huxley_subdivision(hypothesis):
     if not isinstance(hypothesis, Hypothesis):
         raise ValueError('Parameter hypothesis must be of type Hypothesis')
     if hypothesis.hypothesis_type != 'Large value estimate':
         raise ValueError('Parameter hypothesis must be a Hypothesis of type "Large value estimate"')
-        
-    # Iterate through the pieces, extracting the facets (which are just lines) 
+
+    # Iterate through the pieces, extracting the facets (which are just lines)
     # then compute their projection onto the \sigma space
     for p in lv_hypothesis.data.bound.pieces:
         p = pieces[k]
@@ -452,14 +519,3 @@ def apply_huxley_subdivision(hypothesis):
                 faces.append((RF([-c[1], -c[0]], [c[2]]), p, sub, lookup[k]))
 
     raise NotImplementedError()
-    
-
-
-
-
-
-
-
-
-
-
