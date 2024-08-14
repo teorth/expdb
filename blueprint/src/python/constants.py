@@ -19,6 +19,9 @@ class Constants:
     # to ensure that all polytopes are finite subsets of R^n (used to compute centroids).
     TAU_UPPER_LIMIT = frac(1000000, 1)
 
+    # The default upper bound on LV(sigma, tau), representing no upper bound
+    LV_DEFAULT_UPPER_BOUND = frac(1000000)
+
 
 # Often many proofs exist for a single problem - this class allows us to select
 # the objective function used to choose the 'best' proof.
