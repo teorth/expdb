@@ -396,7 +396,7 @@ def optimize_bourgain_large_value_estimate():
         [0, 1, 0, 0, 0, 0],              # a2 = 0
     ]
 
-    domain = Polytope.rect((frac(25,32), frac(1)), (frac(1), frac(3)))
+    domain = Polytope.rect((frac(1,2), frac(1)), (frac(1), frac(3)))
 
     # Sympy solvers give empty solution sets for these systems - so instead we
     # (temporarily) use sympy's matrix rref computer
@@ -404,8 +404,6 @@ def optimize_bourgain_large_value_estimate():
     # var = [a1, a2, s, t, M]
     hypotheses = []
     for c in itertools.combinations(eqns, 3):
-
-        print('-------------------')
         mat = sympy.Matrix([eq for eq in c])
         (rows, cols) = (len(c), len(c[0]))
         res = mat.rref() # Compute reduced row-echelon form
@@ -414,7 +412,7 @@ def optimize_bourgain_large_value_estimate():
         # Take advantage of the reduced row-echelon form
         if mat[0][0] == 0 or mat[1][1] == 0:
             print('skipping')
-            print([[str(v) for v in r] for r in mat])
+            for r in mat: print(' '.join(str(v) for v in r))
 
             continue
 
@@ -431,7 +429,7 @@ def optimize_bourgain_large_value_estimate():
             if mat[2][4] == 0:
                 # Unsolvable for M
                 print('skipping 2')
-                print([[str(v) for v in r] for r in mat])
+                for r in mat: print(' '.join(str(v) for v in r))
                 continue
             else:
                 r = mat[0][4] / mat[2][4]
@@ -439,7 +437,7 @@ def optimize_bourgain_large_value_estimate():
         if mat[1][4] != 0:
             if mat[2][4] == 0:
                 print('skipping 3')
-                print([[str(v) for v in r] for r in mat])
+                for r in mat: print(' '.join(str(v) for v in r))
                 continue
             else:
                 r = mat[1][4] / mat[2][4]
@@ -462,7 +460,8 @@ def optimize_bourgain_large_value_estimate():
                 fns.add(fn)
             # Compute maximum
             start_time = time.time()
-            func = max_of([list(fn) for fn in fns], region)
+            lst = [list(fn) for fn in fns]
+            func = max_of(lst, region)
             neg_regions = domain.set_minus(region)
         else:
             func = Piecewise([])
@@ -471,8 +470,23 @@ def optimize_bourgain_large_value_estimate():
         for reg in neg_regions:
             func.pieces.append(Affine2([10000000, 0, 0], reg))
 
-        for p in func.pieces:
-            print(p)
+        if not func.check((1/2, 1), (1, 3)):
+            print("original list")
+            for p in lst:
+                print(' '.join(str(pi) for pi in p))
+            
+            print("maxed")
+            for p in func.pieces:
+                print(p)
+                
+            print("region")
+            print(region)
+            
+            print("recreation")
+            print(max_of(lst, region).check((1/2, 1), (1,3)))
+        
+            
+        
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
@@ -487,10 +501,8 @@ def optimize_bourgain_large_value_estimate():
         h.recursively_list_proofs()
 
     fn = Piecewise(pieces)
-    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Before simplifying')
+    fn.plot_domain(xlim=(1/2, 1), ylim=(1, 3), title='Before simplifying')
 
-    fn.simplify(5)
-    fn.simplify(5)
     fn.simplify(5)
 
     # debugging
@@ -498,7 +510,7 @@ def optimize_bourgain_large_value_estimate():
     fn = Piecewise(pieces)
     for f in fn.pieces:
         print(f)
-    fn.plot_domain(xlim=(25/32, 1), ylim=(1, 3), title='Debugging')
+    fn.plot_domain(xlim=(1/2, 1), ylim=(1, 3), title='Debugging')
 
     return best_lv_estimate
 
