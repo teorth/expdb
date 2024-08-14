@@ -401,9 +401,9 @@ def all_examples():
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    zero_density_estimates_examples3()
-    # h = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
-    # h.data.bound.check((1/2, 1), (0, 5))
-    # h.data.bound.plot_domain((1/2, 1), (0, 5))
+    # zero_density_estimates_examples3()
+    h = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
+    h.data.bound.check((1/2, 1), (0, 5))
+    h.data.bound.plot_domain((1/2, 1), (0, 5))
 
 all_examples()

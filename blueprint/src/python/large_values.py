@@ -149,21 +149,12 @@ montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjec
 def get_optimized_bourgain_lv_estimate(ref):
     pieces = [
         # For now - assume that we can't say anthing about LV estimates
-        # for sigma < 25/32 and tau < 1
+        # for tau < 1
         Affine2(
             [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
             Polytope([
                 [-frac(1,2), 1, 0],  # \sigma >= 1/2
-                [frac(25,32), -1, 0],  # \sigma <= 25/32
-                [-1, 0, 1],  # \tau >= 1
-                [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
-            ])
-        ),
-        Affine2(
-            [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
-            Polytope([
-                [-frac(1,2), 1, 0],  # \sigma >= 1/2
-                [1, -1, 0],  # \sigma <= 25/32
+                [1, -1, 0],  # \sigma <= 1
                 [0, 0, 1],  # \tau >= 0
                 [1, 0, -1],  # \tau <= 1
             ])
@@ -174,14 +165,14 @@ def get_optimized_bourgain_lv_estimate(ref):
                 [10, -14, 1], # 10 - 14s + t >= 0
                 [-1, 0, 1], # -1 + t >= 0
                 [4, 4, -5], # 4/5 + 4/5s - t >= 0
-                [-frac(25,32), 1, 0]
+                [-11, 16, -1]
             ])
         ),
         Affine2(
             [5, -7, frac(3,4)],
             Polytope([
                 [8, -8, -1],
-                [-frac(25,32), 1, 0],
+                [-16, 20, frac(1,3)],
                 [-6, 10, -frac(7,6)],
                 [-4, -4, 5]
             ])
@@ -199,9 +190,8 @@ def get_optimized_bourgain_lv_estimate(ref):
             [0, -4, 2],
             Polytope([
                 [-6, 2, 2],
-                [-2, 2, frac(1,6)],
+                [-12, 12, 1],
                 [Constants.TAU_UPPER_LIMIT, 0, -1],
-                [-frac(25,32), 1, 0],
                 [1, -1, 0]
             ])
         ),
@@ -209,8 +199,8 @@ def get_optimized_bourgain_lv_estimate(ref):
             [8, -12, frac(4,3)],
             Polytope([
                 [15, -21, 1],
-                [2, -2, -frac(1,6)],
-                [-frac(25,32), 1, 0],
+                [12, -12, -1],
+                [-frac(3,2), 0, 1],
                 [6, -10, frac(7,6)]
             ])
         ),
@@ -221,6 +211,16 @@ def get_optimized_bourgain_lv_estimate(ref):
                 [-10, 14, -1],
                 [-1, 0, 1],
                 [-2, 6, -2]
+            ])
+        ),
+        Affine2(
+            [9, -12, frac(2,3)],
+            Polytope([
+                [frac(3,2), 0, -1],
+                [-frac(1,2), 1, 0],
+                [-1, 0, 1],
+                [11, -16, 1],
+                [16, -20, -frac(1,3)]
             ])
         )
     ]
@@ -474,19 +474,19 @@ def optimize_bourgain_large_value_estimate():
             print("original list")
             for p in lst:
                 print(' '.join(str(pi) for pi in p))
-            
+
             print("maxed")
             for p in func.pieces:
                 print(p)
-                
+
             print("region")
             print(region)
-            
+
             print("recreation")
             print(max_of(lst, region).check((1/2, 1), (1,3)))
-        
-            
-        
+
+
+
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
