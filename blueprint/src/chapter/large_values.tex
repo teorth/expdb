@@ -326,19 +326,19 @@ $$ \rho \leq 4\alpha_1 + 2 + \max(1,2\tau-2) - 4 \sigma,$$
 giving the claim.
 \end{proof}
 
-With the aid of computer assistance, one is able to produce an optimized version of the above large values theorem. We have 
+With the aid of computer assistance, one is able to produce an optimized version of the above large values theorem. We have
 
-\begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, R)$ of Table \ref{optimised_bourgain_lve}, one has 
+\begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, R)$ of Table \ref{optimised_bourgain_lve}, one has
 \[
-\rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in R. 
+\rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in R.
 \]
 \end{corollary}
 
 \derived
 \code{prove_bourgain_large_values_theorem()}
 
-\begin{proof}
-Follows from substituting the specified values of $\alpha_1$ and $\alpha_2$ and a routine calculation. 
+\begin{proof}\uses{bourgain-lvt}
+Follows from substituting the specified values of $\alpha_1$ and $\alpha_2$ and a routine calculation.
 \end{proof}
 \begin{table}[h]
 \def\arraystretch{1.8}
@@ -350,16 +350,16 @@ $\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $R$\\
 \hline
 $\frac{16}{3} - \frac{20}{3}\sigma + \frac{1}{3}\tau$ & $\frac{10}{3} - \frac{14}{3}\sigma + \frac{\tau}{3}$ & $0$ & $\max(1, 14\sigma-10) \le \tau \le \frac{4(1 + \sigma)}{5}$\\
 \hline
-$5 - 7\sigma + \frac{3}{4}\tau$ & $\frac{7}{2} - \frac{9}{2}\sigma + \frac{\tau}{8}$ & $-1 - \sigma + \frac{5}{4}\tau$ & 
+$5 - 7\sigma + \frac{3}{4}\tau$ & $\frac{7}{2} - \frac{9}{2}\sigma + \frac{\tau}{8}$ & $-1 - \sigma + \frac{5}{4}\tau$ &
 $\begin{aligned}
-8-8\sigma-\tau \ge 0,\\ 
+8-8\sigma-\tau \ge 0,\\
 -\frac{25}{32}+\sigma \ge 0,\\
 -6+10\sigma-\frac{7}{6}\tau \ge 0,\\
 -4 - 4\sigma + 5\tau \ge 0.
 \end{aligned}$\\
 \hline
-$3 - 5\sigma + \tau$ & $\frac{9}{2} - \frac{11}{2}\sigma$ & $1 - 3\sigma + \tau$ & 
-$\begin{aligned} 
+$3 - 5\sigma + \tau$ & $\frac{9}{2} - \frac{11}{2}\sigma$ & $1 - 3\sigma + \tau$ &
+$\begin{aligned}
 -8+8\sigma+\tau &\ge 0,\\
 2-6\sigma+2\tau &\ge 0,\\
 -10+14\sigma-\frac{2}{3}\tau &\ge 0,\\
