@@ -6,11 +6,12 @@ import copy
 from fractions import Fraction as frac
 from functions import *
 from hypotheses import *
-import numpy as np
+import itertools
 import matplotlib.pyplot as plt
+import numpy as np
 from polytope import *
 from reference import *
-import itertools
+import scipy
 import time
 
 
@@ -149,21 +150,12 @@ montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjec
 def get_optimized_bourgain_lv_estimate(ref):
     pieces = [
         # For now - assume that we can't say anthing about LV estimates
-        # for sigma < 25/32 and tau < 1
+        # for tau < 1
         Affine2(
             [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
             Polytope([
                 [-frac(1,2), 1, 0],  # \sigma >= 1/2
-                [frac(25,32), -1, 0],  # \sigma <= 25/32
-                [-1, 0, 1],  # \tau >= 1
-                [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
-            ])
-        ),
-        Affine2(
-            [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
-            Polytope([
-                [-frac(1,2), 1, 0],  # \sigma >= 1/2
-                [1, -1, 0],  # \sigma <= 25/32
+                [1, -1, 0],  # \sigma <= 1
                 [0, 0, 1],  # \tau >= 0
                 [1, 0, -1],  # \tau <= 1
             ])
@@ -174,14 +166,14 @@ def get_optimized_bourgain_lv_estimate(ref):
                 [10, -14, 1], # 10 - 14s + t >= 0
                 [-1, 0, 1], # -1 + t >= 0
                 [4, 4, -5], # 4/5 + 4/5s - t >= 0
-                [-frac(25,32), 1, 0]
+                [-11, 16, -1]
             ])
         ),
         Affine2(
             [5, -7, frac(3,4)],
             Polytope([
                 [8, -8, -1],
-                [-frac(25,32), 1, 0],
+                [-16, 20, frac(1,3)],
                 [-6, 10, -frac(7,6)],
                 [-4, -4, 5]
             ])
@@ -199,9 +191,8 @@ def get_optimized_bourgain_lv_estimate(ref):
             [0, -4, 2],
             Polytope([
                 [-6, 2, 2],
-                [-2, 2, frac(1,6)],
+                [-12, 12, 1],
                 [Constants.TAU_UPPER_LIMIT, 0, -1],
-                [-frac(25,32), 1, 0],
                 [1, -1, 0]
             ])
         ),
@@ -209,8 +200,8 @@ def get_optimized_bourgain_lv_estimate(ref):
             [8, -12, frac(4,3)],
             Polytope([
                 [15, -21, 1],
-                [2, -2, -frac(1,6)],
-                [-frac(25,32), 1, 0],
+                [12, -12, -1],
+                [-frac(3,2), 0, 1],
                 [6, -10, frac(7,6)]
             ])
         ),
@@ -221,6 +212,16 @@ def get_optimized_bourgain_lv_estimate(ref):
                 [-10, 14, -1],
                 [-1, 0, 1],
                 [-2, 6, -2]
+            ])
+        ),
+        Affine2(
+            [9, -12, frac(2,3)],
+            Polytope([
+                [frac(3,2), 0, -1],
+                [-frac(1,2), 1, 0],
+                [-1, 0, 1],
+                [11, -16, 1],
+                [16, -20, -frac(1,3)]
             ])
         )
     ]
@@ -474,23 +475,31 @@ def optimize_bourgain_large_value_estimate():
             print("original list")
             for p in lst:
                 print(' '.join(str(pi) for pi in p))
-            
+
             print("maxed")
             for p in func.pieces:
                 print(p)
-                
+
             print("region")
             print(region)
-            
+
             print("recreation")
             print(max_of(lst, region).check((1/2, 1), (1,3)))
-        
-            
-        
+
+
+
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
         hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
 
+    # Ensure that hypotheses objects are complete 
+    print('Checking individual hypotheses')
+    for h in hypotheses:
+        print('Checking:')
+        for p in h.data.bound.pieces:
+            print('\t', p)
+        h.data.bound.check(xlim=(frac(25,32), 1), ylim=(1, 3))
+    
     print('computing piecewise min of ', len(hypotheses))
     best_lv_estimate = piecewise_min(hypotheses, domain, derived_bound_LV)
 
@@ -498,7 +507,6 @@ def optimize_bourgain_large_value_estimate():
     for h in best_lv_estimate:
         for p in h.data.bound.pieces:
             pieces.append(p)
-        h.recursively_list_proofs()
 
     fn = Piecewise(pieces)
     fn.plot_domain(xlim=(1/2, 1), ylim=(1, 3), title='Before simplifying')
@@ -513,6 +521,69 @@ def optimize_bourgain_large_value_estimate():
     fn.plot_domain(xlim=(1/2, 1), ylim=(1, 3), title='Debugging')
 
     return best_lv_estimate
+
+# Check the literature Hypothesis object against a linear program computing the numerical
+# solution for fixed (sigma, tau)
+def check_bourgain_large_value_estimate(hypothesis):
+    
+    sigma_range = (frac(1,2), 1)
+    tau_range = (frac("1.001"), 5) # do not include 1
+
+    TOL = 1e-6
+    N = 1000
+    max_A = 0
+    for i in range(N + 1):
+        # for each sigma, compute the tau limits 
+        sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
+        #tau_lower = min(frac(3,2), (24 * sigma - 18) / (2 * sigma - 1))
+        # tau_lower = min(frac(3,2), 48 * (8 * sigma ** 2 - 10 * sigma + 3) / (25 * sigma - 17))
+
+        for j in range(N + 1):
+            tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
+
+            # In this region, we cannot guarantee that rho \leq 1 using Jutila's k = 3 
+            # estimate - for now just ignore the region
+            if max(2 - 2 * sigma, tau + 18 - 24 * sigma) > min(1, 4 - 2 * tau): 
+                continue
+            
+            # Treating sigma, tau as fixed, solve the LP
+            # min (a1, a2)
+            #       max {f1(a1,a2), f2(a1,a2), ... , f5(a1,a2)} 
+            # s.t. 
+            #       a1 >= 0, 
+            #       a2 >= 0
+            # 
+            # which is equivalent to the LP 
+            # 
+            # min (a1, a2, M) 
+            #       M
+            # s.t. 
+            #       M >= f1(a1,a2), ..., M >= f5(a1,a2),
+            #       a1 >= 0, 
+            #       a2 >= 0
+
+            # objective function is u(a1, a2, M) := M
+            obj_func = [0, 0, 1]
+            # Constraints of the form Ax \leq b
+            Ab = [
+                ([0, 1, -1], -2 + 2 * sigma),               # f1(s, t) = a2 + (2 - 2s) < M
+                ([1, frac(1,2), -1], -2 + 2 * sigma),       # f2(s, t) = a1 + a2/2 + (2 - 2s) < M
+                ([0, -1, -1], -(2 * tau + 4 - 8 * sigma)),  # f3(s, t) = -a2 + (2t + 4 - 8s) < M
+                ([-2, 0, -1], -(tau + 12 - 16 * sigma)),    # f4(s, t) = -2a1 + (t + 12 - 16s) < M
+                ([4, 0, -1], -(2 + max(1, 2 * tau - 2) - 4 * sigma)),# f5(s, t) = 4a1 + (2 + max(1, 2t - 2) - 4s) < M
+                ([-1, 0, 0], 0),                             # a1 >= 0
+                ([0, -1, 0], 0)                             # a2 >= 0
+            ]
+            A = [r[0] for r in Ab]
+            b = [r[1] for r in Ab] 
+
+            res = scipy.optimize.linprog(obj_func, A_ub=A, b_ub=b)
+            if not res.success:
+                print('Warning: linprog did not succeed')
+
+            assert abs(res.x[2] - hypothesis.data.bound.at([sigma, tau])) < TOL
+
+    print("Check complete")
 
 
 # Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by

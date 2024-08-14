@@ -24,6 +24,14 @@ def run_polytope_edge_tests():
             f"face {constraints[i]} intersects with vertices {vertices[incidences[i][0]]}, {vertices[incidences[i][1]]}"
         )
 
+def run_union_test():
+    # '-2 + 6x - 5/3y >= 0', '6 - 10x + 7/6y >= 0', '-25/32 + x >= 0'
+    p1 = Polytope([[-2, 6, -frac(5,3)], [6, -10, frac(7,6)], [-frac(25,32), 1, 0]])
+    # '2 - 6x + 5/3y >= 0', '-25/32 + x >= 0', '15/2 - 21/2x + 1/2y >= 0', '12 - 12x - y >= 0'
+    p2 = Polytope([[2, -6, frac(5,3)], [-frac(25,32), 1, 0], [frac(15,2), -frac(21,2), frac(1,2)], [12, -12, -1]])
+
+    union = Polytope.try_union([p1, p2])
+    assert union is not None
 
 def run_3_way_union_test():
     p1 = Polytope([[-8, 11, -1], [1, -1, 0], [-2, 0, 1], [frac(31, 12), 0, -1]])
@@ -161,5 +169,6 @@ def run_setminus_test():
 run_polytope_tests()
 run_V_init_test()
 run_polytope_edge_tests()
+run_union_test()
 run_3_way_union_test()
 run_setminus_test()

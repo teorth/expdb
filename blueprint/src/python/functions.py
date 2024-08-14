@@ -477,7 +477,7 @@ class Piecewise:
         return True
 
     # For 2-D functions only, plot the domain of the function
-    def plot_domain(self, xlim, ylim, resolution=300, title=None):
+    def plot_domain(self, xlim, ylim, resolution=300, title=None, xlabel=None, ylabel=None, variables="xy"):
         series = {}
         pieces = {}
         for p in self.pieces:
@@ -500,10 +500,15 @@ class Piecewise:
             ser = series[key]
             if len(ser[0]) == 0:
                 continue
-            plt.plot(series[key][0], series[key][1], label=Affine2.to_string(key, "xy"))
-        plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=3)
+            plt.plot(series[key][0], series[key][1], label=Affine2.to_string(key, variables))
+        #plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=3)
+        plt.legend(loc="upper right", ncol=3)
         if title is not None:
             plt.title(title)
+        if xlabel is not None:
+            plt.xlabel(xlabel)
+        if ylabel is not None:
+            plt.ylabel(ylabel)
         plt.show()
 
     # --------------------------------------------------------------------------
