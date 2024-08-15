@@ -566,7 +566,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
                 new_best_bound.append(
                     Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
                 )
-
+                
         # Simplify
         best_bound = []
         i = 0
@@ -580,9 +580,10 @@ def best_zero_density_estimate(hypotheses, verbose=False):
             while j < len(new_best_bound):
                 bj = new_best_bound[j]
                 (fj, intj) = (bj.data.bound, bj.data.interval)
-                if not (fj == fj and right == intj.x0 and \
+                if not (fi == fj and right == intj.x0 and \
                         bi.proof == bj.proof):
                     break
+
                 right = intj.x1
                 j += 1
 
