@@ -137,11 +137,11 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
             pieces.append(p)
 
     # debugging only - for extending Heath-Brown's estimates
-    fn = Piecewise(pieces)
-    print('debugging:', tau_lower, tau_upper)
-    for f in fn.pieces:
-        print(f)
-    fn.plot_domain(xlim=(0.75, 0.82), ylim=(tau_lower, tau_upper), title='Debugging')
+    # fn = Piecewise(pieces)
+    # print('debugging:', tau_lower, tau_upper)
+    # for f in fn.pieces:
+    #     print(f)
+    # fn.plot_domain(xlim=(0.75, 0.82), ylim=(tau_lower, tau_upper), title='Debugging')
 
     # Critical points are partition the interval sigma_interval into subintervals
     # s_i, with the property that
@@ -264,22 +264,21 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, tau0, 2 * tau0
     )
 
-    print('sup 1')
-    for p in sup1:
-        print(p[0], p[1])
-    for p in sup1:
-        if p[1].contains(0.78):
-            for q in p[2]:
-                q.recursively_list_proofs(1)
+    # print('sup 1')
+    # for p in sup1:
+    #     print(p[0], p[1])
+    # for p in sup1:
+    #     if p[1].contains(0.78):
+    #         for q in p[2]:
+    #             q.recursively_list_proofs(1)
     
-    temp = []
-    for p in sup1:
-        if p[1].contains(0.78):
-            for q in p[2]:
-                temp.extend(q.data.bound.pieces)
-    temp = Piecewise(temp)
-    temp.plot_domain(xlim=(0.75, 0.82), ylim=(tau0, 2 * tau0), resolution=1000)
-    
+    # temp = []
+    # for p in sup1:
+    #     if p[1].contains(0.78):
+    #         for q in p[2]:
+    #             temp.extend(q.data.bound.pieces)
+    # temp = Piecewise(temp)
+    # temp.plot_domain(xlim=(0.75, 0.82), ylim=(tau0, 2 * tau0), resolution=1000)
     
     if debug:
         print(time.time() - start_time, "s")
@@ -299,25 +298,20 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, frac(2), tau0
     )
     
-    
-    print('sup 2')
-    for p in sup2:
-        print(p[0], p[1])
-    for p in sup2:
-        if p[1].contains(0.78):
-            for q in p[2]:
-                q.recursively_list_proofs(1)
-    temp = []
-    for p in sup2:
-        if p[1].contains(0.78):
-            for q in p[2]:
-                temp.extend(q.data.bound.pieces)
-    temp = Piecewise(temp)
-    temp.plot_domain(xlim=(0.75, 0.82), ylim=(2, tau0), resolution=1000)
-    
-    
-    
-    
+    # print('sup 2')
+    # for p in sup2:
+    #     print(p[0], p[1])
+    # for p in sup2:
+    #     if p[1].contains(0.78):
+    #         for q in p[2]:
+    #             q.recursively_list_proofs(1)
+    # temp = []
+    # for p in sup2:
+    #     if p[1].contains(0.78):
+    #         for q in p[2]:
+    #             temp.extend(q.data.bound.pieces)
+    # temp = Piecewise(temp)
+    # temp.plot_domain(xlim=(0.75, 0.82), ylim=(2, tau0), resolution=1000)
     
     if debug:
         print(time.time() - start_time, "s")
@@ -410,7 +404,6 @@ def ivic_ep_to_zd(exp_pairs, m=2):
     sigma0 = min(sigma0, frac(6 * m * m - 5 * m + 2, 8 * m * m - 7 * m + 2))
 
     zde = Zero_Density_Estimate(f"{3*m}/({3*m-2}x + {2-m})", Interval(sigma0, 1))
-    print(zde, dep)
     return derived_zero_density_estimate(
         zde, f"Follows from the exponent pair {dep.data}", {dep}
     )
