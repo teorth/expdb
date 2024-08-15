@@ -258,7 +258,15 @@ def prove_ivic_zero_density():
 
 # Compute the best zero-density estimates from the literature
 def compute_best_zero_density():
-    zd.best_zero_density_estimate(literature, verbose=True)
+    hs = Hypothesis_Set()
+    hs.add_hypotheses(literature)
+
+    # Add the new zero-density estimates (not part of the literature yet!)
+    zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
+
+    zd.best_zero_density_estimate(hs, verbose=True)
 
 #################################################################################################
 
@@ -282,8 +290,8 @@ def prove_zero_density_estimates():
     # prove_heathbrown_zero_density2()
     # prove_guth_maynard_zero_density()
     # prove_extended_heathbrown_zero_density()
-    prove_ivic_zero_density()
-    # compute_best_zero_density()
+    # prove_ivic_zero_density()
+    compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
