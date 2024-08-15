@@ -221,20 +221,24 @@ def best_mu_bound(sigma, hypothesis_set):
 
 # Computes the best bound on mu(sigma) in the range [sigma0, sigma1), as a piecewise
 # linear function that the given hypotheses imply.
-# TODO: instead of passing in {sigma0, sigma1}, pass in an Interval object instead
-def best_mu_bound_piecewise(sigma0, sigma1, hypothesis_set):
+def best_mu_bound_piecewise(sigma_interval, hypothesis_set):
+    sigma0, sigma1 = sigma_interval.x0, sigma_interval.x1
+
     if sigma0 > sigma1:
-        raise "sigma0 must be <= sigma1"
+        raise ValueError("sigma0 must be <= sigma1")
 
     # deal with edge pieces
     if sigma0 < 0:
         return [("-x + 1/2", sigma0, 0)] + best_mu_bound_piecewise(
-            0, sigma1, hypothesis_set
+            Interval(0, sigma1, include_lower=True, include_upper=sigma_interval.include_upper),
+            hypothesis_set
         )
     if sigma1 > 1:
-        return best_mu_bound_piecewise(sigma0, 1, hypothesis_set) + [("0", 1, sigma1)]
+        return best_mu_bound_piecewise(
+            Interval(sigma0, 1, include_lower=sigma_interval.include_lower, include_upper=True),
+            hypothesis_set) + [("0", 1, sigma1)]
 
-    # Computed convex hull is stored within `hypothesis_list` the first time
+    # Computed convex hull is stored within `hypothesis_set` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
     if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
         bounds = get_bounds(hypothesis_set)
@@ -246,12 +250,13 @@ def best_mu_bound_piecewise(sigma0, sigma1, hypothesis_set):
     for i in range(len(verts)):
         b1 = verts[i].data
         b2 = verts[(i + 1) % len(verts)].data
-        if b1.sigma < b2.sigma and max(sigma0, b1.sigma) <= min(sigma1, b2.sigma):
+        interval = Interval(max(sigma0, b1.sigma), min(sigma1, b2.sigma))
+        if b1.sigma < b2.sigma and not interval.is_empty():
             mu_bounds.append(
                 Affine(
                     (b2.mu - b1.mu) / (b2.sigma - b1.sigma),
                     (b2.sigma * b1.mu - b1.sigma * b2.mu) / (b2.sigma - b1.sigma),
-                    Interval(max(sigma0, b1.sigma), min(sigma1, b2.sigma)),
+                    interval
                 )
             )
     return mu_bounds
