@@ -232,6 +232,31 @@ def prove_extended_heathbrown_zero_density(verbose=True):
         h.recursively_list_proofs()
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5))
 
+# Prove Ivi\'{c}'s zero-density estimates 
+# A(s) < 3/(2s)  3831/4791 <= s <= 1 (actually, we could do slightly better with better 
+# choice of exponent pair)
+# A(s) < 9/(7s -1), 41/53 <= s <= 1
+# A(s) < 6/(5s - 1),  13/17 <= s <= 1
+def prove_ivic_zero_density():
+
+    hs = Hypothesis_Set()
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair"))
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair transform"))
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
+
+    hs.add_hypotheses(
+        ep.compute_exp_pairs(hs, search_depth=5, prune=True)
+    )
+    hs.add_hypotheses(ep.exponent_pairs_to_beta_bounds(hs))
+    hs.add_hypotheses(ep.compute_best_beta_bounds(hs))
+    ephs = ep.beta_bounds_to_exponent_pairs(hs)
+
+    for m in range(2, 5):
+        h = zd.ivic_ep_to_zd(ephs, m)
+        h.recursively_list_proofs()
+
+#################################################################################################
+
 def prove_exponent_pairs():
     # prove_heathbrown_exponent_pairs()
     #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
@@ -251,12 +276,13 @@ def prove_zero_density_estimates():
     prove_heathbrown_zero_density()
     prove_heathbrown_zero_density2()
     prove_guth_maynard_zero_density()
-    #prove_extended_heathbrown_zero_density()
+    # prove_extended_heathbrown_zero_density()
+    # prove_ivic_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
-    # prove_zero_density_estimates()
-    prove_bourgain_large_values_theorem()
+    prove_zero_density_estimates()
+    # prove_bourgain_large_values_theorem()
 
 prove_all()

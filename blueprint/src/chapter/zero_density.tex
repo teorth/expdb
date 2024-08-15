@@ -409,18 +409,21 @@ In this regime, one can also check from \eqref{rhomax} that
 $$ \rho \leq \min(1, 4-2\tau)$$
 (with room to spare) so we may apply Corollary \ref{borg-lv-simp} to obtain
 \begin{equation}\label{40-alt}
-    \rho \leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma)
+\begin{split}
+\rho &\leq \max( \alpha_2 + 2 - 2 \sigma, \alpha_1+\alpha_2/2 + 2-2\sigma, -\alpha_2 + 2\tau+4-8\sigma, \\
+&\qquad\qquad -2\alpha_1 + \tau + 12 - 16 \sigma, 4\alpha_1 + 2+\max(1,2\tau-2)-4\sigma)
+\end{split}
 \end{equation}
 for any $\alpha_1, \alpha_2 \geq 0$.
 
 We first consider the case when $17/22 \leq \sigma \leq 4/5$, so that $\tau_0 = 8(2\sigma-1)/3$.
 As in the proof of Theorem \ref{bourgain-density}, we set
-$$ \alpha_2 := \max( \frac{5\tau}{4} - (1+\sigma), 0)$$
+$$ \alpha_2 := \max\left( \frac{5\tau}{4} - (1+\sigma), 0\right)$$
 and
 $$ \alpha_1 := \frac{\tau}{3} - \frac{2}{3} (7\sigma-5) - \alpha_2/6.$$
 With this choice, the expressions $\alpha_1+\alpha_2/2 + 2-2\sigma$ and $-2\alpha_1 + \tau + 12 - 16 \sigma$ are both equal to
 $\frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3}$, while $-\alpha_2 + 2\tau+4-8\sigma$ is equal to
-$$ \frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3} - \frac{4}{3} (\alpha_2 - \frac{5\tau}{4} - (1+\sigma))$$
+$$ \frac{\tau}{3} + \frac{16-20\sigma}{3} + \frac{\alpha_2}{3} - \frac{4}{3} \left(\alpha_2 - \frac{5\tau}{4} - (1+\sigma)\right)$$
 which is less than or equal to the previous expression by definition of $\alpha_2$.  Finally, the expression
 $4\alpha_1 + 1+\max(2,2\tau-2)-4\sigma$ is equal to
 $$ \frac{4\tau}{3} + \frac{46-68\sigma}{3} + \max(1,2\tau-2) - \frac{2\alpha_2}{3}.$$
@@ -552,6 +555,9 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
  \frac{6}{5\sigma-1} &\hbox{ for } \frac{13}{17} \leq \sigma \leq 1;
 \end{align*}
 \end{corollary}
+
+\derived 
+\code{prove_ivic_zero_density()}
 
 \begin{proof}\uses{gzd}  Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; $m=3$ and arbitrary $(k,\ell)$ for the second claim; and $m=4$ and arbitrary $(k,\ell)$ for the third claim.
 \end{proof}
