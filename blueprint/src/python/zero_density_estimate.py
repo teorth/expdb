@@ -405,7 +405,7 @@ def ivic_ep_to_zd(exp_pairs, m=2):
 
     zde = Zero_Density_Estimate(f"{3*m}/({3*m-2}x + {2-m})", Interval(sigma0, 1))
     return derived_zero_density_estimate(
-        zde, f"Follows from the exponent pair {dep.data}", {dep}
+        zde, f"Follows from {dep.data}", {dep}
     )
 
 
@@ -566,7 +566,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
                 new_best_bound.append(
                     Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
                 )
-                
+
         # Simplify
         best_bound = []
         i = 0

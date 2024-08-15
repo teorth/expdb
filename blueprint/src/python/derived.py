@@ -251,9 +251,10 @@ def prove_ivic_zero_density():
     hs.add_hypotheses(ep.compute_best_beta_bounds(hs))
     ephs = ep.beta_bounds_to_exponent_pairs(hs)
 
-    for m in range(2, 5):
-        h = zd.ivic_ep_to_zd(ephs, m)
-        h.recursively_list_proofs()
+    for k in range(2, 20):
+        h = zd.ivic_ep_to_zd(ephs, k)
+        print(h.data, h.proof)
+        # h.recursively_list_proofs()
 
 # Compute the best zero-density estimates from the literature
 def compute_best_zero_density():
@@ -274,15 +275,15 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
-    prove_ingham_zero_density()
-    prove_huxley_zero_density()
-    prove_jutila_zero_density()
-    prove_heathbrown_zero_density()
-    prove_heathbrown_zero_density2()
-    prove_guth_maynard_zero_density()
+    # prove_ingham_zero_density()
+    # prove_huxley_zero_density()
+    # prove_jutila_zero_density()
+    # prove_heathbrown_zero_density()
+    # prove_heathbrown_zero_density2()
+    # prove_guth_maynard_zero_density()
     # prove_extended_heathbrown_zero_density()
-    # prove_ivic_zero_density()
-    compute_best_zero_density()
+    prove_ivic_zero_density()
+    # compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()

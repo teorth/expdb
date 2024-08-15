@@ -892,14 +892,20 @@ zd.add_zero_density(
 )
 
 # A. Ivic (1984) The Riemann zeta-function (11.76, 11.77)
-# The estimate for k = 2 is already included in 
+# For k = 2, the estimate is already contained in 
 # (A. Ivic (1980) Exponent pairs and the zeta function of Riemann, Studia Sci. Math. Hung. Volume: 15, pages 157--181)
-# The last term in the lower bound of sigma may be dropped for k \geq 3 
+# For k > 2, the result depends on our choice of exponent pair. Based on 
+# our current knowledge, in the case of k = 3 the lower limit on sigma is 41/53, 
+# and for all higher k the lower limit is given by 
+# (9 * k**2 - 4 * k + 2)/(12 * k**2 - 6 * k + 2)
 for k in range(3, 100):
-    sigma_lower = min(
-        frac(6 * k**2 - 5 * k + 2, 8 * k**2 - 7 * k + 2),
-        frac(9 * k**2 - 4 * k + 2, 12 * k**2 - 6 * k + 2)
-    )
+    if k == 3:
+        sigma_lower = frac(41,53)
+    else:
+        sigma_lower = min(
+            frac(6 * k**2 - 5 * k + 2, 8 * k**2 - 7 * k + 2),
+            frac(9 * k**2 - 4 * k + 2, 12 * k**2 - 6 * k + 2)
+        )
     if sigma_lower > Constants.ZERO_DENSITY_SIGMA_LIMIT:
         break
     zd.add_zero_density(
