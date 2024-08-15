@@ -883,22 +883,30 @@ zd.add_zero_density(
     literature, "9/(8 * x - 2)", Itvl(frac(10, 13), 1), rm.get("ivic_zero_1984")
 )
 
-# TODO reference
+# TODO add reference
 zd.add_zero_density(
     literature,
     "15/(22 * x - 10)",
     Itvl(frac(10, 13), frac(5, 6)),
     Reference.make("Ivic", 1984),
 )
-for k in range(2, 100):
-    sigma_lower = frac(9 * k**2 - 3 * k + 2, 12 * k**2 - 5 * k + 2)
+
+# A. Ivic (1984) The Riemann zeta-function (11.76, 11.77)
+# The estimate for k = 2 is already included in 
+# (A. Ivic (1980) Exponent pairs and the zeta function of Riemann, Studia Sci. Math. Hung. Volume: 15, pages 157--181)
+# The last term in the lower bound of sigma may be dropped for k \geq 3 
+for k in range(3, 100):
+    sigma_lower = min(
+        frac(6 * k**2 - 5 * k + 2, 8 * k**2 - 7 * k + 2),
+        frac(9 * k**2 - 4 * k + 2, 12 * k**2 - 6 * k + 2)
+    )
     if sigma_lower > Constants.ZERO_DENSITY_SIGMA_LIMIT:
         break
     zd.add_zero_density(
         literature,
         f"{3*k}/({3*k-2} * x + {2-k})",
         Itvl(sigma_lower, 1),
-        Reference.make("Ivic", 1984),
+        rm.get("ivic"),
     )
 
 # B. Conrey (1989)
