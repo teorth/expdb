@@ -891,10 +891,13 @@ zd.add_zero_density(
     Reference.make("Ivic", 1984),
 )
 for k in range(2, 100):
+    sigma_lower = frac(9 * k**2 - 3 * k + 2, 12 * k**2 - 5 * k + 2)
+    if sigma_lower > Constants.ZERO_DENSITY_SIGMA_LIMIT:
+        break
     zd.add_zero_density(
         literature,
         f"{3*k}/({3*k-2} * x + {2-k})",
-        Itvl(frac(9 * k**2 - 3 * k + 2, 12 * k**2 - 5 * k + 2), 1),
+        Itvl(sigma_lower, 1),
         Reference.make("Ivic", 1984),
     )
 
@@ -953,10 +956,13 @@ zd.add_zero_density(
     rm.get("pintz_density_2023"),
 )
 for k in range(4, 100):
+    sigma_lower = 1 - frac(1, 2 * k * (k - 1))
+    if sigma_lower > Constants.ZERO_DENSITY_SIGMA_LIMIT:
+        break
     zd.add_zero_density(
         literature,
         f"3 / ({k} * (1 - 2 * ({k} - 1) * (1 - x)))",
-        Itvl(1 - frac(1, 2 * k * (k - 1)), 1 - frac(1, 2 * k * (k + 1))),
+        Itvl(sigma_lower, 1 - frac(1, 2 * k * (k + 1))),
         rm.get("pintz_density_2023"),
     )
 

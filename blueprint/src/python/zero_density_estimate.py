@@ -9,7 +9,7 @@ from constants import Constants, Proof_Optimization_Method
 import bound_beta as bb
 import exponent_pair as ep
 from fractions import Fraction as frac
-from functions import Affine2, Interval, Piecewise, Polytope, RationalFunction as RF
+from functions import Affine2, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
 from hypotheses import *
 import large_values as lv
 import matplotlib.pyplot as plt
@@ -235,7 +235,6 @@ def max_RF(crits, faces):
             soln.pop(i)
     return soln
 
-
 # Computes the maximum of
 #
 # \sup_{t \in [\tau_0, 2\tau_0]} LV(s, t) / t,
@@ -364,6 +363,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
             deps
         ))
     return hyps
+
 
 # Tries to prove the zero-density estimate 
 # A(sigma) \leq Abound (sigma in sigma_interval)
@@ -505,3 +505,117 @@ def ep_to_zd(hypotheses):
     zdts.append(ivic_ep_to_zd(ephs, m=2))
 
     return zdts
+
+
+# Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise 
+# function that represents the best zero-density estimate in each subinterval of [1/2, 1]
+# Note that this function does not compute zero-density estimates from other 
+# Hypothesis objects - it only aggregates existing Hypothesis objects of type 
+# "Zero density estimate". 
+def best_zero_density_estimate(hypotheses, verbose=False):
+    hs = hypotheses.list_hypotheses(hypothesis_type="Zero density estimate")
+
+    # Ensure bound is computed
+    for h in hs:
+        h.data._ensure_bound_is_computed()
+    
+    # Start with default bound 
+    default = Zero_Density_Estimate("10000000", Interval(frac(1,2), 1))
+    default._ensure_bound_is_computed()
+    best_bound = [
+        Hypothesis(
+            "Placeholder zero density estimate",
+            "Zero density estimate",
+            default,
+            "Placeholder zero density estimate",
+            Reference.trivial(),
+        )
+    ]
+    x = RF.x
+
+    for h1 in hs:
+        # For simplicity, work directly with sympy objects
+        f1 = h1.data.bound.num / h1.data.bound.den
+        in1 = h1.data.interval 
+
+        new_best_bound = []
+        for h2 in best_bound:
+            f2 = h2.data.bound.num / h2.data.bound.den
+            in2 = h2.data.interval
+            solns = sympy.solve(f1 - f2)
+            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
+            crits.update([in1.x0, in1.x1])
+            crits = set(c for c in crits if in2.contains(c))
+            crits.update([in2.x0, in2.x1])
+
+            crits = list(crits)
+            crits.sort()
+            for i in range(1, len(crits)):
+                inter = Interval(crits[i - 1], crits[i])
+                mid = inter.midpoint()
+                if not in1.contains(mid) or f2.subs(x, mid) < f1.subs(x, mid):
+                    # f2 is the better bound 
+                    zde = Zero_Density_Estimate(str(f2), inter)
+                    h = h2
+                else:
+                    zde = Zero_Density_Estimate(str(f1), inter)
+                    h = h1
+
+                zde._ensure_bound_is_computed()
+                # name, hypothesis_type, data, proof, reference
+                new_best_bound.append(
+                    Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
+                )
+
+        # Simplify
+        best_bound = []
+        i = 0
+        while i < len(new_best_bound):
+            bi = new_best_bound[i]
+            (fi, inti) = (bi.data.bound, bi.data.interval)
+            left = inti.x0
+            right = inti.x1
+
+            j = i + 1
+            while j < len(new_best_bound):
+                bj = new_best_bound[j]
+                (fj, intj) = (bj.data.bound, bj.data.interval)
+                if not (fj == fj and right == intj.x0 and \
+                        bi.proof == bj.proof):
+                    break
+                right = intj.x1
+                j += 1
+
+            bi.data.interval = Interval(left, right)
+            best_bound.append(bi)
+            i = j
+
+    if verbose:
+        print("A(x) \leq ")
+        for b in best_bound:
+            if b.data.interval.x0 < Constants.ZERO_DENSITY_SIGMA_LIMIT:
+                print(f"\t{b.data}  {b.proof}")
+
+        # plot zero-density estimate 
+        N = 500
+        xs = []
+        computed_zdt = []
+        literature_zdt = []
+
+        for i in range(N):
+            sigma = 1 / 2 + 1 / 2 * i / N
+            xs.append(sigma)
+            literature_zdt.append(min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma)))
+            computed_zdt.append(next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0))
+
+        plt.figure(dpi=1200)
+        plt.xlabel("σ")
+        plt.ylabel("A(σ)")
+        plt.plot(xs, computed_zdt, linewidth=0.5, label="Computed zero-density estimate")
+        plt.plot(xs, literature_zdt, linewidth=0.5, label="Literature zero-density estimate")
+        plt.title("Best zero density estimate")
+        plt.legend(loc="lower left")
+        plt.show()
+    
+    return best_bound
+    

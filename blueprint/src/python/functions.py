@@ -618,6 +618,8 @@ class SympyHelper:
                 n, sympy.core.numbers.Integer
             ):
                 return frac(int(n), int(d))
+        if isinstance(expr, sympy.core.numbers.Float):
+            return float(expr)
         return expr
 
 
@@ -655,6 +657,9 @@ class RationalFunction:
     def __eq__(self, other):
         return (self.num * other.den - self.den * other.num).equals(0)
 
+
+    # Static functions -------------------------------------------------
+
     def parse(expr):
         s = sympy.parsing.sympy_parser.parse_expr(expr)
         (num, den) = sympy.fraction(s)
@@ -662,6 +667,8 @@ class RationalFunction:
         r.num = num
         r.den = den
         return r
+
+    # ------------------------------------------------------------------
 
     def at(self, x):
         f = self.num / self.den
