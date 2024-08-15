@@ -255,6 +255,10 @@ def prove_ivic_zero_density():
         h = zd.ivic_ep_to_zd(ephs, m)
         h.recursively_list_proofs()
 
+# Compute the best zero-density estimates from the literature
+def compute_best_zero_density():
+    zd.best_zero_density_estimate(literature, verbose=True)
+
 #################################################################################################
 
 def prove_exponent_pairs():
@@ -278,6 +282,7 @@ def prove_zero_density_estimates():
     prove_guth_maynard_zero_density()
     # prove_extended_heathbrown_zero_density()
     # prove_ivic_zero_density()
+    compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
