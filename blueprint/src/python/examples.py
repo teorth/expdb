@@ -61,7 +61,7 @@ def mu_bound_examples():
     print(
         "Under the same assumptions, the best piecewise-linear bound on mu in [1/3,9/10) is"
     )
-    mbs = best_mu_bound_piecewise(frac(1, 3), frac(9, 10), hypotheses)
+    mbs = best_mu_bound_piecewise(Interval(frac(1, 3), frac(9, 10)), hypotheses)
     for b in mbs:
         print(f"\\mu(x) \\leq {b}")
 
@@ -197,7 +197,7 @@ def beta_bound_examples():
     print()
     print("6. This implies the following bounds on mu in the range [1/3, 9/10)")
     hypotheses.add_hypotheses(new_exp_pairs)
-    mbs = best_mu_bound_piecewise(frac(1, 3), frac(9, 10), hypotheses)
+    mbs = best_mu_bound_piecewise(Interval(frac(1, 3), frac(9, 10)), hypotheses)
     for b in mbs:
         print(f"\\mu(x) \\leq {b}")
 

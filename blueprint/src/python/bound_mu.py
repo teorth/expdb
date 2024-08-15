@@ -250,6 +250,8 @@ def best_mu_bound_piecewise(sigma_interval, hypothesis_set):
     for i in range(len(verts)):
         b1 = verts[i].data
         b2 = verts[(i + 1) % len(verts)].data
+        if b2.sigma < sigma0 or b1.sigma > sigma1: 
+            continue
         interval = Interval(max(sigma0, b1.sigma), min(sigma1, b2.sigma))
         if b1.sigma < b2.sigma and not interval.is_empty():
             mu_bounds.append(
