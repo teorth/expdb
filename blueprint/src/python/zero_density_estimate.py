@@ -606,8 +606,10 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         for i in range(N):
             sigma = 1 / 2 + 1 / 2 * i / N
             xs.append(sigma)
-            literature_zdt.append(min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma)))
-            computed_zdt.append(next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0))
+            A1 = min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma))
+            A2 = next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0)
+            literature_zdt.append(A1)
+            computed_zdt.append(A2)
 
         plt.figure(dpi=1200)
         plt.xlabel("σ")

@@ -41,7 +41,7 @@ class Interval:
             #     raise ValueError('x1 must be of type number', x1)
 
             if x0 - x1 > 0:
-                raise "x0 must be <= x1"
+                raise ValueError("x0 must be <= x1")
             self.x0 = x0
             self.x1 = x1
             self.include_lower = include_lower
@@ -90,11 +90,19 @@ class Interval:
 
     # Returns true if the interval contains the point x
     def contains(self, x):
-        if self.x0 - x > 0 or (self.x0 == x and not self.include_lower):
-            return False
-        if x - self.x1 > 0 or (self.x1 == x and not self.include_upper):
-            return False
-        return True
+        # previous implementation required 6 comparisons, new implementation only 
+        # requires 4 comparisons (but more cases)
+        if self.include_lower:
+            if self.include_upper:
+                return x - self.x0 >= 0 and self.x1 - x >= 0
+            else:
+                return x - self.x0 >= 0 and self.x1 - x > 0
+
+        if self.include_upper:
+            return x - self.x0 > 0 and self.x1 - x >= 0
+        else:
+            return x - self.x0 > 0 and self.x1 - x > 0
+
 
     # Returns an Interval object representing the intersection of this interval
     # with another.
