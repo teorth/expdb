@@ -272,7 +272,11 @@ def compute_best_zero_density():
 
 def prove_exponent_pairs():
     # prove_heathbrown_exponent_pairs()
-    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1959,47230), frac(3975,4723))
+    prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
+    prove_exponent_pair(frac(89,3478), frac(15327,17390))
+
     best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
     best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
     best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
@@ -295,8 +299,8 @@ def prove_zero_density_estimates():
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
-    # prove_exponent_pairs()
-    prove_zero_density_estimates()
+    prove_exponent_pairs()
+    # prove_zero_density_estimates()
     # prove_bourgain_large_values_theorem()
 
 prove_all()

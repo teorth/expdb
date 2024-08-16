@@ -412,15 +412,17 @@ def ivic_ep_to_zd(exp_pairs, m=2):
 
 def approx_bourgain_ep_to_zd(exp_pairs):
     
-    sigmas = np.linspace(1/2, 1, 100)
+    sigmas = np.linspace(1/2, 1, 1000)
 
+    points = [[p.data.k, p.data.l] for p in exp_pairs]
+    conv = scipy.spatial.ConvexHull(np.array(points))
+    vertices = [points[v] for v in conv.vertices]
+    poly = Polytope.from_V_rep(vertices)
+
+    for v in vertices:
+        print(v[0], v[1])
 
     for s in sigmas:
-        points = [[p.data.k, p.data.l] for p in exp_pairs]
-        conv = scipy.spatial.ConvexHull(np.array(points))
-        vertices = [points[v] for v in conv.vertices]
-        poly = Polytope.from_V_rep(vertices)
-
         R1 = poly.intersect(Polytope([
             [0, 1, 0],
             [frac(11,85), -1, 0],
@@ -430,10 +432,41 @@ def approx_bourgain_ep_to_zd(exp_pairs):
             [2 * s - 1, 2 * s, -1]
         ]))
 
-        print(R1)
-        print(R1.is_empty(include_boundary=False))
-        R1.plot(resolution=300)
-        return
+        R2 = poly.intersect(Polytope([
+            [-frac(11,85), 1, 0],
+            [frac(1,5), -1, 0],
+            [-frac(3,5), 0, 1],
+            [1, 0, -1],
+            [-13, 20, 15],
+            [2 * s - 1, 2 * s, -1],
+            [11 - 22 * s, 170 * s - 144, 11]
+        ]))
+
+
+        # iterate through the vertices of R1
+        Abound = float('inf')
+        argmin = (0, 1)
+        if not R1.is_empty(include_boundary=False):
+            verts = R1.get_vertices()
+            for v in verts:
+                (k, l) = v
+                if 2 * (1 + k) * s - 1 - l <= 0: continue
+                A = 4 * k / (2 * (1 + k) * s - 1 - l)
+                if A < Abound:
+                    Abound = A
+                    argmin = (k, l)
+        
+        if not R2.is_empty(include_boundary=False):
+            verts = R2.get_vertices()
+            for v in verts:
+                (k, l) = v
+                if 2 * (1 + k) * s - 1 - l <= 0: continue
+                A = 4 * k / (2 * (1 + k) * s - 1 - l)
+                if A < Abound:
+                    Abound = A
+                    argmin = (k, l)
+
+        print(s, argmin, Abound)
 
 
 # Computes the zero-density estimate
