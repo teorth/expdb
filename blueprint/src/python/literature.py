@@ -758,28 +758,28 @@ literature.add_hypothesis(
 zd.add_zero_density(literature, "4*x", Itvl(frac(1, 2), 1), rm.get("carlson_uber_1921"))
 
 # Ingham (1940) On the estimation of N(σ,T)
-def add_ingham_1940_zero_density():
+def add_zero_density_ingham_1940():
     zd.add_zero_density(
         literature, "3/(2 - x)", Itvl(frac(1, 2), 1), rm.get("ingham_estimation_1940")
     )
-add_ingham_1940_zero_density()
+add_zero_density_ingham_1940()
 
 # Montgomery (1971) Topics in Multiplicative Number Theory
-def add_montgomery_1971_zero_density():
+def add_zero_density_montgomery_1971():
     zd.add_zero_density(
         literature,
         "1600 * (1 - x) ** (1/2)",
         Itvl(frac(1, 2), 1),
         Reference.make("Montgomery", 1971),
     )
-add_montgomery_1971_zero_density()
+add_zero_density_montgomery_1971()
 
 # M. N. Huxley (1972) On the difference between consecutive primes, Invent. Math., 15, pages 164--170
-def add_huxley_1972_zero_density():
+def add_zero_density_huxley_1972():
     zd.add_zero_density(
         literature, "3/(3 * x - 1)", Itvl(frac(1, 2), 1), rm.get("Huxley")
     )
-add_huxley_1972_zero_density()
+add_zero_density_huxley_1972()
 
 # M. N. Huxley (1973) Large values of Dirichlet polynomials, Acta Arithmetica Volume: 24, pages 329--346
 zd.add_zero_density(
@@ -816,18 +816,17 @@ zd.add_zero_density(
 zd.add_zero_density(literature, "2", Itvl(frac(4, 5), 1), rm.get("huxley_large_1975b"))
 
 # D. R. Heath-Brown (1979) Zero Density Estimates for the Riemann Zeta-Function and Dirichlet L-Functions, J. Lond. Math. Soc. s2-19, pages 221--232
-zd.add_zero_density(
-    literature, "4/(4 * x - 1)", Itvl(frac(25, 28), 1), rm.get("heathbrown_zero_1979")
-)
-zd.add_zero_density(
-    literature,
-    "3/(10 * x - 7)",
-    Itvl(frac(3, 4), frac(25, 28)),
-    rm.get("heathbrown_zero_1979"),
-)
-zd.add_zero_density(
-    literature, "9/(7 * x - 1)", Itvl(frac(11, 14), 1), rm.get("heathbrown_zero_1979")
-)
+def add_zero_density_heathbrown_1979():
+    zd.add_zero_density(
+        literature, "4/(4 * x - 1)", Itvl("[25/28, 1]"), rm.get("heathbrown_zero_1979")
+    )
+    zd.add_zero_density(
+        literature, "3/(10 * x - 7)", Itvl("[3/4, 25/28)"), rm.get("heathbrown_zero_1979"),
+    )
+    zd.add_zero_density(
+        literature, "9/(7 * x - 1)", Itvl("[11/14, 1)"), rm.get("heathbrown_zero_1979")
+    )
+add_zero_density_heathbrown_1979()
 
 # A. Ivic (1979) A note on the zero-density estimates for the zeta function, Archiv der Mathematik Volume: 33, pages 155--164
 zd.add_zero_density(
@@ -906,7 +905,7 @@ zd.add_zero_density(
 # our current knowledge, in the case of k = 3 the lower limit on sigma is 41/53, 
 # and for all higher k the lower limit is given by 
 # (9 * k**2 - 4 * k + 2)/(12 * k**2 - 6 * k + 2)
-def add_ivic_1984_zero_density():
+def add_zero_density_ivic_1984():
     for k in range(3, 100):
         if k == 3:
             sigma_lower = frac(41,53)
@@ -920,7 +919,7 @@ def add_ivic_1984_zero_density():
         zd.add_zero_density(
             literature, f"{3*k}/({3*k-2} * x + {2-k})", Itvl(sigma_lower, 1), rm.get("ivic"),
         )
-add_ivic_1984_zero_density()
+add_zero_density_ivic_1984()
 
 # B. Conrey (1989)
 zd.add_zero_density(
@@ -932,22 +931,22 @@ zd.add_zero_density(
 
 # J. Bourgain (1995) Remarks on Halasz–Montgomery type inequalities, in: Geometric aspects of functional analysis (Israel, 1992–1994),
 # Oper. Theory Adv. Appl. 77, Birkh¨auser, Basel, pages 25--39.
-def add_bourgain_1995_zero_density():
+def add_zero_density_bourgain_1995():
     zd.add_zero_density(
         literature, "4 / (30 * x - 25)", Itvl(frac(15, 16), 1), rm.get("bourgain_remarks_1995"),
     )
     zd.add_zero_density(
         literature, "2 / (7 * x - 5)", Itvl(frac(17, 19), 1), rm.get("bourgain_remarks_1995"),
     )
-add_bourgain_1995_zero_density()
+add_zero_density_bourgain_1995()
 
 # J. Bourgain (2000) On large values estimates for Dirichlet polynomials and the density hypothesis for the Riemann zeta function,
 # Internat. Math. Res. Notices, no. 3, pages 133--146.
-def add_bourgain_2000_zero_density():
+def add_zero_density_bourgain_2000():
     zd.add_zero_density(
         literature, "2", Itvl(frac(25, 32), 1), rm.get("bourgain_large_2000")
     )
-add_bourgain_2000_zero_density()
+add_zero_density_bourgain_2000()
 
 # K. Ford (2002) Vinogradov’s integral and bounds for the Riemann zeta function, Proc. London Math. Soc. (3) 85, no. 2, pages 565--633
 zd.add_zero_density(
@@ -955,11 +954,11 @@ zd.add_zero_density(
 )
 
 # J. Bourgain (2002) On the distribution of Dirichlet sums II, in: Number theory for the millennium, I (Urbana, IL, 2000), pages 87--109, A K Peters, Ltd., Natick, MA
-def add_bourgain_2002_zero_density():
+def add_zero_density_bourgain_2002():
     zd.add_zero_density(
         literature, "3/(2 * x)", Itvl(frac(3734, 4694), 1), Reference.make("Bourgain", 2002)
     )
-add_bourgain_2002_zero_density()
+add_zero_density_bourgain_2002()
 
 # D. R. Heath-Brown (2017) Proc. Steklov Inst. Math. 296, no. 1, pages 88--103
 zd.add_zero_density(
@@ -970,7 +969,7 @@ zd.add_zero_density(
 )
 
 #  J. Pintz (2023) Density theorems for Riemann’s zeta-function near the line \Re s = 1. Acta Arithmetica 208.1, pages 1--13
-def add_pintz_2023_zero_density():
+def add_zero_density_pintz_2023():
     zd.add_zero_density(
         literature,
         "2/(15 * x - 12)",
@@ -987,21 +986,21 @@ def add_pintz_2023_zero_density():
             Itvl(sigma_lower, 1 - frac(1, 2 * k * (k + 1))),
             rm.get("pintz_density_2023"),
         )
-add_pintz_2023_zero_density()
+add_zero_density_pintz_2023()
 
 # B. Chen, G. Debruyne and J. Vindas (2024) On the density hypothesis for L-functions associated with holomorphic cusp forms. Revista Matematica Iberoamericana
-def add_chen_debruyne_vindas_2024_zero_density():
+def add_zero_density_chen_debruyne_vindas_2024():
     zd.add_zero_density(
         literature,
         "24 / (30 * x - 11)",
         Itvl(frac(279, 314), frac(17, 18)),
         rm.get("chen_debruyne_vindas_density_2024"),
     )
-add_chen_debruyne_vindas_2024_zero_density()
+add_zero_density_chen_debruyne_vindas_2024()
 
 # L. Guth, J. Maynard (2024) New large value estimates for Dirichlet polynomials
-def add_guth_maynard_2024_zero_density():
+def add_zero_density_guth_maynard_2024():
     zd.add_zero_density(
         literature, "15 / (3 + 5 * x)", Itvl(frac(1, 2), 1), rm.get("guth-maynard")
     )
-add_guth_maynard_2024_zero_density()
+add_zero_density_guth_maynard_2024()

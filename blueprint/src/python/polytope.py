@@ -2,6 +2,9 @@ import cdd
 import copy
 from fractions import Fraction as frac
 import itertools
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 ###############################################################################
@@ -452,4 +455,30 @@ class Polytope:
         # If not including boundary, strict subspace vertex regions are considered empty
         return len(self.vertices) <= self.dimension()
 
+    # Plot the polytope (current only 2D polytopes are supported)
+    def plot(self, resolution=100):
+        if self.dimension() != 2:
+            raise NotImplementedError("Currently, only 2-dimensional polytopes are supported")
+        
+        # Compute the bounds 
+        if self.vertices is None:
+            self.compute_V_rep()
+        
+        (xmin, xmax) = min(v[0] for v in self.vertices), max(v[0] for v in self.vertices)
+        (ymin, ymax) = min(v[1] for v in self.vertices), max(v[1] for v in self.vertices)
 
+        xvals = np.linspace(xmin, xmax, resolution)
+        yvals = np.linspace(ymin, ymax, resolution)
+
+        xs = []
+        ys = []
+        for x in xvals:
+            for y in yvals:
+                if self.contains([x, y]):
+                    xs.append(x)
+                    ys.append(y)
+        
+        plt.plot(xs, ys)
+        plt.show()
+
+        

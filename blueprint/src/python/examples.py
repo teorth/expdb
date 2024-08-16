@@ -321,14 +321,6 @@ def zero_density_estimates_examples():
         "Best zero density estimate",
     )
 
-    # hypotheses.add_hypothesis(trivial_exp_pair)
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
-
-    # zdt = zd.ep_to_zd(hypotheses)
-    # zdt.recursively_list_proofs()
-
-
 def zero_density_estimates_examples2():
     hypotheses = Hypothesis_Set()
 
@@ -393,6 +385,17 @@ def zero_density_estimates_examples3():
         "Best zero density estimate",
     )
 
+def zero_density_estimates_examples4():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(trivial_exp_pair)
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform"))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
+
+    zdt = zd.ep_to_zd(hypotheses)
+
+
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()
@@ -401,7 +404,8 @@ def all_examples():
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
-    zero_density_estimates_examples3()
+    # zero_density_estimates_examples3()
+    zero_density_estimates_examples4()
     # h = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
     # h.data.bound.check((1/2, 1), (0, 5))
     # h.data.bound.plot_domain((1/2, 1), (1 + 0.00001, 5), resolution=1000, title="Optimized Bourgain's large value estimate LV(σ, τ)", xlabel="σ", ylabel="τ", variables="στ")

@@ -13,9 +13,10 @@ from functions import Affine2, Interval, Piecewise, Polytope, RationalFunction a
 from hypotheses import *
 import large_values as lv
 import matplotlib.pyplot as plt
+import numpy as np
 from reference import Reference
 import sympy
-import scipy.optimize
+import scipy
 import zeta_large_values as zlv
 
 
@@ -375,7 +376,7 @@ def prove_density_estimate(hypothesis, Abound, sigma_interval):
     lv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
     zlv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
 
-    pass
+    raise NotImplementedError()
 
 
 # Computes the zero-density estimate obtained from
@@ -407,6 +408,32 @@ def ivic_ep_to_zd(exp_pairs, m=2):
     return derived_zero_density_estimate(
         zde, f"Follows from {dep.data}", {dep}
     )
+
+
+def approx_bourgain_ep_to_zd(exp_pairs):
+    
+    sigmas = np.linspace(1/2, 1, 100)
+
+
+    for s in sigmas:
+        points = [[p.data.k, p.data.l] for p in exp_pairs]
+        conv = scipy.spatial.ConvexHull(np.array(points))
+        vertices = [points[v] for v in conv.vertices]
+        poly = Polytope.from_V_rep(vertices)
+
+        R1 = poly.intersect(Polytope([
+            [0, 1, 0],
+            [frac(11,85), -1, 0],
+            [-frac(3,5), 0, 1],
+            [1, 0, -1],
+            [-13, 20, 15],
+            [2 * s - 1, 2 * s, -1]
+        ]))
+
+        print(R1)
+        print(R1.is_empty(include_boundary=False))
+        R1.plot(resolution=300)
+        return
 
 
 # Computes the zero-density estimate
@@ -501,8 +528,9 @@ def ep_to_zd(hypotheses):
     hypotheses.add_hypotheses(ep.compute_best_beta_bounds(hypotheses))
     ephs = ep.beta_bounds_to_exponent_pairs(hypotheses)
 
-    zdts = [bourgain_ep_to_zd(ephs)]
-    zdts.append(ivic_ep_to_zd(ephs, m=2))
+    # zdts = [bourgain_ep_to_zd(ephs)]
+    approx_bourgain_ep_to_zd(ephs)
+    # zdts.append(ivic_ep_to_zd(ephs, m=2))
 
     return zdts
 
@@ -621,4 +649,4 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         plt.show()
     
     return best_bound
-    
+
