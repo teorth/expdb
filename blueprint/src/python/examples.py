@@ -349,11 +349,6 @@ def zero_density_estimates_examples2():
         h.recursively_list_proofs()
     plot(zdt, "Heath-Brown zero density estimate")
 
-    hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
-    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    for k in range(2, 5):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
-
 def zero_density_estimates_examples3():
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)

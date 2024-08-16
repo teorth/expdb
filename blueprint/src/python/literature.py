@@ -755,7 +755,11 @@ literature.add_hypothesis(
 # List of zero-density estimates in the literature, in chronological order
 
 # Carlson (1921) Uber die Nullstellen der Dirichletschen Reihen und der Riemannschen ζ-Funktion
-zd.add_zero_density(literature, "4*x", Itvl(frac(1, 2), 1), rm.get("carlson_uber_1921"))
+def add_zero_density_carlson_1921():
+    zd.add_zero_density(
+        literature, "4*x", Itvl(frac(1, 2), 1), rm.get("carlson_uber_1921")
+    )
+add_zero_density_carlson_1921()
 
 # Ingham (1940) On the estimation of N(σ,T)
 def add_zero_density_ingham_1940():
