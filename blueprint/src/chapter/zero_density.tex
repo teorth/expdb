@@ -125,9 +125,12 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
 \begin{corollary}\label{zero-large-cor-0} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
     $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV_\zeta(\sigma,\tau)/\tau, \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV(\sigma,\tau)/\tau\right)$$
     with the convention that the first supremum is $-\infty$ if it is vacuous (i.e., if $\tau_0 < 2$).
-    \end{corollary}
+\end{corollary}
+\python{zero_density_estimate}
+\code{lv_zlv_to_zd(hypotheses, sigma_interval, tau0)}
 
-    \begin{proof}  Denote the right-hand side by $B$, thus
+\begin{proof}  
+Denote the right-hand side by $B$, thus
     $$ \LV(\sigma,\tau) \leq B\tau$$
     for all $\tau_0 \leq \tau \leq 2\tau_0$, and
     \begin{equation}\label{lvz-b}
@@ -148,7 +151,7 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
     for $\tau \geq 2$.  Thus
     $$ \sup_{\tau \geq 2} \frac{\LV_\zeta(\sigma,\tau)}{\tau} \leq B.$$
     The claim now follows from Lemma \ref{zero-from-large}.
-    \end{proof}
+\end{proof}
 
 For machine assisted proofs, one can simply take $\tau_0$ to be a sufficiently large quantity, e.g., $\tau_0=3$ for $\sigma$ not too close to $1$, and larger for $\sigma$ approaching $1$, to recover the full power of Lemma \ref{zero-from-large}.  However, the amount of case analysis required increases with $\tau_0$.  For human written proofs, the following version of Corollary \ref{zero-large-cor-0} is more convenient:
 
@@ -515,6 +518,8 @@ It is remarked in \cite{bourgain_remarks_1995} that further zero density estimat
     $$ \A(\sigma) \leq \frac{24}{30\sigma-11}$$
     for $155/174 \leq \sigma \leq 17/18$.
 \end{lemma}
+\literature
+\code{add_zero_density_ivic_1980()}
 
 \begin{proof}\uses{ivic-lvt, zeta-from-exp, zero-large-cor2}  From Lemma \ref{ivic-lvt} we have
 $$  \LV(\sigma,\tau) \leq \max( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6})$$
@@ -579,6 +584,7 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 \end{align*}
 \end{corollary}
 \literature
+\code{add_zero_density_ivic_1980()}
 \code{add_zero_density_ivic_1984()}
 \derived 
 \code{prove_zero_density_ivic_1984()}

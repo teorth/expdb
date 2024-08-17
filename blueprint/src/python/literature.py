@@ -853,27 +853,26 @@ zd.add_zero_density(
 )
 
 # A. Ivic (1980) Exponent pairs and the zeta function of Riemann, Studia Sci. Math. Hung. Volume: 15, pages 157--181
-zd.add_zero_density(
-    literature, "3/(2 * x)", Itvl(frac(3831, 4791), 1), Reference.make("Ivic", 1980)
-)
-zd.add_zero_density(
-    literature, "2", Itvl(frac(11, 14), 1), Reference.make("Ivic", 1980)
-)
-zd.add_zero_density(
-    literature, "9/(7 * x - 1)", Itvl(frac(41, 53), 1), Reference.make("Ivic", 1980)
-)
-zd.add_zero_density(
-    literature, "6/(5 * x - 1)", Itvl(frac(13, 17), 1), Reference.make("Ivic", 1980)
-)
-zd.add_zero_density(
-    literature, "4/(2 * x + 1)", Itvl(frac(17, 18), 1), Reference.make("Ivic", 1980)
-)
-zd.add_zero_density(
-    literature,
-    "24/(30 * x - 11)",
-    Itvl(frac(155, 174), 1),
-    Reference.make("Ivic", 1980),
-)
+def add_zero_density_ivic_1980():
+    zd.add_zero_density(
+        literature, "3/(2 * x)", Itvl(frac(3831, 4791), 1), Reference.make("Ivic", 1980)
+    )
+    zd.add_zero_density(
+        literature, "2", Itvl(frac(11, 14), 1), Reference.make("Ivic", 1980)
+    )
+    zd.add_zero_density(
+        literature, "9/(7 * x - 1)", Itvl(frac(41, 53), 1), Reference.make("Ivic", 1980)
+    )
+    zd.add_zero_density(
+        literature, "6/(5 * x - 1)", Itvl(frac(13, 17), 1), Reference.make("Ivic", 1980)
+    )
+    zd.add_zero_density(
+        literature, "4/(2 * x + 1)", Itvl(frac(17, 18), 1), Reference.make("Ivic", 1980)
+    )
+    zd.add_zero_density(
+        literature, "24/(30 * x - 11)", Itvl(frac(155, 174), 1), Reference.make("Ivic", 1980),
+    )
+add_zero_density_ivic_1980()
 
 # M. Jutila (1982) Zeros of the zeta-function near the critical line, Studies of Pure Mathematics, to the Memory of Paul Tur\'an, Birkha\"user Verlag, Basel-Stuttgart
 zd.add_zero_density(

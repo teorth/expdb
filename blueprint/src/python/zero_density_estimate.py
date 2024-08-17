@@ -442,7 +442,6 @@ def approx_bourgain_ep_to_zd(exp_pairs):
             [11 - 22 * s, 170 * s - 144, 11]
         ]))
 
-
         # iterate through the vertices of R1
         Abound = float('inf')
         argmin = (0, 1)
