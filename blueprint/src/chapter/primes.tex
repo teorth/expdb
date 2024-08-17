@@ -22,12 +22,13 @@ We now consider local versions of the prime number theorem.
         \item[(iv)] We let $\GAPSQUARE$ denote the least exponent such that
         $$ \sum_{p_n \leq x} (p_{n+1}-p_n)^2 \ll x^{\GAPSQUARE+o(1)}$$
         as $x \to \infty$.
+        \item[(v)] We let $\GAPAA$ denote the least exponent such that for every $\eps>0$, the intervals $[n, n^{\GAPAA+\eps}]$ contain a prime for a density $1$ set of natural numbers $n$.
     \end{itemize}
 \end{definition}
 
 \begin{lemma}[Trivial bounds]\label{pnt-triv}\uses{pnt-ap}
     We have
-    $$ 0 \leq \PNTAA, \GAPMAX \leq \PNTALL \leq 1$$
+    $$ 0 \leq \GAPAA \leq \PNTAA, \GAPMAX \leq \PNTALL \leq 1$$
     and $1 \leq \GAPSQUARE \leq 1+\GAPMAX$.
 \end{lemma}
 
@@ -36,7 +37,7 @@ We now consider local versions of the prime number theorem.
 
 The Cram\'er random model \cite{cramer} predicts
 
-\begin{conjecture}[Prime gap conjecture]\uses{pnt-ap} $\PNTALL = 0$, and hence (by Lemma \ref{pnt-triv}) $\PNTAA = \GAPMAX=0$ and $\GAPSQUARE=1$.
+\begin{conjecture}[Prime gap conjecture]\uses{pnt-ap} $\PNTALL = 0$, and hence (by Lemma \ref{pnt-triv}) $\GAPAA = \PNTAA = \GAPMAX=0$ and $\GAPSQUARE=1$.
 \end{conjecture}
 
 We note that the results of Maier \cite{maier-primes} show that there is some deviation from the prime number theorem at very small scales (of order $\log^{O(1)} x$), but this does not directly affect the exponents discussed here due to the epsilons in our definitions.
@@ -106,10 +107,56 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Iwaniec--Pintz (1984) \cite{iwaniec-pintz} & $\frac{23}{42}$\\
     \hline
+    Mozzochi (1986) & $\frac{1051}{1920}$ \\
+    \hline
+    Lou--Yau (1992)  & $\frac{6}{11}$\\
+    \hline
+    Baker-Harman (1996) & $\frac{107}{200}$\\
+    \hline
     Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40}$ \\
     \hline
     \end{tabular}
     \end{table}\label{gapmax-table}
+
+Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
+
+\begin{table}[ht]
+    \caption{Historical upper bounds on $\GAPAA$.}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound \\
+    \hline
+    Selberg (1943) \cite{selberg_1943} & $19/77$\\
+    \hline
+    Harman (1982) & $1/10$ \\
+    \hline
+    Harman (1983)  & $1/12$ \\
+    \hline
+    Lou--Yao (1985) & $14/159$ \\
+    \hline
+    Jia (1995) & $1/13$ \\
+    \hline
+    Lou--Yao & $17/227$ \\
+    \hline
+    H. Li (1995) & $1/13.5$ \\
+    \hline
+    Jia (1995), Watt (1995) & $1/14$ \\
+    \hline
+    H. Li (1997) & $1/15$ \\
+    \hline
+    Baker--Harman--Pintz (1997) & $1/16$ \\
+    \hline
+    Wong (1996), Jia (1996), Harman (2007) & $1/18$ \\
+    \hline
+    Jia (1996) & $1/20$ \\
+    \hline
+    R. Li (2024) & $1/21.5$ \\
+    \hline
+    \end{tabular}
+    \end{table}\label{gapaa-table}
+
 
 
 The following general bound on $\GAPSQUARE$ is known:
