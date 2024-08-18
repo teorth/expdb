@@ -22,12 +22,13 @@ We now consider local versions of the prime number theorem.
         \item[(iv)] We let $\GAPSQUARE$ denote the least exponent such that
         $$ \sum_{p_n \leq x} (p_{n+1}-p_n)^2 \ll x^{\GAPSQUARE+o(1)}$$
         as $x \to \infty$.
+        \item[(v)] We let $\GAPAA$ denote the least exponent such that for every $\eps>0$, the intervals $[n, n^{\GAPAA+\eps}]$ contain a prime for a density $1$ set of natural numbers $n$.
     \end{itemize}
 \end{definition}
 
 \begin{lemma}[Trivial bounds]\label{pnt-triv}\uses{pnt-ap}
     We have
-    $$ 0 \leq \PNTAA, \GAPMAX \leq \PNTALL \leq 1$$
+    $$ 0 \leq \GAPAA \leq \PNTAA, \GAPMAX \leq \PNTALL \leq 1$$
     and $1 \leq \GAPSQUARE \leq 1+\GAPMAX$.
 \end{lemma}
 
@@ -36,7 +37,7 @@ We now consider local versions of the prime number theorem.
 
 The Cram\'er random model \cite{cramer} predicts
 
-\begin{conjecture}[Prime gap conjecture]\uses{pnt-ap} $\PNTALL = 0$, and hence (by Lemma \ref{pnt-triv}) $\PNTAA = \GAPMAX=0$ and $\GAPSQUARE=1$.
+\begin{conjecture}[Prime gap conjecture]\uses{pnt-ap} $\PNTALL = 0$, and hence (by Lemma \ref{pnt-triv}) $\GAPAA = \PNTAA = \GAPMAX=0$ and $\GAPSQUARE=1$.
 \end{conjecture}
 
 We note that the results of Maier \cite{maier-primes} show that there is some deviation from the prime number theorem at very small scales (of order $\log^{O(1)} x$), but this does not directly affect the exponents discussed here due to the epsilons in our definitions.
@@ -88,29 +89,98 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Reference & Upper bound \\
     \hline
-    Hoheisel (1930) \cite{hoheisel_1930} & $1 - \frac{1}{33000}$ \\
+    Hoheisel (1930) \cite{hoheisel_1930} & $1 - \frac{1}{33000} = 0.999\dots$ \\
     \hline
-    Heilbronn (1933) \cite{heilbronn_1933} & $1 - \frac{1}{250}$ \\
+    Heilbronn (1933) \cite{heilbronn_1933} & $1 - \frac{1}{250} = 0.996$ \\
     \hline
-    Ingham (1937) \cite{ingham_difference_1937} & $\frac{5}{8}$ \\
+    Ingham (1937) \cite{ingham_difference_1937} & $\frac{5}{8} = 0.625$ \\
     \hline
-    Montgomery (1969) \cite{montgomery_1969} & $\frac{3}{5}$ \\
+    Montgomery (1969) \cite{montgomery_1969} & $\frac{3}{5} = 0.6$ \\
     \hline
-    Huxley (1972) \cite{Huxley} & $\frac{7}{12}$ \\
+    Huxley (1972) \cite{Huxley} & $\frac{7}{12} = 0.5833\dots$ \\
     \hline
-    Iwaniec--Jutila (1979)\cite{iwaniec-jutila} & $\frac{13}{23}$ \\
+    Iwaniec--Jutila (1979)\cite{iwaniec-jutila} & $\frac{13}{23} = 0.5652\dots$ \\
     \hline
-    Heath-Brown--Iwaniec (1979) \cite{heathbrown_iwaniec_1979} & $\frac{11}{20}$ \\
+    Heath-Brown--Iwaniec (1979) \cite{heathbrown_iwaniec_1979} & $\frac{11}{20} = 0.55$ \\
     \hline
-    Pintz (1981) \cite{pintz_1981} & $\frac{17}{31}$ \\
+    Pintz (1981) \cite{pintz_1981} & $\frac{17}{31} = 0.5483\dots$ \\
     \hline
-    Iwaniec--Pintz (1984) \cite{iwaniec-pintz} & $\frac{23}{42}$\\
+    Iwaniec--Pintz (1984) \cite{iwaniec-pintz} & $\frac{23}{42} = 0.5476\dots$\\
     \hline
-    Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40}$ \\
+    Mozzochi (1986) \cite{mozzochi-consecutive} & $\frac{1051}{1920} = 0.5473\dots$ \\
+    \hline
+    Lou--Yau (1992) \cite{lou-yao-chebychev} & $\frac{6}{11} = 0.5454\dots$\\
+    \hline
+    Baker-Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
+    \hline
+    Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40} = 0.525$ \\
     \hline
     \end{tabular}
     \end{table}\label{gapmax-table}
 
+Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
+
+\begin{table}[ht]
+    \caption{Historical upper bounds on $\GAPAA$.}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound \\
+    \hline
+    Selberg (1943) \cite{selberg_1943} & $\frac{19}{77}=0.2467\dots$\\
+    \hline
+    Montgomery (1971) \cite{montgomery_topics_1971} & $\frac{1}{5}=0.2$ \\
+    \hline
+    Huxley (1972) \cite{Huxley} & $\frac{1}{6} = 0.1666\dots$ \\
+    \hline
+    Harman (1982) \cite{harman_1982} & $\frac{1}{10} = 0.1$ \\
+    \hline
+    Harman (1983) \cite{harman_1983}, Heath-Brown (1983) \cite{heathbrown_sieve_1984}  & $\frac{1}{12} = 0.0833\dots$ \\
+    \hline
+    Jia (1995) \cite{jia_goldbach_1994} & $\frac{1}{13} = 0.0769\dots$ \\
+    \hline
+    Lou--Yao (1985) \cite{lou_yao_1985} & $\frac{17}{227}= 0.0748\dots$ \\
+    \hline
+    H. Li (1995) \cite{li_goldbach_1995} & $\frac{2}{27} = 0.0740\dots$ \\
+    \hline
+    Jia (1995) \cite{jia_difference_1995}, Watt (1995) \cite{watt_short_1995} & $\frac{1}{14}=0.0714\dots$ \\
+    \hline
+    H. Li (1997) \cite{li_short_1997} & $\frac{1}{15}=0.0666\dots$ \\
+    \hline
+    Baker--Harman--Pintz (1997) \cite{baker-harman-pintz_goldbach_1997} & $\frac{1}{16} = 0.625$ \\
+    \hline
+    Wong (1996) \cite{wong_thesis_1996}, Jia (1996) \cite{jia_exceptional_1996}, Harman (2007) \cite{harman-book} & $\frac{1}{18} = 0.0555\dots$ \\
+    \hline
+    Jia (1996) \cite{jia_almost_all} & $\frac{1}{20} = 0.05$ \\
+    \hline
+    R. Li (2024) \cite{li_primes_almost_2024} & $\frac{2}{43} = 0.0465\dots$ \\
+    \hline
+    \end{tabular}
+    \end{table}\label{gapaa-table}
+
+    Historical bounds on $\GAPSQUARE$ are recorded in Table \ref{gapsquare-table}.
+
+    \begin{table}[ht]
+        \caption{Historical upper bounds on $\GAPSQUARE$.}
+        \centering
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{|c|c|}
+        \hline
+        Reference & Upper bound \\
+        \hline
+        Selberg (1943) \cite{selberg_1943} & $1$ (on RH)\\
+        \hline
+        Heath-Brown (1978) \cite{heath_brown_consecutive_I} & $\frac{4}{3} = 1.3333\dots$\\
+        \hline
+        Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{7}{6} = 1.1666\dots$ (on LH) \\
+        \hline
+        Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{1413}{1067} = 1.3242\dots$ \\
+        \hline
+        Iv\'ic (2003) \cite[Theorem 12.14]{ivic} & $\frac{23}{18} = 1.2777\dots$ \\
+        \hline
+        \end{tabular}
+        \end{table}\label{gapsquare-table}
 
 The following general bound on $\GAPSQUARE$ is known:
 
@@ -118,25 +188,66 @@ The following general bound on $\GAPSQUARE$ is known:
     We have
     $$ \GAPSQUARE \leq \max\left( 2-\frac{2}{\|\A\|_\infty}, \sup_{1/2 \leq \sigma \leq 1} \max(\alpha(\sigma), \beta(\sigma))\right)$$
     where
-    $$ \alpha(\sigma) := 4\sigma-2 + 2 \frac{\A^*(\sigma)(1-\sigma)-1}{\A^*(\sigma)-\A(\sigma)}$$
+    $$ \alpha(\sigma) := 4\sigma-2 + 2 \frac{B(\sigma)(1-\sigma)-1}{B(\sigma)-A(\sigma)}$$
     and
-    $$ \beta(\sigma) := 4\sigma-2 + \frac{\A^*(\sigma)(1-\sigma)-1}{\A(\sigma)}.$$
+    $$ \beta(\sigma) := 4\sigma-2 + \frac{B(\sigma)(1-\sigma)-1}{A(\sigma)}$$
+    where $A(\sigma), B(\sigma)$ are any upper bounds for $\A(\sigma), \A^*(\sigma)$ respectively.
 \end{proposition}
 
 \begin{proof} See \cite[Lemma 2]{heath_brown_consecutive_II}. We remark that this lemma allows $\sigma$ to range over $0 \leq \sigma \leq 1$ rather than $1/2 \leq \sigma \leq 1$, but it is easy to see that the contributions of the $0 \leq \sigma < 1/2$ cases are dominated by the $\sigma=1/2$ case.
 \end{proof}
 
-This proposition recovers several known bounds (both conditional and unconditional) on $\GAPSQUARE$:
+This proposition recovers the known bounds (both conditional and unconditional) on $\GAPSQUARE$:
 
 \begin{corollary}\
     \begin{itemize}
-    \item[(i)] Assuming the Riemann hypothesis, $\GAPSQUARE = 1$.  \cite{selberg_1943}
-    \item[(ii)] Unconditionally, one has $\GAPSQUARE \leq 4/3$.  \cite{heath_brown_consecutive_I}
-    \item[(iii)] Assuming the Lindelof hypothesis, $\GAPSQUARE \leq 7/6$. \cite{heath_brown_consecutive_II}
-    \item[(iv)] Unconditionally, $\GAPSQUARE \leq 1 + 2 \times \frac{173}{1067}$. \cite[\S 7]{heath_brown_consecutive_II}
-    \item[(v)] Unconditionally, $\GAPSQUARE \leq 23/18$. \cite[Theorem 12.14]{ivic}.
+    \item[(i)] Assuming the Riemann hypothesis, $\GAPSQUARE = 1$. (Selberg, 1943 \cite{selberg_1943})
+    \item[(ii)] Assuming the Lindelof hypothesis, $\GAPSQUARE \leq 7/6$. (Heath-Brown, 1979 \cite{heath_brown_consecutive_II})
+    \item[(iii)] Unconditionally, $\GAPSQUARE \leq 23/18$. (Ivic, 2003 \cite[Theorem 12.14]{ivic}).
 \end{itemize}
 \end{corollary}
 
-\begin{proof} {\bf give details}
+\begin{proof}\uses{gapsquare-from-a, lindelof_implies_density, zeroe-lindelof, hb-energy-bound} For (i), we osberve that $\|A\|_\infty=2$ and that one can take $A(\sigma)=B(\sigma)=\eps$ for any $\sigma>1/2$ and $\eps>0$, and $A(\sigma)=2$, $B(\sigma)=6$ for $\sigma=1/2$, and then the claim follows from Proposition \ref{gapsquare-from-a}.
+
+For (ii), from Theorem \ref{lindelof_implies_density} we may take $A(\sigma)=2$ for $\sigma \leq 3/4$ and $A(\sigma)=\eps$ for $3/4 < \sigma \leq 1$ and any $\eps>0$, while from Theorem \ref{zeroe-lindelof} one can take $B(\sigma) = 8-4\sigma$ for $\sigma \leq 3/4$ and $B(\sigma)=\eps$ for $3/4 < \sigma \leq 1$.  The claim now follows from Proposition \ref{gapsquare-from-a} and a routine calculation.
+
+Part (iii) follows from applying Proposition \ref{gapsquare-from-a} using the bounds from Theorem \ref{hb-energy-bound}, together and various bounds on $\A(\sigma)$; see \cite[Theorem 12.14]{ivic} for details.  {\bf Presumably with modern zero density bounds one can obtain an improvement.}
 \end{proof}
+
+A variant of $\GAPSQUARE$ is $\GAPLARGE$, defined as the least exponent for which
+$$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2+\eps}} (p_{n+1}-p_n) \ll x^{\GAPLARGE+o(1)}$$
+for any fixed $\eps>0$ and unbounded $x \geq 1$.  The trivial bounds are
+
+\begin{proposition}[Trivial bounds on large gaps]\label{trivial-large-gap}  If $\GAPMAX < 1/2$, then $\GAPLARGE = -\infty$.  In general, we have
+    $$ \max(1/2,\GAPMAX) \leq \max(1/2, \GAPLARGE)$$
+    and $\GAPLARGE \leq 1$.  Also $\GAPLARGE \leq \GAPSQUARE - 1/2$.
+\end{proposition}
+
+The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are recorded in Table \ref{gaplarge-table}.
+
+\begin{table}[ht]
+    \caption{Historical upper bounds on $\GAPLARGE$.}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound \\
+    \hline
+    Selberg (1943) \cite{selberg_1943} & $\frac{1}{2}=0.5\dots$ (on RH)\\
+    \hline
+    Wolke (1975) \cite{wolke_1975} & $\frac{29}{30} = 0.966\dots$ \\
+    \hline
+    Cook (1979) \cite{cook_1979} & $\frac{85}{98} = 0.8673\dots$ \\
+    \hline
+    Huxley (1980) \cite{huxley_large_1980} & $\frac{1759}{2134} = 0.8242\dots$ \\
+    \hline
+    Huxley (1980) \cite{huxley_large_1980} & $\frac{3}{4} = 0.75$ (on LH) \\
+    \hline
+    Iv\'ic (1979) \cite{ivic_sums_1979} & $\frac{215}{266} = 0.8082\dots$ \\
+    \hline
+    Heath-Brown (1979) \cite{heath_brown_consecutive_III} & $\frac{3}{4} = 0.75$ \\
+    \hline
+    Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{5}{8} = 0.625$ \\
+    \hline
+    \end{tabular}
+    \end{table}\label{gaplarge-table}

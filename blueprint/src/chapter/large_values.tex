@@ -117,7 +117,7 @@ Listed below are some examples of such bounds.
 
 \begin{theorem}[$L^2$ mean value theorem]\label{l2-mvt}\uses{lv-def} For any fixed $1/2 \leq \sigma \leq 1$ and $\tau\geq 0$ one has
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 1 + \tau - 2 \sigma).$$
-In particular, the Montgomery conjecture holds \eqref{mont-conj} for $\tau \leq 1$.
+In particular, the Montgomery conjecture \eqref{mont-conj} holds for $\tau \leq 1$.
 \end{theorem}
 
 \python{large_values}
@@ -182,9 +182,6 @@ The claim follows.
 
 \begin{proof}\uses{exp-lv, vdc-class}  Apply Corollary \ref{exp-lv} with the pair $(k,\ell) = (1/2,1/2)$ from Lemma \ref{vdc-class}.
 \end{proof}
-
-
-
 
 
 \begin{theorem}[Heath-Brown large values theorem, preliminary form]\label{heath_brown-lv-prelim}\uses{lv-def} Let $1/2 \leq \sigma \leq 1$ and $\tau \geq 0$ be fixed.  If $\LV(\sigma, \tau) \le \rho$ then
@@ -328,9 +325,9 @@ giving the claim.
 
 With the aid of computer assistance, one is able to produce an optimized version of the above large values theorem. We have
 
-\begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, R)$ of Table \ref{optimised_bourgain_lve}, one has
+\begin{corollary}[Bourgain large values theorem, optimized version]\label{borg-lv-opt}\uses{lv-def} For each row $(\rho_0, \alpha_1, \alpha_2, \mathcal{S})$ of Table \ref{optimised_bourgain_lve}, one has
 \[
-\rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in R.
+\rho \le \rho_0(\sigma, \tau),\qquad (\sigma, \tau) \in \mathcal{S}.
 \]
 \end{corollary}
 
@@ -344,10 +341,10 @@ Follows from substituting the specified values of $\alpha_1$ and $\alpha_2$ and 
 \begin{table}[h]
 \def\arraystretch{1.8}
 \centering
-\caption{Bounds on $LV(\sigma, \tau)$}
+\caption{Bounds on $LV(\sigma, \tau)$ for $1/2 \le \sigma \le 1$ and $\tau \ge 1$}
 \begin{tabular}{|c|c|c|c|}
 \hline
-$\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $R$\\
+$\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $\mathcal{S}$\\
 \hline
 $\frac{16}{3} - \frac{20}{3}\sigma + \frac{1}{3}\tau$ & $\frac{10}{3} - \frac{14}{3}\sigma + \frac{\tau}{3}$ & $0$ & 
 $\begin{aligned}
@@ -377,7 +374,6 @@ $\begin{aligned}
 $-4\sigma + 2\tau$ & $0$ & $1 - 3\sigma + \tau$ & $\begin{aligned}
 -6+2\sigma+2\tau &\ge 0,\\
 -12 + 12\sigma + \tau &\ge 0,\\
-3-\tau &\ge 0,\\
 1-\sigma &\ge 0.
 \end{aligned}$\\
 \hline

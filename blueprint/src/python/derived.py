@@ -133,11 +133,11 @@ def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)
     return zdes
     
 # Prove Ingham's zero density estimate A(s) < 3/(1-s)
-def prove_ingham_zero_density(verbose=True):
+def prove_zero_density_ingham_1940(verbose=True):
     return prove_zero_density([], verbose, frac(1,2), 'Ingham')
 
 # Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
-def prove_huxley_zero_density(verbose=True):
+def prove_zero_density_huxley_1972(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type='Large value estimate',
@@ -147,7 +147,7 @@ def prove_huxley_zero_density(verbose=True):
     return prove_zero_density(new_hyps, verbose, frac(7,8), 'Huxley')
 
 # Prove Jutila's proof of the density hypothesis for s > 11/14.
-def prove_jutila_zero_density(verbose=True):
+def prove_zero_density_jutila_1977(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type='Large value estimate', 
@@ -157,7 +157,7 @@ def prove_jutila_zero_density(verbose=True):
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Jutila')
 
 # Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
-def prove_heathbrown_zero_density(verbose=True):
+def prove_zero_density_heathbrown_1979(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
@@ -171,7 +171,7 @@ def prove_heathbrown_zero_density(verbose=True):
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown')
 
 # Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
-def prove_heathbrown_zero_density2(verbose=True):
+def prove_zero_density_heathbrown_1979_2(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
@@ -191,8 +191,32 @@ def prove_heathbrown_zero_density2(verbose=True):
     zdts.append(prove_zero_density(new_hyps, verbose, frac(22,23), 'part 2/2 of the second Heath-Brown'))
     return zdts
 
+# Prove Ivi\'{c}'s zero-density estimates 
+# A(s) < 3/(2s)  3831/4791 <= s <= 1 (actually, we could do slightly better with better 
+# choice of exponent pair)
+# A(s) < 9/(7s -1), 41/53 <= s <= 1
+# A(s) < 6/(5s - 1),  13/17 <= s <= 1
+def prove_zero_density_ivic_1984():
+
+    hs = Hypothesis_Set()
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair"))
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair transform"))
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
+
+    hs.add_hypotheses(
+        ep.compute_exp_pairs(hs, search_depth=5, prune=True)
+    )
+    hs.add_hypotheses(ep.exponent_pairs_to_beta_bounds(hs))
+    hs.add_hypotheses(ep.compute_best_beta_bounds(hs))
+    ephs = ep.beta_bounds_to_exponent_pairs(hs)
+
+    for k in range(2, 20):
+        h = zd.ivic_ep_to_zd(ephs, k)
+        print(h.data, h.proof)
+        # h.recursively_list_proofs()
+
 # Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
-def prove_guth_maynard_zero_density(verbose=True):
+def prove_zero_density_guth_maynard_2024(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
@@ -202,7 +226,7 @@ def prove_guth_maynard_zero_density(verbose=True):
     return prove_zero_density(new_hyps, verbose, frac(3,4), "Guth--Maynard")
 
 # Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
-def prove_extended_heathbrown_zero_density(verbose=True):
+def prove_zero_density_heathbrown_extended(verbose=True):
     
     new_hyps = [
         literature.find_hypothesis(
@@ -232,38 +256,44 @@ def prove_extended_heathbrown_zero_density(verbose=True):
         h.recursively_list_proofs()
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5))
 
-# Prove Ivi\'{c}'s zero-density estimates 
-# A(s) < 3/(2s)  3831/4791 <= s <= 1 (actually, we could do slightly better with better 
-# choice of exponent pair)
-# A(s) < 9/(7s -1), 41/53 <= s <= 1
-# A(s) < 6/(5s - 1),  13/17 <= s <= 1
-def prove_ivic_zero_density():
-
-    hs = Hypothesis_Set()
-    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair"))
-    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair transform"))
-    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
-
-    hs.add_hypotheses(
-        ep.compute_exp_pairs(hs, search_depth=5, prune=True)
-    )
-    hs.add_hypotheses(ep.exponent_pairs_to_beta_bounds(hs))
-    hs.add_hypotheses(ep.compute_best_beta_bounds(hs))
-    ephs = ep.beta_bounds_to_exponent_pairs(hs)
-
-    for m in range(2, 5):
-        h = zd.ivic_ep_to_zd(ephs, m)
-        h.recursively_list_proofs()
+def prove_zero_density_bourgain_improved(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", keywords="Bourgain"
+        ),
+        literature.find_hypothesis(
+            hypothesis_type="Large value estimate", keywords="Jutila, k = 3"
+        ),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", keywords="Heath-Brown"
+        )
+    ]
+    return [
+        #prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
+        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain")
+    ]
 
 # Compute the best zero-density estimates from the literature
 def compute_best_zero_density():
-    zd.best_zero_density_estimate(literature, verbose=True)
+    hs = Hypothesis_Set()
+    hs.add_hypotheses(literature)
+
+    # Add the new zero-density estimates (not part of the literature yet!)
+    zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
+
+    zd.best_zero_density_estimate(hs, verbose=True)
 
 #################################################################################################
 
 def prove_exponent_pairs():
     # prove_heathbrown_exponent_pairs()
-    #prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    prove_exponent_pair(frac(1959,47230), frac(3975,4723))
+    prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
+    prove_exponent_pair(frac(89,3478), frac(15327,17390))
+
     best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
     best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
     best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
@@ -274,14 +304,16 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
-    prove_ingham_zero_density()
-    prove_huxley_zero_density()
-    prove_jutila_zero_density()
-    prove_heathbrown_zero_density()
-    prove_heathbrown_zero_density2()
-    prove_guth_maynard_zero_density()
-    # prove_extended_heathbrown_zero_density()
-    # prove_ivic_zero_density()
+    prove_zero_density_ingham_1940()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979()
+    prove_zero_density_heathbrown_1979_2()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+
+    prove_zero_density_heathbrown_extended()
+    prove_zero_density_bourgain_improved()
     compute_best_zero_density()
 
 def prove_all():

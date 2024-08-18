@@ -125,9 +125,12 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
 \begin{corollary}\label{zero-large-cor-0} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
     $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV_\zeta(\sigma,\tau)/\tau, \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV(\sigma,\tau)/\tau\right)$$
     with the convention that the first supremum is $-\infty$ if it is vacuous (i.e., if $\tau_0 < 2$).
-    \end{corollary}
+\end{corollary}
+\python{zero_density_estimate}
+\code{lv_zlv_to_zd(hypotheses, sigma_interval, tau0)}
 
-    \begin{proof}  Denote the right-hand side by $B$, thus
+\begin{proof}  
+Denote the right-hand side by $B$, thus
     $$ \LV(\sigma,\tau) \leq B\tau$$
     for all $\tau_0 \leq \tau \leq 2\tau_0$, and
     \begin{equation}\label{lvz-b}
@@ -148,7 +151,7 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
     for $\tau \geq 2$.  Thus
     $$ \sup_{\tau \geq 2} \frac{\LV_\zeta(\sigma,\tau)}{\tau} \leq B.$$
     The claim now follows from Lemma \ref{zero-from-large}.
-    \end{proof}
+\end{proof}
 
 For machine assisted proofs, one can simply take $\tau_0$ to be a sufficiently large quantity, e.g., $\tau_0=3$ for $\sigma$ not too close to $1$, and larger for $\sigma$ approaching $1$, to recover the full power of Lemma \ref{zero-from-large}.  However, the amount of case analysis required increases with $\tau_0$.  For human written proofs, the following version of Corollary \ref{zero-large-cor-0} is more convenient:
 
@@ -239,19 +242,25 @@ Optimizing in $\tau_0$, we obtain the claim.
 
 \begin{theorem}[Ingham's second bound]\label{thm:ingham_zero_density2}\cite{ingham_estimation_1940}\uses{zero-def} For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{3}{2-\sigma}$.
 \end{theorem}
+\literature
+\code{add_zero_density_ingham_1940()}
 \derived
-\code{prove_ingham_zero_density()}
+\code{prove_zero_density_ingham_1940()}
 
 \begin{proof}\uses{zero-large-cor3, l2-mvt}
 We apply Corollary \ref{zero-large-cor3} with $\tau_0 := 2-\sigma$.  Here we have $4\tau_0/3 < 2$ since $\sigma>1/2$, so the claim \eqref{lvoz} is automatic; and the Montgomery conjecture hypothesis follows from Theorem \ref{l2-mvt}.
 \end{proof}
 
 Either of Theorem \ref{thm:ingham-first} or Theorem \ref{thm:ingham_zero_density2} implies an older result of Carlson \cite{carlson_uber_1921} that $\A(\sigma) \le 4\sigma$ for $1/2 < \sigma < 1$.
+\literature
+\code{add_zero_density_carlson_1921()}
 
 \begin{theorem}[Huxley bound]\label{huxley-bound}\cite{Huxley}\uses{zero-def} For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{3}{3\sigma-1}$. (In particular, the density hypothesis holds for $\sigma \geq 5/6$.)
 \end{theorem}
+\literature
+\code{add_zero_density_huxley_1972()}
 \derived
-\code{prove_huxley_zero_density()}
+\code{prove_zero_density_huxley_1972()}
 
 \begin{proof}\uses{zero-large-cor3, huxley-lv, lvz-mu} We apply Corollary \ref{zero-large-cor3} with $\tau_0 := 3\sigma-1$.  The Montgomery conjecture hypothesis follows from Theorem \ref{huxley-lv}. So it remains to show that \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.  For $\sigma \leq 5/6$ we have $4\tau_0/3 \leq 2$, so the claim is vacuously true in this case.  For $\sigma > 5/6$ we use Corollary \ref{lvz-mu} and the bound $\mu(1/2) \leq 1/6$ from Table \ref{mu-table} to conclude that
 $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > 1/2 + \tau/6$, but this is precisely $\tau < 6\sigma - 3$.  Since $6\sigma-3 > 4\tau_0/3$ when $\sigma > 5/6$, we obtain the claim.
@@ -259,8 +268,10 @@ $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > 1/2 + \tau/6$, but this is
 
 \begin{theorem}[Guth--Maynard bound]\label{guth-maynard-density}\uses{zero-def}  For any $1/2 < \sigma < 1$, one has $\A(\sigma) \leq \frac{15}{3+5\sigma}$.
 \end{theorem}
+\literature
+\code{add_zero_density_guth_maynard_2024()}
 \derived
-\code{prove_guth_maynard_zero_density()}
+\code{prove_zero_density_guth_maynard_2024()}
 
 \begin{proof}\uses{thm:ingham_zero_density2, huxley_lv,zero-large-cor2, guth-maynard-lvt, l2-mvt} We may assume that $7/10 < \sigma < 8/10$, since the bound follows from the Ingham and Huxley bounds otherwise.  We apply Corollary \ref{zero-large-cor2} with $\tau_0 := \frac{3+5\sigma}{5}$.  We have $4\tau_0/3 < 2$, so the claim \eqref{lvoz} is vacuous and we only need to establish \eqref{lvo}.  We split into the subranges $13/5-2\sigma \leq \tau < \tau_0$ and $2\tau_0/3 \leq \tau \leq 13/5-2\sigma$. In the former range we use Theorem \ref{guth-maynard-lvt} (and \eqref{obvious}), and reduce to showing that
 $$ 18/5 - 4 \sigma \leq (3-3\sigma) \frac{\tau}{\tau_0},$$
@@ -280,7 +291,7 @@ in this range.  This follows again from \eqref{18-5} which guarantees the inequa
 \begin{theorem}[Jutila zero density theorem]\label{jutila-density} \cite{jutila_zero_density_1977}\uses{density-hypothesis} The zero density hypothesis is true for $\sigma \geq 11/14$.
 \end{theorem}
 \derived
-\code{prove_jutila_zero_density()}
+\code{prove_zero_density_jutila_1977()}
 
 \begin{proof}\uses{zero-large-cor, jutila-lvt}
 We apply Corollary \ref{zero-large-cor} with $\tau_0 := 3/2$, then it suffices to show that
@@ -296,9 +307,11 @@ In fact, we can do better:
 
 \begin{theorem}[Heath-Brown zero density theorem]\label{hb-density} \cite{heathbrown_zero_1979}\uses{zero-def} For $11/14 \leq \sigma < 1$, one has $\A(\sigma) \leq \frac{9}{7\sigma - 1}$ (in particular, this recovers Theorem \ref{jutila-density}).  For any $3/4 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \max(\frac{3}{10\sigma-7}, \frac{4}{4\sigma-1})$ (which is a superior bound when $\sigma \geq 20/23$).
 \end{theorem}
+\literature
+\code{add_zero_density_heathbrown_1979()}
 \derived
-\code{prove_heathbrown_zero_density()
-prove_heathbrown_zero_density2()}
+\code{prove_zero_density_heathbrown_1979()}
+\code{prove_zero_density_heathbrown_1979_2()}
 
 \begin{proof}\uses{zero-large-cor2, jutila-lvt, hb-12, hb-opt} For the first estimate, we apply Corollary \ref{zero-large-cor2} with $\tau_0 := \frac{7\sigma-1}{3}$.  To verify \eqref{lvo}, we apply the $k=3$ version of Theorem \ref{jutila-lvt}, which gives
 $$ \LV(\sigma,\tau) \leq \max \bigg( 2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg).$$
@@ -326,10 +339,10 @@ $$(3/40,31/40) = xy AW + (1-x)y ABA W + (1-y) W$$
 with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more recent exponent pairs that are stronger, such as the Bourgain exponent pair $(13/84, 1/2+13/84)$.)  We remark that one could also obtain this result from Lemma \ref{beta-duality}, after observing that the required bound $\beta(\alpha) \leq 3/40 + 7\alpha/10$ can be derived from Theorem \ref{huxley-table} (as well as the classical bounds in Corollary \ref{vdc-opt}).  We also note that the corollary $\mu(7/10) \leq 3/40 = 0.075$ is immediate from \cite[Theorem 2.4]{trudgian-yang}, which in fact gives the slightly stronger bound $\mu(7/10) \leq 218/3005 = 0.07254\dots$.
 \end{proof}
 
-\begin{theorem}[Improved Heath-Brown zero density theorem]\label{hb-density2}\uses{zero-def} For any $1/2 \leq \sigma \leq 1$, one has $\A(\sigma) \leq \frac{3}{10\sigma-7}$.
+\begin{theorem}[Improved Heath-Brown zero density theorem]\label{hb-density2}\uses{zero-def} For any $7/10 < \sigma \leq 1$, one has $\A(\sigma) \leq \frac{3}{10\sigma-7}$.
 \end{theorem}
 \derived
-\code{prove_extended_heathbrown_zero_density()}
+\code{prove_zero_density_heathbrown_extended()}
 
 \begin{proof}\uses{zero-large-cor3, 3-40, hb-opt, lvz-exp}  We apply Corollary \ref{zero-large-cor3} with $\tau_0 := 10\sigma-7$.  The claim \eqref{lvo} again follows from
     Theorem \ref{hb-opt} and \eqref{obvious} as in the proof of Theorem \ref{hb-density}.  Meanwhile, from Lemma \ref{3-40} and Corollary \ref{lvz-exp} we have $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > \frac{3}{40} \tau + \frac{7}{10}$, or equivalently $\tau < \frac{4}{3} (10\sigma-7)$, which then immediately gives \eqref{lvoz}.
@@ -337,6 +350,9 @@ with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more 
 
 \begin{theorem}[Bourgain result on density hypothesis]\label{bourgain-density}\uses{density-hypothesis} The density hypothesis holds for $\sigma > 25/32$.
 \end{theorem}
+
+\literature 
+\code{add_zero_density_bourgain_2000()}
 
 \begin{proof}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
 
@@ -378,8 +394,10 @@ We can improve this bound as follows:
 
 \begin{theorem}[Improved Bourgain density hypothesis bound]\label{bourgain-density-improved}\uses{zero-def} For $17/22 \leq \sigma \leq 4/5$, one has $\A(\sigma) \leq \max( \frac{2}{9\sigma-6}, \frac{9}{8(2\sigma-1)} )$.  Thus one has $\A(\sigma) \leq \frac{9}{8(2\sigma-1)}$ for $38/49 \leq \sigma \leq 4/5$ and $\A(\sigma) \leq \frac{2}{9\sigma-6}$ for $17/22 \leq \sigma \leq 38/49$.
 \end{theorem}
+\derived
+\code{prove_zero_density_bourgain_improved()}
 
-The arguments can be pushed to some $\sigma$ below $17/22$, but in that range the estimate in Theorem \ref{further-ivic-zero} becomes superior, so we do not pursue this further.
+The arguments can be pushed to some $\sigma$ below $17/22$, but in that range the estimate in Corollary \ref{further_ivic_zero} becomes superior, so we do not pursue this further.
 
 \begin{proof}\uses{zero-large-cor3, hb-12, jutila-lvt, borg-lv-simp}  We apply Corollary \ref{zero-large-cor3} with $\tau_0 := \min( \frac{ 9(3\sigma-2)}{2}, \frac{8(2\sigma-1)}{3} )$.  For future reference we note that
 \begin{equation}\label{slope}
@@ -486,6 +504,9 @@ but this is an identity.
     for $\frac{17}{19} \leq \sigma \leq \frac{15}{16}$.
 \end{corollary}
 
+\literature
+\code{add_zero_density_bourgain_1995()}
+
 \begin{proof}\uses{bourgain-zd, vdc-class} Apply Theorem \ref{bourgain-zd} with the classical pairs $(\frac{1}{14},\frac{11}{14})$ and $(\frac{1}{6}, \frac{1}{3})$ respectively from Proposition \ref{vdc-class}.
 \end{proof}
 
@@ -497,6 +518,8 @@ It is remarked in \cite{bourgain_remarks_1995} that further zero density estimat
     $$ \A(\sigma) \leq \frac{24}{30\sigma-11}$$
     for $155/174 \leq \sigma \leq 17/18$.
 \end{lemma}
+\literature
+\code{add_zero_density_ivic_1980()}
 
 \begin{proof}\uses{ivic-lvt, zeta-from-exp, zero-large-cor2}  From Lemma \ref{ivic-lvt} we have
 $$  \LV(\sigma,\tau) \leq \max( 2-2\sigma, \tau + 9-12\sigma, \tau - \frac{84\sigma-65}{6})$$
@@ -516,6 +539,9 @@ $$ \A(\sigma) \leq \mu(\alpha) \frac{2(3\sigma-1-2\alpha)}{(2\sigma-1-\alpha)(\s
 In particular, for $152/155 \leq \sigma \leq 1$, one has
 $$ \A(\sigma) \leq \min( 35/36, 1600 (1-\sigma)^{1/2} ).$$
 \end{corollary}
+
+\literature
+\code{add_zero_density_montgomery_1971()}
 
 \begin{proof}\uses{zero_from_mu} Apply the previous lemma with $\alpha = 5\sigma-4$.
 \end{proof}
@@ -552,22 +578,26 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 \begin{align*}
  \frac{3}{2\sigma} &\hbox{ for } \frac{3831}{4791} \leq \sigma \leq 1;\\
  \frac{9}{7\sigma-1} &\hbox{ for } \frac{41}{53} \leq \sigma \leq 1; \\
- \frac{6}{5\sigma-1} &\hbox{ for } \frac{13}{17} \leq \sigma \leq 1;
+ \frac{6}{5\sigma-1} &\hbox{ for } \frac{13}{17} \leq \sigma \leq 1; \\
+ \frac{15}{13\sigma-3} &\hbox{ for } \frac{127}{167} \leq \sigma \leq 1; \\
+ \frac{9}{8\sigma-2} &\hbox{ for } \frac{47}{62} \leq \sigma \leq 1;
 \end{align*}
 \end{corollary}
-
+\literature
+\code{add_zero_density_ivic_1980()}
+\code{add_zero_density_ivic_1984()}
 \derived 
-\code{prove_ivic_zero_density()}
+\code{prove_zero_density_ivic_1984()}
 
-\begin{proof}\uses{gzd}  Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; $m=3$ and arbitrary $(k,\ell)$ for the second claim; and $m=4$ and arbitrary $(k,\ell)$ for the third claim.
+\begin{proof}\uses{gzd} Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; the remaining claims follow from taking $m=3, 4, 5, 6$ and the trivial exponent pair $(0, 1)$.
 \end{proof}
 
 The first bound has been improved:
 
 \begin{theorem}[2000 Bourgain zero density theorem]\label{bourgain-zero-density-2000}\uses{zero-def}\cite{bourgain_dirichlet_2000} One has $\A(\sigma) \leq 3/2\sigma$ for $3734/4694 \leq \sigma \leq 1$.
 \end{theorem}
-
-However, this result is now superseded by Theorem \ref{bourgain-density-improved}.
+\literature
+\code{add_zero_density_bourgain_2002()}
 
 \begin{lemma}[Preliminary large values theorem]\label{a-ivt}\uses{lv-def}  If $1/2 \leq \sigma \leq 1$ and $\tau < 8\sigma-5$, then
     $$ \LV(\sigma,\tau) \leq \max( 2-2\sigma, 6\tau/5 + (20-32\sigma)/5 ).$$
@@ -600,8 +630,10 @@ and
  \frac{1}{2\ell(\ell+1)} \leq \eta \leq \frac{1}{2\ell(\ell-1)}
 \end{equation}
 then
-$$ \A(\sigma) \leq \max( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1-(k-1)\eta)}).$$
+$$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1-(k-1)\eta)}\right).$$
 \end{theorem}
+\literature
+\code{add_zero_density_pintz_2023()}
 
 \begin{proof} We apply Corollary \ref{zero-large-cor2} with
 \begin{equation}\label{tau0-def}
@@ -636,11 +668,13 @@ The range of the second bound in Lemma \ref{ivic-zero-density} was recently exte
 
 \begin{theorem}[Chen-Debruyne-Vidas density theorem]\label{cdv-density}\cite{chen_debruyne_vindas_density_2024}\uses{zero-def}  For any $279/314 \leq \sigma \leq 17/18$, one has $\A(\sigma) \leq \frac{24}{30\sigma-11}$.
 \end{theorem}
+\literature
+\code{add_zero_density_chen_debruyne_vindas_2024()}
 
 The following result appears in an unpublished preprint of Kerr, and is based on the large values theorems in Theorem \ref{kerr-thm}:
 
 \begin{proposition}\label{kerr-prop}\cite[Theorems 6, 7]{kerr}\uses{kerr-thm, zero-def} One has $\A(\sigma) \leq \frac{3}{2\sigma}$ for $\sigma \geq 23/29$, and
-$$\A(\sigma) \leq \\max( \frac{36}{138\sigma-89}, \frac{114\sigma-79}{(1-\sigma)(138\sigma-89)} )$$
+$$\A(\sigma) \leq \max\left( \frac{36}{138\sigma-89}, \frac{114\sigma-79}{(1-\sigma)(138\sigma-89)} \right)$$
 for $127/168 \leq \sigma \leq 107/138$.
 \end{proposition}
 
@@ -650,50 +684,54 @@ The current best known zero density estimates (excepting the unpublished result 
 \code{compute_best_zero_density()}
 
 \begin{table}[ht]
-    \def\arraystretch{1.3}
+    \def\arraystretch{2}
     \centering
     \caption{Current best upper bound on $\A(\sigma)$}
     \begin{tabular}{|c|c|c|}
     \hline
     $\A(\sigma)$ bound & Range & Reference\\
     \hline
-    $\frac{3}{2 - \sigma}$ & $\frac{1}{2} \leq \sigma \le \frac{7}{10} = 0.7$ & Theorem \ref{thm:ingham_zero_density2}\\
+    $\dfrac{3}{2 - \sigma}$ & $\dfrac{1}{2} \leq \sigma \le \dfrac{7}{10} = 0.7$ & Theorem \ref{thm:ingham_zero_density2}\\
     \hline
-    $\frac{15}{3+5\sigma}$ & $\frac{7}{10} \leq \sigma < \frac{13}{17} = 0.7647\ldots$ & Theorem \ref{guth-maynard-density}\\
+    $\dfrac{15}{3+5\sigma}$ & $\dfrac{7}{10} \leq \sigma < \dfrac{19}{25} = 0.76$ & Theorem \ref{guth-maynard-density}\\
     \hline
-    $\frac{6}{5\sigma - 1}$ & $\frac{13}{17} \le \sigma < \frac{17}{22} = 0.7722\ldots$ & Theorem \ref{further_ivic_zero} \\
+    $\dfrac{9}{8\sigma - 2}$ & $\dfrac{19}{25} \leq \sigma < \dfrac{127}{167} = 0.7604\ldots$ & Corollary \ref{further_ivic_zero}\\
     \hline
-    $\frac{2}{9\sigma - 6}$ & $\frac{17}{22} \le \sigma < \frac{38}{49} = 0.7755\ldots$ & Theorem \ref{bourgain-density-improved} \\
+    $\dfrac{15}{13\sigma - 3}$ & $\dfrac{127}{167} \leq \sigma < \dfrac{13}{17} = 0.7647\ldots$ & Corollary \ref{further_ivic_zero}\\
     \hline
-    $\frac{9}{8(2\sigma-1)}$ & $\frac{38}{49} \le \sigma < \frac{4}{5} = 0.8\ldots$ & Theorem \ref{bourgain-density-improved} \\
+    $\dfrac{6}{5\sigma - 1}$ & $\dfrac{13}{17} \leq \sigma < \dfrac{17}{22} = 0.7727\ldots$ & Corollary \ref{further_ivic_zero}\\
     \hline
-    $\frac{3}{2\sigma}$ & $\frac{4}{5} \le \sigma < \frac{7}{8} = 0.875$ & Theorem \ref{further_ivic_zero} \\
+    $\dfrac{2}{9\sigma - 6}$ & $\dfrac{17}{22} \leq \sigma < \dfrac{41}{53} = 0.7735\ldots$ & Theorem \ref{bourgain-density-improved}\\
     \hline
-    $\frac{3}{10\sigma - 7}$ & $\frac{7}{8} \le \sigma < \frac{279}{314} = 0.8885\ldots$ & Theorem \ref{hb-density}\\
+    $\dfrac{9}{7\sigma - 1}$ & $\dfrac{41}{53} \leq \sigma < \dfrac{7}{9} = 0.7777\ldots$ & Corollary \ref{further_ivic_zero}\\
     \hline
-    $\frac{24}{30\sigma - 11}$ & $\frac{279}{314} \le \sigma < \frac{155}{174} = 0.8908\ldots$ & Theorem \ref{cdv-density}  \\
+    $\dfrac{9}{8(2\sigma-1)}$ & $\dfrac{7}{9} \le \sigma < \dfrac{1867}{2347} = 0.7954\ldots$ & Theorem \ref{bourgain-density-improved} \\
     \hline
-    $\frac{24}{30\sigma - 11}$& $\frac{155}{174} \le \sigma \le \frac{9}{10} = 0.9$ & Theorem \ref{ivic-zero-density}\\
+    $\dfrac{3}{2\sigma}$ & $\dfrac{1867}{2347} \le \sigma < \dfrac{4}{5} = 0.8$ & Theorem \ref{bourgain-zero-density-2000} \\
     \hline
-    $\frac{3}{10\sigma - 7}$ & $\frac{9}{10} < \sigma \le \frac{47}{50} = 0.94$ & Theorem \ref{hb-density2}\\
+    $\dfrac{3}{2\sigma}$ & $\dfrac{4}{5} \le \sigma < \dfrac{7}{8} = 0.875$ & Corollary \ref{further_ivic_zero} \\
     \hline
-    $\frac{4}{30\sigma - 25}$ & $\frac{47}{50} < \sigma \le \frac{23}{24} = 0.9583\ldots$ & Corollary \ref{bourgain-zero-density} \\
+    $\dfrac{3}{10\sigma - 7}$ & $\dfrac{7}{8} \le \sigma < \dfrac{279}{314} = 0.8885\ldots$ & Theorem \ref{hb-density}\\
     \hline
-    $\frac{3}{24\sigma - 20}$ & $\frac{23}{24} < \sigma < \frac{39}{40} = 0.975$ & Theorem \ref{pintz-density} \\
+    $\dfrac{24}{30\sigma - 11}$ & $\dfrac{279}{314} \le \sigma < \dfrac{155}{174} = 0.8908\ldots$ & Theorem \ref{cdv-density}  \\
     \hline
-    $\frac{2}{15\sigma - 12}$ & $\frac{39}{40} \leq \sigma < \frac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density} \\
+    $\dfrac{24}{30\sigma - 11}$& $\dfrac{155}{174} \le \sigma \le \dfrac{9}{10} = 0.9$ & Theorem \ref{ivic-zero-density}\\
     \hline
-    $\frac{3}{40 \sigma - 35}$ & $\frac{41}{42} \leq \sigma < \frac{59}{60} = 0.9833\ldots$ & Theorem \ref{pintz-density} \\
+    $\dfrac{3}{10\sigma - 7}$ & $\dfrac{9}{10} < \sigma \le \dfrac{47}{50} = 0.94$ & Theorem \ref{hb-density2}\\
     \hline
-    $\dfrac{3}{n(1 - 2(n - 1)(1 - \sigma))}$ &
-    \begin{tabular}{@{}c@{}}$1 - \frac{1}{2n(n - 1)} \le \sigma < 1 - \frac{1}{2n(n + 1)}$\\(for integer $n \ge 6$)\end{tabular} & Theorem \ref{pintz-density} \\
+    $\dfrac{4}{30\sigma - 25}$ & $\dfrac{47}{50} < \sigma \le \dfrac{23}{24} = 0.9583\ldots$ & Corollary \ref{bourgain-zero-density} \\
+    \hline
+    $\dfrac{3}{24\sigma - 20}$ & $\dfrac{23}{24} < \sigma < \dfrac{39}{40} = 0.975$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\dfrac{2}{15\sigma - 12}$ & $\dfrac{39}{40} \leq \sigma < \dfrac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\dfrac{3}{40 \sigma - 35}$ & $\dfrac{41}{42} \leq \sigma < \dfrac{59}{60} = 0.9833\ldots$ & Theorem \ref{pintz-density} \\
+    \hline
+    $\dfrac{3}{n(1 - 2(n - 1)(1 - \sigma))}$ & \begin{tabular}{@{}c@{}}$1 - \dfrac{1}{2n(n - 1)} \le \sigma < 1 - \dfrac{1}{2n(n + 1)}$\\(for integer $n \ge 6$)\end{tabular} & Theorem \ref{pintz-density} \\
     \hline
     \end{tabular}
     \label{zero_density_estimates_table}
     \end{table}
-
-{\bf TODO: double check this is indeed the optimum function thus far}
-
 
 For completeness, we list in Table \ref{zero_density_historical} some historical zero density theorems not already covered, which have now been superceded by more recent estimates.
 

@@ -321,14 +321,6 @@ def zero_density_estimates_examples():
         "Best zero density estimate",
     )
 
-    # hypotheses.add_hypothesis(trivial_exp_pair)
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
-    # hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
-
-    # zdt = zd.ep_to_zd(hypotheses)
-    # zdt.recursively_list_proofs()
-
-
 def zero_density_estimates_examples2():
     hypotheses = Hypothesis_Set()
 
@@ -356,11 +348,6 @@ def zero_density_estimates_examples2():
     for h in zdt:
         h.recursively_list_proofs()
     plot(zdt, "Heath-Brown zero density estimate")
-
-    hypotheses = Hypothesis_Set()  # Start with an empty hypothesis set
-    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    for k in range(2, 5):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
 
 def zero_density_estimates_examples3():
     hypotheses = Hypothesis_Set()
@@ -394,7 +381,14 @@ def zero_density_estimates_examples3():
     )
 
 def zero_density_estimates_examples4():
-    zd.best_zero_density_estimate(literature, verbose=True)
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(trivial_exp_pair)
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform"))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
+
+    zdt = zd.ep_to_zd(hypotheses)
 
 
 def all_examples():

@@ -71,7 +71,15 @@ $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zet
 \begin{proof}  Repeat the proof of Corollary \ref{zero-large-cor-0}.
 \end{proof}
 
-\begin{theorem}[Heath-Brown's additive energy bound]\cite[Theorem 2]{heathbrown_zero_1979}\uses{zeroe-def}  Let $1/2 \leq \sigma \leq 1$ be fixed.  Then one can bound $A^*(\sigma)$ by
+\begin{proposition}[Additive energy under the Lindelof hypothesis]\label{zeroe-lindelof}\uses{zeroe-def}  Let $1/2 \leq \sigma \leq 1$ be fixed.  Then one has
+    $$ \A^*(\sigma) \leq 8 - 4\sigma$$
+    and $\A^*(\sigma) \leq 0$ if $\sigma > 3/4$.
+\end{proposition}
+
+\begin{proof} See \cite[Lemma 4]{heath_brown_consecutive_II}.
+\end{proof}
+
+\begin{theorem}[Heath-Brown's additive energy bound]\label{hb-energy-bound}\cite[Theorem 2]{heathbrown_zero_1979}\uses{zeroe-def}  Let $1/2 \leq \sigma \leq 1$ be fixed.  Then one can bound $A^*(\sigma)$ by
     \begin{align*}
         \frac{10-11\sigma}{(2-\sigma)(1-\sigma)} & \hbox{ for } 1/2 \leq \sigma \leq 2/3;\\
         \frac{18-19\sigma}{(4-2\sigma)(1-\sigma)} & \hbox{ for } 2/3 \leq \sigma \leq 3/4;\\

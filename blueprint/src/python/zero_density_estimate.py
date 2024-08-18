@@ -13,9 +13,10 @@ from functions import Affine, Affine2, Interval, Piecewise, Polytope, RationalFu
 from hypotheses import *
 import large_values as lv
 import matplotlib.pyplot as plt
+import numpy as np
 from reference import Reference
 import sympy
-import scipy.optimize
+import scipy
 import zeta_large_values as zlv
 
 
@@ -375,7 +376,7 @@ def prove_density_estimate(hypothesis, Abound, sigma_interval):
     lv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
     zlv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
 
-    pass
+    raise NotImplementedError()
 
 
 # Computes the zero-density estimate obtained from
@@ -405,13 +406,71 @@ def ivic_ep_to_zd(exp_pairs, m=2):
 
     zde = Zero_Density_Estimate(f"{3*m}/({3*m-2}x + {2-m})", Interval(sigma0, 1))
     return derived_zero_density_estimate(
-        zde, f"Follows from the exponent pair {dep.data}", {dep}
+        zde, f"Follows from {dep.data}", {dep}
     )
 
 eph = Hypothesis("", "Exponent pair", ep.Exp_pair(frac(1,6), frac(2,3)), "", Reference.classical())
 for m in range(3, 10):
     h = ivic_ep_to_zd([eph], m)
     print(h.data, float(h.data.interval.x0))
+
+def approx_bourgain_ep_to_zd(exp_pairs):
+    
+    sigmas = np.linspace(1/2, 1, 1000)
+
+    points = [[p.data.k, p.data.l] for p in exp_pairs]
+    conv = scipy.spatial.ConvexHull(np.array(points))
+    vertices = [points[v] for v in conv.vertices]
+    poly = Polytope.from_V_rep(vertices)
+
+    for v in vertices:
+        print(v[0], v[1])
+
+    for s in sigmas:
+        R1 = poly.intersect(Polytope([
+            [0, 1, 0],
+            [frac(11,85), -1, 0],
+            [-frac(3,5), 0, 1],
+            [1, 0, -1],
+            [-13, 20, 15],
+            [2 * s - 1, 2 * s, -1]
+        ]))
+
+        R2 = poly.intersect(Polytope([
+            [-frac(11,85), 1, 0],
+            [frac(1,5), -1, 0],
+            [-frac(3,5), 0, 1],
+            [1, 0, -1],
+            [-13, 20, 15],
+            [2 * s - 1, 2 * s, -1],
+            [11 - 22 * s, 170 * s - 144, 11]
+        ]))
+
+        # iterate through the vertices of R1
+        Abound = float('inf')
+        argmin = (0, 1)
+        if not R1.is_empty(include_boundary=False):
+            verts = R1.get_vertices()
+            for v in verts:
+                (k, l) = v
+                if 2 * (1 + k) * s - 1 - l <= 0: continue
+                A = 4 * k / (2 * (1 + k) * s - 1 - l)
+                if A < Abound:
+                    Abound = A
+                    argmin = (k, l)
+        
+        if not R2.is_empty(include_boundary=False):
+            verts = R2.get_vertices()
+            for v in verts:
+                (k, l) = v
+                if 2 * (1 + k) * s - 1 - l <= 0: continue
+                A = 4 * k / (2 * (1 + k) * s - 1 - l)
+                if A < Abound:
+                    Abound = A
+                    argmin = (k, l)
+
+        print(s, argmin, Abound)
+
 
 # Computes the zero-density estimate
 #
@@ -505,8 +564,9 @@ def ep_to_zd(hypotheses):
     hypotheses.add_hypotheses(ep.compute_best_beta_bounds(hypotheses))
     ephs = ep.beta_bounds_to_exponent_pairs(hypotheses)
 
-    zdts = [bourgain_ep_to_zd(ephs)]
-    zdts.append(ivic_ep_to_zd(ephs, m=2))
+    # zdts = [bourgain_ep_to_zd(ephs)]
+    approx_bourgain_ep_to_zd(ephs)
+    # zdts.append(ivic_ep_to_zd(ephs, m=2))
 
     return zdts
 
@@ -570,7 +630,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
                 new_best_bound.append(
                     Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
                 )
-                
+
         # Simplify
         best_bound = []
         i = 0
@@ -610,8 +670,10 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         for i in range(N):
             sigma = 1 / 2 + 1 / 2 * i / N
             xs.append(sigma)
-            literature_zdt.append(min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma)))
-            computed_zdt.append(next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0))
+            A1 = min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma))
+            A2 = next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0)
+            literature_zdt.append(A1)
+            computed_zdt.append(A2)
 
         plt.figure(dpi=1200)
         plt.xlabel("σ")
@@ -623,10 +685,6 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         plt.show()
     
     return best_bound
-
-
-
-
 
 def optimize_pintz_zero_density(hypotheses):
     
@@ -661,8 +719,3 @@ def optimize_pintz_zero_density(hypotheses):
             print(m, a_interval)
         else:
             raise NotImplementedError()
-            
-    
-    
-    
-    
