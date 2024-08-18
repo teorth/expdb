@@ -32,6 +32,80 @@ def run_union_test():
 
     union = Polytope.try_union([p1, p2])
     assert union is not None
+    
+    
+    p1 = Polytope([
+        [-19, 24, 0],
+        [12, -12, -1],
+        [16, -24, 2]
+        ])
+    p2 = Polytope([
+        [19, -24, 0],
+        [12, -12, -1],
+        [-frac(1,2), 1, 0],
+        [3, 0, -1],
+        [16, -24, 2],
+        [-1, 0, 1]
+        ])
+    
+    union = Polytope([
+        [12, -12, -1],
+        [-frac(1,2), 1, 0],
+        [3, 0, -1],
+        [16, -24, 2],
+        [-1, 0, 1]
+        ])
+    assert Polytope.try_union([p1, p2]) == union
+    
+    
+    p1 = Polytope([
+        [18, -22, 0],
+        [12, -12, -1]
+        ])
+    p2 = Polytope([
+        [13, -15, -frac(1,2)],
+        [-7, 5, frac(3,2)],
+        [12, -12, -1],
+        [3, 0, -1]
+        ])
+    
+    U = Polytope.try_union([p1, p2], verbose=True)
+    print(U)
+    
+    # plot 
+    Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([5, 0, 0], U)]).plot_domain((1/2, 1), (1, 3))
+    
+    p1 = Polytope([
+        [-3, 0, 2],
+        [4, -4, -frac(1,2)],
+        [-4, 4, frac(2,3)],
+        [3, 0, -1],
+        [6, -10, frac(7,6)],
+        [13, -14, -frac(4,3)]
+        # '-3 + 2y >= 0', '4 - 4x - 1/2y >= 0', '-4 + 4x + 2/3y >= 0', '3 - y >= 0', 
+        # '6 - 10x + 7/6y >= 0', '13 - 14x - 4/3y >= 0'
+        ])
+    p2 = Polytope([
+        [13, -14, -frac(4,3)],
+        [-4, 4, frac(1,2)],
+        [3, 0, -1]
+        ])
+    p3 = Polytope([
+        [-3, 0, 2],
+        [-4, 4, frac(2,3)],
+        [3, 0, -1],
+        [6, -10, frac(7,6)],
+        [13, -14, -frac(4,3)]
+        ])
+    Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    Piecewise([Affine2([5, 0, 0], p3)]).plot_domain((1/2, 1), (1, 3))
+    assert Polytope.try_union([p1, p2]) == p3
+    
 
 def run_3_way_union_test():
     p1 = Polytope([[-8, 11, -1], [1, -1, 0], [-2, 0, 1], [frac(31, 12), 0, -1]])

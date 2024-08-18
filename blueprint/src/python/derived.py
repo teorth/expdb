@@ -287,7 +287,7 @@ def prove_zero_density_estimates():
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
-    prove_zero_density_estimates()
-    # prove_bourgain_large_values_theorem()
+    # prove_zero_density_estimates()
+    prove_bourgain_large_values_theorem()
 
 prove_all()

@@ -406,10 +406,12 @@ def all_examples():
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
-    zero_density_estimates_examples4()
+    # zero_density_estimates_examples4()
     # h = literature.find_hypothesis(hypothesis_type="Large value estimate", keywords="Bourgain")
     # h.data.bound.check((1/2, 1), (0, 5))
     # h.data.bound.plot_domain((1/2, 1), (1 + 0.00001, 5), resolution=1000, title="Optimized Bourgain's large value estimate LV(σ, τ)", xlabel="σ", ylabel="τ", variables="στ")
     # lv.check_bourgain_large_value_estimate(h)
+    
+    zd.optimize_pintz_zero_density(literature)
 
 all_examples()

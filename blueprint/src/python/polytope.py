@@ -191,7 +191,7 @@ class Polytope:
     # This implementation is based on the union algorithm in
     # A. Bemporad et al. "Convexity recognition of the union of polyhedra" (2001)
     # Algorithm 4.1
-    def try_union(polys):
+    def try_union(polys, verbose=False):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
 
@@ -202,11 +202,15 @@ class Polytope:
         neg = []  # Stores the negation of the removed constraints (1 list per polytope)
 
         # Classifies the constraint by checking if the constraint in row 'row_index'
-        # of 'matrix' is satisfied by all polytopes
-        # except for polytope i
+        # of 'matrix' is satisfied by all polytopes except for polytope i
         def satisfies(matrix, row_index, i):
             for j in range(len(polys)):
                 if i != j:
+                    
+                    if verbose and p.mat[r] == (-7, 5, frac(3,2)):
+                        print("poly")
+                        print(polys[j])
+                        print(f"vertices of polys[{j}]", polys[j].get_vertices())
                     if not all(
                         Polytope._satisfies(matrix, row_index, v)
                         for v in polys[j].get_vertices()
@@ -226,7 +230,16 @@ class Polytope:
                     # Add the negation of the constraint
                     neg_p.append([-x for x in p.mat[r]])
             neg.append(neg_p)
-
+        
+        if verbose:
+            print("Envelope constraints")
+            for c in env:
+                print(c)
+                
+            print("Negative constraints")
+            for c in neg:
+                print(c)
+            
         # Choose 1 constraint from each negated constraint set, and
         # compute the intersection between them and env
         for combination in itertools.product(*neg):

@@ -9,7 +9,7 @@ from constants import Constants, Proof_Optimization_Method
 import bound_beta as bb
 import exponent_pair as ep
 from fractions import Fraction as frac
-from functions import Affine2, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
+from functions import Affine, Affine2, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
 from hypotheses import *
 import large_values as lv
 import matplotlib.pyplot as plt
@@ -408,6 +408,10 @@ def ivic_ep_to_zd(exp_pairs, m=2):
         zde, f"Follows from the exponent pair {dep.data}", {dep}
     )
 
+eph = Hypothesis("", "Exponent pair", ep.Exp_pair(frac(1,6), frac(2,3)), "", Reference.classical())
+for m in range(3, 10):
+    h = ivic_ep_to_zd([eph], m)
+    print(h.data, float(h.data.interval.x0))
 
 # Computes the zero-density estimate
 #
@@ -619,4 +623,46 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         plt.show()
     
     return best_bound
+
+
+
+
+
+def optimize_pintz_zero_density(hypotheses):
+    
+    # compute best beta bounds
+    hypotheses.add_hypotheses(
+        ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
+    )
+    hypotheses.add_hypotheses(ep.exponent_pairs_to_beta_bounds(hypotheses))
+    beta_hyps = ep.compute_best_beta_bounds(hypotheses)
+
+    for b in beta_hyps:
+        (m, c) = b.data.bound.m, b.data.bound.c
+        a_interval = b.data.bound.domain
+        
+        # solve t0 = t0(sigma) such that t0 beta (1/t0) = sigma
+        # as a linear function of sigma 
+        # Since t beta (1/t) \leq m + ct, t0 = -m/c + sigma / c
+        # Range is t1 <= t <= t2 i.e. m + c t1 <= sigma <= m + c t2
+        if c > 0:
+            
+            # exclude this edge case for now 
+            if a_interval.x0 == 0: continue
+        
+            sigma_domain = Interval(
+                m + c / a_interval.x1, m + c / a_interval.x0,
+                a_interval.include_upper, a_interval.include_lower)
+            tau0 = Affine(m/c, -1/c, sigma_domain)
+            print('tau_0 ', tau0)
+            print(m, c, a_interval)
+        elif c == 0:
+            tau0 = None
+            print(m, a_interval)
+        else:
+            raise NotImplementedError()
+            
+    
+    
+    
     

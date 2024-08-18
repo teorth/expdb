@@ -62,7 +62,7 @@ def max_of(bounds, domain=None):
 
     # Construct affine objects to represent the bounds
     fns = [Affine2(b, domain) for b in bounds]
-
+    
     # Handle edge cases
     if len(fns) == 1:
         return Piecewise(fns)
@@ -97,7 +97,7 @@ def max_of(bounds, domain=None):
 
     # Construct the piecewise function and simplify
     bound = Piecewise(pieces)
-    bound.simplify()
+    bound.simplify(debug=True)
 
     return bound
 
@@ -482,9 +482,17 @@ def optimize_bourgain_large_value_estimate():
 
             print("region")
             print(region)
-
-            print("recreation")
-            print(max_of(lst, region).check((1/2, 1), (1,3)))
+            
+            print("neg regions")
+            print(neg_regions)
+            
+            print("recreation of maxed")
+            rec = max_of(lst, region)
+            for neg in neg_regions:
+                rec.pieces.append(Affine2([10000000, 0, 0], neg))
+            print(rec.check((1/2, 1), (1,3)))
+            for p in rec.pieces:
+                print(p)
 
 
 

@@ -553,8 +553,8 @@ class Piecewise:
         )
 
     # Simplify the function by computing unions of polytopes
-    def simplify(self, max_grouping=3):
-
+    def simplify(self, max_grouping=3, debug=False):
+        
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter n represents the
         # number of objects we try to combine at a time .
@@ -562,6 +562,12 @@ class Piecewise:
 
             # Flag to indicate whether any changes have been made
             changed = False
+            
+            # The use of dictionary introduces non-deterministic behaviour - for 
+            # debugging purposes only: re-introduce ordering 
+            # keys = [k for k in matchable]
+            # keys.sort()
+            # for key in keys:
             for key in matchable:
                 # a list of compatible Affine2 objects (same function, same label)
                 group = matchable[key]
@@ -570,14 +576,32 @@ class Piecewise:
                     if union is not None:
                         for f in c:
                             group.remove(f)
-                        group.add(Affine2(c[0].a, union, c[0].label))
+                        new_f = Affine2(c[0].a, union, c[0].label)
+                        group.add(new_f)
                         # Since the group has now been altered, we can no longer
                         # continue iterating through this group. Instead move
                         # onto the next group.
                         changed = True
+                        
+                        if debug:
+                            changes.append((c, new_f))
+                            
                         break
             return changed
-
+        
+        # debugging functions - if debug, save a set 
+        if debug:
+            cpy = copy.copy(self)
+            
+            def to_pw(matchable):
+                pieces = []
+                for key in matchable:
+                    pieces.extend(matchable[key])
+                return Piecewise(pieces)
+            changes = []
+                
+        
+        
         # First - compute the matchable sets (in terms of the function and label)
         matchable = {}
         for i in range(len(self.pieces)):
@@ -590,14 +614,63 @@ class Piecewise:
                 matchable[key] = {p}
 
         # For now - only match 2 - 3 at a time
+        if debug:
+            itr = 0
+            prev = cpy
+            
         for n in range(2, max_grouping + 1):
             while iteration(matchable, n):
+                
+                # Check that the iteration has been consistent 
+                if debug:
+                    itr += 1
+                    temp = to_pw(matchable)
+                    N = 30
+                    for i in range(N):
+                        for j in range(N):
+                            x = 1/2 + 1/2 * i / N
+                            y = 1 + 2 * j / N
+                            if (temp.at([x, y]) is None and cpy.at([x, y]) is not None) or \
+                               (temp.at([x, y]) is not None and cpy.at([x, y]) is not None and \
+                                abs(temp.at([x, y]) - cpy.at([x, y])) > 1e-6):
+                                print(x, y, temp.at([x, y]), cpy.at([x, y]))
+                                print("n = ", n)
+                                print("matchable")
+                                for key in matchable:
+                                    print(key, matchable[key])
+                                print("temp")
+                                for p in temp.pieces:
+                                    print(p)
+                                temp.plot_domain((1/2, 1), (1, 3), title="temp")
+                                print("prev")
+                                for p in prev.pieces:
+                                    print(p)
+                                prev.plot_domain((1/2, 1), (1, 3), title="prev")
+                                print("Changes:")
+                                for ch in changes:
+                                    print("------")
+                                    for p in ch[0]:
+                                        print(p)
+                                    print("->")
+                                    print(ch[1])
+                                raise ValueError()
+                                
+                    prev = temp
+                    
+                                
                 pass
+            
 
         # Finally: re-group the matchable and set self.pieces
         pieces = []
+        
+        # reintroduce ordering for debugging
+        # keys = [k for k in matchable]
+        # keys.sort()
+        # for key in keys:
         for key in matchable:
             pieces.extend(matchable[key])
+            
         self.pieces = pieces
 
 
