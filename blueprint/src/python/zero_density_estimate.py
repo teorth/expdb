@@ -409,11 +409,6 @@ def ivic_ep_to_zd(exp_pairs, m=2):
         zde, f"Follows from {dep.data}", {dep}
     )
 
-eph = Hypothesis("", "Exponent pair", ep.Exp_pair(frac(1,6), frac(2,3)), "", Reference.classical())
-for m in range(3, 10):
-    h = ivic_ep_to_zd([eph], m)
-    print(h.data, float(h.data.interval.x0))
-
 def approx_bourgain_ep_to_zd(exp_pairs):
     
     sigmas = np.linspace(1/2, 1, 1000)

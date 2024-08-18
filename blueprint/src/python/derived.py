@@ -4,6 +4,8 @@ from literature import *
 import exponent_pair as ep
 import zero_density_estimate as zd
 
+import time
+
 
 # Establish the classical van der Corput exponent pair (\frac{1}{2^k-2}, 1 - \frac{k-1}{2^k-2})
 def van_der_corput_pair(k):
@@ -103,7 +105,18 @@ def best_proof_of_exponent_pair(k, l, proof_method=Proof_Optimization_Method.DAT
 ######################################################################################
 
 def prove_bourgain_large_values_theorem():
-    lv.optimize_bourgain_large_value_estimate()
+    
+    start_time = time.time()
+    lv_hyps = lv.optimize_bourgain_large_value_estimate()
+    print("Computed in", time.time() - start_time, "s")
+    pieces = []
+    for lvh in lv_hyps:
+        pieces.extend(lvh.data.bound.pieces)
+    bound = Piecewise(pieces)
+    bound.plot_domain((1/2, 1), (1, 3))
+    
+    for lvh in lv_hyps:
+        print(lvh.data, lvh.proof)
 
 
 
