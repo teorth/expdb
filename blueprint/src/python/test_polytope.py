@@ -57,10 +57,14 @@ def run_union_test():
         ])
     assert Polytope.try_union([p1, p2]) == union
     
-    
+    # Another test case - with a vertex at infinity (this fails)
     p1 = Polytope([
         [18, -22, 0],
-        [12, -12, -1]
+        [12, -12, -1],
+        #[3, 0, -1],
+        #[-1, 0, 1],
+        #[-frac(1,2), 1, 0],
+        #[1, -1, 0]
         ])
     p2 = Polytope([
         [13, -15, -frac(1,2)],
@@ -69,7 +73,7 @@ def run_union_test():
         [3, 0, -1]
         ])
     
-    U = Polytope.try_union([p1, p2], verbose=True)
+    U = Polytope.try_union([p1, p2])
     print(U)
     
     # plot 
@@ -78,6 +82,7 @@ def run_union_test():
     Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
     Piecewise([Affine2([5, 0, 0], U)]).plot_domain((1/2, 1), (1, 3))
     
+    # Another test case
     p1 = Polytope([
         [-3, 0, 2],
         [4, -4, -frac(1,2)],
@@ -85,8 +90,6 @@ def run_union_test():
         [3, 0, -1],
         [6, -10, frac(7,6)],
         [13, -14, -frac(4,3)]
-        # '-3 + 2y >= 0', '4 - 4x - 1/2y >= 0', '-4 + 4x + 2/3y >= 0', '3 - y >= 0', 
-        # '6 - 10x + 7/6y >= 0', '13 - 14x - 4/3y >= 0'
         ])
     p2 = Polytope([
         [13, -14, -frac(4,3)],
@@ -100,10 +103,6 @@ def run_union_test():
         [6, -10, frac(7,6)],
         [13, -14, -frac(4,3)]
         ])
-    Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([5, 0, 0], p3)]).plot_domain((1/2, 1), (1, 3))
     assert Polytope.try_union([p1, p2]) == p3
     
 

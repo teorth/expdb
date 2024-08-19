@@ -97,7 +97,7 @@ def max_of(bounds, domain=None):
 
     # Construct the piecewise function and simplify
     bound = Piecewise(pieces)
-    bound.simplify(debug=False)
+    bound.simplify()
 
     return bound
 

@@ -561,7 +561,7 @@ class Piecewise:
         )
 
     # Simplify the function by computing unions of polytopes
-    def simplify(self, max_grouping=3, debug=False):
+    def simplify(self, max_grouping=3):
         
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter n represents the
@@ -606,7 +606,8 @@ class Piecewise:
             else:
                 matchable[key] = [p]
         
-        # # Often it is possible to aggregate the entire set - try that first
+        # Often it is possible to aggregate the entire set - try that first
+        # Unfortunately, this method is simply too slow
         # keys = [k for k in matchable]
         # for key in keys:
         #     group = matchable[key]
@@ -616,7 +617,6 @@ class Piecewise:
         #         f = group[0]
         #         matchable[key] = [Affine2(f.a, union, f.label)]
             
-        # If that has failed:
         # For now - only match 2 - 3 at a time
         for n in range(2, max_grouping + 1):
             while iteration(matchable, n):
@@ -627,6 +627,7 @@ class Piecewise:
         for key in matchable:
             pieces.extend(matchable[key])
             
+        #print(len(self.pieces), "->", len(pieces))
         self.pieces = pieces
 
 

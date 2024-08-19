@@ -194,14 +194,14 @@ class Polytope:
     # This implementation is based on the union algorithm in
     # A. Bemporad et al. "Convexity recognition of the union of polyhedra" (2001)
     # Algorithm 4.1
-    def try_union(polys, verbose=False):
+    def try_union(polys):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
 
         if len(polys) == 1:
             return polys[0]
 
-        env = []  # Stores the constraints used to compute the envelope
+        env = set()  # Stores the constraints used to compute the envelope
         neg = []  # Stores the negation of the removed constraints (1 list per polytope)
 
         # Classifies the constraint by checking if the constraint in row 'row_index'
@@ -209,11 +209,6 @@ class Polytope:
         def satisfies(matrix, row_index, i):
             for j in range(len(polys)):
                 if i != j:
-                    
-                    if verbose and p.mat[r] == (-7, 5, frac(3,2)):
-                        print("poly")
-                        print(polys[j])
-                        print(f"vertices of polys[{j}]", polys[j].get_vertices())
                     if not all(
                         Polytope._satisfies(matrix, row_index, v)
                         for v in polys[j].get_vertices()
@@ -228,23 +223,15 @@ class Polytope:
             neg_p = []
             for r in range(p.mat.row_size):
                 if satisfies(p.mat, r, i):
-                    env.append(p.mat[r])
+                    env.add(tuple(p.mat[r])) # Use hashability of tuples
                 else:
                     # Add the negation of the constraint
                     neg_p.append([-x for x in p.mat[r]])
             neg.append(neg_p)
-        
-        if verbose:
-            print("Envelope constraints")
-            for c in env:
-                print(c)
-                
-            print("Negative constraints")
-            for c in neg:
-                print(c)
             
         # Choose 1 constraint from each negated constraint set, and
         # compute the intersection between them and env
+        env = list(env)
         for combination in itertools.product(*neg):
             # Check polytope formed (equivalent to the feasibility LP). If
             # the polytope formed is non-empty, then A U B < Env, so the
@@ -255,6 +242,8 @@ class Polytope:
 
         # Otherwise, envelop is the union
         return Polytope(env, canonicalize=True)
+
+
 
     # Constructs a rectangle as a polytope
     def rect(xlim, ylim):
