@@ -626,8 +626,7 @@ class Piecewise:
         pieces = []
         for key in matchable:
             pieces.extend(matchable[key])
-            
-        #print(len(self.pieces), "->", len(pieces))
+        
         self.pieces = pieces
 
 

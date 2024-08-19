@@ -126,7 +126,7 @@ def prove_bourgain_large_values_theorem():
 # Given additional_hypotheses, a list of new hypothesis (other than classical results),
 # find the best density estimate as a piecewise function, then if 'verbose' is true
 # displays the proof of the piece containing 'sigma'. 
-def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)):
+def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3), plot=False):
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
     for k in range(2, 10):
@@ -143,6 +143,21 @@ def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)
             print()
             print(f'Found proof of {name}\'s zero-density estimate')
             hyp.recursively_list_proofs()
+    
+    if plot and len(zdes) > 0:
+        xs = np.linspace(0.5, 1, 100)
+        ys = []
+        for x in xs:
+            zs = [z for z in zdes if z.data.interval.contains(x)]
+            if len(zs) > 0:
+                ys.append(min(z.data.at(x) / (1 - x) for z in zs))
+            else:
+                ys.append(None)
+        plt.plot(xs, ys)
+        plt.title(name + " zero density estimate")
+        plt.xlabel("sigma")
+        plt.ylabel("A(sigma)")
+        
     return zdes
     
 # Prove Ingham's zero density estimate A(s) < 3/(1-s)
@@ -265,9 +280,10 @@ def prove_zero_density_heathbrown_extended(verbose=True):
     # which will be used to calculate the best zeta large value estimate
     new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
     
-    for h in new_hyps:
-        h.recursively_list_proofs()
-    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5))
+    # TODO: this proof currently has a missing range \sigma \in [37/40, 1], 
+    # which requires Huxley subdivision to prove. We could also prove this by 
+    # incorporating more bounds
+    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5), plot=True)
 
 def prove_zero_density_bourgain_improved(verbose=True):
     new_hyps = [
@@ -282,7 +298,7 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        #prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
+        # prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
         prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain")
     ]
 
@@ -317,22 +333,22 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
-    prove_zero_density_ingham_1940()
-    prove_zero_density_huxley_1972()
-    prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979()
-    prove_zero_density_heathbrown_1979_2()
-    prove_zero_density_ivic_1984()
-    prove_zero_density_guth_maynard_2024()
-
-    prove_zero_density_heathbrown_extended()
+    # prove_zero_density_ingham_1940()
+    # prove_zero_density_huxley_1972()
+    # prove_zero_density_jutila_1977()
+    # prove_zero_density_heathbrown_1979()
+    # prove_zero_density_heathbrown_1979_2()
+    # prove_zero_density_ivic_1984()
+    # prove_zero_density_guth_maynard_2024()
+    # prove_zero_density_heathbrown_extended()
+    
     prove_zero_density_bourgain_improved()
-    compute_best_zero_density()
+    #compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
-    # prove_zero_density_estimates()
-    prove_bourgain_large_values_theorem()
+    prove_zero_density_estimates()
+    # prove_bourgain_large_values_theorem()
 
 prove_all()

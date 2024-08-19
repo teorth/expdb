@@ -194,6 +194,10 @@ class Polytope:
     # This implementation is based on the union algorithm in
     # A. Bemporad et al. "Convexity recognition of the union of polyhedra" (2001)
     # Algorithm 4.1
+    #
+    # This implementation only works with finite polytopes - for infinite polytopes 
+    # the wrong result is returned. See e.g. the test cases in test_polytope. 
+    # TODO: implement check and error for infinite polytopes. 
     def try_union(polys):
         if not isinstance(polys, list) or len(polys) == 0:
             return None

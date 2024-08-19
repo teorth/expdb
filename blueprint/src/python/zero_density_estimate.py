@@ -121,6 +121,33 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 
 ###############################################################################
 
+# Numerically compute 
+# sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
+# for a particular sigma value. This method should give the same result (up to 
+# numerical precision) as compute_sup_LV_on_tau
+def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100):
+    
+    ts = np.linspace(tau_lower, tau_upper, resolution)
+    pieces = []
+    for h in hypotheses:
+        pieces.extend(h.data.bound.pieces)
+    
+    # Piecewise(pieces).plot_domain((0.78, 0.8), (2,3), title="approx check")
+    sup = float("-inf")
+    argmax = 0
+    
+    for t in ts:
+        inf = float("inf")
+        for h in hypotheses:
+            v = h.data.bound.at([sigma, t])
+            if v is not None and v / t < inf:
+                inf = v / t
+        if inf > sup:
+            sup = inf
+            argmax = t
+    
+    return sup
+    
 # Given a list of large value estimates or zeta large value estimates, compute
 #
 # sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
@@ -205,12 +232,37 @@ def max_RF(crits, faces):
             continue
 
         s = interval.midpoint()  # the test point
-
+        
         # Iterate through the faces, collecting t-coordinates where the vertical
         # line \sigma = s intersects with a face
         sup = float("-inf")
         argmax = None
         intersecting_faces = [f for f in faces if f[2].contains(s)]
+        
+
+        #print(s, float(s))
+        if s == frac(111,140) or s == frac(191,240):
+            
+            ifs = list(set(f[1] for f in faces if f[2].contains(0.79458)))
+            print("faces containing 0.79458")
+            for f in ifs:
+                print("\t", f)
+            fn = Piecewise(ifs)
+            fn.plot_domain((0.78, 0.8), (2, 3))
+            # Target specifically 0.79
+            ts = np.linspace(2, 3, 500)
+            
+            max_ = 0
+            argmax = 0
+            for t in ts:
+                q = fn.at([0.79458, t]) / t
+                if q > max_:
+                    max_ = q
+                    argmax = t
+                    
+            print(0.79458, max_, argmax)
+
+
         dependencies = {}
         for constraint, func, _, hyp in intersecting_faces:
             t = constraint.at(s)
@@ -264,22 +316,6 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, tau0, 2 * tau0
     )
 
-    # print('sup 1')
-    # for p in sup1:
-    #     print(p[0], p[1])
-    # for p in sup1:
-    #     if p[1].contains(0.78):
-    #         for q in p[2]:
-    #             q.recursively_list_proofs(1)
-    
-    # temp = []
-    # for p in sup1:
-    #     if p[1].contains(0.78):
-    #         for q in p[2]:
-    #             temp.extend(q.data.bound.pieces)
-    # temp = Piecewise(temp)
-    # temp.plot_domain(xlim=(0.75, 0.82), ylim=(tau0, 2 * tau0), resolution=1000)
-    
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -298,20 +334,34 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, frac(2), tau0
     )
     
-    # print('sup 2')
-    # for p in sup2:
-    #     print(p[0], p[1])
-    # for p in sup2:
-    #     if p[1].contains(0.78):
-    #         for q in p[2]:
-    #             q.recursively_list_proofs(1)
-    # temp = []
-    # for p in sup2:
-    #     if p[1].contains(0.78):
-    #         for q in p[2]:
-    #             temp.extend(q.data.bound.pieces)
-    # temp = Piecewise(temp)
-    # temp.plot_domain(xlim=(0.75, 0.82), ylim=(2, tau0), resolution=1000)
+    print('sup 2')
+    for p in sup2:
+        print(p[0], p[1])
+    # Compare numerical to computed 
+    sigmas = np.linspace(1/2, 1, 1000)
+    y1 = []
+    y2 = []
+    y3 = []
+    for sigma in sigmas:
+        y1.append(min((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
+        y2.append(approx_sup_LV_on_tau(hyps, sigma, frac(2), tau0, 500))
+        y3.append(max((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
+                  
+    for i in range(len(sigmas)):
+        if abs(y1[i] - y2[i]) > 0.001:
+            print(sigmas[i], y1[i], y3[i], y2[i])
+            
+    plt.plot(sigmas, y1, label="computed")
+    plt.legend()
+    plt.title("sup2")
+    plt.show()
+    plt.plot(sigmas, y1, label="computed")
+    plt.plot(sigmas, y2, label="approx")
+    plt.legend()
+    plt.title("sup2")
+    plt.show()
+    
+    
     
     if debug:
         print(time.time() - start_time, "s")
