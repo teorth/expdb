@@ -451,7 +451,7 @@ def optimize_bourgain_large_value_estimate():
                 fn = [eqns[i][5], eqns[i][2], eqns[i][3]]
                 fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
                 fns.add(fn)
-                
+
             # Compute maximum
             start_time = time.time()
             lst = [list(fn) for fn in fns]
