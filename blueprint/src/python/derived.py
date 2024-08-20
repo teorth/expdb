@@ -306,7 +306,7 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        # prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
+        prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
         prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain")
     ]
 

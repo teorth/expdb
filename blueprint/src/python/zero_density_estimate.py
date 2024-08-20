@@ -132,10 +132,7 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
     for h in hypotheses:
         pieces.extend(h.data.bound.pieces)
 
-    # Piecewise(pieces).plot_domain((0.78, 0.8), (2,3), title="approx check")
     sup = float("-inf")
-    argmax = 0
-
     for t in ts:
         inf = float("inf")
         for h in hypotheses:
@@ -144,29 +141,22 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
                 inf = v / t
         if inf > sup:
             sup = inf
-            argmax = t
 
     return sup
 
 # Given a list of large value estimates or zeta large value estimates, compute
 #
-# sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
+# sup_{(s, t) \in H} LV(s, t) / t
 #
-# for s in sigma_interval, returning the result as a piecewise function.
+# for s in sigma_interval, returning the result as a piecewise function. Here, 
+# H represents the union of domains of bounds on LV(s, t) contained in hypotheses. 
 # Returns: list of (RationalFunction, Interval) tuples.
-def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
+def compute_sup_LV_on_tau(hypotheses, sigma_interval):
 
     pieces = []
     for h in hypotheses:
         pieces.extend(h.data.bound.pieces)
 
-    # debugging only - for extending Heath-Brown's estimates
-    # fn = Piecewise(pieces)
-    # print('debugging:', tau_lower, tau_upper)
-    # for f in fn.pieces:
-    #     print(f)
-    # fn.plot_domain(xlim=(0.75, 0.82), ylim=(tau_lower, tau_upper), title='Debugging')
-    
     # This implementation assumes that hypotheses is a piecewise-linear function 
     # on the domain sigma_interval x [tau_lower, tau_upper]. Additionally, it is 
     # assumed that there are no multiple-definitions of the function. 
@@ -280,33 +270,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     sup1 = compute_sup_LV_on_tau(
         hyps, sigma_interval, tau0, 2 * tau0
     )
-    
-    # for p in sup1:
-    #     print(p[0], p[1])
-        
-    # sigmas = np.linspace(1/2, 1, 200)
-    # y1 = []
-    # y2 = []
-    # y3 = []
-    # for sigma in sigmas:
-    #     y1.append(min((p[0].at(sigma) for p in sup1 if p[1].contains(sigma)), default=0))
-    #     y2.append(approx_sup_LV_on_tau(hyps, sigma, tau0, tau0 * 2, 500))
-    #     y3.append(max((p[0].at(sigma) for p in sup1 if p[1].contains(sigma)), default=0))
-                  
-    # for i in range(len(sigmas)):
-    #     if abs(y1[i] - y2[i]) > 0.001:
-    #         print(sigmas[i], y1[i], y3[i], y2[i])
-            
-    # plt.plot(sigmas, y1, label="computed")
-    # plt.legend()
-    # plt.title("sup2")
-    # plt.show()
-    # plt.plot(sigmas, y1, label="computed")
-    # plt.plot(sigmas, y2, label="approx")
-    # plt.legend()
-    # plt.title("sup2")
-    # plt.show()
-    
+
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -324,34 +288,6 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     sup2 = compute_sup_LV_on_tau(
         hyps, sigma_interval, frac(2), tau0
     )
-
-    # print('sup 2')
-    # for p in sup2:
-    #     print(p[0], p[1])
-        
-    # Compare numerical to computed 
-    # sigmas = np.linspace(1/2, 1, 1000)
-    # y1 = []
-    # y2 = []
-    # y3 = []
-    # for sigma in sigmas:
-    #     y1.append(min((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
-    #     y2.append(approx_sup_LV_on_tau(hyps, sigma, frac(2), tau0, 500))
-    #     y3.append(max((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
-                  
-    # for i in range(len(sigmas)):
-    #     if abs(y1[i] - y2[i]) > 0.001:
-    #         print(sigmas[i], y1[i], y3[i], y2[i])
-            
-    # plt.plot(sigmas, y1, label="computed")
-    # plt.legend()
-    # plt.title("sup2")
-    # plt.show()
-    # plt.plot(sigmas, y1, label="computed")
-    # plt.plot(sigmas, y2, label="approx")
-    # plt.legend()
-    # plt.title("sup2")
-    # plt.show()
 
     if debug:
         print(time.time() - start_time, "s")
