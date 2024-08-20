@@ -25,26 +25,26 @@ import time
 
 ###############################################################################
 # Object representing an estimate on A(\sigma) represented as a piecewise affine
-# function. 
+# function.
 #
 # The life cycle of this object is:
 # 1) Creation with expr (string), interval (Interval)
-# 2) As needed, lazily parse expr to create bound (RationalFunction) that handles 
+# 2) As needed, lazily parse expr to create bound (RationalFunction) that handles
 # evaluations
 # 3) Once bound is set, expr is only used for stringify methods
 #
 # When creating derived zero-density estimates, occasionally it is more convenient
-# to initialise with the bound object directly. In that case, use the static 
-# from_rational_func function to create the an instance which sets expr to the 
+# to initialise with the bound object directly. In that case, use the static
+# from_rational_func function to create the an instance which sets expr to the
 # default __str__ representation of RationalFunction, which may or may not coincide
-# with the original expr used to generate the bound object in the first place. 
-# This should cause any circular reference problems (only potential display 
-# inconsistencies) since, once the bound object is initialised, the expr object 
-# is not used for computation. 
-# 
-# In the future, we will probably move to a canonical model with a guaranteed 
-# one-to-one correspondence between expr and bound. At present this is challenging 
-# since for each rational function there are multiple possible valid representations. 
+# with the original expr used to generate the bound object in the first place.
+# This should cause any circular reference problems (only potential display
+# inconsistencies) since, once the bound object is initialised, the expr object
+# is not used for computation.
+#
+# In the future, we will probably move to a canonical model with a guaranteed
+# one-to-one correspondence between expr and bound. At present this is challenging
+# since for each rational function there are multiple possible valid representations.
 class Zero_Density_Estimate:
 
     # parameters:
@@ -79,7 +79,7 @@ class Zero_Density_Estimate:
 
     # -------------------------------------------------------------------------
     # Static methods
-    
+
     def from_rational_func(rf, interval):
         if not isinstance(rf, RF):
             raise ValueError("Parameter rf must be of type RationalFunction")
@@ -121,21 +121,21 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 
 ###############################################################################
 
-# Numerically compute 
+# Numerically compute
 # sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
-# for a particular sigma value. This method should give the same result (up to 
+# for a particular sigma value. This method should give the same result (up to
 # numerical precision) as compute_sup_LV_on_tau
 def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100):
-    
+
     ts = np.linspace(tau_lower, tau_upper, resolution)
     pieces = []
     for h in hypotheses:
         pieces.extend(h.data.bound.pieces)
-    
+
     # Piecewise(pieces).plot_domain((0.78, 0.8), (2,3), title="approx check")
     sup = float("-inf")
     argmax = 0
-    
+
     for t in ts:
         inf = float("inf")
         for h in hypotheses:
@@ -145,9 +145,9 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
         if inf > sup:
             sup = inf
             argmax = t
-    
+
     return sup
-    
+
 # Given a list of large value estimates or zeta large value estimates, compute
 #
 # sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
@@ -232,17 +232,17 @@ def max_RF(crits, faces):
             continue
 
         s = interval.midpoint()  # the test point
-        
+
         # Iterate through the faces, collecting t-coordinates where the vertical
         # line \sigma = s intersects with a face
         sup = float("-inf")
         argmax = None
         intersecting_faces = [f for f in faces if f[2].contains(s)]
-        
+
 
         #print(s, float(s))
         if s == frac(111,140) or s == frac(191,240):
-            
+
             ifs = list(set(f[1] for f in faces if f[2].contains(0.79458)))
             print("faces containing 0.79458")
             for f in ifs:
@@ -251,7 +251,7 @@ def max_RF(crits, faces):
             fn.plot_domain((0.78, 0.8), (2, 3))
             # Target specifically 0.79
             ts = np.linspace(2, 3, 500)
-            
+
             max_ = 0
             argmax = 0
             for t in ts:
@@ -259,7 +259,7 @@ def max_RF(crits, faces):
                 if q > max_:
                     max_ = q
                     argmax = t
-                    
+
             print(0.79458, max_, argmax)
 
 
@@ -298,15 +298,15 @@ def max_RF(crits, faces):
 def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
 
     s_lim = (sigma_interval.x0, sigma_interval.x1)
-    
+
     if debug:
         start_time = time.time()
-        
+
     # Get large value bounds
     hyps = lv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (tau0, 2 * tau0))
     )
-    
+
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -324,7 +324,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     hyps = zlv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
     )
-    
+
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -333,11 +333,11 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     sup2 = compute_sup_LV_on_tau(
         hyps, sigma_interval, frac(2), tau0
     )
-    
+
     print('sup 2')
     for p in sup2:
         print(p[0], p[1])
-    # Compare numerical to computed 
+    # Compare numerical to computed
     sigmas = np.linspace(1/2, 1, 1000)
     y1 = []
     y2 = []
@@ -346,11 +346,11 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         y1.append(min((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
         y2.append(approx_sup_LV_on_tau(hyps, sigma, frac(2), tau0, 500))
         y3.append(max((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
-                  
+
     for i in range(len(sigmas)):
         if abs(y1[i] - y2[i]) > 0.001:
             print(sigmas[i], y1[i], y3[i], y2[i])
-            
+
     plt.plot(sigmas, y1, label="computed")
     plt.legend()
     plt.title("sup2")
@@ -360,9 +360,9 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     plt.legend()
     plt.title("sup2")
     plt.show()
-    
-    
-    
+
+
+
     if debug:
         print(time.time() - start_time, "s")
 
@@ -401,7 +401,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
             # Merge
             s1[1].x1 = s2[1].x1
             soln.pop(i)
-    
+
     # pack into Hypothesis
     hyps = []
     for s in soln:
@@ -409,19 +409,19 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         deps = s[2][0]          # the LV dependencies
         deps.extend(s[2][1])    # the LVZ dependencies
         hyps.append(derived_zero_density_estimate(
-            Zero_Density_Estimate.from_rational_func(s[0], s[1]), 
-            proof, 
+            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+            proof,
             deps
         ))
     return hyps
 
 
-# Tries to prove the zero-density estimate 
+# Tries to prove the zero-density estimate
 # A(sigma) \leq Abound (sigma in sigma_interval)
 # using Corollary 11.8
 def prove_density_estimate(hypothesis, Abound, sigma_interval):
 
-    # Try to prove that LV(s, t) / t \leq 3(1 - s)/tau0 = (1 - s) * Abound in the range 
+    # Try to prove that LV(s, t) / t \leq 3(1 - s)/tau0 = (1 - s) * Abound in the range
     # 2/3 tau0 \leq t \leq tau0
     lv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
     zlv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
@@ -460,7 +460,7 @@ def ivic_ep_to_zd(exp_pairs, m=2):
     )
 
 def approx_bourgain_ep_to_zd(exp_pairs):
-    
+
     sigmas = np.linspace(1/2, 1, 1000)
 
     points = [[p.data.k, p.data.l] for p in exp_pairs]
@@ -503,7 +503,7 @@ def approx_bourgain_ep_to_zd(exp_pairs):
                 if A < Abound:
                     Abound = A
                     argmin = (k, l)
-        
+
         if not R2.is_empty(include_boundary=False):
             verts = R2.get_vertices()
             for v in verts:
@@ -616,19 +616,19 @@ def ep_to_zd(hypotheses):
     return zdts
 
 
-# Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise 
+# Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise
 # function that represents the best zero-density estimate in each subinterval of [1/2, 1]
-# Note that this function does not compute zero-density estimates from other 
-# Hypothesis objects - it only aggregates existing Hypothesis objects of type 
-# "Zero density estimate". 
+# Note that this function does not compute zero-density estimates from other
+# Hypothesis objects - it only aggregates existing Hypothesis objects of type
+# "Zero density estimate".
 def best_zero_density_estimate(hypotheses, verbose=False):
     hs = hypotheses.list_hypotheses(hypothesis_type="Zero density estimate")
 
     # Ensure bound is computed
     for h in hs:
         h.data._ensure_bound_is_computed()
-    
-    # Start with default bound 
+
+    # Start with default bound
     default = Zero_Density_Estimate("10000000", Interval(frac(1,2), 1))
     default._ensure_bound_is_computed()
     best_bound = [
@@ -645,7 +645,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
     for h1 in hs:
         # For simplicity, work directly with sympy objects
         f1 = h1.data.bound.num / h1.data.bound.den
-        in1 = h1.data.interval 
+        in1 = h1.data.interval
 
         new_best_bound = []
         for h2 in best_bound:
@@ -663,7 +663,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
                 inter = Interval(crits[i - 1], crits[i])
                 mid = inter.midpoint()
                 if not in1.contains(mid) or f2.subs(x, mid) < f1.subs(x, mid):
-                    # f2 is the better bound 
+                    # f2 is the better bound
                     zde = Zero_Density_Estimate(str(f2), inter)
                     h = h2
                 else:
@@ -706,7 +706,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
             if b.data.interval.x0 < Constants.ZERO_DENSITY_SIGMA_LIMIT:
                 print(f"\t{b.data}  {b.proof}")
 
-        # plot zero-density estimate 
+        # plot zero-density estimate
         N = 500
         xs = []
         computed_zdt = []
@@ -721,18 +721,18 @@ def best_zero_density_estimate(hypotheses, verbose=False):
             computed_zdt.append(A2)
 
         plt.figure(dpi=1200)
-        plt.xlabel("σ")
-        plt.ylabel("A(σ)")
+        plt.xlabel(r"$\sigma$")
+        plt.ylabel(r"$A(\sigma)$")
         plt.plot(xs, computed_zdt, linewidth=0.5, label="Computed zero-density estimate")
         plt.plot(xs, literature_zdt, linewidth=0.5, label="Literature zero-density estimate")
         plt.title("Best zero density estimate")
         plt.legend(loc="lower left")
         plt.show()
-    
+
     return best_bound
 
 def optimize_pintz_zero_density(hypotheses):
-    
+
     # compute best beta bounds
     hypotheses.add_hypotheses(
         ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
@@ -743,16 +743,16 @@ def optimize_pintz_zero_density(hypotheses):
     for b in beta_hyps:
         (m, c) = b.data.bound.m, b.data.bound.c
         a_interval = b.data.bound.domain
-        
+
         # solve t0 = t0(sigma) such that t0 beta (1/t0) = sigma
-        # as a linear function of sigma 
+        # as a linear function of sigma
         # Since t beta (1/t) \leq m + ct, t0 = -m/c + sigma / c
         # Range is t1 <= t <= t2 i.e. m + c t1 <= sigma <= m + c t2
         if c > 0:
-            
-            # exclude this edge case for now 
+
+            # exclude this edge case for now
             if a_interval.x0 == 0: continue
-        
+
             sigma_domain = Interval(
                 m + c / a_interval.x1, m + c / a_interval.x0,
                 a_interval.include_upper, a_interval.include_lower)
