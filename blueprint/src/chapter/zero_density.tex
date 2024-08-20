@@ -129,7 +129,7 @@ The suprema in Lemma \ref{zero-from-large} require unbounded values of $\tau$, b
 \python{zero_density_estimate}
 \code{lv_zlv_to_zd(hypotheses, sigma_interval, tau0)}
 
-\begin{proof}  
+\begin{proof}
 Denote the right-hand side by $B$, thus
     $$ \LV(\sigma,\tau) \leq B\tau$$
     for all $\tau_0 \leq \tau \leq 2\tau_0$, and
@@ -351,7 +351,7 @@ with $x=37081/40415$ and $y=476897/493711$.  (One could of course also use more 
 \begin{theorem}[Bourgain result on density hypothesis]\label{bourgain-density}\uses{density-hypothesis} The density hypothesis holds for $\sigma > 25/32$.
 \end{theorem}
 
-\literature 
+\literature
 \code{add_zero_density_bourgain_2000()}
 
 \begin{proof}  The arguments below are a translation of the original arguments of Bourgain \cite{bourgain_large_2000} to our notational framework.
@@ -586,7 +586,7 @@ for all $\tau \geq 2$.  The claim then follows from Corollary
 \literature
 \code{add_zero_density_ivic_1980()}
 \code{add_zero_density_ivic_1984()}
-\derived 
+\derived
 \code{prove_zero_density_ivic_1984()}
 
 \begin{proof}\uses{gzd} Apply Lemma \ref{gzd} with $m=2$ and $(k,\ell) = (\frac{97}{251}, \frac{132}{251})$ for the first claim; the remaining claims follow from taking $m=3, 4, 5, 6$ and the trivial exponent pair $(0, 1)$.
@@ -868,7 +868,7 @@ In Table \ref{zero_density_heuristic} we list some examples in which the heurist
     \hline
     Lemma \ref{a-ivt-1}, $m=4$ & $\frac{10\sigma-2}{4}$ & $\frac{6}{5\sigma-1}$ & Corollary \ref{further_ivic_zero} \\
     \hline
-    Lemma \ref{a-ivt} & $7\sigma-4$ & $\frac{3}{7\sigma-4}$ & orollary \ref{ivic-near-34} \\
+    Lemma \ref{a-ivt} & $7\sigma-4$ & $\frac{3}{7\sigma-4}$ & Corollary \ref{ivic-near-34} \\
     \hline
     Lemma \ref{a-ivt} & $\frac{8\sigma-2}{3}$ & $\frac{9}{8\sigma-2}$ & Corollary \ref{ivic-near-34} \\
     \hline
