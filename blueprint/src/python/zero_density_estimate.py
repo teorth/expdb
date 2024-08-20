@@ -146,9 +146,9 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
 
 # Given a list of large value estimates or zeta large value estimates, compute
 #
-# sup_{(s, t) \in H} LV(s, t) / t
+# f(s) := sup_{(s, t) \in H} LV(s, t) / t
 #
-# for s in sigma_interval, returning the result as a piecewise function. Here, 
+# for s in sigma_interval, returning the result as a piecewise function in s. Here, 
 # H represents the union of domains of bounds on LV(s, t) contained in hypotheses. 
 # Returns: list of (RationalFunction, Interval) tuples.
 def compute_sup_LV_on_tau(hypotheses, sigma_interval):
@@ -268,7 +268,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         print(f"computing sup LV with {len(hyps)} estimates")
 
     sup1 = compute_sup_LV_on_tau(
-        hyps, sigma_interval, tau0, 2 * tau0
+        hyps, sigma_interval
     )
 
     if debug:
@@ -286,7 +286,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         print(f"computing sup LVZ with {len(hyps)} estimates")
 
     sup2 = compute_sup_LV_on_tau(
-        hyps, sigma_interval, frac(2), tau0
+        hyps, sigma_interval
     )
 
     if debug:
@@ -342,15 +342,18 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     return hyps
 
 
-# Tries to prove the zero-density estimate
-# A(sigma) \leq Abound (sigma in sigma_interval)
-# using Corollary 11.8
-def prove_density_estimate(hypothesis, Abound, sigma_interval):
+# Tries to prove the zero-density estimate using Corollary 11.8 by specifying the 
+# value of tau0 to use and the range of sigma to consider. 
+# Parameters:
+#   - tau0: (RationalFunction) the choice of tau0 as a function of sigma 
+#   - sigma_interval: (Interval) the range of sigma values to consider
+def prove_density_estimate(hypothesis, tau0, sigma_interval):
 
-    # Try to prove that LV(s, t) / t \leq 3(1 - s)/tau0 = (1 - s) * Abound in the range
-    # 2/3 tau0 \leq t \leq tau0
-    lv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
-    zlv.prove_LV_on_tau_bound(hypothesis, Abound.mul(RF([-1, 1])), sigma_interval, (RF([2]), Abound))
+    # TODO: Upper-bound LV(s, t) / t for s in sigma_interval and t in [2/3 tau0(s), tau0(s))
+    lv.prove_LV_on_tau_bound(hypothesis, bound.mul(RF([-1, 1])), sigma_interval, (RF([2]), bound))
+    
+    # TODO: Upper-bound LVZ(s, t) / t for s in sigma_interval and t in [2, 4/3 tau0(s))
+    zlv.prove_LV_on_tau_bound(hypothesis, bound.mul(RF([-1, 1])), sigma_interval, (RF([2]), bound))
 
     raise NotImplementedError()
 
