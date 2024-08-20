@@ -9,7 +9,7 @@ from constants import Constants, Proof_Optimization_Method
 import bound_beta as bb
 import exponent_pair as ep
 from fractions import Fraction as frac
-from functions import Affine, Affine2, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
+from functions import Affine, Affine2, Hyperplane, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
 from hypotheses import *
 import large_values as lv
 import matplotlib.pyplot as plt
@@ -156,13 +156,9 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
 # Returns: list of (RationalFunction, Interval) tuples.
 def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
 
-    # Keep track of which hypothesis each piece came from
-    lookup = []
     pieces = []
     for h in hypotheses:
-        for p in h.data.bound.pieces:
-            lookup.append(h)
-            pieces.append(p)
+        pieces.extend(h.data.bound.pieces)
 
     # debugging only - for extending Heath-Brown's estimates
     # fn = Piecewise(pieces)
@@ -170,35 +166,22 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
     # for f in fn.pieces:
     #     print(f)
     # fn.plot_domain(xlim=(0.75, 0.82), ylim=(tau_lower, tau_upper), title='Debugging')
-
-    # Critical points are partition the interval sigma_interval into subintervals
-    # s_i, with the property that
-    # d/dt(f(s, t)/t) is one-signed for all s \in s_i and (s, t) \in D,
-    # where D is a polytope (in this case it is the domain of a piecewise defined function).
-    crits = set([sigma_interval.x0, sigma_interval.x1])
-
-    # Also, cache all the faces of the polytopes, which are 4-tuples of
-    # (domain, function, interval, estimate), where
-    #
-    # 1. interval: the sigma interval on which the facet is defined
-    # 2. domain: the equation of the facet as a function of sigma (i.e. constraint)
-    # 3. function: the value of the function on the domain (i.e. a)
-    # 4. hypothesis: the hypothesis object from which the bound is derived
-    faces = []
-    for pi in range(len(pieces)):
-        p = pieces[pi]
+    
+    # This implementation assumes that hypotheses is a piecewise-linear function 
+    # on the domain sigma_interval x [tau_lower, tau_upper]. Additionally, it is 
+    # assumed that there are no multiple-definitions of the function. 
+    # 
+    # The strategy is to compute all facets of the domains of each piece (which are
+    # 2-dimensional convex polytopes), then compute the value of 
+    # LV(s, t) / t along each facet as a RationalFunction for a particular range 
+    # of sigma. Store the pieces as tuples of (RationalFunction, Interval).
+    facets = []
+    for p in pieces:
         # Compute vertices and faces of the domain
         verts = p.domain.get_vertices()
         incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
         constraints = p.domain.get_constraints()
-
-        crits.update([v[0] for v in verts if sigma_interval.contains(v[0])])
-        # d/dt(f(s,t)/t) = -(A + Bs)/t^2, which vanishes for s = -A/B
-        if p.a[1] != 0:
-            s = -p.a[0] / p.a[1]
-            if sigma_interval.contains(s):
-                crits.add(s)
-
+        
         # Iterate through the edges
         for i in range(len(constraints)):
             c = constraints[i].coefficients
@@ -206,87 +189,69 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval, tau_lower, tau_upper):
             sub = Interval(min(v[0] for v in vs), max(v[0] for v in vs), True, True)
 
             if sub.length() > 0:
-                faces.append((RF([-c[1], -c[0]], [c[2]]), p, sub, lookup[pi]))
+                f = RF([p.a[1], p.a[0]]).div(RF([-c[1], -c[0]], [c[2]])).add(p.a[2])
+                facets.append((f, sub))
+    
+    # Then, compute their maximums as a piecewise RationalFunction
+    # at this point we can just make use of the same code as best density estimate solver 
+    x = RF.x
+    sup = [(RF.parse("0"), sigma_interval)] # placeholder
+    
+    for (func1, in1) in facets:
+        # For simplicity, work directly with sympy objects
+        f1 = func1.num / func1.den
+        new_sup = []
+        for (func2, in2) in sup:
+            f2 = func2.num / func2.den
+            solns = sympy.solve(f1 - f2)
+            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
+            crits.update([in1.x0, in1.x1])
+            crits = set(c for c in crits if in2.contains(c))
+            crits.update([in2.x0, in2.x1])
 
-    return max_RF(crits, faces)
+            crits = list(crits)
+            crits.sort()
+            for i in range(1, len(crits)):
+                inter = Interval(crits[i - 1], crits[i])
+                mid = inter.midpoint()
+                
+                if not in1.contains(mid):
+                    new_sup.append((func2, inter))
+                elif f2.subs(x, mid) >= f1.subs(x, mid):
+                    new_sup.append((func2, inter))
+                else:
+                    new_sup.append((func1, inter))
 
-# Bounds are 4-tuples of
-# (domain, function, interval, estimate), where
-#
-# 1. interval: the sigma interval on which the facet is defined
-# 2. domain: the equation of the facet as a function of sigma (i.e. constraint)
-# 3. function: the value of the function on the domain (i.e. a)
-# 4. hypothesis: the hypothesis object from which the bound is derived
-def max_RF(crits, faces):
+        # Simplify
+        sup = []
+        i = 0
+        while i < len(new_sup):
+            (fi, inti) = new_sup[i]
+            left = inti.x0
+            right = inti.x1
 
-    # Iterate through each subinterval of sigma
-    crits = list(crits)
-    crits.sort()
+            j = i + 1
+            while j < len(new_sup):
+                (fj, intj) = new_sup[j]
+                if not (fi == fj and right == intj.x0):
+                    break
+                right = intj.x1
+                j += 1
+                
+            sup.append((fi, Interval(left, right)))
+            i = j
+    
+    # Finally, work out the set of dependencies for each piece 
+    extended = []
+    for (f, inter) in sup:
+        s = inter.midpoint()
+        plane = Hyperplane([-s, 1, 0])
+        deps = [h for h in hypotheses 
+                   if any(p for p in h.data.bound.pieces if p.domain.intersects(plane))]
+        extended.append((f, inter, deps))
 
-    soln = []
-    for i in range(1, len(crits)):
-        s1 = crits[i - 1]
-        s2 = crits[i]
-        interval = Interval(s1, s2)
-        if interval.length() == 0:
-            continue
+    return extended
 
-        s = interval.midpoint()  # the test point
-
-        # Iterate through the faces, collecting t-coordinates where the vertical
-        # line \sigma = s intersects with a face
-        sup = float("-inf")
-        argmax = None
-        intersecting_faces = [f for f in faces if f[2].contains(s)]
-
-
-        #print(s, float(s))
-        if s == frac(111,140) or s == frac(191,240):
-
-            ifs = list(set(f[1] for f in faces if f[2].contains(0.79458)))
-            print("faces containing 0.79458")
-            for f in ifs:
-                print("\t", f)
-            fn = Piecewise(ifs)
-            fn.plot_domain((0.78, 0.8), (2, 3))
-            # Target specifically 0.79
-            ts = np.linspace(2, 3, 500)
-
-            max_ = 0
-            argmax = 0
-            for t in ts:
-                q = fn.at([0.79458, t]) / t
-                if q > max_:
-                    max_ = q
-                    argmax = t
-
-            print(0.79458, max_, argmax)
-
-
-        dependencies = {}
-        for constraint, func, _, hyp in intersecting_faces:
-            t = constraint.at(s)
-            q = func.at([s, t]) / t
-            if q > sup:
-                sup = q
-                # objective function (a[0] + a[1]s + a[2]t)/t when t = f(s)
-                argmax = (
-                    RF([func.a[1], func.a[0]]).div(constraint).add(func.a[2]),
-                    hyp,
-                )
-            dependencies[str(hyp.data)] = hyp
-
-        soln.append((argmax[0], interval, list(dependencies.values())))
-
-    # Simplify ranges by merging neighbouring intervals
-    for i in range(len(soln) - 1, 0, -1):
-        s1 = soln[i - 1]
-        s2 = soln[i]
-        if s1[0] == s2[0] and s1[1].x1 == s2[1].x0:
-            # Merge
-            s1[1].x1 = s2[1].x1
-            soln.pop(i)
-    return soln
 
 # Computes the maximum of
 #
@@ -315,7 +280,33 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
     sup1 = compute_sup_LV_on_tau(
         hyps, sigma_interval, tau0, 2 * tau0
     )
-
+    
+    # for p in sup1:
+    #     print(p[0], p[1])
+        
+    # sigmas = np.linspace(1/2, 1, 200)
+    # y1 = []
+    # y2 = []
+    # y3 = []
+    # for sigma in sigmas:
+    #     y1.append(min((p[0].at(sigma) for p in sup1 if p[1].contains(sigma)), default=0))
+    #     y2.append(approx_sup_LV_on_tau(hyps, sigma, tau0, tau0 * 2, 500))
+    #     y3.append(max((p[0].at(sigma) for p in sup1 if p[1].contains(sigma)), default=0))
+                  
+    # for i in range(len(sigmas)):
+    #     if abs(y1[i] - y2[i]) > 0.001:
+    #         print(sigmas[i], y1[i], y3[i], y2[i])
+            
+    # plt.plot(sigmas, y1, label="computed")
+    # plt.legend()
+    # plt.title("sup2")
+    # plt.show()
+    # plt.plot(sigmas, y1, label="computed")
+    # plt.plot(sigmas, y2, label="approx")
+    # plt.legend()
+    # plt.title("sup2")
+    # plt.show()
+    
     if debug:
         print(time.time() - start_time, "s")
         start_time = time.time()
@@ -334,34 +325,33 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
         hyps, sigma_interval, frac(2), tau0
     )
 
-    print('sup 2')
-    for p in sup2:
-        print(p[0], p[1])
-    # Compare numerical to computed
-    sigmas = np.linspace(1/2, 1, 1000)
-    y1 = []
-    y2 = []
-    y3 = []
-    for sigma in sigmas:
-        y1.append(min((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
-        y2.append(approx_sup_LV_on_tau(hyps, sigma, frac(2), tau0, 500))
-        y3.append(max((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
-
-    for i in range(len(sigmas)):
-        if abs(y1[i] - y2[i]) > 0.001:
-            print(sigmas[i], y1[i], y3[i], y2[i])
-
-    plt.plot(sigmas, y1, label="computed")
-    plt.legend()
-    plt.title("sup2")
-    plt.show()
-    plt.plot(sigmas, y1, label="computed")
-    plt.plot(sigmas, y2, label="approx")
-    plt.legend()
-    plt.title("sup2")
-    plt.show()
-
-
+    # print('sup 2')
+    # for p in sup2:
+    #     print(p[0], p[1])
+        
+    # Compare numerical to computed 
+    # sigmas = np.linspace(1/2, 1, 1000)
+    # y1 = []
+    # y2 = []
+    # y3 = []
+    # for sigma in sigmas:
+    #     y1.append(min((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
+    #     y2.append(approx_sup_LV_on_tau(hyps, sigma, frac(2), tau0, 500))
+    #     y3.append(max((p[0].at(sigma) for p in sup2 if p[1].contains(sigma)), default=0))
+                  
+    # for i in range(len(sigmas)):
+    #     if abs(y1[i] - y2[i]) > 0.001:
+    #         print(sigmas[i], y1[i], y3[i], y2[i])
+            
+    # plt.plot(sigmas, y1, label="computed")
+    # plt.legend()
+    # plt.title("sup2")
+    # plt.show()
+    # plt.plot(sigmas, y1, label="computed")
+    # plt.plot(sigmas, y2, label="approx")
+    # plt.legend()
+    # plt.title("sup2")
+    # plt.show()
 
     if debug:
         print(time.time() - start_time, "s")
