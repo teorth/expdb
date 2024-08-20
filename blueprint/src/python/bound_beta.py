@@ -30,10 +30,10 @@ class Bound_Beta_Transform:
     def __init__(self, name, transform):
         self.name = name
         self.transform = transform
-    
+
     def __repr__(self):
         return self.name
-    
+
 ###############################################################################
 
 
@@ -116,11 +116,11 @@ def exponent_pairs_to_beta_bounds(hypothesis_set):
                 {eph},
             )
         )
-        
-        # Append all beta bounds obtained via transformations 
+
+        # Append all beta bounds obtained via transformations
         for tr in transforms:
             hypotheses.extend(tr.data.transform(eph))
-            
+
     return hypotheses
 
 
@@ -182,7 +182,7 @@ def display_beta_bounds(hypotheses):
         )
     plt.xlim((-0.05, 0.55))
     plt.ylim((-0.05, 0.5))
-    plt.xlabel("α")
-    plt.ylabel("β(α)")
-    plt.title("Best bound on β(α)")
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$\beta(\alpha)$")
+    plt.title(r"Best bound on $\beta(\alpha)$")
     plt.show()
