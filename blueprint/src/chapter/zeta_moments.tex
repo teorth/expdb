@@ -139,7 +139,7 @@ $$ |W| \ll T^{o(1)} ( T (N^{-1/2} V)^{-1} (V')^{-5} + T^5 (N^{-1/2} V)^{-1} (V')
 and the claim now follows from the lower bound on $V'$.
 \end{proof}
 
-\begin{lemma}\label{ivic-moment}\cite[Theorem 8.4]{ivic}\uses{zeta-moment-def}  We have $M(\sigma,A) = 1$ when $A$ is equal to
+\begin{lemma}[Ivic's table of moment bounds]\label{ivic-moment}\cite[Theorem 8.4]{ivic}\uses{zeta-moment-def}  We have $M(\sigma,A) = 1$ when $A$ is equal to
 \begin{align*}
     \frac{4}{3-4\sigma} & \hbox{ for } 1/2 < \sigma \leq 5/8; \\
     \frac{10}{5-6\sigma} & \hbox{ for } 5/8 < \sigma \leq 35/54; \\
@@ -156,7 +156,7 @@ Additionally, for $\sigma=2/3$ one can take $A = 9.6187\dots$, for $\sigma = 7/1
 \begin{proof}\uses{zeta-from-exp, ivic-lvt-82, mad} This is a computation using Lemma \ref{zeta-from-exp}, Theorem \ref{ivic-lvt-82}, and Lemma \ref{mad}; see \cite{ivic} for details.
 \end{proof}
 
-\begin{theorem}\label{M_bound_larger_A}\uses{zeta-grow-def}\cite[Theorems 2.1, 2.2]{trudgian-yang}
+\begin{theorem}[Moment bounds for $\sigma=1/2$]\label{M_bound_larger_A}\uses{zeta-grow-def}\cite[Theorems 2.1, 2.2]{trudgian-yang}
     We have
     \[
     M(1/2, A) \leq \begin{cases}
@@ -191,7 +191,7 @@ Additionally, for $\sigma=2/3$ one can take $A = 9.6187\dots$, for $\sigma = 7/1
 
 It is also of interest to control large values of the moments.
 
-\begin{definition}\label{mixed-moment-def}
+\begin{definition}[Mixed moments]\label{mixed-moment-def}
     For fixed $1/2 \leq \sigma \leq 1$, $A \geq 0$, and $h \geq 0$, let $M(\sigma,A, \geq h)$ be the least (fixed) exponent for which the bound
 $$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| \geq T^h} |\zeta(\sigma+it)|^A\ dt \ll T^{M(\sigma,A,h)+o(1)}$$
 holds for unbounded $T$.
@@ -200,7 +200,7 @@ $$ \int_{0 \leq t \leq T: |\zeta(\sigma+it)| < T^h} |\zeta(\sigma+it)|^A\ dt \ll
 holds for unbounded $T$.
 \end{definition}
 
-\begin{lemma}\label{mad-variant}\uses{mixed-moment-def, lvz-def}  If $1/2 \leq \sigma_0 \leq 1$, $A \geq 1$, and $h \geq 0$ are fixed, then
+\begin{lemma}[Mixed moments and large values of zeta]\label{mad-variant}\uses{mixed-moment-def, lvz-def}  If $1/2 \leq \sigma_0 \leq 1$, $A \geq 1$, and $h \geq 0$ are fixed, then
     \begin{equation}\label{msah}
         M(\sigma_0,A,\geq h) \leq \sup_{\tau \geq 2; \sigma \geq 1/2, h\tau} (A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau))/\tau.
     \end{equation}
@@ -218,7 +218,7 @@ Similarly for $M(\sigma_0,A,\geq h)$, in which we replace the condition $\sigma 
 \begin{proof} This is a routine modification of the proof of Lemma \ref{mad}.
 \end{proof}
 
-\begin{corollary}\label{ivic-split}\uses{mixed-moment-def, exp-pair-def}  If $(k,\ell)$ is an exponent pair with $k > 0$, then
+\begin{corollary}[Mixed moments and exponent pairs]\label{ivic-split}\uses{mixed-moment-def, exp-pair-def}  If $(k,\ell)$ is an exponent pair with $k > 0$, then
     $$ M(1/2,6, \geq h) \leq 1$$
 and
 $$ M\left(1/2,\frac{2(1+2k+2\ell)}{k}, \leq h\right) \leq \frac{k+\ell}{k}$$
@@ -236,19 +236,19 @@ The claim then follows from Lemma \ref{mad-variant}.
 \end{proof}
 
 
-\begin{corollary}\label{ivic-6-large}\cite[(8.56)]{ivic}\uses{mixed-moment-def} $M(1/2, 6, \geq 11/72) \leq 1$ and $M(1/2,24, \leq 11/72) \leq 15/4$.
+\begin{corollary}[Specific mixed moments]\label{ivic-6-large}\cite[(8.56)]{ivic}\uses{mixed-moment-def} $M(1/2, 6, \geq 11/72) \leq 1$ and $M(1/2,24, \leq 11/72) \leq 15/4$.
 \end{corollary}
 
 \begin{proof}\uses{zeta-from-exp, add-exponential} Apply Corollary \ref{ivic-split} with the exponent pair $(4/18, 11/18) = BABA(1/6, 2/3)$ from Corollary \ref{add-exponential}.
 \end{proof}
 
-\begin{lemma}\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def, mixed-moment-def} Suppose that $M(1/2,A,\geq h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
+\begin{lemma}[Large value theorems from mixed moment bounds]\label{bourgain-remark-1}\cite[Proposition 2]{bourgain_remarks_1995}\uses{lv-def, mixed-moment-def} Suppose that $M(1/2,A,\geq h) \leq 1$ for some $A \geq 4$ and $h \geq 0$.  Then one has
     $$ \LV(\sigma,\tau) \leq \max( \alpha + 2 - 2 \sigma, -\alpha + \tau + A/2 - 2A (\sigma-1/2))$$
 whenever $1/2 \leq \sigma \leq 1$, $\tau > 0$, and $0 \leq \alpha \leq 1-\sigma$ is such that
 $$ \sigma - \frac{1}{2} > \frac{\tau h}{2} + \frac{1}{4}.$$
 \end{lemma}
 
-\begin{lemma}\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def, mixed-moment-def}  Suppose that $M(1/2,6,\geq h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
+\begin{lemma}[Zero density theorems from mixed moment bounds]\label{bourgain-remark-2}\cite[Proposition 5]{bourgain_remarks_1995}\uses{lv-def, zeta-grow-def, mixed-moment-def}  Suppose that $M(1/2,6,\geq h) \leq 1$ for some $h \geq 0$.  Then for any $1/2 \leq \alpha < \sigma < 1$, one has
 $$ \A(\sigma) \leq \max\left( \frac{\mu(\alpha)}{\sigma-\alpha}, \frac{3}{8\sigma-5}, \frac{6h}{4\sigma-3}\right).$$
 \end{lemma}
 
