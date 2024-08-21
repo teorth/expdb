@@ -543,7 +543,8 @@ def prove_LV_on_tau_bound(hypotheses, f, sigma_range, tau_range):
 
 # Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic
 # properties (ii) of Large value estimates section) to obtain a better large
-# value estimate.
+# value estimate. The domain of the transformed hypothesis will be the same as 
+# the original hypothesis. 
 #
 # If the large value estimate is unchanged, returns None. Otherwise, the new
 # large value estimate is returned as a Hypothesis
