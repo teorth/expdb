@@ -250,47 +250,21 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval):
 #
 # for all s \in sigma_interval, as a piecewise RationalFunction. This function
 # should return the same result as approximate_best_zero_density_estimate.
-def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3), debug=False):
+def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
 
     s_lim = (sigma_interval.x0, sigma_interval.x1)
-
-    if debug:
-        start_time = time.time()
 
     # Get large value bounds
     hyps = lv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (tau0, 2 * tau0))
     )
-
-    if debug:
-        print(time.time() - start_time, "s")
-        start_time = time.time()
-        print(f"computing sup LV with {len(hyps)} estimates")
-
-    sup1 = compute_sup_LV_on_tau(
-        hyps, sigma_interval
-    )
-
-    if debug:
-        print(time.time() - start_time, "s")
-        start_time = time.time()
+    sup1 = compute_sup_LV_on_tau(hyps, sigma_interval)
 
     # Get zeta large value bounds
     hyps = zlv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
     )
-
-    if debug:
-        print(time.time() - start_time, "s")
-        start_time = time.time()
-        print(f"computing sup LVZ with {len(hyps)} estimates")
-
-    sup2 = compute_sup_LV_on_tau(
-        hyps, sigma_interval
-    )
-
-    if debug:
-        print(time.time() - start_time, "s")
+    sup2 = compute_sup_LV_on_tau(hyps, sigma_interval)
 
     # Compute the maximum as a piecewise function
     crits = set(s[1].x0 for s in sup1)
