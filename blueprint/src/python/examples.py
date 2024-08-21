@@ -381,14 +381,9 @@ def zero_density_estimates_examples3():
     )
 
 def zero_density_estimates_examples4():
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypothesis(trivial_exp_pair)
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair'))
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type='Exponent pair transform'))
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform"))
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Upper bound on beta"))
-
-    zdt = zd.ep_to_zd(hypotheses)
+    zdt = zd.bourgain_ep_to_zd()
+    for h in zdt:
+        print(h.data, h.proof)
 
 
 def all_examples():
@@ -400,7 +395,7 @@ def all_examples():
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
-    # zero_density_estimates_examples4()
-    zd.optimize_pintz_zero_density(literature)
+    zero_density_estimates_examples4()
+    # zd.optimize_pintz_zero_density(literature)
 
 all_examples()

@@ -63,7 +63,7 @@ class Zero_Density_Estimate:
         self.bound = None
 
     def __repr__(self):
-        return f"A(x)(1-x) \leq {self.expr} on {self.interval}"
+        return f"A(x) \leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         if self.bound is None:
@@ -428,18 +428,31 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 #   - k < 11/85
 #   - 11/85 < k < 1/5
 #   - s0 = (144k - 11l - 11)/(170k - 22)
-def bourgain_ep_to_zd(exp_pairs):
-
+def bourgain_ep_to_zd():
+    
+    # Temporary:
+    # For now, manually enter the exponent pairs found from the above numerical optimisation
+    eps = [
+        (frac(11,85), frac(59,85)),
+        (frac(391, 4595), frac(3461, 4595)),
+        (frac(2779, 38033), frac(58699, 76066)),
+        (frac(1101653, 15854002), frac(12327829, 15854002)),
+        (frac(1959, 47230), frac(3975, 4723)),
+        (frac(1175779, 38456886), frac(16690288, 19228443)),
+        (frac(89, 3478), frac(15327, 17390)),
+        (frac(1, 100), frac(14, 15))
+        ]
+    
     bounds = []
-    for eph in exp_pairs:
-        (k, l) = eph.data.k, eph.data.l
+    for (k, l) in eps:
+        h = ep.derived_exp_pair(k, l, f"See proof of ({k}, {l})", set())
         if k <= frac(1, 5) and l >= frac(3, 5) and 15 * l + 20 * k >= 13:
             if k <= frac(11, 85):
                 s0 = max(frac(1, 2), (l + 1) / (2 * (k + 1)))
                 if s0 >= 1:
                     continue
                 bounds.append(
-                    (RF([4 * k], [2 * (1 + k), -1 - l]), Interval(s0, 1), eph)
+                    (RF([4 * k], [2 * (1 + k), -1 - l]), Interval(s0, 1), h)
                 )
             else:
                 s0 = max(
@@ -450,7 +463,7 @@ def bourgain_ep_to_zd(exp_pairs):
                 if s0 >= 1:
                     continue
                 bounds.append(
-                    (RF([4 * k], [2 * (1 + k), -1 - l]), Interval(s0, 1), eph)
+                    (RF([4 * k], [2 * (1 + k), -1 - l]), Interval(s0, 1), h)
                 )
 
     crits = set()
@@ -495,10 +508,15 @@ def bourgain_ep_to_zd(exp_pairs):
             s1[1].x1 = s2[1].x1
             soln.pop(i)
 
-    for s in soln:
-        print(s[0], "for x \\in", s[1], s[1].contains(frac(15, 16)), s[2])
-        s[2].recursively_list_proofs()
-    return soln
+    # for s in soln:
+    #     print(s[0], "for x \\in", s[1], s[1].contains(frac(15, 16)), s[2])
+    #     s[2].recursively_list_proofs()
+    return [derived_zero_density_estimate(
+                Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+                f"Follows from applying [Bourgain, 1995] and taking {s[2]}", 
+                {s[2]}
+                ) 
+            for s in soln]
 
 
 # Compute all zero-density estimates derived from exponent pairs
@@ -604,10 +622,9 @@ def best_zero_density_estimate(hypotheses, verbose=False):
             i = j
 
     if verbose:
-        print("A(x) \leq ")
         for b in best_bound:
             if b.data.interval.x0 < Constants.ZERO_DENSITY_SIGMA_LIMIT:
-                print(f"\t{b.data}  {b.proof}")
+                print(f"{b.data}  {b.proof}")
 
         # plot zero-density estimate
         N = 500

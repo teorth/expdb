@@ -306,8 +306,8 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        prove_zero_density(new_hyps, verbose, 0.775, "part 1/2 of optimized Bourgain"),
-        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain")
+        prove_zero_density(new_hyps, verbose, frac(22,29), "part 1/2 of optimized Bourgain", tau0=frac(2)),
+        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain", tau0=frac(2))
     ]
 
 # Compute the best zero-density estimates from the literature
@@ -319,7 +319,8 @@ def compute_best_zero_density():
     zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
-
+    hs.add_hypotheses(zd.bourgain_ep_to_zd())
+    
     zd.best_zero_density_estimate(hs, verbose=True)
 
 #################################################################################################
@@ -348,9 +349,9 @@ def prove_zero_density_estimates():
     # prove_zero_density_heathbrown_1979_2()
     # prove_zero_density_ivic_1984()
     # prove_zero_density_guth_maynard_2024()
-    prove_zero_density_heathbrown_extended()
+    # prove_zero_density_heathbrown_extended()
     # prove_zero_density_bourgain_improved()
-    #compute_best_zero_density()
+    compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()

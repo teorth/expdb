@@ -434,7 +434,7 @@ $$ \rho \leq \min(1, 4-2\tau)$$
 \end{equation}
 for any $\alpha_1, \alpha_2 \geq 0$.
 
-We first consider the case when $17/22 \leq \sigma \leq 4/5$, so that $\tau_0 = 8(2\sigma-1)/3$.
+We first consider the case when $38/49 \leq \sigma \leq 4/5$, so that $\tau_0 = 8(2\sigma-1)/3$.
 As in the proof of Theorem \ref{bourgain-density}, we set
 $$ \alpha_2 := \max\left( \frac{5\tau}{4} - (1+\sigma), 0\right)$$
 and
@@ -507,10 +507,54 @@ but this is an identity.
 \literature
 \code{add_zero_density_bourgain_1995()}
 
-\begin{proof}\uses{bourgain-zd, vdc-class} Apply Theorem \ref{bourgain-zd} with the classical pairs $(\frac{1}{14},\frac{11}{14})$ and $(\frac{1}{6}, \frac{1}{3})$ respectively from Proposition \ref{vdc-class}.
+\begin{proof}\uses{bourgain-zd, vdc-class} Apply Theorem \ref{bourgain-zd} with the classical pairs $(\frac{1}{14},\frac{11}{14})$ and $(\frac{1}{6}, \frac{2}{3})$ respectively from Proposition \ref{vdc-class}.
 \end{proof}
 
-It is remarked in \cite{bourgain_remarks_1995} that further zero density estimates could be obtained by using additional exponent pairs, such as the Huxley--Watt exponent pair $(9/56, 37/56)$ from Theorem \ref{line-sym}.
+It is remarked in \cite{bourgain_remarks_1995} that further zero density estimates could be obtained by using additional exponent pairs.
+
+\begin{corollary}\label{bourgain-zero-density-optimized}\uses{zero-def} One has
+\[
+A(\sigma) \leq \begin{cases}
+\frac{11}{12 \left(4 \sigma - 3\right)} & 3/4 < \sigma \le 14/15,\\
+\frac{391}{2493 \sigma - 2014} & 14/15 < \sigma \le 2841/3016,\\
+\frac{22232}{163248 \sigma - 134765} & 2841/3016 < \sigma \le 859/908,\\
+\frac{4406612}{33911310 \sigma - 28181831} & 859/908 < \sigma \le 635113/655952,\\
+\frac{3918}{49189 \sigma - 43490} & 635113/655952 < \sigma \le 637457/656512,\\
+\frac{2351558}{39632665 \sigma - 35918731} & 637457/656512 < \sigma \le 39/40,\\
+\frac{1780}{35670 \sigma - 32717} & 39/40 < \sigma \le 59/60,\\
+\frac{6}{303 \sigma - 290} & 59/60 < \sigma < 1.
+\end{cases}
+\]
+\end{corollary}
+\python[zero_density_estimate]
+\code{bourgain_ep_to_zd()}
+\begin{proof}
+Let $\mathcal{S}(\sigma)$ denote the closure of the region
+\begin{align*}
+\Bigg\{(k, \ell) : 0 < k < \frac{1}{5}, \frac{3}{5} < \ell < 1, 15\ell + 20k > 13, \frac{\ell + 1}{2(k + 1)} < \sigma, \\
+k < \frac{11}{85} \text{ or } \left(k > \frac{11}{85} \text{ and } \frac{144k - 11\ell - 11}{170k - 22} < \sigma\right)\Bigg\}
+\end{align*}
+One may verify that $\mathcal{S}(\sigma)$ is a convex polygon for all $3/4 < \sigma < 1$, and thus so is $\mathcal{S}(\sigma) \cap H$, where $H$ is the convex hull of exponent pairs. Thus
+\[
+\min_{(k, \ell) \in \mathcal{S}(\sigma) \cap H}\frac{4k}{2(1 + k)\sigma - 1 - \ell}
+\]
+is a convex optimisation problem for each $3/4 < \sigma < 1$. 
+We take the following choices of $(k, \ell)$ (found with the aid of computer assistance). 
+\[
+\left(\frac{11}{85} - \varepsilon, \frac{59}{85} + 2\varepsilon\right), 
+\left(\frac{391}{4595} + \varepsilon, \frac{3461}{4595}\right), 
+\left(\frac{2779}{38033} + \varepsilon, \frac{58699}{76066}\right),
+\left(\frac{1101653}{15854002} + \varepsilon, \frac{12327829}{15854002}\right),
+\]
+\[
+\left(\frac{1959}{47230} + \varepsilon, \frac{3975}{4723}\right),
+\left(\frac{1175779}{38456886} + \varepsilon, \frac{16690288}{19228443}\right),
+\left(\frac{89}{3478} + \varepsilon, \frac{15327}{17390}\right),
+\left(\frac{1}{100} + \varepsilon, \frac{14}{15}\right).
+\]
+The desired result follows from taking a minimum over the implied bounds. 
+\end{proof}
+
 
 \begin{lemma}\label{ivic-zero-density}\uses{zero-def}\cite{ivic_exponent_pairs}, \cite[Theorem 11.2]{ivic} We have
     $$ \A(\sigma) \leq \frac{4}{2\sigma+1}$$
