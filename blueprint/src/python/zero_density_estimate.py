@@ -12,6 +12,7 @@ from fractions import Fraction as frac
 from functions import Affine, Affine2, Hyperplane, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
 from hypotheses import *
 import large_values as lv
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 from reference import Reference
@@ -635,7 +636,13 @@ def best_zero_density_estimate(hypotheses, verbose=False):
         for i in range(N):
             sigma = 1 / 2 + 1 / 2 * i / N
             xs.append(sigma)
-            A1 = min(h.data.at(sigma) for h in hs if h.data.interval.contains(sigma))
+            min_ = 1000000
+            for h in hs:
+                if h.data.interval.contains(sigma):
+                    q = h.data.at(sigma)
+                    if q.is_real and math.isfinite(q) and min_ > q:
+                        min_ = q
+            A1 = min_
             A2 = next((b.data.at(sigma) for b in best_bound if b.data.interval.contains(sigma)), 0)
             literature_zdt.append(A1)
             computed_zdt.append(A2)
