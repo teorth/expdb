@@ -609,6 +609,8 @@ whenever
 &\qquad \max\left( \frac{9m^2-4m+2}{12m^2-6m+2}, \frac{3m^2(1+2k+2\ell)-(4k+2\ell)m + 2k+2\ell}{4m^2(1+2k+2\ell)-(6k+4\ell)m + 2k+2\ell} \right) \biggr).
 \end{align*}
 \end{lemma}
+\python{zero_density_estimate}
+\code{ivic_ep_to_zd(exp_pairs, m=2)}
 
 \begin{proof}\uses{hb-12, a-ivt-1, zerp=large-cor2} With the hypothesis on $\sigma$, one sees from Lemma \ref{a-ivt-1} that
 $$ \LV(\sigma,\tau) \leq \max( 2 - 2 \sigma, \tau - \frac{(4m-2)\sigma + 2-2m}{m} + 2-2\sigma)$$
@@ -707,6 +709,67 @@ from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \
 
 
 {\bf we should be able to do better with subdivision!}
+
+\begin{theorem}[Pintz zero density theorem with subdivision]\label{pintz-density-subdiv}\uses{zero-def} If $k \geq 4$, $\ell \geq 3$ are integers and $\sigma = 1-\eta$ is such that
+\begin{equation}\label{eta-b1}
+    \frac{1}{k(k+1)} \leq \eta < \frac{1}{k(k-1)}
+\end{equation}
+and
+\begin{equation}\label{eta-l1}
+ \frac{1}{2\ell(\ell+1)} \leq \eta < \frac{1}{2\ell(\ell-1)}
+\end{equation}
+then
+$$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(2-k+(k-1)\sigma) + 4(1-\sigma)}\right).$$
+\end{theorem}
+\begin{proof} 
+We apply Corollary \ref{zero-large-cor2} with
+\begin{equation}\label{tau0-def}
+\tau_0 := \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} k(2-k+(k-1)\sigma) + 3(1 - \sigma)) - \varepsilon
+\end{equation}
+for an arbitrarily small $\varepsilon$.
+It then suffices to show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.
+
+First we prove \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$. 
+From Lemma \ref{beta-HB} one has
+\begin{align*}
+\tau \beta(1/\tau) &\leq 1 + \max\left( \frac{\tau-r}{r(r-1)}, -\frac{1}{r(r-1)}, - \frac{2\tau}{r^2(r-1)}\right)
+\end{align*}
+for any $r \ge 3$. If 
+\[
+\frac{(r-1)^2+1}{r}\leq \tau \leq r-1
+\]
+then 
+\begin{equation}\label{tbt_bound_1}
+\tau \beta(1/\tau) \le 1-\frac{1}{r(r-1)} \le \sigma 
+\end{equation}
+by \eqref{eta-b1}. On the other hand if 
+\[
+r - 1 < \tau \le \frac{r^2+1}{r+1}
+\]
+then 
+\begin{equation}\label{tbt_bound_2}
+\tau \beta(1/\tau) \le 1+\frac{\tau-r}{r(r-1)} \le 1+\frac{\tau_0 - r}{r(r-1)} = \sigma. 
+\end{equation}
+Therefore, taking $r = 3, 4, \ldots$ in \eqref{tbt_bound_1} and \eqref{tbt_bound_2}, one has 
+\[
+\tau \beta(1/\tau) \le \sigma,\qquad (2 \le \tau \le \tau_1),
+\]
+\[
+\tau_1 := k(2 - k + (k - 1)\sigma).
+\]
+By Lemma \ref{beta-zeta-vanish}, one has
+\[
+\LV(\sigma, \tau) \leq 0,\qquad (\tau \le \tau_1).
+\]
+Hence by subdivision, one has, for any $\tau_1 \le \tau \le 4\tau_0/3$,
+\[
+\LV(\sigma, \tau) \le \tau - \tau_1 \le 3(1 - \sigma)\frac{\tau}{\tau_0}
+\]
+where the second inequality follows from $\tau_0 \le \frac{3}{4}\tau_1 + 3(1 - \sigma)$ and hence 
+\[
+\tau - 3(1 - \sigma)\frac{\tau}{\tau_0} = \frac{\tau_0 - 3(1 - \sigma)}{\tau_0}\tau \le \frac{3}{4}\frac{\tau}{\tau_0}\tau_1 \le \tau_1.
+\]
+
 
 The range of the second bound in Lemma \ref{ivic-zero-density} was recently extended:
 
