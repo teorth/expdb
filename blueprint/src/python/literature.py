@@ -975,11 +975,23 @@ zd.add_zero_density(
 def add_zero_density_pintz_2023():
     zd.add_zero_density(
         literature,
+        "3/(24 * x - 20)",
+        Itvl(frac(23, 24), frac(39, 40)),
+        rm.get("pintz_density_2023"),
+    )
+    zd.add_zero_density(
+        literature,
         "2/(15 * x - 12)",
         Itvl(frac(39, 40), frac(41, 42)),
         rm.get("pintz_density_2023"),
     )
-    for k in range(4, 100):
+    zd.add_zero_density(
+        literature,
+        "3/(40 * x - 35)",
+        Itvl(frac(41, 42), frac(59, 60)),
+        rm.get("pintz_density_2023"),
+    )
+    for k in range(6, 100):
         sigma_lower = 1 - frac(1, 2 * k * (k - 1))
         if sigma_lower > Constants.ZERO_DENSITY_SIGMA_LIMIT:
             break
