@@ -537,6 +537,14 @@ def ep_to_zd(hypotheses):
 
     return zdts
 
+# Compute the set of density estimates implied by Pintz theorem using subdivision
+def compute_pintz_density_estimate_subdiv():
+    N = 10
+    # Intervals for eta 
+    for k in range(4, N):
+        print(k, Interval(1 - frac(1,k*(k-1)), 1 - frac(1, k*(k+1))))
+    for l in range(3, N):
+        print(l, Interval(1 - frac(1,2*l*(l-1)), 1 - frac(1, 2*l*(l+1))))
 
 # Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise
 # function that represents the best zero-density estimate in each subinterval of [1/2, 1]
