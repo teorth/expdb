@@ -713,6 +713,10 @@ from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \
 \begin{theorem}[Pintz zero density theorem with subdivision]\label{pintz-density-subdiv}\uses{zero-def} Let $k \geq 4$, $\ell \geq 3$ and $\sigma = 1-\eta$ satisfy the same conditions of Theorem \ref{pintz-density}. Then
 $$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1 - (k - 1)\eta) + 4\eta}\right).$$
 \end{theorem}
+
+\python{zero_density_estimate}
+\code{compute_pintz_density_estimate_subdiv()}
+
 \begin{proof}
 We apply Corollary \ref{zero-large-cor2} with
 \begin{equation}\label{tau0-def1}
@@ -808,7 +812,9 @@ $\dfrac{4406612}{33911310\sigma - 28181831}$ & $\dfrac{859}{908} \le \sigma < \d
     \hline
     $\dfrac{2351558}{39632665\sigma - 35918731}$ & $\dfrac{60725033}{62460603} \le \sigma < \dfrac{39}{40} = 0.975$ & Corollary \ref{bourgain-zero-density-optimized} \\
     \hline
-    $\dfrac{2}{15\sigma - 12}$ & $\dfrac{39}{40} \leq \sigma < \dfrac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density} \\
+    $\dfrac{3}{40 \sigma - 35}$ & $\dfrac{39}{40} \leq \sigma < \dfrac{40}{41} = 0.9756\ldots$ & Theorem \ref{pintz-density-subdiv} \\
+    \hline
+    $\dfrac{2}{13 \sigma - 10}$ & $\dfrac{40}{41} \leq \sigma < \dfrac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density-subdiv} \\
     \hline
     $\dfrac{3}{40 \sigma - 35}$ & $\dfrac{41}{42} \leq \sigma < \dfrac{59}{60} = 0.9833\ldots$ & Theorem \ref{pintz-density} \\
     \hline

@@ -537,15 +537,79 @@ def ep_to_zd(hypotheses):
 
     return zdts
 
+
+# Returns the maximum of two RationalFunction instances over an interval 
+def max_of(f1, f2, interval):
+    crits = sympy.solve(f1.num * f2.den - f1.den * f2.num)
+    crits = set(c for c in crits if interval.contains(c))
+    crits.update([interval.x0, interval.x1])
+    crits = list(crits)
+    crits.sort()
+    
+    maxfs = []
+    for i in range(1, len(crits)):
+        sub = Interval(crits[i - 1], crits[i])
+        x = sub.midpoint()
+        maxf = f2 if f1.at(x) < f2.at(x) else f1 
+        maxfs.append((maxf, sub))
+    return maxfs
+    
+# Given a list of tuples (RationalFunction, interval), 
+# returns a simplified list of tuples representing the same piecewise defined 
+# function         
+def simplify(pieces):
+    # Simplify
+    simplified_pieces = []
+    i = 0
+    while i < len(pieces):
+        (fi, inti) = pieces[i]
+        left = inti.x0
+        right = inti.x1
+
+        j = i + 1
+        while j < len(pieces):
+            (fj, intj) = pieces[j]
+            if not (fi == fj and right == intj.x0):
+                break
+
+            right = intj.x1
+            j += 1
+
+        simplified_pieces.append((fi, Interval(left, right)))
+        i = j
+    return simplified_pieces
+    
 # Compute the set of density estimates implied by Pintz theorem using subdivision
 def compute_pintz_density_estimate_subdiv():
-    N = 10
-    # Intervals for eta 
+    N = 20
+    bounds = []
     for k in range(4, N):
-        print(k, Interval(1 - frac(1,k*(k-1)), 1 - frac(1, k*(k+1))))
-    for l in range(3, N):
-        print(l, Interval(1 - frac(1,2*l*(l-1)), 1 - frac(1, 2*l*(l+1))))
-
+        k_int = Interval(frac(1, k*(k+1)), frac(1,k*(k-1))) 
+        # Bound 1: 4/(((k - 1) k - 4) x + (2 - k) k + 4)
+        b1 = RF([4], [(k - 1) * k - 4, (2 - k) * k + 4])
+        #b1 = RF([4], [(k - 1) * k, (2 - k) * k])
+        for l in range(3, N):
+            l_int = Interval(frac(1, 2*l*(l+1)), frac(1,2*l*(l-1)))
+            # Bound 2: 3/((2 l - 2) l x + (3 - 2 l) l)
+            b2 = RF([3], [(2 * l - 2) * l, (3 - 2 * l) * l])
+            
+            interval = k_int.intersect(l_int)
+            sigma_interval = Interval(1 - interval.x1, 1 - interval.x0, 
+                                      interval.include_upper, interval.include_lower)
+            if not interval.is_empty():
+                bounds.append((k, l, sigma_interval, [b1, b2]))
+    
+    # Compute the maximum 
+    zdes = []
+    for b in bounds:
+        interval = b[2]
+        (b1, b2) = b[3]
+        zdes.extend(max_of(b1, b2, interval))
+        
+    # zdes.sort(key=lambda b: b[1].x0)
+    zdes = simplify(zdes)
+    return zdes
+    
 # Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise
 # function that represents the best zero-density estimate in each subinterval of [1/2, 1]
 # Note that this function does not compute zero-density estimates from other
