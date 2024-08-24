@@ -702,7 +702,7 @@ To prove \eqref{lvo}, it suffices by Lemma \ref{montgomery-lv} and \eqref{obviou
 $$ \sup_{1 \leq \tau \leq \tau_0} \beta(1/\tau) \tau < 2\sigma - 1 = 1 - 2 \eta.$$
 Using \eqref{taub}, \eqref{eta-l} we obtain the claim whenever
 $$ \tau \in [r^2(r-1)\eta+\eps, r(1-2(r-1)\eta)-\eps]$$
-for some $3 \leq r \leq \ell$.  These cover the range $[18\eta+\eps, \tau]$.  For the remaining range $[1, 18\eta+\eps]$ we use the van der Corput bound
+for some $3 \leq r \leq \ell$.  These cover the range $[18\eta+\eps, \tau_0]$.  For the remaining range $[1, 18\eta+\eps]$ we use the van der Corput bound
 $$ \tau \beta(1/\tau) \leq \frac{\tau}{2} \leq 9 \eta$$
 from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \leq \frac{1}{12}$.
 \end{proof}
@@ -710,64 +710,32 @@ from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \
 
 {\bf we should be able to do better with subdivision!}
 
-\begin{theorem}[Pintz zero density theorem with subdivision]\label{pintz-density-subdiv}\uses{zero-def} If $k \geq 4$, $\ell \geq 3$ are integers and $\sigma = 1-\eta$ is such that
-\begin{equation}\label{eta-b1}
-    \frac{1}{k(k+1)} \leq \eta < \frac{1}{k(k-1)}
-\end{equation}
-and
-\begin{equation}\label{eta-l1}
- \frac{1}{2\ell(\ell+1)} \leq \eta < \frac{1}{2\ell(\ell-1)}
-\end{equation}
-then
-$$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(2-k+(k-1)\sigma) + 4(1-\sigma)}\right).$$
+\begin{theorem}[Pintz zero density theorem with subdivision]\label{pintz-density-subdiv}\uses{zero-def} Let $k \geq 4$, $\ell \geq 3$ and $\sigma = 1-\eta$ satisfy the same conditions of Theorem \ref{pintz-density}. Then
+$$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1 - (k - 1)\eta) + 4\eta}\right).$$
 \end{theorem}
-\begin{proof} 
+\begin{proof}
 We apply Corollary \ref{zero-large-cor2} with
-\begin{equation}\label{tau0-def}
-\tau_0 := \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} k(2-k+(k-1)\sigma) + 3(1 - \sigma)) - \varepsilon
+\begin{equation}\label{tau0-def1}
+\tau_0 := \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} k(1 - (k - 1)\eta) + 3\eta) - \varepsilon
 \end{equation}
 for an arbitrarily small $\varepsilon$.
-It then suffices to show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.
+As before, it suffices to show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.
 
-First we prove \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$. 
-From Lemma \ref{beta-HB} one has
-\begin{align*}
-\tau \beta(1/\tau) &\leq 1 + \max\left( \frac{\tau-r}{r(r-1)}, -\frac{1}{r(r-1)}, - \frac{2\tau}{r^2(r-1)}\right)
-\end{align*}
-for any $r \ge 3$. If 
+We proceed as in the proof of the previous theorem, where it was shown that
 \[
-\frac{(r-1)^2+1}{r}\leq \tau \leq r-1
-\]
-then 
-\begin{equation}\label{tbt_bound_1}
-\tau \beta(1/\tau) \le 1-\frac{1}{r(r-1)} \le \sigma 
-\end{equation}
-by \eqref{eta-b1}. On the other hand if 
-\[
-r - 1 < \tau \le \frac{r^2+1}{r+1}
-\]
-then 
-\begin{equation}\label{tbt_bound_2}
-\tau \beta(1/\tau) \le 1+\frac{\tau-r}{r(r-1)} \le 1+\frac{\tau_0 - r}{r(r-1)} = \sigma. 
-\end{equation}
-Therefore, taking $r = 3, 4, \ldots$ in \eqref{tbt_bound_1} and \eqref{tbt_bound_2}, one has 
-\[
-\tau \beta(1/\tau) \le \sigma,\qquad (2 \le \tau \le \tau_1),
-\]
-\[
-\tau_1 := k(2 - k + (k - 1)\sigma).
+\tau \beta(1/\tau) < \sigma,\qquad (2 \le \tau < \tau_1 := k(1 - (k - 1)\eta)).
 \]
 By Lemma \ref{beta-zeta-vanish}, one has
 \[
-\LV(\sigma, \tau) \leq 0,\qquad (\tau \le \tau_1).
+\LV_\zeta(\sigma, \tau) \leq 0,\qquad (\tau \le \tau_1).
 \]
 Hence by subdivision, one has, for any $\tau_1 \le \tau \le 4\tau_0/3$,
 \[
-\LV(\sigma, \tau) \le \tau - \tau_1 \le 3(1 - \sigma)\frac{\tau}{\tau_0}
+\LV_\zeta(\sigma, \tau) \le \tau - \tau_1 \le 3\eta\frac{\tau}{\tau_0}
 \]
-where the second inequality follows from $\tau_0 \le \frac{3}{4}\tau_1 + 3(1 - \sigma)$ and hence 
+where the second inequality follows from $\tau_0 \le \frac{3}{4}\tau_1 + 3\eta$ and hence
 \[
-\tau - 3(1 - \sigma)\frac{\tau}{\tau_0} = \frac{\tau_0 - 3(1 - \sigma)}{\tau_0}\tau \le \frac{3}{4}\frac{\tau}{\tau_0}\tau_1 \le \tau_1.
+\tau - 3\eta\frac{\tau}{\tau_0} = \frac{\tau_0 - 3\eta}{\tau_0}\tau \le \frac{3}{4}\frac{\tau}{\tau_0}\tau_1 \le \tau_1.
 \]
 To show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$, we proceed as before.
 \end{proof}
