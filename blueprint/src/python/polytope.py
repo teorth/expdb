@@ -108,7 +108,7 @@ class Polytope:
     # Parameters:
     #   - constraints: a list of lists, each of which has the form [a_0 a_1 ... a_d]
     #           representing the inequality a_0 + a_1 x_1 + ... + a_d x_d \geq 0
-    def __init__(self, constraints, linear=False, canonicalize=False, debug=False):
+    def __init__(self, constraints, linear=False, canonicalize=False):
         
         # There is a strange bug when constraint is a list of zeroes - where 
         # the resulting matrix adds to the linset. Remove such redundant constraints
