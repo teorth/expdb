@@ -19,6 +19,8 @@ import numbers
 #    - 'Large value estimate'
 #    - 'Zeta large value estimate'
 #    - 'Zero density estimate'
+#    - 'Large value energy region'
+#    - 'Large value energy region transform'
 # - description : a longer description of the hypothesis, e.g., 'The bound
 #       $\mu(1/2) \leq 13/84$'.  Defaults to the description of the underlying data.
 # - citation : a reference to where the hypothesis was discovered/proven/conjectured,

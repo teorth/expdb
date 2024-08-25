@@ -380,6 +380,7 @@ def zero_density_estimates_examples3():
         "Best zero density estimate",
     )
 
+
 def zero_density_estimates_examples4():
     zdt = zd.bourgain_ep_to_zd()
     for h in zdt:

@@ -1,21 +1,37 @@
 # code implementation for large value additive energy region theorems
-from functions import *
-from polytope import *
+
 import copy 
+from fractions import Fraction as frac
+from functions import *
+from hypotheses import Hypothesis
+from polytope import Polytope
+from reference import Reference
+from transform import Transform
 
 class Large_Value_Energy_Region:
     
     # Construct a valid large value energy region represented as a union of 
     # 5-dimensional polytopes 
     # Parameters:
-    #   - polytopes (list of Polytope) the set of polytopes whose union represent
-    #               the energy region. The polytopes may not necessarily be disjoint.
+    #   - polytopes (list of Polytope or Polytope) the set of polytopes whose union 
+    #     represent the energy region. The polytopes may not necessarily be disjoint.
     def __init__(self, polytopes):
-        self.region = polytopes
+        # Should this be a set instead of a list?
+        if not isinstance(polytopes, list) and \
+            not isinstance(polytopes, Polytope):
+            raise ValueError("Parameter polytopes must be a list of Polytope or Polytope")
+            
+        if isinstance(polytopes, Polytope):
+            self.region = [polytopes]
+        else:
+            self.region = polytopes
+    
     
     def __repr__(self):
         return "Union of " + str(self.region)
         
+    def __copy__(self):
+        return Large_Value_Energy_Region(copy.copy(self.region))
         
     # Returns whether the region contains a 5-dimensional point 
     def contains(self, point):
@@ -44,11 +60,43 @@ class Large_Value_Energy_Region:
                 r_cpy.scale(i, frac(1,k), [])
             new_regions.append(r_cpy)
         return Large_Value_Energy_Region(new_regions)
-        
 
 
+def derived_large_value_energy_region(data, proof, deps):
+    year = Reference.max_year(tuple(d.reference for d in deps))
+    bound = Hypothesis(
+        "Derived large value energy region",
+        "Large value energy region",
+        data,
+        proof,
+        Reference.derived(year),
+    )
+    bound.dependencies = deps
+    return bound
+
+def get_raise_to_power_hypothesis(k):
+    # name, hypothesis_type, data, proof, reference
+    name = f"Large value energy region raise to power hypothesis with k = {k}"
+    
+    def f(h):
+        region = copy.copy(h.data)
+        region.raise_to_power(k)
+        return derived_large_value_energy_region(
+            region, 
+            f"Follows from raising {h} to the k = {k} power",
+            {h}
+            )
+    
+    return Hypothesis(
+        name,
+        "Large value energy region transform",
+        Transform(name, f),
+        "Classical",
+        Reference.classical(),
+        )
 
 
+print(get_raise_to_power_hypothesis(2))
 
 
 
