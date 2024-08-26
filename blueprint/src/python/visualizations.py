@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from literature import *
 
@@ -138,6 +139,57 @@ def beta_bound_plot():
         )
     )
 
+# Compare the best literature zero-density estimates against the 
+# best-known zero-density estimate
+def zero_density_plot():
+    # plot zero-density estimate
+    N = 500
+    sigmas = []
+    literature_zd = []
+    best_zd = []
+    
+    hs = Hypothesis_Set()
+    hs.add_hypotheses(literature)
+    
+    # Add the new zero-density estimates (not part of the literature yet!)
+    zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
+    hs.add_hypotheses(zd.bourgain_ep_to_zd())
+    # New Pintz-type estimates 
+    zd.add_zero_density(hs, "3/(40 * x - 35)", Interval("[39/40, 40/41)"), Reference.make("Tao--Trudgian--Yang", 2024))
+    zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), Reference.make("Tao--Trudgian--Yang", 2024))
+    
+    
+    
+    def best_zd_at(hypotheses, sigma):
+        min_ = 1000000
+        for h in hs:
+            if h.hypothesis_type == "Zero density estimate":
+                if h.data.interval.contains(sigma):
+                    q = h.data.at(sigma)
+                    if q.is_real and math.isfinite(q) and min_ > q:
+                        min_ = q
+        return min_
+    
+    for i in range(N):
+        sigma = 1 / 2 + 1 / 2 * i / N
+        sigmas.append(sigma)
+        literature_zd.append(best_zd_at(literature, sigma))
+        best_zd.append(best_zd_at(hs, sigma))
+    
+    plt.figure(dpi=1200)
+    plt.xlabel(r"$\sigma$")
+    plt.ylabel(r"$A(\sigma)$")
+    plt.plot(sigmas, literature_zdt, linewidth=0.5, label="Literature zero-density estimate")
+    plt.plot(sigmas, best_zd, linewidth=0.5, label="Best zero-density estimate")
+    plt.title("Zero density estimates")
+    plt.legend(loc="lower left")
+    plt.show()
+    
+    
 
 # van_der_corput_plot2()
-beta_bound_plot()
+# beta_bound_plot()
+zero_density_plot()
+
