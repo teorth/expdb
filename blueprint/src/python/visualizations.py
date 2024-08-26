@@ -164,7 +164,7 @@ def zero_density_plot():
     
     def best_zd_at(hypotheses, sigma):
         min_ = 1000000
-        for h in hs:
+        for h in hypotheses:
             if h.hypothesis_type == "Zero density estimate":
                 if h.data.interval.contains(sigma):
                     q = h.data.at(sigma)
@@ -172,17 +172,21 @@ def zero_density_plot():
                         min_ = q
         return min_
     
+    print(len(literature), len(hs))
     for i in range(N):
         sigma = 1 / 2 + 1 / 2 * i / N
         sigmas.append(sigma)
         literature_zd.append(best_zd_at(literature, sigma))
         best_zd.append(best_zd_at(hs, sigma))
     
+    for i in range(len(sigmas)):
+        print(sigmas[i], literature_zd[i], best_zd[i])
+        
     plt.figure(dpi=1200)
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A(\sigma)$")
-    plt.plot(sigmas, literature_zdt, linewidth=0.5, label="Literature zero-density estimate")
     plt.plot(sigmas, best_zd, linewidth=0.5, label="Best zero-density estimate")
+    plt.plot(sigmas, literature_zd, linewidth=0.5, label="Literature zero-density estimate")
     plt.title("Zero density estimates")
     plt.legend(loc="lower left")
     plt.show()
