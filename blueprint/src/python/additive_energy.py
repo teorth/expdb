@@ -46,7 +46,6 @@ class Large_Value_Energy_Region:
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND))
 
-
     # ------------------------------------------------------------------------
     
     # Returns whether the region contains a 5-dimensional point 
@@ -66,6 +65,7 @@ class Large_Value_Energy_Region:
 
     # Raise this region to the kth power
     # (sigma, tau, rho, rho*, s) -> (sigma, tau / k, rho / k, rho* / k, s / k) 
+    # TODO There is a potential issue with the default bounds being scaled too
     def raise_to_power(self, k):
         if not isinstance(k, int) or k < 2:
             raise ValueError("Parameter k must be an integer and >= 2.")
@@ -113,10 +113,18 @@ def get_raise_to_power_hypothesis(k):
         Reference.classical(),
         )
 
-
-
-
-print(Large_Value_Energy_Region.default_region())
+# Convert an exponent pair (k, l) to a large value energy region 
+# Lemma 10.15 s \leq 1 + max(
+# rho + 1,
+# 5/3 rho + tau / 3
+# (2 + 3k + 4l) / (1 + 2k + 2l) rho + (k + l) / (1 + 2k + 2l) tau
+#)
+def ep_to_lver(k, l):
+    
+    # Functions of (rho, tau)
+    f1 = Affine2()
+    f2 = Affine2()
+    f2 = Affine2()
 
 
 
