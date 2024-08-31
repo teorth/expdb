@@ -1,6 +1,7 @@
 # This file contains all bounds that can be directly drawn from the literature.
 # For bounds that are derived from other bounds, used derived.py instead
 
+import additive_energy as ad
 from constants import *
 from fractions import Fraction as frac
 from hypotheses import *
@@ -1019,3 +1020,29 @@ def add_zero_density_guth_maynard_2024():
         literature, "15 / (3 + 5 * x)", Itvl(frac(1, 2), 1), rm.get("guth-maynard")
     )
 add_zero_density_guth_maynard_2024()
+
+
+#################################################################
+# List of large value energy region theorems from the literature
+
+def add_lver_heath_brown():
+    # Construct Polytope of (sigma, tau, rho, rho*, s)
+    polys = []
+    rect = Large_Value_Energy_Region.default_constraints()
+
+    # 2 + rho - s >= 0
+    polys.append(Polytope(rect + [[2, 0, 0, 1, 0, -1]]))
+
+    # 1 + 2 * rho - s >= 0
+    polys.append(Polytope(rect + [[1, 0, 0, 2, 0, -1]]))
+
+    # 1 + 1/2 * tau + 5/4 * rho - s >= 0
+    polys.append(Polytope(rect + [[1, 0, frac(1,2), frac(5,4), 0, -1]]))
+    
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    literature.add_hypothesis(
+        literature_large_value_energy_region(
+            region,
+            rm.get("heathbrown_large_1979")
+        )
+add_lver_heath_brown()

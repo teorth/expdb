@@ -268,6 +268,9 @@ Another bound is
 $$ s \leq \max( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau) + 1.$$
 \end{lemma}
 
+\python{additive_energy}
+\code{ep_to_lver(eph)}
+
 Finally, we have the useful
 
 \begin{lemma}[Heath-Brown bound on double sums]\label{hb-double}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
@@ -275,6 +278,9 @@ Finally, we have the useful
 \end{lemma}
 
 Note that if $\tau \leq 3/2$, the $5\rho/4+\tau/2$ term is bounded by the convex combination $(3/4)(\rho+1)+(1/4)(2\rho)$ and may therefore be omitted.
+
+\literature
+\code{add_lver_heath_brown_1979()}
 
 \begin{proof} See \cite[Theorem 1]{heathbrown_large_1979} or \cite[Lemma 11.5]{ivic}.
 \end{proof}

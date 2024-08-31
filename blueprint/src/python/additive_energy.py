@@ -34,13 +34,28 @@ class Large_Value_Energy_Region:
 
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
-    def default_limits():
-        return [
+    def default_constraints():
+        limits = [
             (frac(1,2), frac(1)),
             (0, Constants.TAU_UPPER_LIMIT),
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
-            (0, Constants.LV_DEFAULT_UPPER_BOUND)]
+            (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ]
+        
+        dim = len(limits)
+        bounds = []
+        for i in range(dim):
+            lim = limits[i]
+            
+            b = [-lim[0]] + ([0] * dim)
+            b[i + 1] = 1
+            bounds.append(b)   # x >= lim[0]
+            
+            b = [lim[1]] + ([0] * dim)
+            b[i + 1] = -1
+            bounds.append(b)   # x <= lim[1]
+        return bounds
 
     # Computes the union of n large value energy regions
     def union(*regions):
@@ -62,6 +77,14 @@ class Large_Value_Energy_Region:
             raise ValueError("Parameter k must be an integer and >= 2.")
         raise NotImplementedError("TODO") # TODO
 
+def literature_large_value_energy_region(region, ref):
+    return Hypothesis(
+        f"{ref.author()} large value energy region",
+        "Large value energy region",
+        Large_Value_Energy_Region(region),
+        f"See [{ref.author()}, {ref.year()}]",
+        ref,
+    )
 
 def derived_large_value_energy_region(data, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
@@ -109,33 +132,26 @@ def ep_to_lver(eph):
 
     k, l = eph.data.k, eph.data.l
     
-    # Construct Polytope of (rho, tau, s)
-    limits = Large_Value_Energy_Region.default_limits()
-    rho_limits, tau_limits, s_limits = limits[2], limits[1], limits[4]
+    # Construct Polytope of (sigma, tau, rho, rho*, s)
     polys = []
 
     # default limits 
-    rect = [
-        [-rho_limits[0], 1, 0, 0],
-        [rho_limits[1], -1, 0, 0],
-        [-tau_limits[0], 0, 1, 0],
-        [tau_limits[1], 0, -1, 0],
-        [-s_limits[0], 0, 0, 1],
-        [s_limits[1], 0, 0, -1]
-        ]
+    rect = Large_Value_Energy_Region.default_constraints()
 
     # 2 + rho - s >= 0
-    polys.append(Polytope(rect + [[2, 1, 0, -1]]))
+    polys.append(Polytope(rect + [[2, 0, 0, 1, 0, -1]]))
 
-    # 1 + 5/3 * rho + 1/3 * tau - s >= 0
-    polys.append(Polytope(rect + [[1, frac(5,3), frac(1,3), -1]]))
+    # 1 + 1/3 * tau + 5/3 * rho - s >= 0
+    polys.append(Polytope(rect + [[1, 0, frac(1,3), frac(5,3), 0, -1]]))
 
-    # 1 + (2 + 3k + 4l) / (1 + 2k + 2l) rho + (k + l) / (1 + 2k + 2l) tau - s >= 0
+    # 1 + (k + l) / (1 + 2k + 2l) tau + (2 + 3k + 4l) / (1 + 2k + 2l) rho - s >= 0
     polys.append(Polytope(rect + [
         [
-            1, 
-            frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
+            1,
+            0,
             frac(k + l, 1 + 2 * k + 2 * l),
+            frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
+            0,
             -1
         ]]))
 
@@ -145,8 +161,6 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
     
-print(ep_to_lver(ep.trivial_exp_pair).data)
-
 
 
 
