@@ -247,8 +247,6 @@ class Polytope:
         # Otherwise, envelop is the union
         return Polytope(env, canonicalize=True)
 
-
-
     # Constructs a d-dimensional box as a polytope
     # lims is a ordered list of limits for each variable
     def rect(*lims):

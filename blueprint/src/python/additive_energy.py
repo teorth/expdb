@@ -2,11 +2,13 @@
 
 import copy 
 from constants import Constants
+import exponent_pair as ep
 from fractions import Fraction as frac
 from functions import *
 from hypotheses import Hypothesis
 from polytope import Polytope
 from reference import Reference
+from region import Region, Region_Type
 from transform import Transform
 
 class Large_Value_Energy_Region:
@@ -32,14 +34,13 @@ class Large_Value_Energy_Region:
 
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
-    # TODO: convert this into Region?
-    def default_region():
-        return Polytope.rect(
+    def default_limits():
+        return [
             (frac(1,2), frac(1)),
             (0, Constants.TAU_UPPER_LIMIT),
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
-            (0, Constants.LV_DEFAULT_UPPER_BOUND))
+            (0, Constants.LV_DEFAULT_UPPER_BOUND)]
 
     # Computes the union of n large value energy regions
     def union(*regions):
@@ -55,17 +56,11 @@ class Large_Value_Energy_Region:
     
     # Raise this region to the kth power
     # (sigma, tau, rho, rho*, s) -> (sigma, tau / k, rho / k, rho* / k, s / k) 
-    # TODO There is a potential issue with the default bounds being scaled too
+    # TODO implement 
     def raise_to_power(self, k):
         if not isinstance(k, int) or k < 2:
             raise ValueError("Parameter k must be an integer and >= 2.")
-        new_regions = []
-        for r in self.region:
-            r_cpy = copy.copy(r)
-            for i in range(1,5):
-                r_cpy.scale(i, frac(1,k), [])
-            new_regions.append(r_cpy)
-        return Large_Value_Energy_Region(new_regions)
+        raise NotImplementedError("TODO") # TODO
 
 
 def derived_large_value_energy_region(data, proof, deps):
@@ -104,17 +99,53 @@ def get_raise_to_power_hypothesis(k):
         )
 
 # Convert an exponent pair (k, l) to a large value energy region 
-# Lemma 10.15 s \leq 1 + max(
+# Lemma 10.15 
+# s \leq 1 + max(
 # rho + 1,
 # 5/3 rho + tau / 3
 # (2 + 3k + 4l) / (1 + 2k + 2l) rho + (k + l) / (1 + 2k + 2l) tau
-#)
-def ep_to_lver(k, l):
+# )
+def ep_to_lver(eph):
+
+    k, l = eph.data.k, eph.data.l
     
-    # Functions of (rho, tau)
-    # TODO: Use this as a test case for the new Region computation paradygm
-    pass
+    # Construct Polytope of (rho, tau, s)
+    limits = Large_Value_Energy_Region.default_limits()
+    rho_limits, tau_limits, s_limits = limits[2], limits[1], limits[4]
+    polys = []
+
+    # default limits 
+    rect = [
+        [-rho_limits[0], 1, 0, 0],
+        [rho_limits[1], -1, 0, 0],
+        [-tau_limits[0], 0, 1, 0],
+        [tau_limits[1], 0, -1, 0],
+        [-s_limits[0], 0, 0, 1],
+        [s_limits[1], 0, 0, -1]
+        ]
+
+    # 2 + rho - s >= 0
+    polys.append(Polytope(rect + [[2, 1, 0, -1]]))
+
+    # 1 + 5/3 * rho + 1/3 * tau - s >= 0
+    polys.append(Polytope(rect + [[1, frac(5,3), frac(1,3), -1]]))
+
+    # 1 + (2 + 3k + 4l) / (1 + 2k + 2l) rho + (k + l) / (1 + 2k + 2l) tau - s >= 0
+    polys.append(Polytope(rect + [
+        [
+            1, 
+            frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
+            frac(k + l, 1 + 2 * k + 2 * l),
+            -1
+        ]]))
+
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    return derived_large_value_energy_region(
+        Large_Value_Energy_Region(region),
+        f"Follows from {eph.data}",
+        {eph})
     
+print(ep_to_lver(ep.trivial_exp_pair).data)
 
 
 

@@ -1,4 +1,5 @@
 from polytope import Polytope
+import copy
 
 class Region_Type:
     
@@ -36,13 +37,13 @@ class Region:
     def __repr__(self):
         return self.to_str(0)
 
-    def to_str(region, indentation=0):
-        if isinstance(region, Polytope):
-            return ("\t" * indentation) + str(region) + "\n"
+    def __copy__(self):
+        return Region(self.region_type, copy.copy(self.child))
         
+    def to_str(region, indentation=0):
         s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
         if isinstance(region.child, Polytope):
-            s += Region.to_str(region.child, indentation + 1)
+            s += ("\t" * indentation) + str(region.child) + "\n"
         else:
             for r in region.child:
                 s += Region.to_str(r, indentation + 1)
@@ -59,12 +60,12 @@ class Region:
         return Region(Region_Type.COMPLEMENT, region)
 
     # Compute the union of regions 
-    def union(*regions):
-        return Region(Region_Type.UNION, list(regions))
+    def union(regions):
+        return Region(Region_Type.UNION, regions)
 
     # Compute the intersection of regions
-    def intersect(*regions):
-        return Region(Region_Type.INTERSECT, list(regions))
+    def intersect(regions):
+        return Region(Region_Type.INTERSECT, regions)
 
     # Instance methods -------------------------------------------------------
 
