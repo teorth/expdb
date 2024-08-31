@@ -130,9 +130,9 @@ class Polytope:
 
     def __repr__(self):
         def to_str(row, is_lin):
-            ch_set = list("xyzw")
-            if len(row) > 5:
-                ch_set = [f"x_{i}" for i in range(1, len(row) - 1)]
+            ch_set = list("xyzwu")
+            if len(row) > 6:
+                ch_set = [f"x_{i}" for i in range(1, len(row))]
 
             f = ""
             if row[0] != 0:
@@ -262,7 +262,7 @@ class Polytope:
             bounds.append(b)   # x >= lim[0]
             
             b = [lim[1]] + ([0] * dim)
-            b[i + 1] = 1
+            b[i + 1] = -1
             bounds.append(b)   # x <= lim[1]
 
         return Polytope(bounds)

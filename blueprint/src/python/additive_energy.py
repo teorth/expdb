@@ -1,7 +1,7 @@
 # code implementation for large value additive energy region theorems
 
 import copy 
-from constants import Constant
+from constants import Constants
 from fractions import Fraction as frac
 from functions import *
 from hypotheses import Hypothesis
@@ -116,7 +116,7 @@ def get_raise_to_power_hypothesis(k):
 
 
 
-
+print(Large_Value_Energy_Region.default_region())
 
 
 
