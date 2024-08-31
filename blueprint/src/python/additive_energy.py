@@ -1,6 +1,7 @@
 # code implementation for large value additive energy region theorems
 
 import copy 
+from constants import Constant
 from fractions import Fraction as frac
 from functions import *
 from hypotheses import Hypothesis
@@ -38,7 +39,12 @@ class Large_Value_Energy_Region:
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
     def default_region():
-        return Polytope.rect()
+        return Polytope.rect(
+            (frac(1,2), frac(1)),
+            (0, Constants.TAU_UPPER_LIMIT),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND))
 
 
     # ------------------------------------------------------------------------

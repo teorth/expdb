@@ -13,11 +13,11 @@ class Constants:
     LARGE_VALUES_TRUNCATION = 20
 
     # The maximum value of the alpha parameter (reciprocal of tau)
-    ALPHA_UPPER_LIMIT = frac(100, 1)
+    ALPHA_UPPER_LIMIT = frac(100)
 
     # Impose an upper limit on the \tau variable (appears in large value estimates)
     # to ensure that all polytopes are finite subsets of R^n (used to compute centroids).
-    TAU_UPPER_LIMIT = frac(1000000, 1)
+    TAU_UPPER_LIMIT = frac(1000000)
 
     # The default upper bound on LV(sigma, tau), representing no upper bound
     LV_DEFAULT_UPPER_BOUND = frac(1000000)
