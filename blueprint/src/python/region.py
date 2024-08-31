@@ -37,12 +37,15 @@ class Region:
         return self.to_str(0)
 
     def to_str(region, indentation=0):
-        s = Region_Type.to_str(region.region_type) + r"\n"
-        if isinstance(region.child, Region) or isinstance(region.child, Polytope):
-            s += ("\t" * indentation) + str(region.child)
+        if isinstance(region, Polytope):
+            return ("\t" * indentation) + str(region) + "\n"
+        
+        s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
+        if isinstance(region.child, Polytope):
+            s += Region.to_str(region.child, indentation + 1)
         else:
             for r in region.child:
-                s += ("\t" * indentation) + r + r"\n"
+                s += Region.to_str(r, indentation + 1)
         return s
         
     # Static methods ---------------------------------------------------------

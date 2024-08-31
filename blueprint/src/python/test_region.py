@@ -33,6 +33,7 @@ def test_intersect():
         intersection = Region.intersect(R1, R2)
         x = (rd.uniform(0, 3), rd.uniform(0, 3))
         assert intersection.contains(x) == (R1.contains(x) and R2.contains(x))
+        print(intersection)
 
 test_union()
 test_intersect()

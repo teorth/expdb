@@ -13,23 +13,17 @@ class Large_Value_Energy_Region:
     
     # Construct a valid large value energy region represented as a union of 
     # 5-dimensional polytopes 
-    # Parameters:
-    #   - polytopes (list of Polytope or Polytope) the set of polytopes whose union 
-    #     represent the energy region. The polytopes may not necessarily be disjoint.
-    def __init__(self, polytopes):
+    # Parameters: region (Region) an object of type Region which represents the 
+    # large value energy region
+    def __init__(self, region):
         # Should this be a set instead of a list?
-        if not isinstance(polytopes, list) and \
-            not isinstance(polytopes, Polytope):
-            raise ValueError("Parameter polytopes must be a list of Polytope or Polytope")
-            
-        if isinstance(polytopes, Polytope):
-            self.region = [polytopes]
-        else:
-            self.region = polytopes
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type Region.")
+        self.region = region
     
     
     def __repr__(self):
-        return "Union of " + str(self.region)
+        return str(self.region)
         
     def __copy__(self):
         return Large_Value_Energy_Region(copy.copy(self.region))
@@ -38,6 +32,7 @@ class Large_Value_Energy_Region:
 
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
+    # TODO: convert this into Region?
     def default_region():
         return Polytope.rect(
             (frac(1,2), frac(1)),
@@ -46,23 +41,18 @@ class Large_Value_Energy_Region:
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND))
 
+    # Computes the union of n large value energy regions
+    def union(*regions):
+        return Large_Value_Energy_Region(Region.union([r.region for r in regions]))
+        
     # ------------------------------------------------------------------------
     
     # Returns whether the region contains a 5-dimensional point 
     def contains(self, point):
         if len(point) != 5: 
             raise ValueError("point must be 5-dimensional")
-        # Slow method - simply loop through the polytopes 
-        return any(poly.contains(point) for poly in self.region)
+        return self.region.contains(point)
     
-    
-    # Computes the union of two large value regions (this object is modified )
-    def union_with(self, other):
-        if not isinstance(other, Large_Value_Energy_Region):
-            raise ValueError("Parameter other must be of type Large_Value_Energy_Region")
-        self.region.extend(other.region)
-
-
     # Raise this region to the kth power
     # (sigma, tau, rho, rho*, s) -> (sigma, tau / k, rho / k, rho* / k, s / k) 
     # TODO There is a potential issue with the default bounds being scaled too
