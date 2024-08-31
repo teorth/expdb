@@ -32,7 +32,17 @@ class Large_Value_Energy_Region:
         
     def __copy__(self):
         return Large_Value_Energy_Region(copy.copy(self.region))
-        
+    
+    # Static methods ---------------------------------------------------------
+
+    # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
+    # that all large value regions are finite regions. 
+    def default_region():
+        return Polytope.rect()
+
+
+    # ------------------------------------------------------------------------
+    
     # Returns whether the region contains a 5-dimensional point 
     def contains(self, point):
         if len(point) != 5: 
@@ -74,6 +84,8 @@ def derived_large_value_energy_region(data, proof, deps):
     bound.dependencies = deps
     return bound
 
+# Returns a Hypothesis object representing raising the large value energy region 
+# to a integer power k. 
 def get_raise_to_power_hypothesis(k):
     # name, hypothesis_type, data, proof, reference
     name = f"Large value energy region raise to power hypothesis with k = {k}"
@@ -94,9 +106,6 @@ def get_raise_to_power_hypothesis(k):
         "Classical",
         Reference.classical(),
         )
-
-
-print(get_raise_to_power_hypothesis(2))
 
 
 

@@ -249,16 +249,23 @@ class Polytope:
 
 
 
-    # Constructs a rectangle as a polytope
-    def rect(xlim, ylim):
-        return Polytope(
-            [
-                [-xlim[0], 1, 0],  # x >= xlim[0]
-                [xlim[1], -1, 0],  # x <= xlim[1]
-                [-ylim[0], 0, 1],  # y >= ylim[0]
-                [ylim[1], 0, -1],  # y <= ylim[1]
-            ]
-        )
+    # Constructs a d-dimensional box as a polytope
+    # lims is a ordered list of limits for each variable
+    def rect(*lims):
+        bounds = []
+        dim = len(lims)
+        for i in range(dim):
+            lim = lims[i]
+            
+            b = [-lim[0]] + ([0] * dim)
+            b[i + 1] = 1
+            bounds.append(b)   # x >= lim[0]
+            
+            b = [lim[1]] + ([0] * dim)
+            b[i + 1] = 1
+            bounds.append(b)   # x <= lim[1]
+
+        return Polytope(bounds)
 
     # Create a polytope from its vertices
     # TODO: add support for extreme rays
