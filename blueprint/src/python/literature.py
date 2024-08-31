@@ -1045,4 +1045,5 @@ def add_lver_heath_brown():
             region,
             rm.get("heathbrown_large_1979")
         )
-add_lver_heath_brown()
+    )
+add_lver_heath_brown_1979()

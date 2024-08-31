@@ -63,7 +63,7 @@ We remark that (v) can also be proven using \cite[Lemma 4.8, (4.2)]{cladek-tao}.
 
 We will also study the following related quantity.  Given a set $W$ and a scale $N>1$, let $S(N,W)$ denote the \emph{double zeta sum}
 \begin{equation}\label{snw-def}
-     S(N,W) := \sum_{t,t' \in W} |\sum_{n \in [N,2N]} n^{-i(t-t')}|^2.
+     S(N,W) := \sum_{t,t' \in W} \left|\sum_{n \in [N,2N]} n^{-i(t-t')} \right|^2.
 \end{equation}
 We caution that this normalization differs from the one in \cite{ivic}, where $n^{-1/2-i(t-t')}$ is used in place of $n^{-i(t-t')}$.  This sum may also be rearranged as
 \begin{equation}\label{snw}
@@ -73,7 +73,7 @@ where $R_W$ is the exponential sum
 $$ R_W(x) := \sum_{t \in W} x^{it}.$$
 From the first formula it is clear that $S(N,W)$ is monotone non-decreasing in $W$, and from the second formula one has the triangle inequality
 \begin{equation}\label{S-triangle}
-S(N, \bigcup_{i=1}^k W_i)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}
+S\left(N, \bigcup_{i=1}^k W_i \right)^{1/2} \leq \sum_{i=1}^k S(N,W_i)^{1/2}
 \end{equation}
 when the $W_i$ are disjoint, and hence also when they are not assumed to be disjoint, thanks to the monotonicity.
 
@@ -81,10 +81,10 @@ The following Cauchy--Schwarz inequality is also useful:
 
 \begin{lemma}[Cauchy--Schwarz and double $\zeta$-sums]\label{cauchy-schwarz}\uses{energy-def} \cite[Lemma 3.4]{bourgain_dirichlet_2000} If $W,W'$ are finite sets of reals, $N>1$, and $a_n$ is a $1$-bounded sequence for $n \in [N,2N]$, then
 \begin{equation}\label{ttww}
-     \sum_{t \in W, t' \in W'} |\sum_{n \in [N,2N]} a_n n^{-it}|^2 \leq S(N,W)^{1/2} S(N,W')^{1/2}.
+     \sum_{t \in W, t' \in W'} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right|^2 \leq S(N,W)^{1/2} S(N,W')^{1/2}.
 \end{equation}
 In particular
-$$ \sum_{t \in W} |\sum_{n \in [N,2N]} a_n n^{-it}|^2 \leq S(N,W).$$
+$$ \sum_{t \in W} \left|\sum_{n \in [N,2N]} a_n n^{-it} \right|^2 \leq S(N,W).$$
 \end{lemma}
 
 \begin{proof}  The left-hand side of \eqref{ttww} can be rewritten as
@@ -100,11 +100,11 @@ $$ V^2 E_1(W) \ll T^{o(1)} \sum_{n,m \in [N,2N]} |R_W(n/m)|^3 + T^{-50}.$$
 \end{lemma}
 
 \begin{proof} By hypothesis, we have
-$$ V^2 E_1(W) \leq \sum_{t_1,t_2,t_3,t_4 \in W: |t_1+t_2-t_3-t_4| \leq 1} |\sum_{n \in [N,2N]} a_n n^{-it_4}|^2.$$
+$$ V^2 E_1(W) \leq \sum_{t_1,t_2,t_3,t_4 \in W: |t_1+t_2-t_3-t_4| \leq 1} \left|\sum_{n \in [N,2N]} a_n n^{-it_4} \right|^2.$$
 By standard Fourier arguments (see \cite[Lemma 11.3]{guth-maynard}), we can bound
-$$ |\sum_{n \in [N,2N]} a_n n^{-it_4}| \ll T^{o(1)} \int_{t: |t-t_4| \leq T^{o(1)}} |\sum_{n \in [N,2N]} a_n n^{-it}|\ dt + T^{-100}.$$
+$$ \left|\sum_{n \in [N,2N]} a_n n^{-it_4}\right| \ll T^{o(1)} \int_{t: |t-t_4| \leq T^{o(1)}} \left|\sum_{n \in [N,2N]} a_n n^{-it}\right|\ dt + T^{-100}.$$
 Since each $t_1,t_2,t_3$ generates at most $O(1)$ choices for $t_4$, we conclude that
-$$ V^2 E_1(W) \ll T^{o(1)} \sum_{t_1,t_2,t_3 \in W} \int_{s: |s| \leq T^{o(1)}}  |\sum_{n \in [N,2N]} a_n n^{-i(t_1+t_2-t_3+s)}|^2\ ds + T^{-50},$$
+$$ V^2 E_1(W) \ll T^{o(1)} \sum_{t_1,t_2,t_3 \in W} \int_{s: |s| \leq T^{o(1)}}  \left|\sum_{n \in [N,2N]} a_n n^{-i(t_1+t_2-t_3+s)} \right|^2\ ds + T^{-50},$$
 The right-hand side can be rewritten as
 $$ T^{o(1)} \sum_{n,m \in [N,2N]} a_n \overline{a_m} (n/m)^{-is} \overline{R_W}(n/m)^2 R_W(n/m) + T^{-50},$$
 and the claim then follows from the triangle inequality.
@@ -121,7 +121,7 @@ since from H\"older's inequality one now has
     V^2 E_1(W) \ll T^{o(1)} S(N,W)^{1/2} S_4(N,W)^{1/2} + T^{-50}
 \end{equation}
 (cf. \cite[Lemma 3]{heath_brown_consecutive_II}).  The quantity $S_4(N,W)$ can also be expressed as
-$$ S_4(N,W) = \sum_{t_1,t_2,t_3,t_4 \in W} |\sum_{n \in [N,2N]} n^{-i(t_1+t_2-t_3-t_4)}|^2.$$
+$$ S_4(N,W) = \sum_{t_1,t_2,t_3,t_4 \in W} \left|\sum_{n \in [N,2N]} n^{-i(t_1+t_2-t_3-t_4)}\right|^2.$$
 
 One can bound this quantity by an $S(N,W)$ type expression:
 
@@ -140,13 +140,13 @@ and
 This result appears implicitly in \cite[p. 229]{heath_brown_consecutive_II}, and is made more explicit in the proof of \cite[Lemma 11.6]{guth-maynard}.
 
 \begin{proof} One can bound
-    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2,t_3,t_4 \in W} \int_{t = t_1+t_2-t_3-t_4+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100},$$
+    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2,t_3,t_4 \in W} \int_{t = t_1+t_2-t_3-t_4+O(T^{o(1)})} \left|\sum_{n \in [N,2N]} n^{-it}\right|^2\ dt + T^{-100},$$
     and hence
-    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in [-2N,2N] \cap \Z} f(t_1) f(t_2) \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
+    $$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in [-2N,2N] \cap \Z} f(t_1) f(t_2) \int_{t = t_1-t_2+O(T^{o(1)})} \left|\sum_{n \in [N,2N]} n^{-it}\right|^2\ dt + T^{-100}$$
 where $f$ is the counting function
 $$ f(t) := |\{ (t_1,t_2) \in W: |t-t_1-t_2| \leq 1 \}|.$$
 Note that $f$ is integer valued and bounded above by $|W|$. By dyadic decomposition, one can then find $1 \leq u \ll |W|$ and a subset $U$ of $[-2N,2N] \cap \Z$ such that $f(t) \asymp u$ for $t \in U$, and
-$$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in U} u^2 \int_{t = t_1-t_2+O(T^{o(1)})} |\sum_{n \in [N,2N]} n^{-it}|^2\ dt + T^{-100}$$
+$$ S_4(N,W) \ll T^{o(1)} \sum_{t_1,t_2 \in U} u^2 \int_{t = t_1-t_2+O(T^{o(1)})} \left|\sum_{n \in [N,2N]} n^{-it} \right|^2\ dt + T^{-100}$$
 which we can rearrange as
 $$ S_4(N,W) \ll T^{o(1)} u^2 \int_{s = O(T^{o(1)})} \sum_{n,m \in [N,2M]} (n/m)^{is} |R_U(n/m)|^2\ ds + T^{-100}$$
 and hence by the triangle inequality
@@ -169,7 +169,7 @@ Clearly we have
 \begin{lemma}[Trivial containment]\label{triv-contain}\uses{lv-edef} We have $\Energy_\zeta \subset \Energy$.
 \end{lemma}
 
-These regions are related to $\LV(\sigma,\tau)$ and as follows:
+These regions are related to $\LV(\sigma,\tau)$ and $\LV_{\zeta}(\sigma,\tau)$ as follows:
 
 \begin{lemma}\label{energy-region-lv}\uses{lv-def, lvz-def, energy-def} For any fixed $1/2 \leq \sigma \leq 1, \tau \geq 0$, we have
 $$ \LV(\sigma,\tau) = \sup \{ \rho: (\sigma,\tau,\rho,\rho^*,s) \in \Energy\}$$
@@ -195,7 +195,7 @@ As usual, we have an equivalent non-asymptotic definition of the large value ene
 
 \begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{lv-edef} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
     \begin{itemize}
-    \item[(i)] $(\sigma,\tau,\rho,\rho^*) \in \Energy$.
+    \item[(i)] $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$.
     \item[(ii)] For every $\eps>0$ and $C > 0$, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$,
     $N^{\rho-\eps} \leq |W| \leq N^{\rho+\eps}$,
     $N^{\rho^*-\eps} \leq E_1(W) \leq N^{\rho^*+\eps}$, and
@@ -246,9 +246,9 @@ $$ \rho \leq \min( 2-2\sigma, k(3-4\sigma)/2 + s' - 1).$$
 \end{theorem}
 
 \begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By \cite[(11.58)]{ivic}, one has
-$$ |W|^2 \ll T^{o(1)} ( |W| N^{2-2\sigma} + N^{1-2\sigma} |W|^2 + N^{(3-4\sigma)/2} \int_{v = O(T^{o(1)})} \sum_{t,t' \in W} |\sum_{n \leq 4T/N} n^{-1/2+it-it'+iv}|\ dv ).$$
+$$ |W|^2 \ll T^{o(1)} \left( |W| N^{2-2\sigma} + N^{1-2\sigma} |W|^2 + N^{(3-4\sigma)/2} \int_{v = O(T^{o(1)})} \sum_{t,t' \in W} \left|\sum_{n \leq 4T/N} n^{-1/2+it-it'+iv}\right|\ dv \right).$$
 Since $\sigma>1/2$, the $N^{1-2\sigma} |W|^2$ term can be dropped.  Applying H\"older's inequality and dyadic pigeonholing as in \cite[(11.59)]{ivic}, we conclude that
-$$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2}  (\sum_{t,t' \in W} |\sum_{n \in [N',2N']} b_n n^{-1/2+it-it'+iv}|^2)^{1/2})$$
+$$ |W| \ll T^{o(1)} \left(N^{2-2\sigma} + N^{k(3-4\sigma)/2}  \left(\sum_{t,t' \in W} \left|\sum_{n \in [N',2N']} b_n n^{-1/2+it-it'+iv}\right|^2\right)^{1/2}\right)$$
 for some $v = O(T^{o(1)})$ and coefficients $b_n = O(T^{o(1)})$, and some $N' \ll (4T/N)^k$.  After passing to a subsequence if necessary, we may assume that $N' = N^{\alpha+o(1)}$ for some $0 \leq \alpha \leq k(\tau-1)$.  If $\alpha=0$ then the second term here is negligible compared to the first and we obtain $\rho \leq 2-2\sigma$, so suppose that $\alpha > 0$.  Using \cite[Lemma 11.1]{ivic} to eliminate the $b_n n^{-1/2+iv}$ coefficients, we conclude that
 $$ |W| \ll T^{o(1)} (N^{2-2\sigma} + N^{k(3-4\sigma)/2-1} S(N', W)).$$
 By construction, we have $S(N',W) = (N')^{s'/\alpha+o(1)} = N^{s'+o(1)}$ for some tuple $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$.  The claim follows.
@@ -265,7 +265,7 @@ Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{iv
 Another bound is
 
 \begin{lemma}\label{double-zeta_from_exp_pair}\cite[Lemma 11.2]{ivic}\uses{lv-edef}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
-$$ s \leq \max( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau) + 1.$$
+$$ s \leq \max\left( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right) + 1.$$
 \end{lemma}
 
 \python{additive_energy}
@@ -493,7 +493,7 @@ Now we turn to another application of double zeta sums to large value theorems.
     \begin{table}[ht]
     \def\arraystretch{1.8}
     \centering
-    \caption{Bounds on $LV(\sigma, \tau)$ for $1/2 \le \sigma \le 1$ and $\tau \ge 1$}
+    \caption{Bounds on $\LV(\sigma, \tau)$ for $1/2 \le \sigma \le 1$ and $\tau \ge 1$}
     \begin{tabular}{|c|c|c|c|}
     \hline
     $\rho_0(\sigma, \tau)$ & $\alpha_1$ & $\alpha_2$ & $\mathcal{S}$\\
@@ -554,8 +554,6 @@ Now we turn to another application of double zeta sums to large value theorems.
     \end{tabular}
     \label{optimised_bourgain_lve}
     \end{table}
-
-
 
     The preprint of Kerr \cite{kerr} contains additional large value theorems:
 
