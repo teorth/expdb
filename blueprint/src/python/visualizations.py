@@ -182,6 +182,7 @@ def zero_density_plot():
     for i in range(len(sigmas)):
         print(sigmas[i], literature_zd[i], best_zd[i])
         
+    plt.figure(figsize=(10, 6))
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A(\sigma)$")
     plt.plot(sigmas, best_zd, linewidth=0.5, label="Best zero-density estimate")
