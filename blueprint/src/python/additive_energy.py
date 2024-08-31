@@ -122,9 +122,9 @@ def get_raise_to_power_hypothesis(k):
 def ep_to_lver(k, l):
     
     # Functions of (rho, tau)
-    f1 = Affine2()
-    f2 = Affine2()
-    f2 = Affine2()
+    # TODO: Use this as a test case for the new Region computation paradygm
+    pass
+    
 
 
 

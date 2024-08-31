@@ -25,22 +25,20 @@ class Region_Type:
     
 # A region represents a boolean combination of polytopes 
 class Region:
-    
-    # Construct a region from a polytope
-    def __init__(self, region_type, region):
-        if not isinstance(region, Polytope) and \
-            not isinstance(region, Region):
-            raise ValueError("Parameter polytope must either be of type Polytope or Region")
+    def __init__(self, region_type, children):
+        if not isinstance(children, Polytope) and \
+            not isinstance(children, list):
+            raise ValueError("Parameter polytope must either be of type Polytope or list")
             
         self.region_type = region_type
-        self.child = region
+        self.child = children
 
     def __repr__(self):
         return self.to_str(0)
 
     def to_str(region, indentation=0):
         s = Region_Type.to_str(region.region_type) + r"\n"
-        if isinstance(region.child, Region):
+        if isinstance(region.child, Region) or isinstance(region.child, Polytope):
             s += ("\t" * indentation) + str(region.child)
         else:
             for r in region.child:
@@ -78,4 +76,3 @@ class Region:
         if self.region_type == Region_Type.INTERSECT:
             return all(c.contains(x) for c in self.child)
 
-        
