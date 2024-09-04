@@ -161,6 +161,27 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+
+def small_tau_relation():
+    # divide into two cases: tau <= 1 and tau >= 1
+    rect1 = Large_Value_Energy_Region.default_constraints()
+    rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+
+    rect2 =  Large_Value_Energy_Region.default_constraints()
+    rect2.append([-1, 0, 1, 0, 0, 0]) # tau >= 1
+
+    # No additional constraints on the second region with tau >= 1
+    polys = [Polytope(rect2)]
+    
+    # Region 1 polytopes
+    # 2 + rho - s >= 0
+    polys.append(Polytope(rect1 + [[2, 0, 0, 1, 0, -1]]))
+    # 1 + 2rho - s >= 0
+    polys.append(Polytope(rect1 + [[1, 0, 0, 2, 0, -1]]))
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    return region
+
+
 # Implementation of "Simplified Heath-Brown relation" Corollary 10.19
 # TODO: move this over to literature.py
 def heath_brown_relation():
@@ -182,9 +203,8 @@ def heath_brown_relation():
     polys.append(Polytope(rect1 + [[4, -4, 0, 1, -1, 0]]))
     # 3/2 - 2sigma + 5/2rho - rho* >= 0
     polys.append(Polytope(rect1 + [[frac(3,2), -2, 0, frac(5,2), -1, 0]]))
-    region1 = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
-    
-    return Region.intersect([region1, Region(Region_Type.POLYTOPE, rect2)])
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    return region
 
 # Implementation of second Heath-Brown relation (Lemma 10.20)
 # TODO: move this over to literature.py
