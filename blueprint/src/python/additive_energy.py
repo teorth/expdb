@@ -205,6 +205,21 @@ def heath_brown_relation2(k)
     region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
     return region
 
+def guth_maynard_relation(k):
+    if not isinstance(k, int):
+        raise ValueError("Parameter k must be an integer.")
+    if k < 1:
+        raise ValueError("Parameter k must be >= 1.")
 
+    rect = Large_Value_Energy_Region.default_constraints()
+    polys = []
+    # 2 - 2sigma - rho >= 0
+    polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
+    # 1 - 2sigma + S_1/3 - rho >= 0 
+    # -7/3 - 2sigma - rho >= 0
+    polys.append(Polytope(rect + [[-frac(7,3), -2, 0, -1, 0, 0]]))
+    
+    # TODO: complete the list of constraints
+    raise NotImplementedError()
 
 
