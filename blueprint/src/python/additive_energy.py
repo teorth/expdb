@@ -162,6 +162,7 @@ def ep_to_lver(eph):
         {eph})
 
 # Implementation of "Simplified Heath-Brown relation" Corollary 10.19
+# TODO: move this over to literature.py
 def heath_brown_relation():
     # divide into two cases: Region 1 with tau < 3/2 and 
     # region 2 with tau > 3/2
@@ -184,7 +185,25 @@ def heath_brown_relation():
     # No additional constraints on the second region with tay >= 3/2
     return Region.intersect([region1, rect2])
 
-
+# Implementation of second Heath-Brown relation (Lemma 10.20)
+# TODO: move this over to literature.py
+def heath_brown_relation2(k)
+    if not isinstance(k,int):
+        raise ValueError("Parameter k must be an integer.")
+    if k < 2:
+        raise ValueError("Parameter k must be >= 2.")
+    
+    rect = Large_Value_Energy_Region.default_constraints()
+    polys = []
+    # 2 - 2sigma - rho >= 0
+    polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
+    # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
+    polys.append(Polytope(rect + [[frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0]]))
+    # 3k/4 - k sigma - rho + rho*/4 >= 0
+    polys.append(Polytope(rect + [[frac(3*k,4), -k, 0, -1, frac(1,4), 0]])) 
+    
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    return region
 
 
 
