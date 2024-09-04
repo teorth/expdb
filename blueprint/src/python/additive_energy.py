@@ -222,4 +222,9 @@ def guth_maynard_relation(k):
     # TODO: complete the list of constraints
     raise NotImplementedError()
 
+def guth_maynard_relation2():
+    rect = Large_Value_Energy_Region.default_constraints()
+    return Region(Region_Type.POLYTOPE, Polytope(
+        rect + [[0, -2, 0, 1, -1, 1]] # -2sigma + rho - rho* - s >= 0
+    ))
 
