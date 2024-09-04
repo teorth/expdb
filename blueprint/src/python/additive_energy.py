@@ -172,8 +172,10 @@ def heath_brown_relation():
     rect2 =  Large_Value_Energy_Region.default_constraints()
     rect2.append([-frac(3,2), 0, 1, 0, 0, 0]) # tau >= 3/2
 
+    # No additional constraints on the second region with tau >= 3/2
+    polys = [Polytope(rect2)]
+    
     # Region 1 polytopes
-    polys = []
     # 1 - 2sigma + 3rho - rho* >= 0
     polys.append(Polytope(rect1 + [[1, -2, 0, 3, -1, 0]]))
     # 4 - 4sigma + rho - rho* >= 0
@@ -182,8 +184,7 @@ def heath_brown_relation():
     polys.append(Polytope(rect1 + [[frac(3,2), -2, 0, frac(5,2), -1, 0]]))
     region1 = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
     
-    # No additional constraints on the second region with tay >= 3/2
-    return Region.intersect([region1, rect2])
+    return Region.intersect([region1, Region(Region_Type.POLYTOPE, rect2)])
 
 # Implementation of second Heath-Brown relation (Lemma 10.20)
 # TODO: move this over to literature.py
@@ -228,3 +229,27 @@ def guth_maynard_relation2():
         rect + [[0, -2, 0, 1, -1, 1]] # -2sigma + rho - rho* - s >= 0
     ))
 
+def guth_maynard_relation3():
+    rect1 = Large_Value_Energy_Region.default_constraints()
+    rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
+    rect1.append([-1, 0, 1, 0, 0, 0]) 
+
+    rect2 = Large_Value_Energy_Region.default_constraints()
+    rect2.append([-frac(4,3), 0, 1, 0, 0, 0]) # tau >= 4/3
+
+    rect3 = Large_Value_Energy_Region.default_constraints()
+    rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+    
+    # No additional constraints for second and third region
+    polys = [Polytope(rect2), Polytope(rect3)]
+
+    # Impose constraints for first region
+    # 4 - 4sigma + rho - rho* >= 0
+    polys.append(Polytope(rect + [[4, -4, 0, 1, -1, 0]]))
+    # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
+    polys.append(Polytope(rect + [[1, -2, frac(1,4), frac(21,8), -1, 0]]))
+    # 1 - 2sigma + 3rho - rho* >= 0
+    polys.append(Polytope(rect + [[1, -2, 0, 3, -1, 0]]))
+
+    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    return region
