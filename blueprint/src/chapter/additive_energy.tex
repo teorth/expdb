@@ -232,11 +232,16 @@ Finally, from \eqref{S-triangle}, we know that a (possibly yet another subcollec
 \end{proof}
 
 
-\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then $(\sigma,\tau/k, \rho/k, (\rho^*)/k,s/k) \in \Energy$ for any integer $k \geq 1$.
+\begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, and $k \geq 1$, then amongst all tuples $(\sigma,\tau/k,\rho',(\rho')^*,s') \in \Energy$ with $\rho' \leq \rho/k$, $(\rho')^* \leq \rho^*/k$, and $s' \leq s/k$, there exists a tuple with $\rho' = \rho/k$, there exists a tuple with $(\rho')^* = \rho^*/k$, and there exists a tuple with $s' = s/k$. (These may be three different tuples.)
 \end{lemma}
 
-\begin{proof}
-    ...
+Morally speaking, one should be able to obtain equality in all three conclusions simultaneously, i.e., $(\sigma,\tau/k,\rho/k,\rho^*/k,s/k) \in \Energy$.
+
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N > 1$ unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$.  Observe that
+    $$ (\sum_{n \in [N,2N]} a_n n^{-it})^k = \sum_{n \in [N^k, 2^k N^k]} b_n n^{-it}$$
+for some coefficients $b_n = O(n^{o(1)})$.  In particular, partitioning $[N^k, 2^k N^k]$ into $O(1)$ sub-intervals $[N',2N']$ with $N' = N^{k+o(1)}$, we can partition $W$ into $O(1)$ subcollections $W_{N'}$, such that
+$$ |\sum_{n \in [N',2N']} b_n n^{-it}| \gg V^k = (N')^{\sigma+o(1)}$$
+for all $t \in W_{N'}$.  Again by the pigeonhole principle, one of the $W_{N'}$ must have cardinality $N^{\rho+o(1)}$, one must have energy $N^{\rho^*+o(1)}$, and one must have double zeta sum $N^{s+o(1)}$ (but these may be different $W_{N'}$).  Each of these $W_{N'}$ then give the different conclusions to the lemma.
 \end{proof}
 
 \section{Known relations for the large value energy region}
@@ -262,7 +267,9 @@ Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{iv
 \python{additive_energy}
 \code{small_tau_relation()}
 
-\begin{proof} See the discussion after \cite[(11.63)]{ivic}.
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By the discussion after \cite[(11.63)]{ivic}, we have
+    $$ N^{-1} S(N,W) \ll T^\eps ( |W| N + |W|^2 )$$
+for any fixed $\eps>0$, which gives the claim.    .
 \end{proof}
 
 Another bound is
@@ -270,6 +277,11 @@ Another bound is
 \begin{lemma}\label{double-zeta_from_exp_pair}\cite[Lemma 11.2]{ivic}\uses{lv-edef}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
 $$ s \leq \max\left( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right) + 1.$$
 \end{lemma}
+
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.   From \cite[Lemma 11.2]{ivic} we have
+$$ N^{-1} S(N,W) \ll |W| N + |W|^{5/3} T^{1/3+\eps} + |W|^{\frac{2+3k+4\ell}{1+2k+2\ell}} T^{\frac{k+\ell+\eps}{1+2k+2\ell}}$$
+for any fixed $\eps>0$, which gives the claim.
+\end{proof}
 
 \python{additive_energy}
 \code{ep_to_lver(eph)}
@@ -285,7 +297,9 @@ Note that if $\tau \leq 3/2$, the $5\rho/4+\tau/2$ term is bounded by the convex
 \literature
 \code{add_lver_heath_brown_1979()}
 
-\begin{proof} See \cite[Theorem 1]{heathbrown_large_1979} or \cite[Lemma 11.5]{ivic}.
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.   From \cite[Theorem 1]{heathbrown_large_1979} or \cite[Lemma 11.5]{ivic}, one has
+$$ N^{-1} S(N,W) \ll T^\eps ( |W| N + |W|^2 + |W|^{5/4} T^{1/2} ),$$
+giving the claim.
 \end{proof}
 
 Lemma \ref{wtu} can be formulated in terms of the large value energy region as follows.
@@ -349,14 +363,16 @@ which gives the claim.
 
 
 \begin{lemma}[Second Heath-Brown relation]\label{hbt-2}\uses{lv-edef} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
-$$ \rho \leq \max( 2-2\sigma, \rho^*/4 + \max(\tau/4 + k(3-4\sigma)/4, k/4 + k(1-2\sigma)/2))$$
+$$ \rho \leq \max( 2-2\sigma, \rho^*/4 + \max(\tau/4 + k(3-4\sigma)/4, k\tau/4 + k(1-2\sigma)/2))$$
 for any positive integer $k$.
 \end{lemma}
 
 \literature
 \code{add_lver_heath_brown_1979c(K)}
 
-\begin{proof} See \cite[Lemma 4]{heathbrown_zero_1979}.
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.   From \cite[Lemma 4]{heathbrown_zero_1979}, we have
+$$ |W| \ll T^\eps \left( N^{2-2\sigma} + E_1(W)^{1/4} (T^{1/4} N^{k(3-4\sigma)/4} + T^{k/4} N^{k(1-2\sigma)/2})\right)$$
+for any fixed $\eps>0$, giving the claim.
 \end{proof}
 
 \begin{lemma}[Guth-Maynard relation]\label{gm-1}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
@@ -373,7 +389,17 @@ $$ S_3 \leq \max( 2\tau + 3\rho/2, \tau+1+\rho/2+\rho^*/2).$$
 \literature
 \code{add_lver_guth_maynard_2024a()}
 
-\begin{proof} This follows from \cite[Propositions 4.6, 5.1, 6.1, 8.1, 10.1, (5.5)]{guth-maynard}.
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By \cite[Proposition 4.6, (5.5)]{guth-maynard}, one may bound
+$$ |W| \ll N^{2-2\sigma} + N^{1-2\sigma} (S_1 + S_2 + S_3)^{1/3}$$
+for three expressions $S_1, S_2, S_3$ defined after \cite[(5.5)]{guth-maynard}.  From \cite[Proposition 5.1]{guth-maynard} we have
+$$ S_1 \ll T^{-10}.$$
+From \cite[Proposition 6.1]{guth-maynard} we have
+$$ S_2 \ll T^{o(1)} ( N^2 |W|^2 + T N |W|^{2-1/k} + N^2 |W|^2 (\frac{T^{1/2}}{|W|^{3/4}})^{1/k} ).$$
+From \cite[Proposition 8.1]{guth-maynard} we have
+$$ S_3 \ll T^{2+o(1)} |W|^{1/2} E_1(W)^{1/2}$$
+while from \cite[Proposition 10.1]{guth-maynard} we have
+$$ S_3 \ll T^{2+o(1)} |W|^{3/2} + T^{1+o(1)} N |W|^{1/2} E_1(W)^{1/2}.$$
+Combining all these bounds, we obtain the claim.
 \end{proof}
 
 \begin{lemma}[Second Guth-Maynard relation]\cite[Lemma 1.7]{guth-maynard}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ then
@@ -398,7 +424,9 @@ Since $W$ is non-empty, $E_1(W) \geq 1$, and $V \gg 1$, so the $T^{-50}$ error c
 \literature
 \code{add_lver_guth_maynard_2024c()}
 
-\begin{proof} See \cite[Proposition 11.1]{guth-maynard}.
+\begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  Applying \cite[Proposition 11.1]{guth-maynard}, we conclude that
+    $$ E_1(W) \ll T^{o(1)} ( |W| N^{4-4\sigma} + |W|^{21/8} T^{1/4} N^{1-2\sigma} + |W|^3 N^{1-2\sigma} ),$$
+giving the claim.
 \end{proof}
 
 We can put this all together to prove the Guth--Maynard large values theorem.
