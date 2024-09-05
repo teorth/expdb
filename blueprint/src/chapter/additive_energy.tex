@@ -264,8 +264,8 @@ Heuristically one expects $s \leq \max( \rho+1, 2\rho)+1$ (see \cite[(11.63)]{iv
 \begin{lemma}\label{easy-double-zeta-bound}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\tau < 1$, then $s \leq \max(\rho+1, 2\rho)+1$.
 \end{lemma}
 
-\python{additive_energy}
-\code{small_tau_relation()}
+\literature
+\code{add_lver_ivic_1985()}
 
 \begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N>1$ unbounded, $T = N^{\tau+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$ and $S(N,W) = N^{s+o(1)}$.  By the discussion after \cite[(11.63)]{ivic}, we have
     $$ N^{-1} S(N,W) \ll T^\eps ( |W| N + |W|^2 )$$
@@ -345,8 +345,8 @@ and the claim follows after moving the $\kappa$ inside the second maximum and pe
 $$ \rho^* \leq \max(3 \rho + 1-2\sigma, \rho +4-4\sigma, 5\rho/2 + (3-4\sigma)/2).$$
 \end{corollary}
 
-\python{additive_energy}
-\code{heath_brown_relation()}
+\literature
+\code{add_lver_heath_brown_1979b()}
 
 This result essentially appears as \cite[Lemma 3]{heathbrown_zero_1979}.
 

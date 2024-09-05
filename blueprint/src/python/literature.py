@@ -1104,7 +1104,7 @@ add_lver_heath_brown_1979b()
 # Implementation of second Heath-Brown relation (Lemma 10.20)
 def add_lver_heath_brown_1979c(K)
     rect = Large_Value_Energy_Region.default_constraints()
-    for k in range(2, K):
+    for k in range(1, K):
         polys = []
         # 2 - 2sigma - rho >= 0
         polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
