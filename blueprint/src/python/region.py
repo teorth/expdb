@@ -27,10 +27,12 @@ class Region_Type:
 # A region represents a boolean combination of polytopes 
 class Region:
     def __init__(self, region_type, children):
+        if not isinstance(region_type, int):
+            raise ValueError("Parameter region_type must be of type int.")
         if not isinstance(children, Polytope) and \
             not isinstance(children, list):
-            raise ValueError("Parameter polytope must either be of type Polytope or list")
-            
+            raise ValueError("Parameter polytope must either be of type Polytope or list of Polytope")
+        
         self.region_type = region_type
         self.child = children
 

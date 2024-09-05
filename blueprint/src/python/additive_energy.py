@@ -77,9 +77,9 @@ class Large_Value_Energy_Region:
             raise ValueError("Parameter k must be an integer and >= 2.")
         raise NotImplementedError("TODO") # TODO
 
-def literature_large_value_energy_region(region, ref):
+def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
-        f"{ref.author()} large value energy region",
+        f"{ref.author()} large value energy region" + params,
         "Large value energy region",
         Large_Value_Energy_Region(region),
         f"See [{ref.author()}, {ref.year()}]",
@@ -161,115 +161,3 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
-
-def small_tau_relation():
-    # divide into two cases: tau <= 1 and tau >= 1
-    rect1 = Large_Value_Energy_Region.default_constraints()
-    rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-
-    rect2 =  Large_Value_Energy_Region.default_constraints()
-    rect2.append([-1, 0, 1, 0, 0, 0]) # tau >= 1
-
-    # No additional constraints on the second region with tau >= 1
-    polys = [Polytope(rect2)]
-    
-    # Region 1 polytopes
-    # 2 + rho - s >= 0
-    polys.append(Polytope(rect1 + [[2, 0, 0, 1, 0, -1]]))
-    # 1 + 2rho - s >= 0
-    polys.append(Polytope(rect1 + [[1, 0, 0, 2, 0, -1]]))
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
-    return region
-
-
-# Implementation of "Simplified Heath-Brown relation" Corollary 10.19
-# TODO: move this over to literature.py
-def heath_brown_relation():
-    # divide into two cases: Region 1 with tau < 3/2 and 
-    # region 2 with tau > 3/2
-    rect1 = Large_Value_Energy_Region.default_constraints()
-    rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
-
-    rect2 =  Large_Value_Energy_Region.default_constraints()
-    rect2.append([-frac(3,2), 0, 1, 0, 0, 0]) # tau >= 3/2
-
-    # No additional constraints on the second region with tau >= 3/2
-    polys = [Polytope(rect2)]
-    
-    # Region 1 polytopes
-    # 1 - 2sigma + 3rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[1, -2, 0, 3, -1, 0]]))
-    # 4 - 4sigma + rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[4, -4, 0, 1, -1, 0]]))
-    # 3/2 - 2sigma + 5/2rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[frac(3,2), -2, 0, frac(5,2), -1, 0]]))
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
-    return region
-
-# Implementation of second Heath-Brown relation (Lemma 10.20)
-# TODO: move this over to literature.py
-def heath_brown_relation2(k)
-    if not isinstance(k,int):
-        raise ValueError("Parameter k must be an integer.")
-    if k < 2:
-        raise ValueError("Parameter k must be >= 2.")
-    
-    rect = Large_Value_Energy_Region.default_constraints()
-    polys = []
-    # 2 - 2sigma - rho >= 0
-    polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
-    # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
-    polys.append(Polytope(rect + [[frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0]]))
-    # 3k/4 - k sigma - rho + rho*/4 >= 0
-    polys.append(Polytope(rect + [[frac(3*k,4), -k, 0, -1, frac(1,4), 0]])) 
-    
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
-    return region
-
-def guth_maynard_relation(k):
-    if not isinstance(k, int):
-        raise ValueError("Parameter k must be an integer.")
-    if k < 1:
-        raise ValueError("Parameter k must be >= 1.")
-
-    rect = Large_Value_Energy_Region.default_constraints()
-    polys = []
-    # 2 - 2sigma - rho >= 0
-    polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
-    # 1 - 2sigma + S_1/3 - rho >= 0 
-    # -7/3 - 2sigma - rho >= 0
-    polys.append(Polytope(rect + [[-frac(7,3), -2, 0, -1, 0, 0]]))
-    
-    # TODO: complete the list of constraints
-    raise NotImplementedError()
-
-def guth_maynard_relation2():
-    rect = Large_Value_Energy_Region.default_constraints()
-    return Region(Region_Type.POLYTOPE, Polytope(
-        rect + [[0, -2, 0, 1, -1, 1]] # -2sigma + rho - rho* - s >= 0
-    ))
-
-def guth_maynard_relation3():
-    rect1 = Large_Value_Energy_Region.default_constraints()
-    rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
-    rect1.append([-1, 0, 1, 0, 0, 0]) 
-
-    rect2 = Large_Value_Energy_Region.default_constraints()
-    rect2.append([-frac(4,3), 0, 1, 0, 0, 0]) # tau >= 4/3
-
-    rect3 = Large_Value_Energy_Region.default_constraints()
-    rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-    
-    # No additional constraints for second and third region
-    polys = [Polytope(rect2), Polytope(rect3)]
-
-    # Impose constraints for first region
-    # 4 - 4sigma + rho - rho* >= 0
-    polys.append(Polytope(rect + [[4, -4, 0, 1, -1, 0]]))
-    # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
-    polys.append(Polytope(rect + [[1, -2, frac(1,4), frac(21,8), -1, 0]]))
-    # 1 - 2sigma + 3rho - rho* >= 0
-    polys.append(Polytope(rect + [[1, -2, 0, 3, -1, 0]]))
-
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
-    return region
