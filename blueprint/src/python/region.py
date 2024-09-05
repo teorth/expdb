@@ -4,11 +4,11 @@ import copy
 class Region_Type:
     
     # Supports many regions 
-    INTERSECT = 0,
-    UNION = 1,
+    INTERSECT = 0
+    UNION = 1
     
     # Supports one region or polytope
-    POLYTOPE = 2,
+    POLYTOPE = 2
     COMPLEMENT = 3
     
     def to_str(region_type):
@@ -28,6 +28,7 @@ class Region_Type:
 class Region:
     def __init__(self, region_type, children):
         if not isinstance(region_type, int):
+            print(region_type)
             raise ValueError("Parameter region_type must be of type int.")
         if not isinstance(children, Polytope) and \
             not isinstance(children, list):
