@@ -368,7 +368,7 @@ class Polytope:
         return self.mat.row_size
 
     # Computes the intersection of this polytope with another
-    def intersect(self, other, debug=False):
+    def intersect(self, other):
         if not isinstance(other, Polytope):
             raise ValueError("Parameter other must be of type Polytope")
         
@@ -385,10 +385,6 @@ class Polytope:
         if len(rows) > 0:
             mat.extend(rows, linear=False)
         
-        if debug:
-            print('mat before canonicalize')
-            print(mat)
-
         mat.canonicalize()
         return Polytope._from_mat(mat)
 

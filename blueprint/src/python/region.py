@@ -6,16 +6,21 @@ class Region_Type:
     # Supports many regions 
     INTERSECT = 0
     UNION = 1
+    DISJOINT_UNION = 2
     
     # Supports one region or polytope
-    POLYTOPE = 2
-    COMPLEMENT = 3
+    POLYTOPE = 3
+    COMPLEMENT = 4
+
+
     
     def to_str(region_type):
         if region_type == Region_Type.INTERSECT:
             return "Intersection"
         elif region_type == Region_Type.UNION:
             return "Union"
+        elif region_type == Region_Type.DISJOINT_UNION:
+            return "Disjoint union"
         elif region_type == Region_Type.POLYTOPE:
             return "Polytope"
         elif region_type == Region_Type.COMPLEMENT:
@@ -66,6 +71,10 @@ class Region:
     def union(regions):
         return Region(Region_Type.UNION, regions)
 
+    # Compute the union of regions, assuming that they are disjoint 
+    def disjoint_union(regions):
+        return Region(Region_Type.DISJOINT_UNION, regions)
+
     # Compute the intersection of regions
     def intersect(regions):
         return Region(Region_Type.INTERSECT, regions)
@@ -78,8 +87,33 @@ class Region:
             return not self.child.contains(x)
         if self.region_type == Region_Type.POLYTOPE:
             return self.child.contains(x)
-        if self.region_type == Region_Type.UNION:
+        if self.region_type == Region_Type.UNION or self.region_type == Region_Type.DISJOINT_UNION:
             return any(c.contains(x) for c in self.child)
         if self.region_type == Region_Type.INTERSECT:
             return all(c.contains(x) for c in self.child)
+        raise NotImplementedError(self.region_type)
+
+    # Returns a representation of this region as a disjoint union of convex polytope.
+    # Returns a Region object that is a union of polytopes. 
+    def to_disjoint_union(self):
+        if self.region_type == Region_Type.COMPLEMENT:
+            raise NotImplementedError() # TODO: implement this
+        if self.region_type == Region_Type.POLYTOPE:
+            return Region.union([self])
+        if self.region_type == Region_Type.INTERSECT:
+            child_sets = [r.to_disjoint_union().child for r in self.child]
+            disjoint = child_sets[0]
+            for i in range(1, len(child_sets)):
+                new_disjoint = []
+                for p in disjoint:
+                    for q in child_sets[i]:
+                        inter = p.intersect(q)
+                        if not inter.is_empty(include_boundary=False):
+                            new_disjoint.append(inter)
+                disjoint = new_disjoint
+            return Region.disjoint_union(disjoint)
+        if self.region_type == Region_Type.UNION:
+            raise NotImplementedError() # TODO: implement this
+        if self.region_type == Region.DISJOINT_UNION:
+            return self
 
