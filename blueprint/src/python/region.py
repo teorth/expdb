@@ -93,15 +93,16 @@ class Region:
             return all(c.contains(x) for c in self.child)
         raise NotImplementedError(self.region_type)
 
-    # Returns a representation of this region as a disjoint union of convex polytope.
-    # Returns a Region object that is a union of polytopes. 
+    # Returns a representation of this region as a disjoint union of convex polytopes.
+    # Returns the result as a list of disjoint Polytope objects
     def to_disjoint_union(self):
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError() # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
-            return Region.union([self])
+            return [self.child]
         if self.region_type == Region_Type.INTERSECT:
-            child_sets = [r.to_disjoint_union().child for r in self.child]
+            # Sets of lists of polytopes
+            child_sets = [r.to_disjoint_union() for r in self.child]
             disjoint = child_sets[0]
             for i in range(1, len(child_sets)):
                 new_disjoint = []
@@ -110,10 +111,14 @@ class Region:
                         inter = p.intersect(q)
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
+                print(len(new_disjoint))
                 disjoint = new_disjoint
-            return Region.disjoint_union(disjoint)
+            return disjoint
         if self.region_type == Region_Type.UNION:
             raise NotImplementedError() # TODO: implement this
-        if self.region_type == Region.DISJOINT_UNION:
-            return self
+        if self.region_type == Region_Type.DISJOINT_UNION:
+            result = []
+            for r in self.child:
+                result.extend(r.to_disjoint_union())
+            return result
 

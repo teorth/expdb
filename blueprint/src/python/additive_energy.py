@@ -188,6 +188,11 @@ def approx_sup_LV_star(hypotheses, sigma, tau):
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
 
+    print(E)
+
+    DE = E.to_disjoint_union()
+    print(DE)
+    
     # sigma, tau, rho, rho*, s
     sup = 0
     argmax = []
