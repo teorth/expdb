@@ -479,6 +479,7 @@ class Polytope:
             new_rows.append(new_row)
         
         new_mat = cdd.Matrix(new_rows)
+        new_mat.rep_type = cdd.RepType.INEQUALITY
         new_mat.lin_set = self.mat.lin_set # copy over the lin set
         return Polytope._from_mat(new_mat)
 

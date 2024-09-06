@@ -246,9 +246,6 @@ def run_subs_tests():
             [0, 0, 1], # y >= 0
             [1, -1, -1] # x + y <= 1
         ])
-    print(B.subs({1: frac(1,2)}).polyhedron.get_generators())
-    print(Polytope.rect((0, frac(1,2))).polyhedron.get_generators())
-    
     assert B.subs({1: frac(1,2)}) == Polytope.rect((0, frac(1,2)))
 
 
