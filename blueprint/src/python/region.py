@@ -93,11 +93,17 @@ class Region:
             return all(c.contains(x) for c in self.child)
         raise NotImplementedError(self.region_type)
 
+    # Returns a new region object where the substitute function is called on each polytope
+    def substitute(self, values):
+        if self.region_type == Region_Type.POLYTOPE:
+            return Region(Region_Type.POLYTOPE, self.child.substitute(values))
+        return Region(self.region_type, [c.substitute(values) for c in self.child])
+
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a list of disjoint Polytope objects
     def to_disjoint_union(self):
         if self.region_type == Region_Type.COMPLEMENT:
-            raise NotImplementedError() # TODO: implement this
+            raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
             return [self.child]
         if self.region_type == Region_Type.INTERSECT:
@@ -115,10 +121,11 @@ class Region:
                 disjoint = new_disjoint
             return disjoint
         if self.region_type == Region_Type.UNION:
-            raise NotImplementedError() # TODO: implement this
+            raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.DISJOINT_UNION:
             result = []
             for r in self.child:
                 result.extend(r.to_disjoint_union())
             return result
+        raise NotImplementedError(self.region_type)
 

@@ -239,14 +239,14 @@ def run_setminus_test():
     
 def run_subs_tests():
     A = Polytope.rect((1, 2), (1, 2), (1, 2))
-    assert A.subs({1: frac(3,2)}) == Polytope.rect((1, 2), (1, 2))
+    assert A.substitute({1: frac(3,2)}) == Polytope.rect((1, 2), (1, 2))
 
     B = Polytope([
             [0, 1, 0], # x >= 0
             [0, 0, 1], # y >= 0
             [1, -1, -1] # x + y <= 1
         ])
-    assert B.subs({1: frac(1,2)}) == Polytope.rect((0, frac(1,2)))
+    assert B.substitute({1: frac(1,2)}) == Polytope.rect((0, frac(1,2)))
 
 
 run_polytope_tests()

@@ -465,7 +465,7 @@ class Polytope:
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 
-    def subs(self, values):
+    def substitute(self, values):
 
         # The rows of the shrunk matrix with the specified dimensions projected out
         new_rows = []

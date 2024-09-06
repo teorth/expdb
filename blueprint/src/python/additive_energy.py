@@ -180,19 +180,37 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+import random as rd
+
 # Given a set of hypotheses and the choices of (sigma, tau), compute 
 # the best available bound on LV*(sigma, tau) numerically. 
-def approx_sup_LV_star(hypotheses, sigma, tau):
+def approx_LV_star(hypotheses, sigma, tau, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
 
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    polys = E.to_disjoint_union()
+    E1 = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
 
-    print(E)
+    # if debug: randomly sample some points, and test inclusion/exclusion 
+    if debug:
+        for i in range(1000):
+            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
+            if E.contains(x) != E1.contains(x):
+                print(i, x)
+                raise ValueError()
+            else:
+                print(i, "passed")
 
-    DE = E.to_disjoint_union()
-    print(DE)
+    print(E1)
     
+    E2 = E1.substitute({0: sigma, 1: tau})
+
+    print(E2)
+
+    sup = max(max(v[1] for v in p.child.get_vertices()) for p in E2.child)
+    print("sup using exact inference", sup)
+
     # sigma, tau, rho, rho*, s
     sup = 0
     argmax = []
