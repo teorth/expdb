@@ -74,13 +74,12 @@ def run_union_test():
         ])
     
     U = Polytope.try_union([p1, p2])
-    print(U)
     
     # plot 
-    Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    Piecewise([Affine2([5, 0, 0], U)]).plot_domain((1/2, 1), (1, 3))
+    # Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
+    # Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    # Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
+    # Piecewise([Affine2([5, 0, 0], U)]).plot_domain((1/2, 1), (1, 3))
     
     # Another test case
     p1 = Polytope([
@@ -238,10 +237,25 @@ def run_setminus_test():
     assert not any(p.contains((1.5, 1.5)) for p in A_minus_B)
     assert any(p.contains((3, 3)) for p in A_minus_B)
     
+def run_subs_tests():
+    A = Polytope.rect((1, 2), (1, 2), (1, 2))
+    assert A.subs({1: frac(3,2)}) == Polytope.rect((1, 2), (1, 2))
+
+    B = Polytope([
+            [0, 1, 0], # x >= 0
+            [0, 0, 1], # y >= 0
+            [1, -1, -1] # x + y <= 1
+        ])
+    print(B.subs({1: frac(1,2)}).polyhedron.get_generators())
+    print(Polytope.rect((0, frac(1,2))).polyhedron.get_generators())
     
+    assert B.subs({1: frac(1,2)}) == Polytope.rect((0, frac(1,2)))
+
+
 run_polytope_tests()
 run_V_init_test()
 run_polytope_edge_tests()
 run_union_test()
 run_3_way_union_test()
 run_setminus_test()
+run_subs_tests()

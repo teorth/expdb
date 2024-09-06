@@ -285,6 +285,7 @@ class Polytope:
 
     # Computes the V representation of this polytope
     def compute_V_rep(self):
+        # TODO: replace this with the proper V generators
         v = self.polyhedron.get_generators()
         self.vertices = [r[1:] for r in v if r[0] == 1]  # unpack matrix output
         self.rays = [r[1:] for r in v if r[0] == 0]
@@ -473,14 +474,13 @@ class Polytope:
         # The rows of the shrunk matrix with the specified dimensions projected out
         new_rows = []
         for r in self.mat:
-            new_row = [r[0] + sum(r[i] * values[i] for i in values)]
-            new_row.extend(r[i] for i in range(1, len(r)) if i not in values)
+            new_row = [r[0] + sum(r[i + 1] * values[i] for i in values)]
+            new_row.extend(r[i] for i in range(1, len(r)) if i - 1 not in values)
             new_rows.append(new_row)
         
         new_mat = cdd.Matrix(new_rows)
         new_mat.lin_set = self.mat.lin_set # copy over the lin set
         return Polytope._from_mat(new_mat)
-
 
     # Plot the polytope (current only 2D polytopes are supported)
     def plot(self, resolution=100):
