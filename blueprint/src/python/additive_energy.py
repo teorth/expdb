@@ -156,27 +156,23 @@ def ep_to_lver(eph):
 
     # default limits 
     rect = Large_Value_Energy_Region.default_constraints()
-
-    # 2 + rho - s >= 0
-    polys.append(Polytope(rect + [[2, 0, 0, 1, 0, -1]]))
-
-    # 1 + 1/3 * tau + 5/3 * rho - s >= 0
-    polys.append(Polytope(rect + [[1, 0, frac(1,3), frac(5,3), 0, -1]]))
-
-    # 1 + (k + l) / (1 + 2k + 2l) tau + (2 + 3k + 4l) / (1 + 2k + 2l) rho - s >= 0
-    polys.append(Polytope(rect + [
+    region = Large_Value_Energy_Region.union_of_halfplanes(
         [
-            1,
-            0,
-            frac(k + l, 1 + 2 * k + 2 * l),
-            frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
-            0,
-            -1
-        ]]))
-
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+            [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
+            [1, 0, frac(1,3), frac(5,3), 0, -1],    # 1 + 1/3 * tau + 5/3 * rho - s >= 0
+            [   # 1 + (k + l) / (1 + 2k + 2l) tau + (2 + 3k + 4l) / (1 + 2k + 2l) rho - s >= 0
+                1,
+                0,
+                frac(k + l, 1 + 2 * k + 2 * l),
+                frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
+                0,
+                -1
+            ]
+        ],
+        rect
+    )
     return derived_large_value_energy_region(
-        Large_Value_Energy_Region(region),
+        region,
         f"Follows from {eph.data}",
         {eph})
 
@@ -194,22 +190,31 @@ def approx_LV_star(hypotheses, sigma, tau, debug=True):
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
+        ntrues = 0
+        npassed = 0
         for i in range(1000):
             x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
             if E.contains(x) != E1.contains(x):
                 print(i, x)
                 raise ValueError()
             else:
-                print(i, "passed")
+                npassed += 1
+            if E.contains(x):
+                ntrues += 1
+        print("[Debug info] Passed:", npassed, "Contained:", ntrues)
 
     print(E1)
-    
+    print("vertices")
+    for r in E1.child:
+        print(r.child.get_vertices())
+
     E2 = E1.substitute({0: sigma, 1: tau})
 
     print(E2)
 
-    sup = max(max(v[1] for v in p.child.get_vertices()) for p in E2.child)
-    print("sup using exact inference", sup)
+    print("vertices")
+    for r in E2.child:
+        print(r.child.get_vertices())
 
     # sigma, tau, rho, rho*, s
     sup = 0

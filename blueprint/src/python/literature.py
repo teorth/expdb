@@ -1102,7 +1102,7 @@ def add_lver_heath_brown_1979c(K):
             [
                 [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
                 [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
-                [frac(3*k,4), -k, 0, -1, frac(1,4), 0]          # 3k/4 - k sigma - rho + rho*/4 >= 0
+                [frac(k,2), -k, frac(k,4), -1, frac(1,4), 0]    # k/2 - k sigma + k/4 tau - rho + rho*/4 >= 0
             ],
             rect
         )
@@ -1113,7 +1113,7 @@ def add_lver_heath_brown_1979c(K):
                 params=f" with k = {k}"
             )
         )
-add_lver_heath_brown_1979c(10)
+add_lver_heath_brown_1979c(5)
 
 def add_lver_guth_maynard_2024a(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
