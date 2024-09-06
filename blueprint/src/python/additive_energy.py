@@ -161,3 +161,25 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+# Given a set of hypotheses and the choices of (sigma, tau), compute 
+# the best available bound on LV*(sigma, tau) numerically. 
+def approx_sup_LV_star(hypotheses, sigma, tau):
+    lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+
+    # Compute intersection 
+    E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+
+    # sigma, tau, rho, rho*, s
+    sup = 0
+    argmax = []
+    for rho in np.linspace(0, 10, 100):
+        for s in np.linspace(0, 10, 100):
+            for rho_star in np.linspace(0, 10, 100):
+                if sup < rho_star and E.contains([sigma, tau, rho, rho_star, s]):
+                    sup = rho_star
+                    argmax = [sigma, tau, rho, rho_star, s]
+    
+    print(sup)
+    print(argmax)
+    return sup
+

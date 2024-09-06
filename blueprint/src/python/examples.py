@@ -1,4 +1,5 @@
 from literature import *
+import additive_energy as ad
 import large_values as lv
 import zero_density_estimate as zd
 import zeta_large_values as zlv
@@ -386,6 +387,8 @@ def zero_density_estimates_examples4():
     for h in zdt:
         print(h.data, h.proof)
 
+def large_value_energy_region_examples():
+    ad.approx_sup_LV_star(literature, frac(3,4), frac(2))
 
 def all_examples():
     # mu_bound_examples()
@@ -396,7 +399,8 @@ def all_examples():
     # zero_density_estimates_examples()
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
-    zero_density_estimates_examples4()
+    # zero_density_estimates_examples4()
     # zd.optimize_pintz_zero_density(literature)
+    large_value_energy_region_examples()
 
 all_examples()

@@ -466,6 +466,22 @@ class Polytope:
         # If not including boundary, strict subspace vertex regions are considered empty
         return len(self.vertices) <= self.dimension()
 
+    # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
+    # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 
+    def subs(self, values):
+
+        # The rows of the shrunk matrix with the specified dimensions projected out
+        new_rows = []
+        for r in self.mat:
+            new_row = [r[0] + sum(r[i] * values[i] for i in values)]
+            new_row.extend(r[i] for i in range(1, len(r)) if i not in values)
+            new_rows.append(new_row)
+        
+        new_mat = cdd.Matrix(new_rows)
+        new_mat.lin_set = self.mat.lin_set # copy over the lin set
+        return Polytope._from_mat(new_mat)
+
+
     # Plot the polytope (current only 2D polytopes are supported)
     def plot(self, resolution=100):
         if self.dimension() != 2:
