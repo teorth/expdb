@@ -32,6 +32,29 @@ class Large_Value_Energy_Region:
     
     # Static methods ---------------------------------------------------------
 
+    # Computes a Large_Value_Energy_Region object representing the union of 
+    # a list of polytopes, where each polytope is defined as the intersection of 
+    # - a box, represented as a list of lists (a list of constraints)
+    # - a halfplane, represented as a single list (a constraint)
+    # The resulting Region object is represented as a DISJOINT_UNION, which 
+    # greatly improves performance over a UNION representation
+    # 
+    # This method is useful for quickly initializing many commonly encountered 
+    # regions in the study of large value energy regions, since they correspond to 
+    # a region implied by a single max() function. 
+    def union_of_halfplanes(halfplanes, box):
+
+        # Once a halfplane has been added, include its complement in the list of 
+        # neg_ineq, to add as a constraint to all remaining polytopes to be 
+        # constructed. 
+        neg_ineq = []
+        polys = []
+        for hp in halfplanes:
+            polys.append(Region(Region_Type.POLYTOPE, Polytope(box + [hp] + neg_ineq)))
+            neg_ineq.append([-x for x in hp])
+        return Region.disjoint_union(polys)
+
+
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
     def default_constraints():
@@ -57,10 +80,6 @@ class Large_Value_Energy_Region:
             bounds.append(b)   # x <= lim[1]
         return bounds
 
-    # Computes the union of n large value energy regions
-    def union(*regions):
-        return Large_Value_Energy_Region(Region.union([r.region for r in regions]))
-        
     # ------------------------------------------------------------------------
     
     # Returns whether the region contains a 5-dimensional point 

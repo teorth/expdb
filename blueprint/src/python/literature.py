@@ -1027,20 +1027,14 @@ add_zero_density_guth_maynard_2024()
 # List of large value energy region theorems from the literature
 
 def add_lver_heath_brown_1979():
-    # Construct Polytope of (sigma, tau, rho, rho*, s)
-    polys = []
-    rect = ad.Large_Value_Energy_Region.default_constraints()
-
-    # 2 + rho - s >= 0
-    polys.append(Polytope(rect + [[2, 0, 0, 1, 0, -1]]))
-
-    # 1 + 2 * rho - s >= 0
-    polys.append(Polytope(rect + [[1, 0, 0, 2, 0, -1]]))
-
-    # 1 + 1/2 * tau + 5/4 * rho - s >= 0
-    polys.append(Polytope(rect + [[1, 0, frac(1,2), frac(5,4), 0, -1]]))
-    
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        [
+            [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
+            [1, 0, 0, 2, 0, -1],                    # 1 + 2 * rho - s >= 0
+            [1, 0, frac(1,2), frac(5,4), 0, -1],    # 1 + 1/2 * tau + 5/4 * rho - s >= 0
+        ],
+        ad.Large_Value_Energy_Region.default_constraints()
+    )
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -1054,19 +1048,18 @@ def add_lver_ivic_1985():
     # divide into two cases: tau <= 1 and tau >= 1
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        [
+            [2, 0, 0, 1, 0, -1],    # 2 + rho - s >= 0
+            [1, 0, 0, 2, 0, -1]     # 1 + 2 * rho - s >= 0
+        ],
+        rect1
+    )
 
     rect2 = ad.Large_Value_Energy_Region.default_constraints()
     rect2.append([-1, 0, 1, 0, 0, 0]) # tau >= 1
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
 
-    # No additional constraints on the second region with tau >= 1
-    polys = [Polytope(rect2)]
-    
-    # Region 1 polytopes
-    # 2 + rho - s >= 0
-    polys.append(Polytope(rect1 + [[2, 0, 0, 1, 0, -1]]))
-    # 1 + 2rho - s >= 0
-    polys.append(Polytope(rect1 + [[1, 0, 0, 2, 0, -1]]))
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -1080,20 +1073,19 @@ def add_lver_heath_brown_1979b():
     # divide into two cases
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
+    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        [
+            [1, -2, 0, 3, -1, 0],                   # 1 - 2sigma + 3rho - rho* >= 0
+            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
+            [frac(3,2), -2, 0, frac(5,2), -1, 0]    # 3/2 - 2sigma + 5/2rho - rho* >= 0
+        ],
+        rect1
+    )
+
     rect2 = ad.Large_Value_Energy_Region.default_constraints()
     rect2.append([-frac(3,2), 0, 1, 0, 0, 0]) # tau >= 3/2
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
 
-    # No additional constraints on the second region with tau >= 3/2
-    polys = [Polytope(rect2)]
-    
-    # Region 1 polytopes
-    # 1 - 2sigma + 3rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[1, -2, 0, 3, -1, 0]]))
-    # 4 - 4sigma + rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[4, -4, 0, 1, -1, 0]]))
-    # 3/2 - 2sigma + 5/2rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[frac(3,2), -2, 0, frac(5,2), -1, 0]]))
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -1106,15 +1098,14 @@ add_lver_heath_brown_1979b()
 def add_lver_heath_brown_1979c(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
     for k in range(1, K):
-        polys = []
-        # 2 - 2sigma - rho >= 0
-        polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
-        # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
-        polys.append(Polytope(rect + [[frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0]]))
-        # 3k/4 - k sigma - rho + rho*/4 >= 0
-        polys.append(Polytope(rect + [[frac(3*k,4), -k, 0, -1, frac(1,4), 0]])) 
-        
-        region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
+        region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+            [
+                [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
+                [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
+                [frac(3*k,4), -k, 0, -1, frac(1,4), 0]          # 3k/4 - k sigma - rho + rho*/4 >= 0
+            ],
+            rect
+        )
         literature.add_hypothesis(
             ad.literature_large_value_energy_region(
                 region,
@@ -1140,9 +1131,12 @@ def add_lver_guth_maynard_2024a(K):
 
 def add_lver_guth_maynard_2024b():
     rect = ad.Large_Value_Energy_Region.default_constraints()
-    region = Region(Region_Type.POLYTOPE, Polytope(
-        rect + [[0, -2, 0, 1, -1, 1]] # -2sigma + rho - rho* - s >= 0
-    ))
+    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        [
+            [0, -2, 0, 1, -1, -1]    # -2sigma + rho - rho* - s >= 0
+        ],
+        rect
+    )
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -1155,25 +1149,22 @@ def add_lver_guth_maynard_2024c():
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
     rect1.append([-1, 0, 1, 0, 0, 0]) 
-
+    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        [
+            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
+            [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
+            [1, -2, 0, 3, -1, 0]                    # 1 - 2sigma + 3rho - rho* >= 0
+        ],
+        rect1
+    )
     rect2 = ad.Large_Value_Energy_Region.default_constraints()
     rect2.append([-frac(4,3), 0, 1, 0, 0, 0]) # tau >= 4/3
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
 
     rect3 = ad.Large_Value_Energy_Region.default_constraints()
     rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect3)))
     
-    # No additional constraints for second and third region
-    polys = [Polytope(rect2), Polytope(rect3)]
-
-    # Impose constraints for first region
-    # 4 - 4sigma + rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[4, -4, 0, 1, -1, 0]]))
-    # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
-    polys.append(Polytope(rect1 + [[1, -2, frac(1,4), frac(21,8), -1, 0]]))
-    # 1 - 2sigma + 3rho - rho* >= 0
-    polys.append(Polytope(rect1 + [[1, -2, 0, 3, -1, 0]]))
-
-    region = Region.union([Region(Region_Type.POLYTOPE, p) for p in polys])
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
