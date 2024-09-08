@@ -196,69 +196,23 @@ def sample_check(region1, region2, N=1000, info=None):
             ntrues += 1
     print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
-# Given a set of hypotheses and the choices of (sigma, tau), compute 
-# the best available bound on LV*(sigma, tau) numerically. 
-def approx_LV_star(hypotheses, sigma, tau, debug=True):
+# Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
+# as a polytope in R^3 with dimensions (sigma, tau, rho*)
+def compute_LV_star(hypotheses, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
-    
-    # Debugging - order the lvers in a specific way to reproduce bug
-    ordering = [
-        "Heath-Brown large value energy region 2", 
-        "Heath-Brown large value energy region 3 with k = 4", 
-        "Heath-Brown large value energy region 3 with k = 3", 
-        "Guth--Maynard large value energy region 2", 
-        "Ivi\\'{c} large value energy region", 
-        "Heath-Brown large value energy region 3 with k = 1", 
-        "Heath-Brown large value energy region 1", 
-        "Guth--Maynard large value energy region 3", 
-        "Heath-Brown large value energy region 3 with k = 2"
-        ]
-    
-    ordered_lvers = []
-    for o in ordering:
-        ordered_lvers.append(next(l for l in lvers if str(l) == o))
-    lvers = ordered_lvers
-    
-    x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
-    ###########################################################################
     
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
     E1 = E.as_disjoint_union()
 
-    print("Does E contain x?", E.contains(x))
-    for lver in lvers:
-        print("\t", lver.data.contains(x), lver)
-    print("Does E1 contain x?", E1.contains(x))
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
-        sample_check(E, E1, info=lvers)
+        sample_check(E, E1, N=10000, info=lvers)
     
-    print("Emptyness check:")
-    for r in E1.child:
-        print(r.child.is_empty(include_boundary=False))
-        
-    '''
-    E2 = E1.substitute({0: sigma, 1: tau})
-    print("After substituting")
-    print(E2)
+    # Project onto the (sigma, tau, rho*) dimension
+    Eproj = E1.project({0, 1, 3})
+    return Eproj
 
-    print("vertices")
-    for r in E2.child:
-        print(r.child.get_vertices())
-    '''
 
-    # sigma, tau, rho, rho*, s
-    sup = 0
-    argmax = []
-    for rho in np.linspace(0, 10, 100):
-        for s in np.linspace(0, 10, 100):
-            for rho_star in np.linspace(0, 10, 100):
-                if sup < rho_star and E.contains([sigma, tau, rho, rho_star, s]):
-                    sup = rho_star
-                    argmax = [sigma, tau, rho, rho_star, s]
-    
-    print(sup)
-    print(argmax)
-    return sup
+
 

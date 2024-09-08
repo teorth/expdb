@@ -285,7 +285,6 @@ class Polytope:
 
     # Computes the V representation of this polytope
     def compute_V_rep(self):
-        # TODO: replace this with the proper V generators
         v = self.polyhedron.get_generators()
         self.vertices = [r[1:] for r in v if r[0] == 1]  # unpack matrix output
         self.rays = [r[1:] for r in v if r[0] == 0]
@@ -483,6 +482,20 @@ class Polytope:
         new_mat.rep_type = cdd.RepType.INEQUALITY
         new_mat.lin_set = self.mat.lin_set # copy over the lin set
         return Polytope._from_mat(new_mat)
+
+    # Given a set of integers represent the indices of dimensions, returns a 
+    # new Polytope object projected onto those dimensions (uses vertex generation)
+    def project(self, dims):
+        if not isinstance(dims, set):
+            raise ValueError("Parameter dims must of type set.")
+        
+        if self.vertices is None:
+            self.compute_V_rep()
+        
+        projected_verts = []
+        for v in self.vertices:
+            projected_verts.append([v[i] for i in range(len(v)) if i in dims])
+        return Polytope.from_V_rep(projected_verts)
 
     # Plot the polytope (current only 2D polytopes are supported)
     def plot(self, resolution=100):

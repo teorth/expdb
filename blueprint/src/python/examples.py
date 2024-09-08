@@ -388,8 +388,10 @@ def zero_density_estimates_examples4():
         print(h.data, h.proof)
 
 def large_value_energy_region_examples():
-    ad.approx_LV_star(literature, frac(3,4), frac(2))
-
+    LVs = ad.compute_LV_star(literature, debug=False)
+    print(len(LVs.child), "regions")
+    
+    
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()

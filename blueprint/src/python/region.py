@@ -98,7 +98,24 @@ class Region:
         if self.region_type == Region_Type.POLYTOPE:
             return Region(Region_Type.POLYTOPE, self.child.substitute(values))
         return Region(self.region_type, [c.substitute(values) for c in self.child])
-
+    
+    # Project this region onto a set of dimensions (set of integers)
+    # Here we make the assumption that the projection of a union (resp. intersection) 
+    # of sets is the union (resp. intersection) of the projection of each set. 
+    def project(self, dims):
+        if self.region_type == Region_Type.POLYTOPE:
+            return Region(Region_Type.POLYTOPE, self.child.project(dims))
+        
+        # Unfortunately the disjointness of unions are not preserved under projection
+        if self.region_type == Region_Type.UNION or self.region_type == Region_Type.DISJOINT_UNION:
+            return Region(Region_Type.UNION, [c.project(dims) for c in self.child])
+        
+        if self.region_type == Region_Type.INTERSECTION:
+            return Region(Region_Type.INTERSECTION, [c.project(dims) for c in self.child])
+        
+        # In particular, complements are not yet supported. 
+        raise NotImplementedError()
+    
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a Region object of type DISJOINT_UNION
     def as_disjoint_union(self):
@@ -109,8 +126,6 @@ class Region:
     # Same as the as_disjoint_union(self) method except it returns the result as a 
     # list of Polytope objects.
     def _as_disjoint_union_poly(self):
-        x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
-    
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
@@ -128,25 +143,8 @@ class Region:
                 for p in disjoint:
                     for q in child_sets[i]:
                         inter = p.intersect(q)
-                        if inter.contains(x) and (not p.contains(x) or not q.contains(x)):
-                            print(p.contains(x), q.contains(x), inter.contains(x))
-                            print("p")
-                            print(p)
-                            print("q")
-                            print(q)
-                            print("inter")
-                            print(inter)
-                            raise ValueError()
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
-                
-                A = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in disjoint])
-                B = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in child_sets[i]])
-                R = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in new_disjoint])
-                print(len(new_disjoint), A.contains(x), B.contains(x), R.contains(x))
-                for c in child_sets[i]:
-                    print("\t", c.contains(x))
-                    
                 disjoint = new_disjoint
             return disjoint
         if self.region_type == Region_Type.UNION:
