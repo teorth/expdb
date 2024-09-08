@@ -356,9 +356,14 @@ class Polytope:
     def contains(self, x):
         if len(x) != self.dimension():
             raise ValueError(f"Dimension of x must be {self.dimension()}")
-        for row in self.mat:
-            if row[0] + sum(row[i + 1] * x[i] for i in range(len(x))) < 0:
-                return False
+            
+        for ri in range(self.mat.row_size):
+            row = self.mat[ri]
+            q = row[0] + sum(row[i + 1] * x[i] for i in range(len(x)))
+            if ri in self.mat.lin_set:
+                if q != 0: return False
+            else:
+                if q < 0: return False
         return True
 
     def dimension(self):

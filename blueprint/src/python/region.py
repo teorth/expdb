@@ -109,27 +109,44 @@ class Region:
     # Same as the as_disjoint_union(self) method except it returns the result as a 
     # list of Polytope objects.
     def _as_disjoint_union_poly(self):
+        x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
+    
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
             return [self.child]
         if self.region_type == Region_Type.INTERSECT:
+            # Compute intersection of regions using distributive property of set 
+            # algebra, i.e. 
+            # A ∩ (B1 u B2 u ... u Bn) = (A ∩ B1) u (A ∩ B2) u ... u (A ∩ Bn)
+            
             # Sets of lists of polytopes
             child_sets = [r._as_disjoint_union_poly() for r in self.child]
-            print("Counts", [len(c) for c in child_sets])
             disjoint = child_sets[0]
             for i in range(1, len(child_sets)):
                 new_disjoint = []
                 for p in disjoint:
                     for q in child_sets[i]:
                         inter = p.intersect(q)
+                        if inter.contains(x) and (not p.contains(x) or not q.contains(x)):
+                            print(p.contains(x), q.contains(x), inter.contains(x))
+                            print("p")
+                            print(p)
+                            print("q")
+                            print(q)
+                            print("inter")
+                            print(inter)
+                            raise ValueError()
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
-                            
-                R = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in new_disjoint])
-                x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
-                print(len(new_disjoint), R.contains(x))
                 
+                A = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in disjoint])
+                B = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in child_sets[i]])
+                R = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in new_disjoint])
+                print(len(new_disjoint), A.contains(x), B.contains(x), R.contains(x))
+                for c in child_sets[i]:
+                    print("\t", c.contains(x))
+                    
                 disjoint = new_disjoint
             return disjoint
         if self.region_type == Region_Type.UNION:
