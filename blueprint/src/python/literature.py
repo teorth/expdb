@@ -1027,7 +1027,7 @@ add_zero_density_guth_maynard_2024()
 # List of large value energy region theorems from the literature
 
 def add_lver_heath_brown_1979():
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+    region = ad.union_of_halfplanes(
         [
             [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
             [1, 0, 0, 2, 0, -1],                    # 1 + 2 * rho - s >= 0
@@ -1038,7 +1038,8 @@ def add_lver_heath_brown_1979():
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
-            rm.get("heathbrown_large_1979")
+            rm.get("heathbrown_large_1979"),
+            params= " 1"
         )
     )
 add_lver_heath_brown_1979()
@@ -1048,7 +1049,7 @@ def add_lver_ivic_1985():
     # divide into two cases: tau <= 1 and tau >= 1
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+    region = ad.union_of_halfplanes(
         [
             [2, 0, 0, 1, 0, -1],    # 2 + rho - s >= 0
             [1, 0, 0, 2, 0, -1]     # 1 + 2 * rho - s >= 0
@@ -1073,7 +1074,7 @@ def add_lver_heath_brown_1979b():
     # divide into two cases
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+    region = ad.union_of_halfplanes(
         [
             [1, -2, 0, 3, -1, 0],                   # 1 - 2sigma + 3rho - rho* >= 0
             [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
@@ -1089,7 +1090,8 @@ def add_lver_heath_brown_1979b():
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
-            rm.get("heathbrown_zero_1979")
+            rm.get("heathbrown_zero_1979"),
+            params=" 2"
         )
     )
 add_lver_heath_brown_1979b()
@@ -1098,7 +1100,7 @@ add_lver_heath_brown_1979b()
 def add_lver_heath_brown_1979c(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
     for k in range(1, K):
-        region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+        region = ad.union_of_halfplanes(
             [
                 [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
                 [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
@@ -1110,7 +1112,7 @@ def add_lver_heath_brown_1979c(K):
             ad.literature_large_value_energy_region(
                 region,
                 rm.get("heathbrown_zero_1979"),
-                params=f" with k = {k}"
+                params=f" 3 with k = {k}"
             )
         )
 add_lver_heath_brown_1979c(5)
@@ -1131,16 +1133,17 @@ def add_lver_guth_maynard_2024a(K):
 
 def add_lver_guth_maynard_2024b():
     rect = ad.Large_Value_Energy_Region.default_constraints()
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+    region = ad.union_of_halfplanes(
         [
-            [0, -2, 0, 1, -1, -1]    # -2sigma + rho - rho* - s >= 0
+            [0, -2, 0, 1, -1, 1]    # -2sigma + rho - rho* + s >= 0
         ],
         rect
     )
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
-            rm.get("guth-maynard")
+            rm.get("guth-maynard"),
+            params=" 2"
         )
     )
 add_lver_guth_maynard_2024b()
@@ -1149,7 +1152,7 @@ def add_lver_guth_maynard_2024c():
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
     rect1.append([-1, 0, 1, 0, 0, 0]) 
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
+    region = ad.union_of_halfplanes(
         [
             [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
             [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
@@ -1168,7 +1171,8 @@ def add_lver_guth_maynard_2024c():
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
-            rm.get("guth-maynard")
+            rm.get("guth-maynard"),
+            params=" 3"
         )
     )
 add_lver_guth_maynard_2024c()

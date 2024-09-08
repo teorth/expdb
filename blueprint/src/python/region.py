@@ -100,15 +100,23 @@ class Region:
         return Region(self.region_type, [c.substitute(values) for c in self.child])
 
     # Returns a representation of this region as a disjoint union of convex polytopes.
-    # Returns the result as a list of disjoint Polytope objects
-    def to_disjoint_union(self):
+    # Returns the result as a Region object of type DISJOINT_UNION
+    def as_disjoint_union(self):
+        polys = self._as_disjoint_union_poly()
+        return Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
+
+    # Internal method 
+    # Same as the as_disjoint_union(self) method except it returns the result as a 
+    # list of Polytope objects.
+    def _as_disjoint_union_poly(self):
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
             return [self.child]
         if self.region_type == Region_Type.INTERSECT:
             # Sets of lists of polytopes
-            child_sets = [r.to_disjoint_union() for r in self.child]
+            child_sets = [r._as_disjoint_union_poly() for r in self.child]
+            print("Counts", [len(c) for c in child_sets])
             disjoint = child_sets[0]
             for i in range(1, len(child_sets)):
                 new_disjoint = []
@@ -117,7 +125,11 @@ class Region:
                         inter = p.intersect(q)
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
-                print(len(new_disjoint))
+                            
+                R = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in new_disjoint])
+                x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
+                print(len(new_disjoint), R.contains(x))
+                
                 disjoint = new_disjoint
             return disjoint
         if self.region_type == Region_Type.UNION:
@@ -125,7 +137,6 @@ class Region:
         if self.region_type == Region_Type.DISJOINT_UNION:
             result = []
             for r in self.child:
-                result.extend(r.to_disjoint_union())
+                result.extend(r._as_disjoint_union_poly())
             return result
         raise NotImplementedError(self.region_type)
-

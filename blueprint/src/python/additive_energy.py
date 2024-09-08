@@ -32,29 +32,6 @@ class Large_Value_Energy_Region:
     
     # Static methods ---------------------------------------------------------
 
-    # Computes a Large_Value_Energy_Region object representing the union of 
-    # a list of polytopes, where each polytope is defined as the intersection of 
-    # - a box, represented as a list of lists (a list of constraints)
-    # - a halfplane, represented as a single list (a constraint)
-    # The resulting Region object is represented as a DISJOINT_UNION, which 
-    # greatly improves performance over a UNION representation
-    # 
-    # This method is useful for quickly initializing many commonly encountered 
-    # regions in the study of large value energy regions, since they correspond to 
-    # a region implied by a single max() function. 
-    def union_of_halfplanes(halfplanes, box):
-
-        # Once a halfplane has been added, include its complement in the list of 
-        # neg_ineq, to add as a constraint to all remaining polytopes to be 
-        # constructed. 
-        neg_ineq = []
-        polys = []
-        for hp in halfplanes:
-            polys.append(Region(Region_Type.POLYTOPE, Polytope(box + [hp] + neg_ineq)))
-            neg_ineq.append([-x for x in hp])
-        return Region.disjoint_union(polys)
-
-
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
     def default_constraints():
@@ -81,7 +58,7 @@ class Large_Value_Energy_Region:
         return bounds
 
     # ------------------------------------------------------------------------
-    
+
     # Returns whether the region contains a 5-dimensional point 
     def contains(self, point):
         if len(point) != 5: 
@@ -95,6 +72,28 @@ class Large_Value_Energy_Region:
         if not isinstance(k, int) or k < 2:
             raise ValueError("Parameter k must be an integer and >= 2.")
         raise NotImplementedError("TODO") # TODO
+
+# Computes a Region object representing the union of a list of polytopes, 
+# where each polytope is defined as the intersection of 
+# - a box, represented as a list of lists (a list of constraints)
+# - a halfplane, represented as a single list (a constraint)
+# The resulting Region object is represented as a DISJOINT_UNION, which 
+# greatly improves performance over a UNION representation
+# 
+# This method is useful for quickly initializing many commonly encountered 
+# regions in the study of large value energy regions, since they correspond to 
+# a region implied by a single max() function. 
+def union_of_halfplanes(halfplanes, box):
+    # Once a halfplane has been added, include its complement in the list of 
+    # neg_ineq, to add as a constraint to all remaining polytopes to be 
+    # constructed. 
+    neg_ineq = []
+    polys = []
+    for hp in halfplanes:
+        polys.append(Region(Region_Type.POLYTOPE, Polytope(box + [hp] + neg_ineq)))
+        neg_ineq.append([-x for x in hp])
+    return Region.disjoint_union(polys)
+
 
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
@@ -177,44 +176,77 @@ def ep_to_lver(eph):
         {eph})
 
 import random as rd
+rd.seed(1007)
+
+# Debugging method to check whether two regions agree
+def sample_check(region1, region2, N=1000, info=None):
+    ntrues = 0
+    npassed = 0
+    for i in range(N):
+        x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
+        c1 = region1.contains(x)
+        c2 = region2.contains(x)
+        if c1 != c2:
+            print(i, x)
+            print(info)
+            raise ValueError()
+        else:
+            npassed += 1
+        if c1:
+            ntrues += 1
+    print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
 # Given a set of hypotheses and the choices of (sigma, tau), compute 
 # the best available bound on LV*(sigma, tau) numerically. 
 def approx_LV_star(hypotheses, sigma, tau, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
-
+    
+    # Debugging - order the lvers in a specific way to reproduce bug
+    ordering = [
+        "Heath-Brown large value energy region 2", 
+        "Heath-Brown large value energy region 3 with k = 4", 
+        "Heath-Brown large value energy region 3 with k = 3", 
+        "Guth--Maynard large value energy region 2", 
+        "Ivi\\'{c} large value energy region", 
+        "Heath-Brown large value energy region 3 with k = 1", 
+        "Heath-Brown large value energy region 1", 
+        "Guth--Maynard large value energy region 3", 
+        "Heath-Brown large value energy region 3 with k = 2"
+        ]
+    
+    ordered_lvers = []
+    for o in ordering:
+        ordered_lvers.append(next(l for l in lvers if str(l) == o))
+    lvers = ordered_lvers
+    
+    x = [0.927969694257609, 4.002419704154391, 2.969216748104854, 4.435046662065839, 3.7077908485341697]
+    ###########################################################################
+    
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
-    polys = E.to_disjoint_union()
-    E1 = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    E1 = E.as_disjoint_union()
 
+    print("Does E contain x?", E.contains(x))
+    for lver in lvers:
+        print("\t", lver.data.contains(x), lver)
+    print("Does E1 contain x?", E1.contains(x))
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
-        ntrues = 0
-        npassed = 0
-        for i in range(1000):
-            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
-            if E.contains(x) != E1.contains(x):
-                print(i, x)
-                raise ValueError()
-            else:
-                npassed += 1
-            if E.contains(x):
-                ntrues += 1
-        print("[Debug info] Passed:", npassed, "Contained:", ntrues)
-
-    print(E1)
-    print("vertices")
+        sample_check(E, E1, info=lvers)
+    
+    print("Emptyness check:")
     for r in E1.child:
-        print(r.child.get_vertices())
-
+        print(r.child.is_empty(include_boundary=False))
+        
+    '''
     E2 = E1.substitute({0: sigma, 1: tau})
-
+    print("After substituting")
     print(E2)
 
     print("vertices")
     for r in E2.child:
         print(r.child.get_vertices())
+    '''
 
     # sigma, tau, rho, rho*, s
     sup = 0
