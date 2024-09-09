@@ -22,7 +22,7 @@ for any $1/2 \leq \sigma \leq 1$.
 
 \begin{proof}\uses{add-energy, zero-basic} The claim (i) follows from Lemma \ref{add-energy}(iv), and the remaining claims then follow from Lemma \ref{zero-basic}.\end{proof}
 
-Upper bounds on $A^*(\sigma)$ can be obtained from large value energy theorems via the following relation.
+Upper bounds on $\A^*(\sigma)$ can be obtained from large value energy theorems via the following relation.
 
 \begin{lemma}[Zero density energy from large values energy]\label{zeroe-from-large}\uses{lvze-def}  Let $1/2 < \sigma < 1$.  Then
 $$ \A^*(\sigma)(1-\sigma) \leq \max\left( \sup_{\tau \geq 1} \LV^*_\zeta(\sigma,\tau)/\tau, \limsup_{\tau \to \infty} \LV^*(\sigma,\tau)/\tau \right).$$
@@ -91,12 +91,16 @@ $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zet
 \begin{equation}\label{second-claim}
         \rho^* \leq \max\left( \frac{10-11\sigma}{2-\sigma}, \frac{18-19\sigma}{4-2\sigma}\right) \tau
 \end{equation}
-whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $2 \leq \tau \leq 3$.  Let $k$ be the first integer for which $1 \leq \tau/k \leq 3/2$, thus $k=2,3$ and also $\tau/(k+1) \leq 1$.  By Lemma \ref{power-energy}, we have
+whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $2 \leq \tau \leq 3$.  Let $k$ be the first integer for which $1 \leq \tau/k \leq 3/2$, thus $k=2,3$ and also $\tau/(k+1) \leq 1$.  By Lemma \ref{power-energy}, there exist tuples
 \begin{equation}\label{smak}
-\left(\sigma, \frac{\tau}{k}, \frac{\rho}{k}, \frac{\rho^*}{k}, \frac{s}{k}\right), \left(\sigma,\frac{\tau}{k+1}, \frac{\rho}{k+1}, \frac{\rho^*}{k+1}, \frac{s}{k+1}\right)  \in \Energy.
+\left(\sigma, \frac{\tau}{k}, \rho', \frac{\rho^*}{k}, s'\right), \left(\sigma,\frac{\tau}{k+1}, \rho'', \frac{\rho^*}{k+1}, s''\right)  \in \Energy.
 \end{equation}
-From applying Corollary \ref{hb-energy-simp} to the former quadruple, we have
-$$ \frac{\rho^*}{k} \leq \max \left(\frac{3\rho}{k} + 1-2\sigma, \frac{\rho}{k} +4-4\sigma, \frac{5\rho}{2k} + \frac{3-4\sigma}{2}\right).$$
+for some $\rho'$, $s'$, $\rho''$ and $s''$ satisfying
+\[
+\rho' \le \frac{\rho}{k},\qquad s' \le \frac{s}{k},\qquad \rho'' \le \frac{\rho}{k+1},\qquad s'' \le \frac{s}{k+1}.
+\]
+Applying Corollary \ref{hb-energy-simp} to the former tuple of \eqref{smak} and using $\rho' \le \rho/k$, we have
+$$\frac{\rho^*}{k} \leq \max \left(\frac{3\rho}{k} + 1-2\sigma, \frac{\rho}{k} +4-4\sigma, \frac{5\rho}{2k} + \frac{3-4\sigma}{2}\right).$$
 Write $\tau' := \tau/k$. From Lemma \ref{l2-mvt} one has
 $$\rho/k \leq \tau' + 1 - 2\sigma$$
 and also
