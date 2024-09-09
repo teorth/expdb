@@ -557,7 +557,7 @@ class Polytope:
             mat.extend(eq_constraints, linear=True)
         return Polytope._from_mat(mat)
 
-        
+
     # Plot the polytope (current only 2D polytopes are supported)
     def plot(self, resolution=100):
         if self.dimension() != 2:

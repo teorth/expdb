@@ -180,8 +180,6 @@ def ep_to_lver(eph):
 def lv_to_lver(hypotheses):
     lvs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
 
-    rect = Large_Value_Energy_Region.default_constraints()
-
     # A large value estimate currently is represented as a 2-dimensional affine function rho
     # <= f(sigma, tau). Convert this into a polytope representing the set of feasible rho
     # values in (sigma, tau, rho, rho*, s) space, with default limits on the unconstrained
@@ -190,17 +188,29 @@ def lv_to_lver(hypotheses):
         polys = []
         # Each piece is an affine function of (sigma, tau)
         for piece in lv.bound.pieces:
-            f = piece.a # rho <= f[0] + f[1] * sigma + f[2] * tau
-            D = piece.domain # polytope of (sigma, tau)
-            region.child.append(
-                Region(
-                    Region_Type.POLYTOPE,
-                    Polytope(
-                        rect + [[f[0], f[1], f[2], -1, 0, 0]] + []
-                    )
-                )
+            # Express this piece as a polytope 
+            # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
+            P = piece.domain.lift([
+                0, 
+                1,
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ]).intersect(
+                # rho <= f[0] + f[1] * sigma + f[2] * tau
+                Polytope([
+                    [piece.a[0], piece.a[1], piece.a[2], -1, 0, 0]
+                ])
             )
-        region = Region(Region_Type.DISJOINT_UNION, [])
+            polys.append(Region(Region_Type.POLYTOPE, P))
+        region = Region(Region_Type.DISJOINT_UNION, polys)
+        hypotheses.add_hypothesis(
+            derived_large_value_energy_region(
+                Large_Value_Energy_Region(region),
+                f"Follows from {lv}",
+                {lv}
+            )
+        )
 
 
 import random as rd
