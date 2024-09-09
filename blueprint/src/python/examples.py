@@ -2,6 +2,7 @@ from literature import *
 import additive_energy as ad
 import large_values as lv
 import zero_density_estimate as zd
+import zero_density_energy_estimate as ze
 import zeta_large_values as zlv
 
 # Temporary debugging functionality
@@ -390,8 +391,55 @@ def zero_density_estimates_examples4():
 def large_value_energy_region_examples():
     LVs = ad.compute_LV_star(literature, debug=False)
     print(len(LVs.child), "regions")
+
+def zero_density_energy_examples():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density estimate"))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density energy estimate"))
+
+    # add trivial bounds - this uses literature zero-density estimates
+    ze.add_trivial_zero_density_energy_estimates(hypotheses)
+
+    # as an example, plot the trivial bound and the literature bound 
+    sigmas = np.linspace(1/2, 0.999, 1000)
+    trivial_bound = []
+    lit_bound = []
+    lindelof_bound = []
+    print([h for h in hypotheses if h.name == "Trivial zero density energy estimate"])
+    print(literature.list_hypotheses(hypothesis_type="Zero density energy estimate"))
+    for sigma in sigmas:
+        trivial = min(
+                    h.data.at(sigma) 
+                    for h in hypotheses 
+                    if h.name == "Trivial zero density energy estimate" and h.data.interval.contains(sigma)
+                )
+        trivial_bound.append(trivial)
+        
+        lit = min(
+                h.data.at(sigma)
+                for h in literature
+                if h.hypothesis_type == "Zero density energy estimate" and h.data.interval.contains(sigma)
+            )
+        lit_bound.append(min(lit, trivial))
+        
+        if sigma > 3/4:
+            lindelof_bound.append(0)
+        else:
+            lindelof_bound.append(8 - 4 * sigma)
+            
+        
     
-    
+    plt.figure(dpi=1200)
+    plt.xlabel(r"$\sigma$")
+    plt.ylabel(r"$A^*(\sigma)$")
+    plt.plot(sigmas, lit_bound, linewidth=0.5, label="Literature zero-density energy estimate")
+    plt.plot(sigmas, trivial_bound, linewidth=0.5, label="\"Trivial\" zero-density energy estimate")
+    plt.plot(sigmas, lindelof_bound, linewidth=0.5, label="Lindelof zero-density energy estimate")
+    plt.title(r"Bounds on $A^*(\sigma)$")
+    plt.legend(loc="lower left")
+    plt.show()
+
+
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()
@@ -403,6 +451,7 @@ def all_examples():
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
     # zd.optimize_pintz_zero_density(literature)
-    large_value_energy_region_examples()
+    # large_value_energy_region_examples()
+    zero_density_energy_examples()
 
 all_examples()
