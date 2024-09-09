@@ -25,7 +25,7 @@ for any $1/2 \leq \sigma \leq 1$.
 Upper bounds on $A^*(\sigma)$ can be obtained from large value energy theorems via the following relation.
 
 \begin{lemma}[Zero density energy from large values energy]\label{zeroe-from-large}\uses{lvze-def}  Let $1/2 < \sigma < 1$.  Then
-$$ \A^*(\sigma)(1-\sigma) \leq \max( \sup_{\tau \geq 1} \LV^*_\zeta(\sigma,\tau)/\tau, \limsup_{\tau \to \infty} \LV^*(\sigma,\tau)/\tau ).$$
+$$ \A^*(\sigma)(1-\sigma) \leq \max\left( \sup_{\tau \geq 1} \LV^*_\zeta(\sigma,\tau)/\tau, \limsup_{\tau \to \infty} \LV^*(\sigma,\tau)/\tau \right).$$
 \end{lemma}
 
 \begin{proof}\uses{lve-basic,zero-from-large,add-energy, lve-asymp}
@@ -89,14 +89,14 @@ $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zet
 
 \begin{proof}\uses{zeroe-large-cor-0, power-energy, hb-energy-simp, l2-mvt, hb-density, zeroe-basic, lvz-basic} We first suppose that $\sigma \leq 3/4$.  Here we apply Corollary \ref{zeroe-large-cor-0} with $\tau_0 = 2$.  The $\LV^*_\zeta$ supremum is now trivial, so it suffices to show that
 \begin{equation}\label{second-claim}
-        \rho^* \leq \max( \frac{10-11\sigma}{2-\sigma}, \frac{18-19\sigma}{4-2\sigma}) \tau
+        \rho^* \leq \max\left( \frac{10-11\sigma}{2-\sigma}, \frac{18-19\sigma}{4-2\sigma}\right) \tau
 \end{equation}
-whenever $(\sigma,\tau,\rho,\rho^*) \in \Energy$ with $2 \leq \tau \leq 3$.  Let $k$ be the first integer for which $1 \leq \tau/k \leq 3/2$, thus $k=2,3$ and also $\tau/(k+1) \leq 1$.  By Lemma \ref{power-energy}, we have
+whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $2 \leq \tau \leq 3$.  Let $k$ be the first integer for which $1 \leq \tau/k \leq 3/2$, thus $k=2,3$ and also $\tau/(k+1) \leq 1$.  By Lemma \ref{power-energy}, we have
 \begin{equation}\label{smak}
- (\sigma,\tau/k, \rho/k, (\rho^*)/k), (\sigma,\tau/(k+1), \rho/(k+1), (\rho^*)/(k+1))  \in \Energy.
+\left(\sigma, \frac{\tau}{k}, \frac{\rho}{k}, \frac{\rho^*}{k}, \frac{s}{k}\right), \left(\sigma,\frac{\tau}{k+1}, \frac{\rho}{k+1}, \frac{\rho^*}{k+1}, \frac{s}{k+1}\right)  \in \Energy.
 \end{equation}
 From applying Corollary \ref{hb-energy-simp} to the former quadruple, we have
-$$ \rho^*/k \leq \max(3 \rho/k + 1-2\sigma, \rho/k +4-4\sigma, 5\rho/2k + (3-4\sigma)/2).$$
+$$ \frac{\rho^*}{k} \leq \max \left(\frac{3\rho}{k} + 1-2\sigma, \frac{\rho}{k} +4-4\sigma, \frac{5\rho}{2k} + \frac{3-4\sigma}{2}\right).$$
 Write $\tau' := \tau/k$. From Lemma \ref{l2-mvt} one has
 $$\rho/k \leq \tau' + 1 - 2\sigma$$
 and also
@@ -106,14 +106,20 @@ and thus
 \rho/k \leq \min( \tau'+1-2\sigma, 3-3\sigma)
 \end{equation}
 and
-$$ \rho^*/k \leq \max(3 \min(\tau'+1-2\sigma,3-3\sigma) + 1-2\sigma, \min(\tau'+1-2\sigma,3-3\sigma) +4-4\sigma, 5\min(\tau'+1-2\sigma,3-3\sigma)/2 + (3-4\sigma)/2).$$
+\begin{equation*}
+    \begin{split}
+        \rho^*/k \leq \max(&3 \min(\tau'+1-2\sigma,3-3\sigma) + 1-2\sigma, \\
+        &\min(\tau'+1-2\sigma,3-3\sigma) +4-4\sigma, \\
+        &5\min(\tau'+1-2\sigma,3-3\sigma)/2 + (3-4\sigma)/2).
+    \end{split}
+\end{equation*}
 A tedious calculation shows that for $1 \leq \tau' \leq 3/2$, we have
 $$3 \min(\tau'+1-2\sigma,3-3\sigma) + 1-2\sigma \leq \frac{10-11\sigma}{2-\sigma} \tau',$$
-$$ \min(\tau'+1-2\sigma,3-3\sigma) +4-4\sigma \leq \max( \frac{7-7\sigma}{2-\sigma}, 6-6\sigma)\tau'$$
+$$ \min(\tau'+1-2\sigma,3-3\sigma) +4-4\sigma \leq \max\left( \frac{7-7\sigma}{2-\sigma}, 6-6\sigma\right)\tau'$$
 and
-$$5\min(\tau'+1-2\sigma,3-3\sigma)/2 + (3-4\sigma)/2 \leq \frac{18-19\sigma}{4-2\sigma} \tau';$$
-since
-$$\max( \frac{7-7\sigma}{2-\sigma}, 6-6\sigma) \leq \max(\frac{10-11\sigma}{2-\sigma}, \frac{18-19\sigma}{4-2\sigma})$$
+$$5\min(\tau'+1-2\sigma,3-3\sigma)/2 + (3-4\sigma)/2 \leq \frac{18-19\sigma}{4-2\sigma} \tau'.$$
+Since
+$$\max\left( \frac{7-7\sigma}{2-\sigma}, 6-6\sigma\right) \leq \max\left(\frac{10-11\sigma}{2-\sigma}, \frac{18-19\sigma}{4-2\sigma}\right)$$
 we obtain the claim.
 
 Now suppose that $\sigma > 3/4$.  From Theorem \ref{hb-density} and Lemma \ref{zeroe-basic}(i) we are already done when $\sigma \geq 25/28$, so we may assume $\sigma < 25/28$.
@@ -122,7 +128,7 @@ Here we apply Corollary \ref{zeroe-large-cor-0} with $\tau_0 = 4\sigma-1$.  To c
 \begin{equation}\label{first-claim}
     \rho^* \leq \frac{12(1-\sigma)}{4\sigma-1} \tau
 \end{equation}
-whenever $(\sigma,\tau,\rho,\rho^*) \in \Energy_\zeta$ and $2 \leq \tau < 4\sigma-1$. We use Lemma \ref{lvz-basic}(ii) followed by Lemma \ref{hb-12} to give
+whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta$ and $2 \leq \tau < 4\sigma-1$. We use Lemma \ref{lvz-basic}(ii) followed by Lemma \ref{hb-12} to give
 $$ \rho^* \leq 3\rho \leq 3( 2\tau - 12 (\sigma-1/2) )$$
 so the claim reduces to verifying
 $$ 3( 2\tau - 12 (\sigma-1/2) ) \leq \frac{12(1-\sigma)}{4\sigma-1} \tau.$$
@@ -132,7 +138,7 @@ It remains to establish
 \begin{equation}\label{second-claim'}
     \rho^* \leq \frac{12(1-\sigma)}{4\sigma-1} \tau
 \end{equation}
-whenever $(\sigma,\tau,\rho,\rho^*) \in \Energy_\zeta$ and $4\sigma-1 \leq \tau \leq 2(4\sigma-1)$.
+whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy_\zeta$ and $4\sigma-1 \leq \tau \leq 2(4\sigma-1)$.
 Let $k$ be the first integer for which $(4\sigma-1)/2 \leq \tau/k \leq 3(4\sigma-1)/4$, thus $k=2,3$ and also $\tau/(k+1) \leq 4\sigma-1$.  By Lemma \ref{power-energy}, we have \eqref{smak}.
 From Theorem \ref{huxley-lv} we have
 $$\rho/k \leq \max(2-2\sigma, \tau' + 4 - 6\sigma)$$

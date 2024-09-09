@@ -7,9 +7,11 @@
 # satisfying with real part \in [\sigma, 1] and imaginary part \in 
 # [-T, T]. 
 
+import additive_energy as ad
 from fractions import Fraction as frac
 from functions import Interval, RationalFunction as RF
 from hypotheses import Hypothesis, Hypothesis_Set
+import numpy as np
 from reference import Reference
 
 # class representing a zero-density energy estimate 
@@ -110,3 +112,46 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
             Zero_Density_Energy_Estimate("3 / (1 - x)", Interval(frac(1,2), 1))
         )
     )
+
+# Given a (sigma, tau, rho*) Region representing feasible LV*(sigma, tau) values and a 
+# fixed sigma, compute 
+# sup_{tau_lower \leq tau \leq tau_upper} LV*(sigma,tau) / tau 
+def approx_sup_LV_star_on_tau(LV_star_region, sigma, tau_lower, tau_upper, resolution=100):
+
+    ts = np.linspace(tau_lower, tau_upper, resolution)
+    pieces = []
+    for h in hypotheses:
+        pieces.extend(h.data.bound.pieces)
+
+    sup = float("-inf")
+    for t in ts:
+        inf = float("inf")
+        for h in hypotheses:
+            v = h.data.bound.at([sigma, t])
+            if v is not None and v / t < inf:
+                inf = v / t
+        if inf > sup:
+            sup = inf
+
+    return sup
+
+# Given
+# - a (sigma, tau, rho*) Region representing feasible LV*(\sigma, \tau) values 
+# - a (sigma, tau, rho*) Region representing feasible LV*_{\zeta}(\sigma, \tau) values
+# - a range of values of \sigma
+# compute the best bound on A*(\sigma) using t0 = 2 and the bound 
+# A*(s)(1 - s) \leq 
+# max(sup_{2 \leq t < t0} LV*_{\zeta}(s, t)/t, sup_{t0 \leq t \leq 2t0} LV*(s, t)/t)
+def approx_best_energy_bound(LV_region, sigma):
+    LVs = LV_region.substitute({0: sigma})
+
+    # Take tau0 = 2
+    tau0 = 2
+    N = 100
+    taus = np.linspace(tau0, 3/2 * tau0, N)
+    rhos = np.linspace(0, 10, N)
+    LV_on_tau = []
+    for tau in taus:
+        LV_on_tau.append(max(rho for rho in rhos if LVs.contains([tau, rho])) / tau)
+    return max(LV_on_tau)
+

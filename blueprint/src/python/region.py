@@ -1,5 +1,8 @@
-from polytope import Polytope
+
 import copy
+import matplotlib.pyplot as plt
+import numpy as np
+from polytope import Polytope
 
 class Region_Type:
     
@@ -78,7 +81,18 @@ class Region:
     # Compute the intersection of regions
     def intersect(regions):
         return Region(Region_Type.INTERSECT, regions)
-
+    
+    # If the region is a union of polytopes, try to simplify it
+    def _try_simplify_union_of_polytopes(region):
+        if region.region_type not in {Region_Type.UNION, Region_Type.DISJOINT_UNION} or \
+            not all(r.region_type == Region_Type.POLYTOPE for r in region.child):
+            return False
+        
+        polys = [r.child for r in region.child]
+        
+        raise NotImplementedError() # TODO: implement this method
+    
+    
     # Instance methods -------------------------------------------------------
 
     # Returns whether this region contains the point x
@@ -155,3 +169,29 @@ class Region:
                 result.extend(r._as_disjoint_union_poly())
             return result
         raise NotImplementedError(self.region_type)
+    
+    # If this region is 2-dimensional, plot it (see also the plot method in Polytope)
+    def plot2d(self, xlim, ylim, resolution=100):
+        xvals = np.linspace(xlim[0], xlim[1], resolution)
+        yvals = np.linspace(ylim[0], ylim[1], resolution)
+        xs = []
+        ys = []
+        for x in xvals:
+            for y in yvals:
+                if self.contains((x, y)):
+                    xs.append(x)
+                    ys.append(y)
+        
+        plt.plot(xs, ys)
+        plt.show()
+
+    # Simplify the Region
+    # TODO: add more simplification routines 
+    def simplify(self):
+
+        # If this region is a union of polytopes, it may be simplified
+        Region._try_simplify_union_of_polytopes(self)
+
+        pass
+    
+
