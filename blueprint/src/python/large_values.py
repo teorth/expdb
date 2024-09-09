@@ -48,6 +48,9 @@ class Large_Value_Estimate_Transform:
 # bounds (list of list) vectors a representing a function f(x) = a^Tx with the first
 #                   coefficient denoting the constant term
 # domain (Polytope object) the (sigma, tau) domain of definition
+# 
+# TODO: since we have implemented the Region class this method may be replaced 
+# by e.g. union_of_halfplanes method in additive_energy. 
 def max_of(bounds, domain=None):
 
     # The standard domain of definition is \sigma \in [1/2, 1], \tau \geq 0

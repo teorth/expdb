@@ -314,7 +314,17 @@ class Polytope:
 
     # Returns this polytope as a set of Constraint objects
     def get_constraints(self):
-        return [Constraint(list(r), Constraint.GREATER_EQUALS) for r in self.mat]
+        return 
+        [
+            Constraint(list(self.mat[i]), Constraint.GREATER_EQUALS)  # The inequality constraints
+                for i in range(self.mat.num_rows) 
+                if i not in self.mat.lin_set
+        ] + \
+        [
+            Constraint(list(self.mat[i]), Constraint.EQUALS) # The equality constraints
+                for i in range(self.mat.num_rows)
+                if i in self.mat.lin_set
+        ]
 
     # Returns a new matrix with the ith dimension scaled by a factor
     def scale(self, i, factor, additional_constraints):
@@ -483,8 +493,11 @@ class Polytope:
         new_mat.lin_set = self.mat.lin_set # copy over the lin set
         return Polytope._from_mat(new_mat)
 
-    # Given a set of integers represent the indices of dimensions, returns a 
-    # new Polytope object projected onto those dimensions (uses vertex generation)
+    # Given a set of integers representing the indices of dimensions, returns a 
+    # new Polytope object projected onto those dimensions.
+    #
+    # Note: this method uses the V representation of a polytope so only works 
+    # for finite polytopes. 
     def project(self, dims):
         if not isinstance(dims, set):
             raise ValueError("Parameter dims must of type set.")
@@ -497,6 +510,53 @@ class Polytope:
             projected_verts.append([v[i] for i in range(len(v)) if i in dims])
         return Polytope.from_V_rep(projected_verts)
 
+    # Given a list (var) x[0], x[1], ..., x[N - 1], with N > self.dimension(), 
+    # returns a polytope formed by lifting this polytope to N dimensions. 
+    # Each x[i] is either
+    # - an integer, in which case the i-th dimension of the resulting polytope 
+    #   is the x[i]-th dimension of this polytope, or
+    # - a tuple (a, b) of numbers representing the limits along the (new) i-th 
+    #   dimension of the resulting polytope
+    def lift(self, var):
+        if not isinstance(var, list):
+            raise ValueError("Parameter var must be of type list")
+        if not all(isinstance(x, int) or isinstance(x, tuple) for x in var):
+            raise ValueError("Each entry of parameter var must be either of type int or tuple")
+
+        N = len(var)
+
+        # The inequality constraints of the form ax >= 0
+        ineq_constraints = [self.mat[i] for i in range(self.mat.num_rows) if i not in self.mat.linset] 
+        # the equality constraints of the form ax = 0
+        eq_constraints = [self.mat[i] for i in range(self.mat.num_rows) if i in self.mat.linset]
+
+        # Convert existing constraints into one in N dimensions
+        def f(constraint):
+            # Account for the constant term in the front
+            return constraint[0] + [constraint[x + 1] for x in var if isinstance(x, int) else 0]
+
+        ineq_constraints = [f(c) for c in ineq_constraints]
+        eq_constraints = [f(c) for c in eq_constraints]
+
+        # Add constraints due to additional variables 
+        for i in range(N):
+            (lower, upper) = var[i]
+            # The lower bound
+            c = [-lower] + ([0] * N)
+            c[i + 1] = 1
+            ineq_constraints.append(c)
+
+            # The upper bound 
+            c = [upper] + ([0] * N)
+            c[i + 1] = -1
+            ineq_constraints.append(c)
+        
+        # Construct matrix 
+        mat = cdd.Matrix(ineq_constraints, linear=False, number_type="fraction")
+        mat.extend(eq_constraints, linear=True)
+        return Polytope._from_mat(mat)
+
+        
     # Plot the polytope (current only 2D polytopes are supported)
     def plot(self, resolution=100):
         if self.dimension() != 2:
