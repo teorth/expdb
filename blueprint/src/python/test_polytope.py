@@ -248,6 +248,27 @@ def run_subs_tests():
         ])
     assert B.substitute({1: frac(1,2)}) == Polytope.rect((0, frac(1,2)))
 
+def run_lift_test():
+    A = Polytope.rect((1, 2))
+    assert A.lift([0, (3, 4)]) == Polytope.rect((1, 2), (3, 4))
+    assert A.lift([(3, 4), 0]) == Polytope.rect((3, 4), (1, 2))
+    
+    B = Polytope.rect((-1, 1), (4, 9))
+    assert B.lift([(2, 3), 0, (3, 6), 1]) == Polytope.rect((2, 3), (-1, 1), (3, 6), (4, 9))
+    assert B.lift([0, 1]) == B
+    
+    C = Polytope([
+            [0, 1, 0], # x >= 0
+            [0, 0, 1], # y >= 0
+            [1, -1, -1] # x + y <= 1
+        ])
+    assert C.lift([0, (5, 10), 1]) == Polytope([
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+            [1, -1, 0, -1],
+            [-5, 0, 1, 0],
+            [10, 0, -1, 0]
+        ])
 
 run_polytope_tests()
 run_V_init_test()
@@ -256,3 +277,4 @@ run_union_test()
 run_3_way_union_test()
 run_setminus_test()
 run_subs_tests()
+run_lift_test()

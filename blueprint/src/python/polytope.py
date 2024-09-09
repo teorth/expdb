@@ -314,15 +314,13 @@ class Polytope:
 
     # Returns this polytope as a set of Constraint objects
     def get_constraints(self):
-        return 
-        [
+        return [
             Constraint(list(self.mat[i]), Constraint.GREATER_EQUALS)  # The inequality constraints
-                for i in range(self.mat.num_rows) 
+                for i in range(self.mat.row_size) 
                 if i not in self.mat.lin_set
-        ] + \
-        [
+        ] + [
             Constraint(list(self.mat[i]), Constraint.EQUALS) # The equality constraints
-                for i in range(self.mat.num_rows)
+                for i in range(self.mat.row_size)
                 if i in self.mat.lin_set
         ]
 
@@ -526,20 +524,22 @@ class Polytope:
         N = len(var)
 
         # The inequality constraints of the form ax >= 0
-        ineq_constraints = [self.mat[i] for i in range(self.mat.num_rows) if i not in self.mat.linset] 
+        ineq_constraints = [self.mat[i] for i in range(self.mat.row_size) if i not in self.mat.lin_set] 
         # the equality constraints of the form ax = 0
-        eq_constraints = [self.mat[i] for i in range(self.mat.num_rows) if i in self.mat.linset]
+        eq_constraints = [self.mat[i] for i in range(self.mat.row_size) if i in self.mat.lin_set]
 
         # Convert existing constraints into one in N dimensions
         def f(constraint):
             # Account for the constant term in the front
-            return constraint[0] + [constraint[x + 1] for x in var if isinstance(x, int) else 0]
+            return [constraint[0]] + [(constraint[x + 1] if isinstance(x, int) else 0) for x in var]
 
         ineq_constraints = [f(c) for c in ineq_constraints]
         eq_constraints = [f(c) for c in eq_constraints]
 
         # Add constraints due to additional variables 
         for i in range(N):
+            if isinstance(var[i], int): 
+                continue
             (lower, upper) = var[i]
             # The lower bound
             c = [-lower] + ([0] * N)
@@ -553,7 +553,8 @@ class Polytope:
         
         # Construct matrix 
         mat = cdd.Matrix(ineq_constraints, linear=False, number_type="fraction")
-        mat.extend(eq_constraints, linear=True)
+        if len(eq_constraints) > 0:
+            mat.extend(eq_constraints, linear=True)
         return Polytope._from_mat(mat)
 
         
