@@ -176,7 +176,7 @@ def ep_to_lver(eph):
         {eph})
 
 # Given a Hypothesis_Set, convert all Hypothesis objects of type "Large value estimate" into 
-# large value energy regions and add them to the Hypothesis_Set
+# large value energy regions and returns them
 def lv_to_lver(hypotheses):
     lvs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
 
@@ -184,10 +184,11 @@ def lv_to_lver(hypotheses):
     # <= f(sigma, tau). Convert this into a polytope representing the set of feasible rho
     # values in (sigma, tau, rho, rho*, s) space, with default limits on the unconstrained
     # variables rho* and s.
+    hyps = []
     for lv in lvs:
         polys = []
         # Each piece is an affine function of (sigma, tau)
-        for piece in lv.bound.pieces:
+        for piece in lv.data.bound.pieces:
             # Express this piece as a polytope 
             # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
             P = piece.domain.lift([
@@ -204,13 +205,14 @@ def lv_to_lver(hypotheses):
             )
             polys.append(Region(Region_Type.POLYTOPE, P))
         region = Region(Region_Type.DISJOINT_UNION, polys)
-        hypotheses.add_hypothesis(
+        hyps.append(
             derived_large_value_energy_region(
                 Large_Value_Energy_Region(region),
                 f"Follows from {lv}",
                 {lv}
             )
         )
+    return hyps
 
 
 import random as rd

@@ -1,5 +1,5 @@
+import parent
 from functions import *
-
 
 def get_unit_square():
     return Polytope(
@@ -10,19 +10,6 @@ def get_unit_square():
             [0, 0, 1],  # y >= 0
         ]
     )
-
-
-def run_polytope_edge_tests():
-    p = get_unit_square()
-    vertices = p.get_vertices()
-
-    incidences = [list(x) for x in p.polyhedron.get_input_incidence()]
-
-    constraints = p.get_constraints()
-    for i in range(len(constraints)):
-        print(
-            f"face {constraints[i]} intersects with vertices {vertices[incidences[i][0]]}, {vertices[incidences[i][1]]}"
-        )
 
 def run_union_test():
     # '-2 + 6x - 5/3y >= 0', '6 - 10x + 7/6y >= 0', '-25/32 + x >= 0'
@@ -272,7 +259,6 @@ def run_lift_test():
 
 run_polytope_tests()
 run_V_init_test()
-run_polytope_edge_tests()
 run_union_test()
 run_3_way_union_test()
 run_setminus_test()

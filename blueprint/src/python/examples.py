@@ -394,11 +394,17 @@ def large_value_energy_region_examples():
 
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(literature)
 
+    # Add the L2 bound 
+    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
+    hyps = ad.lv_to_lver(hypotheses)
+    hypotheses.add_hypotheses(hyps)
+    
+    hypotheses.add_hypotheses(literature)
+    
     # add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
-
+    
     # Compute the feasible region for LV*(s, t) as a 3-dimensional polytope
     LV_star = ad.compute_LV_star(hypotheses)
     

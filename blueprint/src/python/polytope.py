@@ -553,6 +553,7 @@ class Polytope:
         
         # Construct matrix 
         mat = cdd.Matrix(ineq_constraints, linear=False, number_type="fraction")
+        mat.rep_type = cdd.RepType.INEQUALITY
         if len(eq_constraints) > 0:
             mat.extend(eq_constraints, linear=True)
         return Polytope._from_mat(mat)
