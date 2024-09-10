@@ -184,7 +184,18 @@ class Polytope:
         p.vertices = None
         p.rays = None
         return p
-        
+    
+    # Returns the constraints defining this polytope as a list of tuples
+    # If lin_set is True, then only return equalities. If lin_set is False, then
+    # only return inequalities 
+    def _matrix_as_list(matrix, lin_set):
+        return [
+            matrix[r]
+            for r in range(matrix.row_size)
+            if (r in matrix.lin_set) == lin_set
+        ]
+    
+
     # -------------------------------------------------------------------------
     # Static public functions
 
@@ -314,33 +325,21 @@ class Polytope:
 
     # Returns this polytope as a set of Constraint objects
     def get_constraints(self):
-        return [
-            Constraint(list(self.mat[i]), Constraint.GREATER_EQUALS)  # The inequality constraints
-                for i in range(self.mat.row_size) 
-                if i not in self.mat.lin_set
-        ] + [
-            Constraint(list(self.mat[i]), Constraint.EQUALS) # The equality constraints
-                for i in range(self.mat.row_size)
-                if i in self.mat.lin_set
-        ]
+          # The inequality constraints
+        return [Constraint(list(r), Constraint.GREATER_EQUALS) for r in Polytope._matrix_as_list(self.mat, False)] 
+                + [Constraint(list(r), Constraint.EQUALS) for r in Polytope._matrix_as_list(self.mat, True)]
 
-    # Returns a new matrix with the ith dimension scaled by a factor
+    # Returns a new polytope with the ith dimension scaled by a factor
     def scale(self, i, factor, additional_constraints):
 
-        ineq_rows = [
-            list(self.mat[r])
-            for r in range(self.mat.row_size)
-            if r not in self.mat.lin_set
-        ]
+        ineq_rows = Polytope._matrix_as_list(self.mat, False)
         for c in ineq_rows:
-            c[i] /= factor
+            c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
         ineq_rows.extend(additional_constraints)
 
-        eq_rows = [
-            list(self.mat[r]) for r in range(self.mat.row_size) if r in self.mat.lin_set
-        ]
+        eq_rows = Polytope._matrix_as_list(self.mat, True)
         for c in eq_rows:
-            c[i] /= factor
+            c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
 
         # The matrix will not have dimensions initialised if the number of inequality
         # rows = 0, hence this strange duplicated code
@@ -356,8 +355,35 @@ class Polytope:
 
         # reset polytope object
         p.polyhedron = cdd.Polyhedron(p.mat)
-
         return p
+    
+    # Given a list of length self.dimension(), scales the i-th dimension by factors[i]
+    def scale_all(self, factors):
+        if not isinstance(factors, list):
+            raise ValueError("Parameter factors must be of type list")
+        if len(factors) != self.dimension():
+            raise ValueError(f"Parameter factors must have length {self.dimension()}")
+        
+        D = len(factors)
+        ineq_rows = Polytope._matrix_as_list(self.mat, False)
+        eq_rows = Polytope._matrix_as_list(self.mat, True)
+
+        mat = None
+        if len(ineq_rows) > 0:
+            ineq_rows = [[r[0]] + [r[i + 1] / factors[i] for i in range(D)] for r in ineq_rows]
+            mat = cdd.Matrix(ineq_rows, linear=False, number_type="fraction")
+            mat.rep_type = cdd.RepType.INEQUALITY
+        
+        if len(eq_rows) > 0:
+            eq_rows = [[r[0]] + [r[i + 1] / factors[i] for i in range(D)] for r in eq_rows]
+            if mat is None:
+                mat = cdd.Matrix(eq_rows, linear=True, number_type="fraction")
+                mat.rep_type = cdd.RepType.INEQUALITY
+            else:
+                mat.extend(eq_rows, linear=True)
+        
+        return Polytope._from_mat(mat)
+
 
     # Returns whether this region contains the point x
     def contains(self, x):

@@ -119,14 +119,14 @@ class Region:
     
     # Given a list of numbers of length dimension(), returns a new region where each 
     # dimension is scaled by the given factor 
-    def scale(self, factors):
+    def scale_all(self, factors):
         if not isinstance(factors, list):
             raise ValueError("Parameter factors must be of type list")
         # Handle regions with single child
         if self.region_type in {Region_Type.POLYTOPE, Region_Type.COMPLEMENT}:
-            return Region(self.region_type, self.child.scale(factors))
+            return Region(self.region_type, self.child.scale_all(factors))
         # Handle regions with multiple children
-        return Region(self.region_type, [c.scale(factors) for c in self.child])
+        return Region(self.region_type, [c.scale_all(factors) for c in self.child])
     
     # Project this region onto a set of dimensions (set of integers)
     # Here we make the assumption that the projection of a union (resp. intersection) 
