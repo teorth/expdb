@@ -66,12 +66,15 @@ class Large_Value_Energy_Region:
         return self.region.contains(point)
     
     # Raise this region to the kth power
-    # (sigma, tau, rho, rho*, s) -> (sigma, tau / k, rho / k, rho* / k, s / k) 
+    # (sigma, tau, rho, rho*, s) -> (sigma, k * tau, k * rho, k * rho*, k * s) 
     # TODO implement 
     def raise_to_power(self, k):
         if not isinstance(k, int) or k < 2:
             raise ValueError("Parameter k must be an integer and >= 2.")
         raise NotImplementedError("TODO") # TODO
+
+#############################################################################
+
 
 # Computes a Region object representing the union of a list of polytopes, 
 # where each polytope is defined as the intersection of 

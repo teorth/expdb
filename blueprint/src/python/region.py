@@ -111,7 +111,22 @@ class Region:
     def substitute(self, values):
         if self.region_type == Region_Type.POLYTOPE:
             return Region(Region_Type.POLYTOPE, self.child.substitute(values))
+        # Handle regions with single child
+        if self.region_type == Region_Type.COMPLEMENT: 
+            return Region(Region_Type.COMPLEMENT, self.child.substitute(values))
+        # Handle regions with multiple children
         return Region(self.region_type, [c.substitute(values) for c in self.child])
+    
+    # Given a list of numbers of length dimension(), returns a new region where each 
+    # dimension is scaled by the given factor 
+    def scale(self, factors):
+        if not isinstance(factors, list):
+            raise ValueError("Parameter factors must be of type list")
+        # Handle regions with single child
+        if self.region_type in {Region_Type.POLYTOPE, Region_Type.COMPLEMENT}:
+            return Region(self.region_type, self.child.scale(factors))
+        # Handle regions with multiple children
+        return Region(self.region_type, [c.scale(factors) for c in self.child])
     
     # Project this region onto a set of dimensions (set of integers)
     # Here we make the assumption that the projection of a union (resp. intersection) 

@@ -113,28 +113,6 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
         )
     )
 
-# Given a (sigma, tau, rho*) Region representing feasible LV*(sigma, tau) values and a 
-# fixed sigma, compute 
-# sup_{tau_lower \leq tau \leq tau_upper} LV*(sigma,tau) / tau 
-def approx_sup_LV_star_on_tau(LV_star_region, sigma, tau_lower, tau_upper, resolution=100):
-
-    ts = np.linspace(tau_lower, tau_upper, resolution)
-    pieces = []
-    for h in hypotheses:
-        pieces.extend(h.data.bound.pieces)
-
-    sup = float("-inf")
-    for t in ts:
-        inf = float("inf")
-        for h in hypotheses:
-            v = h.data.bound.at([sigma, t])
-            if v is not None and v / t < inf:
-                inf = v / t
-        if inf > sup:
-            sup = inf
-
-    return sup
-
 # Given
 # - a (sigma, tau, rho*) Region representing feasible LV*(\sigma, \tau) values 
 # - a (sigma, tau, rho*) Region representing feasible LV*_{\zeta}(\sigma, \tau) values
@@ -146,7 +124,7 @@ def approx_best_energy_bound(LV_region, sigma):
     LVs = LV_region.substitute({0: sigma})
 
     # Take tau0 = 2
-    tau0 = 2
+    tau0 = 4
     N = 100
     taus = np.linspace(tau0, 3/2 * tau0, N)
     rhos = np.linspace(0, 10, N)
