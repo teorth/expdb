@@ -395,11 +395,14 @@ def large_value_energy_region_examples():
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
 
+    # Only include the k = 2 raise to power transform for now
+    for k in range(2, 3):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(2))
+
     # Add the L2 bound 
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hyps = ad.lv_to_lver(hypotheses)
     hypotheses.add_hypotheses(hyps)
-    
     hypotheses.add_hypotheses(literature)
     
     # add trivial bounds - this uses literature zero-density estimates

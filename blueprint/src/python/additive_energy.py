@@ -126,10 +126,9 @@ def get_raise_to_power_hypothesis(k):
     name = f"Large value energy region raise to power hypothesis with k = {k}"
     
     def f(h):
-        region = copy.copy(h.data)
-        region.raise_to_power(k)
+        region = h.data.region.scale_all([frac(1), frac(k), frac(k), frac(k), frac(k)])
         return derived_large_value_energy_region(
-            region, 
+            Large_Value_Energy_Region(region), 
             f"Follows from raising {h} to the k = {k} power",
             {h}
             )
@@ -243,6 +242,16 @@ def sample_check(region1, region2, N=1000, info=None):
 # as a polytope in R^3 with dimensions (sigma, tau, rho*)
 def compute_LV_star(hypotheses, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+    
+    print(len(lvers))
+    # Find all LVER transformations and use them to expand the set of LVERs
+    transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
+    transformed_lvers = []
+    for tf in transforms:
+        transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
+    lvers.extend(transformed_lvers)
+
+    print(len(lvers))
     
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])

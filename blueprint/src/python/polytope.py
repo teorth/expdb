@@ -326,7 +326,7 @@ class Polytope:
     # Returns this polytope as a set of Constraint objects
     def get_constraints(self):
           # The inequality constraints
-        return [Constraint(list(r), Constraint.GREATER_EQUALS) for r in Polytope._matrix_as_list(self.mat, False)] 
+        return [Constraint(list(r), Constraint.GREATER_EQUALS) for r in Polytope._matrix_as_list(self.mat, False)] \
                 + [Constraint(list(r), Constraint.EQUALS) for r in Polytope._matrix_as_list(self.mat, True)]
 
     # Returns a new polytope with the ith dimension scaled by a factor
