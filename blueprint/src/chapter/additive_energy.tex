@@ -254,7 +254,7 @@ for some monotonically increasing functions $f_1, f_2, f_3$ (that possibly also 
 Suppose amongst all tuples $(\sigma, \tau, \rho', (\rho^*)', s') \in \Energy_1$ with $\rho' \le \rho$, $(\rho^*)' \le \rho^*$ and $s' \le s$, there exists a tuple with $\rho' = \rho$, a tuple with $(\rho^*)' = \rho^*$ and a tuple with $s' = s$ (not necessarily the same tuple each time). Then, $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$.
 \end{lemma}
 \begin{proof}
-Suppose that $(\sigma, \tau, \rho, (\rho^*)', s') \in E_i$ for some $(\rho^*)'\le \rho^*$ and $s \le s'$. Then by definition $\rho \le f_1((\rho^*)', s')$. Since $f_1$ is monotonically increasing (with respect to both $\rho^*$ and $s$), one has $\rho \le f_1(\rho^*, s)$. Similarly, one also has $\rho^* \le f_2(\rho, s)$ and $s \le f_3(\rho, \rho^*)$, which together imply $(\sigma, \tau, \rho, \rho^*, s) \in E_i$ by definition. Hence $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$ since $\Energy_1$ is the intersection of sets $E_i$. 
+Suppose that $(\sigma, \tau, \rho, (\rho^*)', s') \in \Energy_1$ for some $(\rho^*)'\le \rho^*$ and $s \le s'$ so that also $(\sigma, \tau, \rho, (\rho^*)', s') \in E_i$. Then by definition $\rho \le f_1((\rho^*)', s')$. Since $f_1$ is monotonically increasing (with respect to both $\rho^*$ and $s$), one has $\rho \le f_1(\rho^*, s)$. Similarly, $(\sigma, \tau, \rho', \rho^*, s') \in \Energy_1$ implies $\rho^* \le f_2(\rho, s)$ and $(\sigma, \tau, \rho', (\rho^*)', s) \in \Energy_1$ implies $s \le f_3(\rho, \rho^*)$, which together imply $(\sigma, \tau, \rho, \rho^*, s) \in E_i$ by definition. Hence $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$ since $\Energy_1$ is the intersection of sets $E_i$. 
 \end{proof}
 
 \begin{lemma}[Raising to a power, alternative formulation]
