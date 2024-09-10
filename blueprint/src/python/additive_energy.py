@@ -93,7 +93,12 @@ def union_of_halfplanes(halfplanes, box):
     neg_ineq = []
     polys = []
     for hp in halfplanes:
-        polys.append(Region(Region_Type.POLYTOPE, Polytope(box + [hp] + neg_ineq)))
+        polys.append(
+            Region(
+                Region_Type.POLYTOPE, 
+                Polytope(box + [hp] + neg_ineq, canonicalize=True)
+            )
+        )
         neg_ineq.append([-x for x in hp])
     return Region.disjoint_union(polys)
 
@@ -238,6 +243,23 @@ def sample_check(region1, region2, N=1000, info=None):
             ntrues += 1
     print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
+def sample_check2(region1, region2, N=1000, info=None):
+    ntrues = 0
+    npassed = 0
+    for i in range(N):
+        x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5))
+        c1 = region1.contains(x)
+        c2 = region2.contains(x)
+        if c1 != c2:
+            print(i, x)
+            print(info)
+            raise ValueError()
+        else:
+            npassed += 1
+        if c1:
+            ntrues += 1
+    print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
+
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
 # as a polytope in R^3 with dimensions (sigma, tau, rho*)
 def compute_LV_star(hypotheses, debug=True):
@@ -252,6 +274,9 @@ def compute_LV_star(hypotheses, debug=True):
 
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    
+    print(E)
+    
     E1 = E.as_disjoint_union()
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
@@ -260,13 +285,20 @@ def compute_LV_star(hypotheses, debug=True):
     
     # Project onto the (sigma, tau, rho*) dimension
     Eproj = E1.project({0, 1, 3})
-    
-    print("Before simp", Eproj)
+
+    if debug:
+        cpy = copy.copy(Eproj)
+        print("Before simp", Eproj)
+
 
     Eproj.simplify()
 
-    print("After simp", Eproj)
-    
+
+    if debug:
+        print("After simp", Eproj)
+        sample_check2(Eproj, cpy, N=10000, info=lvers)
+
+
     ###########################################################################
     '''
     # To debug this: we are getting strange results for sigma = 0.5, iterate 

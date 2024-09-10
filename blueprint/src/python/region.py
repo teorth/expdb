@@ -1,5 +1,6 @@
 
 import copy
+import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 from polytope import Polytope
@@ -59,7 +60,44 @@ class Region:
             for r in region.child:
                 s += Region.to_str(r, indentation + 1)
         return s
+    
+    # Private methods --------------------------------------------------------
+
+    # If the region is a union of polytopes, try to simplify it
+    # Returns True if changes were made
+    def _try_simplify_union_of_polytopes(region, max_groupsize=3):
+        if region.region_type not in {Region_Type.UNION, Region_Type.DISJOINT_UNION} or \
+            not all(r.region_type == Region_Type.POLYTOPE for r in region.child):
+            return False
         
+        polys = [r.child for r in region.child]
+        
+        # a single simplification iteration, which tries to represent multiple
+        # Affine2 objects as a single object. The parameter groupsizen represents 
+        # the number of objects we try to combine at a time.
+        def iteration(objs, groupsize):
+            for c in itertools.combinations(range(len(objs)), groupsize):
+                union = Polytope.try_union([objs[i] for i in c])
+                if union is not None:
+                    # Remove indices of c from group, add new element at the end of list 
+                    return [objs[i] for i in range(len(objs)) if i not in c] + [union]
+            return None
+        
+        changed = False
+
+        for n in range(2, max_groupsize + 1):
+            while True:
+                print(n)
+                new_polys = iteration(polys, n)
+                if new_polys is None:
+                    break
+                polys = new_polys
+                changed = True
+
+        region.child = [Region(Region_Type.POLYTOPE, p) for p in polys]  # repack
+            
+    
+    
     # Static methods ---------------------------------------------------------
 
     # Construct a region from a polytope
@@ -81,37 +119,6 @@ class Region:
     # Compute the intersection of regions
     def intersect(regions):
         return Region(Region_Type.INTERSECT, regions)
-    
-    # If the region is a union of polytopes, try to simplify it
-    # Returns True if changes were made
-    def _try_simplify_union_of_polytopes(region):
-        if region.region_type not in {Region_Type.UNION, Region_Type.DISJOINT_UNION} or \
-            not all(r.region_type == Region_Type.POLYTOPE for r in region.child):
-            return False
-        
-        polys = [r.child for r in region.child]
-        
-        def iteration(objs):
-            for i in range(len(objs)):
-                p = objs[i]
-                for j in range(i):
-                    q = objs[j]
-                    U = Polytope.try_union([p, q])
-                    if U is not None:
-                        return [objs[k] for k in range(len(objs)) if k != i and k != j] + [U]
-            return None
-        
-        changed = False
-        while True:
-            new_polys = iteration(polys)
-
-            if new_polys is None:
-                # repack 
-                region.child = [Region(Region_Type.POLYTOPE, p) for p in polys]
-                return changed
-            polys = new_polys
-            changed = True
-    
     
     # Instance methods -------------------------------------------------------
 
@@ -227,7 +234,7 @@ class Region:
 
         changed = False
         # If this region is a union of polytopes, it may be simplified
-        changed = changed or Region._try_simplify_union_of_polytopes(self)
+        changed = changed or Region._try_simplify_union_of_polytopes(self, 2)
 
         return changed
     
