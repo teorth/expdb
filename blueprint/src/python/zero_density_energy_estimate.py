@@ -124,7 +124,7 @@ def approx_best_energy_bound(LV_region, sigma):
     LVs = LV_region.substitute({0: sigma})
 
     # Take tau0 = 2
-    tau0 = 4
+    tau0 = 2
     N = 100
     taus = np.linspace(tau0, 3/2 * tau0, N)
     rhos = np.linspace(0, 10, N)

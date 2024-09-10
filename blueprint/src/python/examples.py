@@ -403,7 +403,10 @@ def zero_density_energy_examples():
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hyps = ad.lv_to_lver(hypotheses)
     hypotheses.add_hypotheses(hyps)
-    hypotheses.add_hypotheses(literature)
+    
+    #hypotheses.add_hypotheses(literature)
+    hbhyp = next(h for h in literature if h.name == "Heath-Brown large value energy region 2")
+    hypotheses.add_hypothesis(hbhyp)
     
     # add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)

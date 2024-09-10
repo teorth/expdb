@@ -83,6 +83,7 @@ class Region:
         return Region(Region_Type.INTERSECT, regions)
     
     # If the region is a union of polytopes, try to simplify it
+    # Returns True if changes were made
     def _try_simplify_union_of_polytopes(region):
         if region.region_type not in {Region_Type.UNION, Region_Type.DISJOINT_UNION} or \
             not all(r.region_type == Region_Type.POLYTOPE for r in region.child):
@@ -90,7 +91,26 @@ class Region:
         
         polys = [r.child for r in region.child]
         
-        raise NotImplementedError() # TODO: implement this method
+        def iteration(objs):
+            for i in range(len(objs)):
+                p = objs[i]
+                for j in range(i):
+                    q = objs[j]
+                    U = Polytope.try_union([p, q])
+                    if U is not None:
+                        return [objs[k] for k in range(len(objs)) if k != i and k != j] + [U]
+            return None
+        
+        changed = False
+        while True:
+            new_polys = iteration(polys)
+
+            if new_polys is None:
+                # repack 
+                region.child = [Region(Region_Type.POLYTOPE, p) for p in polys]
+                return changed
+            polys = new_polys
+            changed = True
     
     
     # Instance methods -------------------------------------------------------
@@ -174,6 +194,7 @@ class Region:
                         inter = p.intersect(q)
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
+                print(len(new_disjoint))
                 disjoint = new_disjoint
             return disjoint
         if self.region_type == Region_Type.UNION:
@@ -204,9 +225,10 @@ class Region:
     # TODO: add more simplification routines 
     def simplify(self):
 
+        changed = False
         # If this region is a union of polytopes, it may be simplified
-        Region._try_simplify_union_of_polytopes(self)
+        changed = changed or Region._try_simplify_union_of_polytopes(self)
 
-        pass
+        return changed
     
 

@@ -243,7 +243,6 @@ def sample_check(region1, region2, N=1000, info=None):
 def compute_LV_star(hypotheses, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
     
-    print(len(lvers))
     # Find all LVER transformations and use them to expand the set of LVERs
     transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
     transformed_lvers = []
@@ -251,8 +250,6 @@ def compute_LV_star(hypotheses, debug=True):
         transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
     lvers.extend(transformed_lvers)
 
-    print(len(lvers))
-    
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
     E1 = E.as_disjoint_union()
@@ -263,6 +260,33 @@ def compute_LV_star(hypotheses, debug=True):
     
     # Project onto the (sigma, tau, rho*) dimension
     Eproj = E1.project({0, 1, 3})
+    
+    print("Before simp", Eproj)
+
+    Eproj.simplify()
+
+    print("After simp", Eproj)
+    
+    ###########################################################################
+    '''
+    # To debug this: we are getting strange results for sigma = 0.5, iterate 
+    # through the hypotheses and see which one is causing the problems 
+    for lver in lvers:
+        # Take tau0 = 2
+        tau0 = 2
+        N = 100
+        taus = np.linspace(tau0, 3/2 * tau0, N)
+        rhos = np.linspace(0, 10, N)
+        LV_on_tau = []
+        for tau in taus:
+            LV_on_tau.append(max(rho for rho in rhos if LVs.contains([tau, rho])) / tau)
+        lver.data.region
+    '''
+        
+    ###########################################################################
+    
+    
+    
     return Eproj
 
 
