@@ -102,6 +102,13 @@ def union_of_halfplanes(halfplanes, box):
         neg_ineq.append([-x for x in hp])
     return Region.disjoint_union(polys)
 
+# Computes a region object representing the intersection of halfplanes
+# This corresponds to a single min() function
+def intersection_of_halfplanes(halfplanes, box):
+    return Region.from_polytope(
+        Polytope(box + halfplanes)
+    )
+
 
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(

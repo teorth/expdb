@@ -852,25 +852,72 @@ add_lver_heath_brown_1979c(5)
 def add_lver_guth_maynard_2024a(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
     for k in range(1, K):
-        polys = []
-        # 2 - 2sigma - rho >= 0
-        polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
-        # 1 - 2sigma + S_1/3 - rho >= 0 
-        # -7/3 - 2sigma - rho >= 0
-        polys.append(Polytope(rect + [[-frac(7,3), -2, 0, -1, 0, 0]]))
-        
-        # TODO: complete the list of constraints
-        raise NotImplementedError()
+        # intersection of two regions (arising from S_3 bounds)
+        # The common inequalities are:
+        common = [
+            [2, -2, 0, -1, 0, 0],   # 2 - 2sigma - rho >= 0
+
+            # Bounds arising from rho <= 1 - 2sigma + S_1/3
+            [-frac(7,3), -2, 0, -1, 0, 0],   # S_1 <= -10
+
+            # Bounds arising from rho <= 1 - 2sigma + S_2/3
+            # S_2 <= 2 + 2rho, 
+            # i.e. 5 - 6sigma - rho >= 0
+            [5, -6, 0, -1, 0, 0],
+
+            # S_2 <= tau + 1 + (2 - 1/k)rho 
+            # i.e. 4 - 6sigma + tau - (1 + 1/k)rho >= 0
+            [4, -6, 1, -frac(k + 1, k), 0, 0],
+
+            # S_2 <= 2 + 2rho + (tau/2 - 3rho/4)/k
+            # i.e. 5/3 - 2sigma + t/(6k) - (1/3 + 1/(4k))rho >= 0
+            [frac(5,3), -2, frac(1,6*k), -frac(1,3)-frac(1,4*k), 0, 0]
+        ]
+
+        # First region arising on S_3 <= 2tau + rho/2 + rho*/2
+        reg1 = ad.union_of_halfplanes(
+            common + [
+                [1, -2, frac(2,3), frac(1,6), -frac(5,6), 0]
+            ],
+            rect
+        )
+        # Second region arising from 
+        # S_3 <= max(2tau + 3rho/2, tau + 1 + rho/2 + rho*/2)
+        reg2 = ad.union_of_halfplanes(
+            common + [
+                [1, -2, frac(2,3), -frac(1,2), 0, 0],
+                [frac(4,3), -2, frac(1,3), -frac(5,6), frac(1,6), 0]
+            ],
+            rect
+        )
+        literature.add_hypothesis(
+            ad.literature_large_value_energy_region(
+                Region.intersect([reg1, reg2]),
+                rm.get("guth-maynard"),
+                params=f" 1 with k = {k}"
+            )
+        )
 #add_lver_guth_maynard_2024a(10)
 
+# Lemma 10.18 from Guth--Maynard
 def add_lver_guth_maynard_2024b():
-    rect = ad.Large_Value_Energy_Region.default_constraints()
+    
+    # First region: tau <= 3/2
+    rect1 = ad.Large_Value_Energy_Region.default_constraints()
+    rect1.append([frac(3,2), 0, -1, 0, 0, 0])
     region = ad.union_of_halfplanes(
         [
-            [0, -2, 0, 1, -1, 1]    # -2sigma + rho - rho* + s >= 0
+            [1, -2, 0, 3, -1, 0],    # 1 - 2sigma + 3rho - rho* >= 0
+            [2, -2, 0, 2, -1, 0]    # 2 - 2sigma + 2rho - rho* >= 0
         ],
-        rect
+        rect1
     )
+    
+    # Second region: tau >= 3/2: no new bounds in this region
+    rect2 = ad.Large_Value_Energy_Region.default_constraints()
+    rect2.append([-frac(3,2), 0, 1, 0, 0, 0])
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
+
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -907,7 +954,7 @@ def add_lver_guth_maynard_2024c():
             params=" 3"
         )
     )
-add_lver_guth_maynard_2024c()
+#add_lver_guth_maynard_2024c()
 
 
 ########################################################################################
