@@ -455,7 +455,6 @@ class Polytope:
         
         return Polytope._from_mat(mat)
 
-
     # Returns whether this region contains the point x
     def contains(self, x):
         if len(x) != self.dimension():
@@ -534,7 +533,6 @@ class Polytope:
 
         return polys
 
-
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
     # This is currently determined by checking the number of vertices in its V representation
     # - however, solving a LP may be faster
@@ -567,6 +565,61 @@ class Polytope:
         # If the boundary is not considered as part of the polytope, check whether 
         # the polytope is of full dimension as well
         return self._is_empty_incl_boundary or (not self.is_full_dim())
+
+    # Returns whether this polytope is a subset of another.
+    def is_subset_of(self, other):
+        if not isinstance(other, Polytope):
+            raise ValueError("Parameter other must be of type Polytope")
+        
+        # Returns the H rep of a polytope as inequalities only (representing 
+        # equality constraints via two-sided constraints)
+        def as_ineq(mat):
+            ineq = Polytope._matrix_as_list(self.mat, False)
+            ineq.extend(Polytope._matrix_as_list(self.mat, True))
+            ineq.extend([tuple(-x for x in r) 
+                for r in Polytope._matrix_as_list(self.mat, True)])
+            return ineq 
+
+        Ab = as_ineq(other.mat) # Represent other polytope as Ax <= b
+        Cd = as_ineq(self.mat)  # Represent this polytope as Cx <= d
+        minus_d = [-row[0] for row in Cd] # Represents -d
+
+        # Dimensions of the C matrix
+        m = self.dimension()
+        n = len(minus_d) # The number of constraints in this polytope
+
+        # Loop through each in Ab constraint of the form ax <= b. If this 
+        # polytope's H representation is Cx <= d, then solve the LP
+        # d'x <= b, y >= 0, C'y = a
+        # (See method described in https://math.stackexchange.com/q/2097171)
+        for ab in Ab:
+            # Add d'x <= b constraint
+            a, b = ab[1:], ab[0]
+            mat_ineq = [[b] + minus_d]
+            # Add y >= 0 constraints
+            for i in range(n):    
+                row = [0] * (n + 1)
+                row[i + 1] = 1
+                mat_ineq.append(row)
+            # Add C'y = a 
+            mat_eq = []
+            for i in range(m):
+                mat_eq.append([-a[i]] + [Cd[j][i + 1] for j in range(n)])
+
+            # Construct matrix
+            mat = cdd.Matrix(mat_ineq, linear=False)
+            mat.rep_type = cdd.RepType.INEQUALITY
+            mat.extend(mat_eq, linear=True)
+            mat.obj_type = cdd.LPObjType.MAX
+            mat.obj_func = tuple([0] + [1] * n) # Arbitrary obj function
+            lp = cdd.LinProg(mat)
+            lp.solve()
+
+            # If the LP is feasible, then this polytope is contained in
+            # another polytope
+            if lp.status == cdd.LPStatusType.OPTIMAL:
+                return True
+        return False
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 

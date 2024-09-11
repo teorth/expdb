@@ -309,7 +309,6 @@ def run_union_3d_test():
     ])
     assert Polytope.try_union([p1, p2]) == p2
 
-
 def run_union_linset_test():
     # Test union edge cases which involve the use of lin_set
     A = Polytope([
@@ -356,7 +355,17 @@ def run_setminus_test():
     
     assert not any(p.contains((1.5, 1.5)) for p in A_minus_B)
     assert any(p.contains((3, 3)) for p in A_minus_B)
-    
+
+def run_containment_test():
+    p1 = Polytope.rect((0, 1), (0, 1))
+    p2 = Polytope.rect((0, 2), (0, 2))
+    assert p1.is_subset_of(p2)
+
+    p1 = Polytope.rect((0, 2), (0, 2))
+    p2 = Polytope.rect((1, 3), (1, 3))
+    assert not p1.is_subset_of(p2)
+
+
 def run_subs_test():
     A = Polytope.rect((1, 2), (1, 2), (1, 2))
     assert A.substitute({1: frac(3,2)}) == Polytope.rect((1, 2), (1, 2))
@@ -408,6 +417,7 @@ run_union_3d_test()
 run_union_linset_test()
 run_3_way_union_test()
 run_setminus_test()
+run_containment_test()
 run_subs_test()
 run_lift_test()
 run_scale_test()
