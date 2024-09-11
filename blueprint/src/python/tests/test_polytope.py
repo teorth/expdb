@@ -359,12 +359,32 @@ def run_setminus_test():
 def run_containment_test():
     p1 = Polytope.rect((0, 1), (0, 1))
     p2 = Polytope.rect((0, 2), (0, 2))
+    assert p1.is_subset_of(p1)
     assert p1.is_subset_of(p2)
 
     p1 = Polytope.rect((0, 2), (0, 2))
     p2 = Polytope.rect((1, 3), (1, 3))
-    # assert not p1.is_subset_of(p2)
+    assert not p1.is_subset_of(p2)
+    assert not p2.is_subset_of(p1)
 
+    p1 = Polytope.rect((1, 2), (3, 4), (5, 6))
+    p2 = Polytope.rect((0, 2), (3, 10), (5, 7))
+    assert p1.is_subset_of(p2)
+    assert not p2.is_subset_of(p1)
+
+    # Equality constraints tests
+    p1 = Polytope.rect((1, 1), (1, 2))
+    p1.canonicalize()
+    assert p1.is_subset_of(Polytope.rect((0, 2), (0, 2)))
+
+    p1 = Polytope.rect((1, 1), (0, 5))
+    p1.canonicalize()
+    assert not p1.is_subset_of(Polytope.rect((0, 2), (0, 2)))
+
+    # Point containment test 
+    p1 = Polytope.rect((1, 1), (2, 2))
+    assert p1.is_subset_of(p1)
+    assert p1.is_subset_of(Polytope.rect((1, 2), (1, 3)))
 
 def run_subs_test():
     A = Polytope.rect((1, 2), (1, 2), (1, 2))

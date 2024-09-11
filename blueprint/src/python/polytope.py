@@ -401,16 +401,17 @@ class Polytope:
                 + [Constraint(list(r), Constraint.EQUALS) for r in Polytope._matrix_as_list(self.mat, True)]
 
     # Returns a new polytope with the ith dimension scaled by a factor
+    # Note that i is 1-indexed
     def scale(self, i, factor, additional_constraints):
 
         ineq_rows = [list(r) for r in Polytope._matrix_as_list(self.mat, False)]
         for c in ineq_rows:
-            c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
+            c[i] /= factor
         ineq_rows.extend(additional_constraints)
 
         eq_rows = [list(r) for r in Polytope._matrix_as_list(self.mat, True)]
         for c in eq_rows:
-            c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
+            c[i] /= factor
 
         # The matrix will not have dimensions initialised if the number of inequality
         # rows = 0, hence this strange duplicated code
@@ -548,10 +549,10 @@ class Polytope:
         # Case 1: ------------------------------------------------------------------
         # If the polytope is closed, then one can check for emptiness by solving the 
         # linear program Ax <= b with an arbitrary objective function to check for 
-        # feasibility. Here we use the objective function (1, 0, ..., 0)
+        # feasibility. Here we use the objective function (1, 1, ..., 1)
         A = self.mat.copy()
         A.obj_type = cdd.LPObjType.MAX
-        A.obj_func = tuple([1] + [0] * self.dimension())
+        A.obj_func = tuple([0] * (1 + self.dimension()))
         lp = cdd.LinProg(A)
         lp.solve()
 
@@ -574,17 +575,17 @@ class Polytope:
         # Returns the H rep of a polytope as inequalities only (representing 
         # equality constraints via two-sided constraints)
         def as_ineq(mat):
-            ineq = Polytope._matrix_as_list(self.mat, False)
-            ineq.extend(Polytope._matrix_as_list(self.mat, True))
+            ineq = Polytope._matrix_as_list(mat, False)
+            ineq.extend(Polytope._matrix_as_list(mat, True))
             ineq.extend([tuple(-x for x in r) 
-                for r in Polytope._matrix_as_list(self.mat, True)])
+                for r in Polytope._matrix_as_list(mat, True)])
             return ineq 
         
         Ab = as_ineq(other.mat) # Represent other polytope as Ax <= b
 
         # Construct matrix
         mat = self.mat.copy()
-        mat.obj_type = cdd.LPObjType.MAX
+        mat.obj_type = cdd.LPObjType.MIN
 
         # Iterate through the rows of Ab
         for ab in Ab:
