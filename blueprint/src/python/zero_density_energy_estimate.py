@@ -113,6 +113,20 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
         )
     )
 
+# Numerically approximate 
+# sup_{tau_lower \leq t <= tau_upper} LV*(s, t)/t for a fixed s, given a 2-dimensional
+# region representing the feasible values of (t, LV*(s, t))
+def approx_sup_LV_on_tau(tau_rho_region, tau_lower, tau_upper):
+    taus = np.linspace(tau_lower, tau_upper, 500)
+
+    # TODO: Project to find the largest feasible value of rho
+    rhos = np.linspace(0, 10, 100)
+
+    LV_on_tau = []
+    for tau in taus:
+        LV_on_tau.append(max(rho for rho in rhos if tau_rho_region.contains([tau, rho])) / tau)
+    return max(LV_on_tau)
+
 # Given
 # - a (sigma, tau, rho*) Region representing feasible LV*(\sigma, \tau) values 
 # - a (sigma, tau, rho*) Region representing feasible LV*_{\zeta}(\sigma, \tau) values
@@ -120,31 +134,25 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
 # compute the best bound on A*(\sigma) using t0 = 2 and the bound 
 # A*(s)(1 - s) \leq 
 # max(sup_{2 \leq t < t0} LV*_{\zeta}(s, t)/t, sup_{t0 \leq t \leq 2t0} LV*(s, t)/t)
-def approx_best_energy_bound(LV_region, sigma):
+def approx_best_energy_bound(LV_region, LVZ_region, sigma, tau0):
+
     LVs = LV_region.substitute({0: sigma})
+    LVs.plot2d((tau0, 2 * tau0), (0, 20), resolution=500)
+    #proj = LVs.project({1})
+    #proj.simplify()
+    #print("rho projection", proj)
 
-    """
-    LVs.plot2d((2, 3), (0, 10), resolution=500)
-    print("Containment check:")
-    for r in LVs.child:
-        if r.child.contains([3, 10]):
-            print(r.child)
+    sup1 = approx_sup_LV_on_tau(LVs, tau0, 2 * tau0)
     
-    print("(tau, rho*) region")
-    LVs.simplify()
-    for r in LVs.child:
-        print(r.child)
-    
-    print("-=-----------------")
-    """
+    LVZs = LVZ_region.substitute({0: sigma})
+    sup2 = approx_sup_LV_on_tau(LVZs, 2, tau0)
 
-    # Take tau0 = 2
-    tau0 = 5
-    N = 500
-    taus = np.linspace(tau0, 3/2 * tau0, N)
-    rhos = np.linspace(0, 10, N)
-    LV_on_tau = []
-    for tau in taus:
-        LV_on_tau.append(max(rho for rho in rhos if LVs.contains([tau, rho])) / tau)
-    return max(LV_on_tau)
+    print(sup1, sup2)
+
+    return max(sup1, sup2)
+    
+    
+    
+    
+
 

@@ -25,4 +25,4 @@ def benchmark_empty(N, dim):
     print(f"{N} nonempty polytopes (dimension {dim}) emptiness check took {end - start} sec.")
 
 
-benchmark_empty(100, 5)
+benchmark_empty(10, 5)

@@ -309,6 +309,20 @@ def run_union_3d_test():
     ])
     assert Polytope.try_union([p1, p2]) == p2
 
+    # Another example
+    # ['-1 + 2x >= 0', 'z >= 0', '1000000 - z >= 0', '-5 - x + y >= 0', '6 - y >= 0']
+    p1 = Polytope([
+        [-1, 2, 0, 0], [0, 0, 0, 1], [100, 0, 0, -1], [-5, -1, 1, 0], [6, 0, -1, 0] 
+    ])
+    # ['15 - 18x - z >= 0', '21 - 36x + 3y - z >= 0', '-2 + y >= 0', '-5 + 4x + y + z >= 0', 
+    # '-1 + 2x >= 0', 'z >= 0', '48 - 72x + 3y - z >= 0', '3 - y >= 0']
+    p2 = Polytope([
+        [15, -18, 0, -1], [21, -36, 3, -1], [-2, 0, 1, 0], [-5, 4, 1, 1],
+        [-1, 2, 0, 0], [0, 0, 0, 1], [48, -72, 3, -1], [3, 0, -1, 0]
+    ])
+    # union
+    assert Polytope.try_union([p1, p2]) is None
+
 def run_union_linset_test():
     # Test union edge cases which involve the use of lin_set
     A = Polytope([

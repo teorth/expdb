@@ -535,8 +535,8 @@ class Polytope:
         return polys
 
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
-    # This is currently determined by checking the number of vertices in its V representation
-    # - however, solving a LP may be faster
+    # if include_boundary is True, the boundary of the polytope is considered part of 
+    # the polytope
     def is_empty(self, include_boundary=True):
 
         # Check for cached computations
@@ -549,7 +549,9 @@ class Polytope:
         # Case 1: ------------------------------------------------------------------
         # If the polytope is closed, then one can check for emptiness by solving the 
         # linear program Ax <= b with an arbitrary objective function to check for 
-        # feasibility. Here we use the objective function (1, 1, ..., 1)
+        # feasibility. Here we use the objective function (0, 0, ..., 0)
+        # Note: this routine no longer passes unit tests if objective function is set 
+        # to e.g. (1, 1, ..., 1) - possibly because of different lp.status values?
         A = self.mat.copy()
         A.obj_type = cdd.LPObjType.MAX
         A.obj_func = tuple([0] * (1 + self.dimension()))
