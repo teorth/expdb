@@ -386,6 +386,30 @@ def run_containment_test():
     assert p1.is_subset_of(p1)
     assert p1.is_subset_of(Polytope.rect((1, 2), (1, 3)))
 
+    # Containment of a finite polytope in a infinite polytope
+    p1 = Polytope.rect((1, 2), (1, 2))
+    p2 = Polytope([
+        [0, 0, 1],
+        [0, 1, 0],
+        [2, -1, 0]
+    ])
+    assert p1.is_subset_of(p2)
+    assert not p2.is_subset_of(p1)
+
+    # Containment of a infinite polytope in another infinite polytope
+    p1 = Polytope([
+        [1, 0, 1],
+        [3, 0, -1],
+        [5, 1, 0]
+    ])
+    p2 = Polytope([
+        [0, 0, 1],
+        [2, 0, -1],
+        [0, 1, 0]
+    ])
+    assert p2.is_subset_of(p1)
+    assert not p1.is_subset_of(p2)
+
 def run_subs_test():
     A = Polytope.rect((1, 2), (1, 2), (1, 2))
     assert A.substitute({1: frac(3,2)}) == Polytope.rect((1, 2), (1, 2))
