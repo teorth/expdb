@@ -157,10 +157,13 @@ def run_emptiness_tests():
     assert p8.is_empty(include_boundary=False)
 
 def run_intersection_test():
+
+    # Nonempty intersection example 
     p1 = Polytope.rect((0, 2), (0, 2))
     p2 = Polytope.rect((1, 3), (1, 3))
     assert p1.intersect(p2) == Polytope.rect((1, 2), (1, 2))
 
+    # Empty intersection example
     p1 = Polytope([
         [-1, 0, frac(1,7)],
         [-frac(1,2), 1, 0],
@@ -173,6 +176,36 @@ def run_intersection_test():
         [-2, 0, 1],
         [2, 0, -1]
     ])
+    assert p1.intersect(p2).is_empty(include_boundary=True)
+
+    # Test with equality constraints 
+    p1 = Polytope.rect((1, 1), (0, 1), (0, 1))
+    p1.canonicalize()
+    p2 = Polytope.rect((0, 1), (0, 0), (0, 3))
+    p1.canonicalize()
+    p3 = Polytope.rect((1, 1), (0, 0), (0, 1))
+    p3.canonicalize()
+    assert p1.intersect(p2) == p3
+
+    # Conflicting equality constraint example 
+    """
+    ['2 + z - u >= 0', '1 - 2x + y - z >= 0', '1 - 2x + 1/2y - z + 1/4w >= 0', '-3/2 + 2x - 1/4y + z - 1/4w >= 0', '2x + z - w + u >= 0', '-1/2 + x >= 0', '1000000 - y >= 0', 'w >= 0', '1000000 - w >= 0', 'u >= 0', '9/4 - 3x + 1/4y - z + 1/4w >= 0']
+    ['-1/2 + x = 0', '1 - x = 0', 'y = 0', 'z = 0', 'w = 0', 'u = 0']
+    intersect
+    ['2 + z - u >= 0', '1 - 2x + y - z >= 0', '1 - 2x + 1/2y - z + 1/4w >= 0', '-3/2 + 2x - 1/4y + z - 1/4w >= 0', '2x + z - w + u >= 0', '1000000 - y >= 0', 'w >= 0', '1000000 - w >= 0', '9/4 - 3x + 1/4y - z + 1/4w >= 0', '-1/2 + x >= 0', 'u >= 0']
+    """
+    p1 = Polytope([
+        [2, 0, 0, 1, -1, 0],
+        [1, -2, 1, -1, 0, 0],
+        [1, -2, frac(1,2), -1, 0, frac(1,4)],
+        [-frac(3,2), 2, -frac(1,4), 1, 0, -frac(1,4)]
+    ])
+
+    p2 = Polytope([
+        [-frac(1,2), 1, 0, 0, 0, 0],
+        [1, -1, 0, 0, 0, 0]
+    ], linear=True)
+
     assert p1.intersect(p2).is_empty(include_boundary=True)
 
 def run_V_init_test():

@@ -327,6 +327,11 @@ class Polytope:
     # -------------------------------------------------------------------------
     # public instance functions
 
+    # Set the internal matrix to canonical form
+    def canonicalize(self):
+        self.mat.canonicalize()
+        self.is_canonical = True
+
     # The dimension of the space in which this polytope resides 
     # (this is not the rank of the H-representation matrix) 
     def dimension(self):
@@ -460,11 +465,13 @@ class Polytope:
         
         mat = self.mat.copy()
         
-        # TODO: check lin_set? Currently passes unit tests
-        rows = [r for r in other.mat]
-        if len(rows) > 0:
-            mat.extend(rows, linear=False)
-        
+        # Add inequality constraints from the other polytope
+        ineq = Polytope._matrix_as_list(other.mat, False)
+        if len(ineq) > 0: mat.extend(ineq, linear=False)
+        # Add equality constraints from the other polytope
+        ineq = Polytope._matrix_as_list(other.mat, True)
+        if len(ineq) > 0: mat.extend(ineq, linear=True)
+
         mat.canonicalize()
         p = Polytope._from_mat(mat)
         p.is_canonical = True

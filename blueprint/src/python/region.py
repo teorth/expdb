@@ -197,7 +197,20 @@ class Region:
                 new_disjoint = []
                 for p in disjoint:
                     for q in child_sets[i]:
+                        x = (0.5526333971071384, 2.6127523920876934, 1.4688895492136673, 1.2858300913524678, 3.1622832001931718)
+                        before = p.contains(x) and q.contains(x)
+
                         inter = p.intersect(q)
+
+                        after = inter.contains(x)
+                        if before != after:
+                            print(before, after)
+                            print("components")
+                            print(p)
+                            print(q)
+                            print("intersect")
+                            print(inter)
+                            raise ValueError()
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
                 print(len(new_disjoint))
