@@ -99,6 +99,36 @@ def run_polytope_tests():
         (0, -1),
     }
 
+def run_emptiness_tests():
+    # Square
+    p1 = Polytope.rect((0, 1), (0, 1))
+    assert not p1.is_empty(include_boundary=True)
+    assert not p1.is_empty(include_boundary=False)
+
+    # Line
+    p2 = Polytope.rect((0, 0), (0, 1))
+    assert not p2.is_empty(include_boundary=True)
+    assert p2.is_empty(include_boundary=False)
+
+    # Trapezium
+    p3 = Polytope([
+        [0, 0, 1],
+        [2, 0, -1],
+        [0, 1, 0],
+        [1, -1, 0],
+        [1, 1, -1]
+    ])
+    assert not p3.is_empty(include_boundary=True)
+    assert not p3.is_empty(include_boundary=False)
+
+    # Empty region
+    p4 = Polytope([
+        [0, 0, 1],  # y >= 0
+        [-1, 0, -1] # y <= -1
+    ])
+    assert p4.is_empty(include_boundary=True)
+    assert p4.is_empty(include_boundary=False)
+
 def run_V_init_test():
     verts = [[0, 0], [0, 1], [1, 1], [1, 0]]
     p = Polytope.from_V_rep(verts)
@@ -112,7 +142,6 @@ def run_union_test():
 
     union = Polytope.try_union([p1, p2])
     assert union is not None
-    
     
     p1 = Polytope([
         [-19, 24, 0],
@@ -152,16 +181,8 @@ def run_union_test():
         [12, -12, -1],
         [3, 0, -1]
         ])
-    
     U = Polytope.try_union([p1, p2])
     
-    # plot 
-    # Piecewise([Affine2([1, 0, 0], p1)]).plot_domain((1/2, 1), (1, 3))
-    # Piecewise([Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    # Piecewise([Affine2([1, 0, 0], p1), Affine2([2, 0, 0], p2)]).plot_domain((1/2, 1), (1, 3))
-    # Piecewise([Affine2([5, 0, 0], U)]).plot_domain((1/2, 1), (1, 3))
-    
-    # Another test case
     p1 = Polytope([
         [-3, 0, 2],
         [4, -4, -frac(1,2)],
@@ -183,6 +204,38 @@ def run_union_test():
         [13, -14, -frac(4,3)]
         ])
     assert Polytope.try_union([p1, p2]) == p3
+
+    # Test edge cases - union between line and square 
+    square = Polytope.rect((0, 1), (0, 1))
+    line = Polytope.rect((frac(1,2), frac(1,2)), (0, 1))
+    assert Polytope.try_union([square, line]) == square
+
+    # Test unsuccessful union
+    long_line = Polytope.rect((frac(1,2), frac(1,2)), (-1, 2))
+    assert Polytope.try_union([square, long_line]) is None
+
+def run_union_3d_test():
+    # Higher dimensional polytope test
+    # ['1 - x >= 0', '8 - 14x + 5/2y - z >= 0', '8 - 4x - z >= 0', '3 - y >= 0', '-34/3 + 32/3x + z >= 0']
+    p1 = Polytope([
+        [1, -1, 0, 0], 
+        [8, -14, frac(5,2), -1],
+        [8, -4, 0, -1],
+        [3, 0, -1, 0],
+        [-frac(34,3), frac(32,3), 0, 1]
+    ])
+
+    # ['z >= 0', '1 - x >= 0', '-1 + 2x >= 0', '1000000 - z >= 0', '1000000 - y >= 0'] ->
+    p2 = Polytope([
+        [-1, 2, 0, 0],
+        [1, -1, 0, 0],
+        [0, 0, 1, 0],
+        [100, 0, -1, 0],
+        [0, 0, 0, 1],
+        [100, 0, 0, -1]
+    ])
+    assert Polytope.try_union([p1, p2]) == p2
+
 
 def run_union_linset_test():
     # Test union edge cases which involve the use of lin_set
@@ -274,8 +327,10 @@ def run_scale_test():
 
 
 run_polytope_tests()
+run_emptiness_tests()
 run_V_init_test()
 run_union_test()
+run_union_3d_test()
 run_union_linset_test()
 run_3_way_union_test()
 run_setminus_test()

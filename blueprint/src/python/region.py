@@ -72,6 +72,8 @@ class Region:
         
         polys = [r.child for r in region.child]
         
+        print("pre check:", any(p.contains([3/4, -10000, 1]) for p in polys))
+
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter groupsizen represents 
         # the number of objects we try to combine at a time.
@@ -90,7 +92,16 @@ class Region:
                             print(objs[i])
                         print("union")
                         print(union)
-                        
+                    if union.contains([3/4, -10000, 1]):
+                        print("----------------------------------------------")
+                        print("constitutients")
+                        for i in c:
+                            print(objs[i])
+                        print("union")
+                        print(union)
+                        print("Trying union again with debug on")
+                        Polytope.try_union([objs[i] for i in c], debug=True)
+                        raise ValueError()
                     
                     # Remove indices of c from group, add new element at the end of list 
                     return [objs[i] for i in range(len(objs)) if i not in c] + [union]

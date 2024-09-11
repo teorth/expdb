@@ -215,7 +215,7 @@ class Polytope:
     # This implementation only works with finite polytopes - for infinite polytopes 
     # the wrong result is returned. See e.g. the test cases in test_polytope. 
     # TODO: implement check and error for infinite polytopes. 
-    def try_union(polys):
+    def try_union(polys, debug=False):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
 
@@ -237,7 +237,7 @@ class Polytope:
                         return False
             return True
 
-        # Iterate through the polynomials and decide whether each constraint is
+        # Iterate through the polytopes and decide whether each constraint is
         # of env type or neg type
         for i in range(len(polys)):
             p = polys[i]
@@ -252,8 +252,24 @@ class Polytope:
                 else:
                     # Add the negation of the constraint
                     neg_p.append([-x for x in p.mat[r]])
+                    if r in p.mat.lin_set:
+                        neg_p.append([x for x in p.mat[r]])
+                
             neg.append(neg_p)
-        
+            
+        if debug:
+            print("vertices")
+            for p in polys:
+                print("-----------------")
+                for v in p.get_vertices():
+                    print(v)
+            print("env")
+            for p in env:
+                print(p)
+            print("neg")
+            for p in neg:
+                print(p)
+
         # Choose 1 constraint from each negated constraint set, and
         # compute the intersection between them and env
         env = list(env)
@@ -261,10 +277,11 @@ class Polytope:
             # Check polytope formed (equivalent to the feasibility LP). If
             # the polytope formed is non-empty, then A U B < Env, so the
             # resulting union is not a polytope. Returns None in this case
+            if debug: print(combination)
             p = Polytope(env + [c for c in combination])
-            if not p.is_empty(include_boundary=False):
+            if not p.is_empty(include_boundary=False, debug=debug):
                 return None
-
+        
         # Otherwise, envelop is the union
         return Polytope(env, canonicalize=True)
 
@@ -501,13 +518,20 @@ class Polytope:
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
     # This is currently determined by checking the number of vertices in its V representation
     # - however, solving a LP may be faster
-    def is_empty(self, include_boundary=True):
+    def is_empty(self, include_boundary=True, debug=False):
         if self.vertices is None:
             self.compute_V_rep()
-
+        
         if include_boundary:
             return len(self.vertices) == 0
 
+        if debug:
+            print("------------")
+            print(len(self.vertices) <= self.dimension())
+            print(self)
+            print("vertices", self.vertices)
+            print("rays", self.rays)
+        
         # If not including boundary, strict subspace vertex regions are considered empty
         return len(self.vertices) <= self.dimension()
 
