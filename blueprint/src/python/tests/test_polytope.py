@@ -142,8 +142,8 @@ def run_emptiness_tests():
     assert not p6.is_empty(include_boundary=True)
     assert not p6.is_empty(include_boundary=False)
 
-    # The entire R^2 plane
-    p7 = Polytope([])
+    # A halfplane in R^3
+    p7 = Polytope([[1, 1, 1, 1]])
     assert not p7.is_empty(include_boundary=True)
     assert not p7.is_empty(include_boundary=False)
 

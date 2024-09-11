@@ -127,6 +127,8 @@ class Polytope:
 
         # Cache whether this polytope is guaranteed to be canonical
         self.is_canonical = canonicalize
+        # Cache whether this polytope is empty (including the boundary)
+        self._is_empty_incl_boundary = None 
 
         self.polyhedron = cdd.Polyhedron(self.mat)
 
@@ -206,7 +208,6 @@ class Polytope:
             if (r in matrix.lin_set) == lin_set
         ]
     
-
     # -------------------------------------------------------------------------
     # Static public functions
 
@@ -331,7 +332,7 @@ class Polytope:
     def dimension(self):
         return self.mat.col_size - 1
 
-    # Returns true if the representation matrix is full rank
+    # Returns true if this polytope cannot be embedded into a lower-dimension
     def is_full_dim(self):
         if not self.is_canonical:
             self.mat.canonicalize()
@@ -465,7 +466,9 @@ class Polytope:
             mat.extend(rows, linear=False)
         
         mat.canonicalize()
-        return Polytope._from_mat(mat)
+        p = Polytope._from_mat(mat)
+        p.is_canonical = True
+        return p
 
 
     # Computes A \ B where A is this polytope and B is another polytope. Returns 
@@ -533,21 +536,34 @@ class Polytope:
     # This is currently determined by checking the number of vertices in its V representation
     # - however, solving a LP may be faster
     def is_empty(self, include_boundary=True, debug=False):
-        if self.vertices is None:
-            self.compute_V_rep()
-        
-        if include_boundary:
-            return len(self.vertices) == 0
 
-        if debug:
-            print("------------")
-            print(len(self.vertices) <= self.dimension())
-            print(self)
-            print("vertices", self.vertices)
-            print("rays", self.rays)
+        # Check for cached computations
+        if self._is_empty_incl_boundary is not None:
+            if include_boundary:
+                return self._is_empty_incl_boundary
+            else:
+                return self._is_empty_incl_boundary or (not self.is_full_dim())
         
-        # If not including boundary, strict subspace vertex regions are considered empty
-        return len(self.vertices) <= self.dimension()
+        # Case 1: ------------------------------------------------------------------
+        # If the polytope is closed, then one can check for emptiness by solving the 
+        # linear program Ax <= b with an arbitrary objective function to check for 
+        # feasibility. Here we use the objective function (1, 0, ..., 0)
+        A = self.mat.copy()
+        A.obj_type = cdd.LPObjType.MAX
+        A.obj_func = tuple([1] + [0] * self.dimension())
+        lp = cdd.LinProg(A)
+        lp.solve()
+
+        # If status is "OPTIMAL", then a solution was found for this LP and 
+        # the region represented by this polytope is non-empty
+        self._is_empty_incl_boundary = (lp.status != cdd.LPStatusType.OPTIMAL)
+        if include_boundary:
+            return self._is_empty_incl_boundary
+
+        # Case 2: ------------------------------------------------------------------
+        # If the boundary is not considered as part of the polytope, check whether 
+        # the polytope is of full dimension as well
+        return self._is_empty_incl_boundary or (not self.is_full_dim())
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 
