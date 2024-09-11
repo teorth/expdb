@@ -72,8 +72,6 @@ class Region:
         
         polys = [r.child for r in region.child]
         
-        print("pre check:", any(p.contains([3/4, -10000, 1]) for p in polys))
-
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter groupsizen represents 
         # the number of objects we try to combine at a time.
@@ -81,28 +79,6 @@ class Region:
             for c in itertools.combinations(range(len(objs)), groupsize):
                 union = Polytope.try_union([objs[i] for i in c])
                 if union is not None:
-                    x = [0.678862637980522, 1.2681984617140185, 2.4099773655889685]
-                    before = any(objs[i].contains(x) for i in c)
-                    after = union.contains(x)
-                    if before != after:
-                        print("----------------------------------------------")
-                        print(before, after)
-                        print("constitutients")
-                        for i in c:
-                            print(objs[i])
-                        print("union")
-                        print(union)
-                    if union.contains([3/4, -10000, 1]):
-                        print("----------------------------------------------")
-                        print("constitutients")
-                        for i in c:
-                            print(objs[i])
-                        print("union")
-                        print(union)
-                        print("Trying union again with debug on")
-                        Polytope.try_union([objs[i] for i in c], debug=True)
-                        raise ValueError()
-                    
                     # Remove indices of c from group, add new element at the end of list 
                     return [objs[i] for i in range(len(objs)) if i not in c] + [union]
             return None
@@ -111,7 +87,6 @@ class Region:
 
         for n in range(2, max_groupsize + 1):
             while True:
-                print(n)
                 new_polys = iteration(polys, n)
                 if new_polys is None:
                     break
