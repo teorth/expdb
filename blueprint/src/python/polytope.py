@@ -211,7 +211,39 @@ class Polytope:
     # -------------------------------------------------------------------------
     # Static public functions
 
-    # Compute the joint union with multiple polytopes, if the resulting union is
+    # Compute the intersection of a list of convex polytopes, returning the 
+    # result as a convex polytope. 
+    def intersection(polys, canonicalize=True):
+        if not isinstance(polys, list) or not all(isinstance(p, Polytope) for p in polys):
+            raise ValueError("Parameter polys must be a list of Polytope.")
+        
+        if len(polys) == 0:
+            raise ValueError("Must have at least one polytope.")
+
+        if len(polys) == 1:
+            return polys[0]
+        
+        # Copy the constraints of the first polytope 
+        mat = polys[0].mat.copy()
+        
+        # Loop through the remaining polytopes and add their constraints
+        ineqs = []  # the inequality constraints from the other polytopes
+        eqs = []    # the equality constraints from the other polytopes
+        for i in range(1, len(polys)):
+            ineqs.extend(Polytope._matrix_as_list(polys[i].mat, False))
+            eqs.extend(Polytope._matrix_as_list(polys[i].mat, True))
+        
+        if len(ineqs) > 0: mat.extend(ineqs, linear=False)
+        if len(eqs) > 0: mat.extend(eqs, linear=True)
+
+        if canonicalize:
+            mat.canonicalize()
+        
+        p = Polytope._from_mat(mat)
+        p.is_canonical = canonicalize
+        return p
+
+    # Compute the union of a list of polytopes, if the resulting union is
     # a polytope (otherwise, this function returns None).
     #
     # This implementation is based on the union algorithm in
@@ -452,8 +484,12 @@ class Polytope:
                 if q < 0: return False
         return True
 
-    # Computes the intersection of this polytope with another
+    # Computes the intersection of this polytope with another. This polytope is 
+    # unchanged 
     def intersect(self, other):
+
+        return Polytope.intersection([self, other], canonicalize=True)
+        """
         if not isinstance(other, Polytope):
             raise ValueError("Parameter other must be of type Polytope")
         
@@ -476,6 +512,7 @@ class Polytope:
         p = Polytope._from_mat(mat)
         p.is_canonical = True
         return p
+        """
 
 
     # Computes A \ B where A is this polytope and B is another polytope. Returns 
