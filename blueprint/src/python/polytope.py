@@ -125,6 +125,9 @@ class Polytope:
         if canonicalize:
             self.mat.canonicalize()
 
+        # Cache whether this polytope is guaranteed to be canonical
+        self.is_canonical = canonicalize
+
         self.polyhedron = cdd.Polyhedron(self.mat)
 
         # Workspaces for V representation
@@ -132,7 +135,9 @@ class Polytope:
         self.rays = None
 
     def __copy__(self):
-        return Polytope._from_mat(self.mat.copy())
+        p = Polytope._from_mat(self.mat.copy())
+        p.is_canonical = self.canonical
+        return p
 
     def __repr__(self):
         def to_str(row, is_lin):
@@ -321,6 +326,21 @@ class Polytope:
     # -------------------------------------------------------------------------
     # public instance functions
 
+    # The dimension of the space in which this polytope resides 
+    # (this is not the rank of the H-representation matrix) 
+    def dimension(self):
+        return self.mat.col_size - 1
+
+    # Returns true if the representation matrix is full rank
+    def is_full_dim(self):
+        if not self.is_canonical:
+            self.mat.canonicalize()
+            self.is_canonical = True
+        return len(self.mat.lin_set) == 0
+        
+    def num_constraints(self):
+        return self.mat.row_size
+
     # Computes the V representation of this polytope
     def compute_V_rep(self):
         v = self.polyhedron.get_generators()
@@ -425,12 +445,6 @@ class Polytope:
             else:
                 if q < 0: return False
         return True
-
-    def dimension(self):
-        return self.mat.col_size - 1
-
-    def num_constraints(self):
-        return self.mat.row_size
 
     # Computes the intersection of this polytope with another
     def intersect(self, other):
