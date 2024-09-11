@@ -104,10 +104,15 @@ class Hyperplane:
 # Represents a d-dimensional convex polytope
 class Polytope:
 
-    # build Polytope object in terms of its H representation
+    # Build Polytope object in terms of its H representation
     # Parameters:
     #   - constraints: a list of lists, each of which has the form [a_0 a_1 ... a_d]
     #           representing the inequality a_0 + a_1 x_1 + ... + a_d x_d \geq 0
+    #   - linear: (boolean) if True, then the constraints are equalities, otherwise 
+    #           the constraints are inequalities
+    #   - canonicalize: (boolean) if True, then the list of constraints will be 
+    #           canonicalized. In general this operation is expensive, however certain
+    #           operations that depending on a matrix's lin_set require it.   
     def __init__(self, constraints, linear=False, canonicalize=False):
         
         # There is a strange bug when constraint is a list of zeroes - where 
@@ -119,6 +124,7 @@ class Polytope:
         self.mat.rep_type = cdd.RepType.INEQUALITY
         if canonicalize:
             self.mat.canonicalize()
+
         self.polyhedron = cdd.Polyhedron(self.mat)
 
         # Workspaces for V representation
@@ -238,12 +244,16 @@ class Polytope:
             neg_p = []
             for r in range(p.mat.row_size):
                 if satisfies(p.mat, r, i):
-                    env.add(tuple(p.mat[r])) # Use hashability of tuples
+                    # Use hashability of tuples to ensure uniqueness in set
+                    env.add(tuple(p.mat[r])) 
+                    # If this a linear constraint, we also need to add its negation
+                    if r in p.mat.lin_set:
+                        env.add(tuple(-x for x in p.mat[r]))
                 else:
                     # Add the negation of the constraint
                     neg_p.append([-x for x in p.mat[r]])
             neg.append(neg_p)
-            
+        
         # Choose 1 constraint from each negated constraint set, and
         # compute the intersection between them and env
         env = list(env)

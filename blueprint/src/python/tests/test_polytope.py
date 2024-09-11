@@ -183,7 +183,17 @@ def run_union_test():
         [13, -14, -frac(4,3)]
         ])
     assert Polytope.try_union([p1, p2]) == p3
-    
+
+def run_union_linset_test():
+    # Test union edge cases which involve the use of lin_set
+    A = Polytope([
+        [-1, 0, 1, 0], [frac(3,2), 0, -1, 0],
+        [0, 0, 0, 1], [3, 0, 0, -1],
+        [-frac(1,2), 1, 0, 0], [frac(1,2), -1, 0, 0] # the linear constraint
+    ], canonicalize=True)
+
+    assert Polytope.try_union([A, A]) == A
+
 def run_3_way_union_test():
     p1 = Polytope([[-8, 11, -1], [1, -1, 0], [-2, 0, 1], [frac(31, 12), 0, -1]])
     p2 = Polytope(
@@ -266,6 +276,7 @@ def run_scale_test():
 run_polytope_tests()
 run_V_init_test()
 run_union_test()
+run_union_linset_test()
 run_3_way_union_test()
 run_setminus_test()
 run_subs_test()
