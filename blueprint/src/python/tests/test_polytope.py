@@ -129,6 +129,33 @@ def run_emptiness_tests():
     assert p4.is_empty(include_boundary=True)
     assert p4.is_empty(include_boundary=False)
 
+    # Point 
+    p5 = Polytope.rect((0, 0), (0, 0))
+    assert not p5.is_empty(include_boundary=True)
+    assert p5.is_empty(include_boundary=False)
+
+    # Half-infinite rectangle 
+    p6 = Polytope([
+        [0, 1, 0],  # x >= 0
+        [0, 0, 1], [-1, 0, 1] # 0 <= y <= 1
+    ])
+    assert not p6.is_empty(include_boundary=True)
+    assert not p6.is_empty(include_boundary=False)
+
+    # The entire R^2 plane
+    p7 = Polytope([])
+    assert not p7.is_empty(include_boundary=True)
+    assert not p7.is_empty(include_boundary=False)
+
+    # A polygon embedded in 3 dimensions
+    p8 = Polytope([
+        [0, 1, 0, 0], [1, -1, 0, 0], # 0 <= x <= 1
+        [0, 0, 1, 0], [1, 0, -1, 0], # 0 <= y <= 1
+        [0, 0, 0, 1], [0, 0, 0, -1]  # z = 0
+    ])
+    assert not p8.is_empty(include_boundary=True)
+    assert p8.is_empty(include_boundary=False)
+
 def run_V_init_test():
     verts = [[0, 0], [0, 1], [1, 1], [1, 0]]
     p = Polytope.from_V_rep(verts)
