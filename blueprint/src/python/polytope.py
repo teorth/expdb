@@ -253,7 +253,7 @@ class Polytope:
     # This implementation only works with finite polytopes - for infinite polytopes 
     # the wrong result is returned. See e.g. the test cases in test_polytope. 
     # TODO: implement check and error for infinite polytopes. 
-    def try_union(polys, debug=False):
+    def try_union(polys):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
 
@@ -294,19 +294,6 @@ class Polytope:
                         neg_p.append([x for x in p.mat[r]])
                 
             neg.append(neg_p)
-            
-        if debug:
-            print("vertices")
-            for p in polys:
-                print("-----------------")
-                for v in p.get_vertices():
-                    print(v)
-            print("env")
-            for p in env:
-                print(p)
-            print("neg")
-            for p in neg:
-                print(p)
 
         # Choose 1 constraint from each negated constraint set, and
         # compute the intersection between them and env
@@ -315,9 +302,8 @@ class Polytope:
             # Check polytope formed (equivalent to the feasibility LP). If
             # the polytope formed is non-empty, then A U B < Env, so the
             # resulting union is not a polytope. Returns None in this case
-            if debug: print(combination)
             p = Polytope(env + [c for c in combination])
-            if not p.is_empty(include_boundary=False, debug=debug):
+            if not p.is_empty(include_boundary=False):
                 return None
         
         # Otherwise, envelop is the union
@@ -484,36 +470,30 @@ class Polytope:
                 if q < 0: return False
         return True
 
+    # Returns whether this polytope intersects with a plane. Parameter plane must
+    # be of type Hyperplane
+    def intersects(self, plane):
+        if not isinstance(plane, Hyperplane):
+            raise ValueError("Parameter plane must be of type Hyperplane")
+
+        if self.vertices is None:
+            self.compute_V_rep()
+
+        # Check if all vertices are on the same side of the hyperplane
+        sign = 0
+        a = plane.constraint.coefficients
+        for vert in self.vertices:
+            new_sign = a[0] + sum(a[i + 1] * vert[i] for i in range(len(vert)))
+            if sign * new_sign < 0:
+                return True  # points are on opposite sides of the plane
+            if new_sign != 0:
+                sign = new_sign
+        return False
+
     # Computes the intersection of this polytope with another. This polytope is 
     # unchanged 
     def intersect(self, other):
-
         return Polytope.intersection([self, other], canonicalize=True)
-        """
-        if not isinstance(other, Polytope):
-            raise ValueError("Parameter other must be of type Polytope")
-        
-        # Check redundant cases 
-        if self.num_constraints() == 0:
-            return copy.copy(other)
-        if other.num_constraints() == 0:
-            return copy.copy(self)
-        
-        mat = self.mat.copy()
-        
-        # Add inequality constraints from the other polytope
-        ineq = Polytope._matrix_as_list(other.mat, False)
-        if len(ineq) > 0: mat.extend(ineq, linear=False)
-        # Add equality constraints from the other polytope
-        ineq = Polytope._matrix_as_list(other.mat, True)
-        if len(ineq) > 0: mat.extend(ineq, linear=True)
-
-        mat.canonicalize()
-        p = Polytope._from_mat(mat)
-        p.is_canonical = True
-        return p
-        """
-
 
     # Computes A \ B where A is this polytope and B is another polytope. Returns 
     # a list of polytopes that are guaranteed to be disjoint, and whose union 
@@ -555,31 +535,10 @@ class Polytope:
         return polys
 
 
-    # Returns whether this polytope intersects with a plane. Parameter plane must
-    # be of type Hyperplane
-    def intersects(self, plane):
-        if not isinstance(plane, Hyperplane):
-            raise ValueError("Parameter plane must be of type Hyperplane")
-
-        if self.vertices is None:
-            self.compute_V_rep()
-
-        # Check if all vertices are on the same side of the hyperplane
-        sign = 0
-        a = plane.constraint.coefficients
-        for vert in self.vertices:
-            new_sign = a[0] + sum(a[i + 1] * vert[i] for i in range(len(vert)))
-            if sign * new_sign < 0:
-                return True  # points are on opposite sides of the plane
-            if new_sign != 0:
-                sign = new_sign
-        return False
-
-
     # Returns whether the polytope is empty, i.e. whether the constraints are consistent
     # This is currently determined by checking the number of vertices in its V representation
     # - however, solving a LP may be faster
-    def is_empty(self, include_boundary=True, debug=False):
+    def is_empty(self, include_boundary=True):
 
         # Check for cached computations
         if self._is_empty_incl_boundary is not None:
