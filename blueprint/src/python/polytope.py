@@ -579,47 +579,26 @@ class Polytope:
             ineq.extend([tuple(-x for x in r) 
                 for r in Polytope._matrix_as_list(self.mat, True)])
             return ineq 
-
+        
         Ab = as_ineq(other.mat) # Represent other polytope as Ax <= b
-        Cd = as_ineq(self.mat)  # Represent this polytope as Cx <= d
-        minus_d = [-row[0] for row in Cd] # Represents -d
 
-        # Dimensions of the C matrix
-        m = self.dimension()
-        n = len(minus_d) # The number of constraints in this polytope
+        # Construct matrix
+        mat = self.mat.copy()
+        mat.obj_type = cdd.LPObjType.MAX
 
-        # Loop through each in Ab constraint of the form ax <= b. If this 
-        # polytope's H representation is Cx <= d, then solve the LP
-        # d'x <= b, y >= 0, C'y = a
-        # (See method described in https://math.stackexchange.com/q/2097171)
+        # Iterate through the rows of Ab
         for ab in Ab:
-            # Add d'x <= b constraint
-            a, b = ab[1:], ab[0]
-            mat_ineq = [[b] + minus_d]
-            # Add y >= 0 constraints
-            for i in range(n):    
-                row = [0] * (n + 1)
-                row[i + 1] = 1
-                mat_ineq.append(row)
-            # Add C'y = a 
-            mat_eq = []
-            for i in range(m):
-                mat_eq.append([-a[i]] + [Cd[j][i + 1] for j in range(n)])
-
-            # Construct matrix
-            mat = cdd.Matrix(mat_ineq, linear=False)
-            mat.rep_type = cdd.RepType.INEQUALITY
-            mat.extend(mat_eq, linear=True)
-            mat.obj_type = cdd.LPObjType.MAX
-            mat.obj_func = tuple([0] + [1] * n) # Arbitrary obj function
+            # If there is a point x in P1 that is not in P2 then P1 is not a 
+            # subset of P2. 
+            # If a point is in P2 it must satisfy each constraint of the form 
+            # ab >= 0. If we cannot find such a point within P1, then it is not 
+            # in P2, so P1 is not a subset of P2.  
+            mat.obj_func = ab
             lp = cdd.LinProg(mat)
             lp.solve()
-
-            # If the LP is feasible, then this polytope is contained in
-            # another polytope
-            if lp.status == cdd.LPStatusType.OPTIMAL:
-                return True
-        return False
+            if lp.obj_value < 0:
+                return False
+        return True
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 
