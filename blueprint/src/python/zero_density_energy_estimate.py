@@ -123,9 +123,24 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
 def approx_best_energy_bound(LV_region, sigma):
     LVs = LV_region.substitute({0: sigma})
 
+    """
+    LVs.plot2d((2, 3), (0, 10), resolution=500)
+    print("Containment check:")
+    for r in LVs.child:
+        if r.child.contains([3, 10]):
+            print(r.child)
+    
+    print("(tau, rho*) region")
+    LVs.simplify()
+    for r in LVs.child:
+        print(r.child)
+    
+    print("-=-----------------")
+    """
+
     # Take tau0 = 2
     tau0 = 2
-    N = 100
+    N = 500
     taus = np.linspace(tau0, 3/2 * tau0, N)
     rhos = np.linspace(0, 10, N)
     LV_on_tau = []

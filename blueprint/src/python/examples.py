@@ -397,29 +397,31 @@ def zero_density_energy_examples():
 
     # Only include the k = 2 raise to power transform for now
     for k in range(2, 4):
-        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(2))
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add the L2 bound 
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hyps = ad.lv_to_lver(hypotheses)
     hypotheses.add_hypotheses(hyps)
     
-    #hypotheses.add_hypotheses(literature)
-    hbhyp = next(h for h in literature if h.name == "Heath-Brown large value energy region 2")
-    hypotheses.add_hypothesis(hbhyp)
+    for h in hyps:
+        print("lv -> lver", h.data)
+    
+    hypotheses.add_hypotheses(literature)
+    # hbhyp = next(h for h in literature if h.name == "Heath-Brown large value energy region 2")
+    # hypotheses.add_hypothesis(hbhyp)
     
     # add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
     
     # Compute the feasible region for LV*(s, t) as a 3-dimensional polytope
-    LV_star = ad.compute_LV_star(hypotheses)
+    tau0 = 2
+    LV_star = ad.compute_LV_star(hypotheses, (frac(1,2), 1), (tau0, frac(3,2) * tau0))
 
-    # Fow now - just try at sigma = 1/2
-    sigma = frac(1,2)
-    print(sigma, ze.approx_best_energy_bound(LV_star, sigma) / (1 - sigma))
-    #sigmas = np.linspace(1/2, 1, 100)
-    #for sigma in sigmas:
-    #    print(sigma, ze.approx_best_energy_bound(LV_star, sigma) / (1 - sigma))
+    # Debug 
+    sigmas = np.linspace(1/2, 1, 100)
+    for sigma in sigmas:
+        print(sigma, ze.approx_best_energy_bound(LV_star, sigma) / (1 - sigma))
 
 
 def all_examples():

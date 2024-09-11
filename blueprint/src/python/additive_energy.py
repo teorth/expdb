@@ -262,7 +262,7 @@ def sample_check2(region1, region2, N=1000, info=None):
 
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
 # as a polytope in R^3 with dimensions (sigma, tau, rho*)
-def compute_LV_star(hypotheses, debug=True):
+def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True):
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
     
     # Find all LVER transformations and use them to expand the set of LVERs
@@ -272,8 +272,17 @@ def compute_LV_star(hypotheses, debug=True):
         transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
     lvers.extend(transformed_lvers)
 
-    # Compute intersection 
-    E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    # Compute intersection over the domain
+    domain = Region.from_polytope(
+        Polytope.rect(
+            sigma_interval, 
+            tau_interval,
+            (0, Constants.LV_DEFAULT_UPPER_BOUND),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND)
+        )
+    )
+    E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers] + [domain])
     
     print(E)
     

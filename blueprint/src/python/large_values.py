@@ -298,8 +298,8 @@ def covers(estimate, xlim, ylim):
 # Returns result as a list of hypotheses, created using the constructor function
 def piecewise_min(estimates, domain, constructor):
 
-    # Compute bounds and crop domains (taking care not the alter the original estimates
-    # objects)
+    # Compute bounds and crop domains (taking care not the alter the original 
+    # estimates objects)
     bounds = [e.data.bound for e in estimates]
     for i in range(len(bounds)):
         bounds[i] = copy.copy(bounds[i])

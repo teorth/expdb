@@ -93,7 +93,7 @@ $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zet
 \end{equation}
 whenever $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $2 \leq \tau \leq 3$.  Let $k$ be the first integer for which $1 \leq \tau/k \leq 3/2$, thus $k=2,3$ and also $\tau/(k+1) \leq 1$.  By Lemma \ref{power-energy}, there exist tuples
 \begin{equation}\label{smak}
-\left(\sigma, \frac{\tau}{k}, \rho', \frac{\rho^*}{k}, s'\right), \left(\sigma,\frac{\tau}{k+1}, \rho'', \frac{\rho^*}{k+1}, s''\right)  \in \Energy.
+\left(\sigma, \frac{\tau}{k}, \rho', \frac{\rho^*}{k}, s'\right), \left(\sigma,\frac{\tau}{k+1}, \frac{\rho}{k + 1}, (\rho^*)'', s''\right)  \in \Energy.
 \end{equation}
 for some $\rho'$, $s'$, $\rho''$ and $s''$ satisfying
 \[
@@ -101,10 +101,10 @@ for some $\rho'$, $s'$, $\rho''$ and $s''$ satisfying
 \]
 Applying Corollary \ref{hb-energy-simp} to the former tuple of \eqref{smak} and using $\rho' \le \rho/k$, we have
 $$\frac{\rho^*}{k} \leq \max \left(\frac{3\rho}{k} + 1-2\sigma, \frac{\rho}{k} +4-4\sigma, \frac{5\rho}{2k} + \frac{3-4\sigma}{2}\right).$$
-Write $\tau' := \tau/k$. From Lemma \ref{l2-mvt} one has
+Write $\tau' := \tau/k$. Applying Lemma \ref{l2-mvt} to the first tuple of \eqref{smak} one has
 $$\rho/k \leq \tau' + 1 - 2\sigma$$
-and also
-$$\rho/k = \frac{k+1}{k} \rho/(k+1) \leq \frac{k+1}{k} (2-2\sigma) = 3-3\sigma$$
+while applying Lemma \ref{l2-mvt} to the second tuple of \eqref{smak} (recalling that $\tau/(k+1) \le 1$) gives
+$$\rho/k = \frac{k+1}{k} \frac{\rho}{k+1} \leq \frac{k+1}{k} (2-2\sigma) \le 3-3\sigma$$
 and thus
 \begin{equation}\label{rho-k}
 \rho/k \leq \min( \tau'+1-2\sigma, 3-3\sigma)

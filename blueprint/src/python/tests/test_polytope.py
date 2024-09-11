@@ -156,6 +156,25 @@ def run_emptiness_tests():
     assert not p8.is_empty(include_boundary=True)
     assert p8.is_empty(include_boundary=False)
 
+def run_intersection_test():
+    p1 = Polytope.rect((0, 2), (0, 2))
+    p2 = Polytope.rect((1, 3), (1, 3))
+    assert p1.intersect(p2) == Polytope.rect((1, 2), (1, 2))
+
+    p1 = Polytope([
+        [-1, 0, frac(1,7)],
+        [-frac(1,2), 1, 0],
+        [1, -1, 0],
+        [1000000, 0, -1]
+    ])
+    p2 = Polytope([
+        [-frac(1,2), 1, 0],
+        [1, -1, 0],
+        [-2, 0, 1],
+        [2, 0, -1]
+    ])
+    assert p1.intersect(p2).is_empty(include_boundary=True)
+
 def run_V_init_test():
     verts = [[0, 0], [0, 1], [1, 1], [1, 0]]
     p = Polytope.from_V_rep(verts)
@@ -355,6 +374,7 @@ def run_scale_test():
 
 run_polytope_tests()
 run_emptiness_tests()
+run_intersection_test()
 run_V_init_test()
 run_union_test()
 run_union_3d_test()

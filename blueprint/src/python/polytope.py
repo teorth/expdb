@@ -138,7 +138,7 @@ class Polytope:
 
     def __copy__(self):
         p = Polytope._from_mat(self.mat.copy())
-        p.is_canonical = self.canonical
+        p.is_canonical = self.is_canonical
         return p
 
     def __repr__(self):
@@ -380,12 +380,12 @@ class Polytope:
     # Returns a new polytope with the ith dimension scaled by a factor
     def scale(self, i, factor, additional_constraints):
 
-        ineq_rows = Polytope._matrix_as_list(self.mat, False)
+        ineq_rows = [list(r) for r in Polytope._matrix_as_list(self.mat, False)]
         for c in ineq_rows:
             c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
         ineq_rows.extend(additional_constraints)
 
-        eq_rows = Polytope._matrix_as_list(self.mat, True)
+        eq_rows = [list(r) for r in Polytope._matrix_as_list(self.mat, True)]
         for c in eq_rows:
             c[i] /= factor # TODO: verify if this is correct - should this be c[i + 1] instead?
 

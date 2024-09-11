@@ -306,8 +306,8 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        prove_zero_density(new_hyps, verbose, frac(22,29), "part 1/2 of optimized Bourgain", tau0=frac(2)),
-        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain", tau0=frac(2))
+        #prove_zero_density(new_hyps, verbose, frac(22,29), "part 1/2 of optimized Bourgain", tau0=frac(3)),
+        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain", tau0=frac(3))
     ]
 
 # Compute the best zero-density estimates from the literature
@@ -353,8 +353,8 @@ def prove_zero_density_estimates():
     # prove_zero_density_ivic_1984()
     # prove_zero_density_guth_maynard_2024()
     # prove_zero_density_heathbrown_extended()
-    # prove_zero_density_bourgain_improved()
-    compute_best_zero_density()
+    prove_zero_density_bourgain_improved()
+    # compute_best_zero_density()
 
 def prove_all():
     # prove_hardy_littlewood_mu_bound()
