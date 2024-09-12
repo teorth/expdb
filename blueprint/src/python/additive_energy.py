@@ -102,14 +102,6 @@ def union_of_halfplanes(halfplanes, box):
         neg_ineq.append([-x for x in hp])
     return Region.disjoint_union(polys)
 
-# Computes a region object representing the intersection of halfplanes
-# This corresponds to a single min() function
-def intersection_of_halfplanes(halfplanes, box):
-    return Region.from_polytope(
-        Polytope(box + halfplanes)
-    )
-
-
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
         f"{ref.author()} large value energy region" + params,
@@ -189,15 +181,47 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
-# Given a Hypothesis_Set, convert all Hypothesis objects of type "Large value estimate" into 
-# large value energy regions and returns them
+# Given a list of Hypothesis objects of type "Large value estimate" or "Zeta large value estimate", 
+# convert them into large value energy regions and returns them
 def lv_to_lver(hypotheses):
-    lvs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
-
     # A large value estimate currently is represented as a 2-dimensional affine function rho
     # <= f(sigma, tau). Convert this into a polytope representing the set of feasible rho
     # values in (sigma, tau, rho, rho*, s) space, with default limits on the unconstrained
     # variables rho* and s.
+    hyps = []
+    for lv in hypotheses:
+        polys = []
+        # Each piece is an affine function of (sigma, tau)
+        for piece in lv.data.bound.pieces:
+            # Express this piece as a polytope 
+            # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
+            P = piece.domain.lift([
+                0, 
+                1,
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ]).intersect(
+                # rho <= f[0] + f[1] * sigma + f[2] * tau
+                Polytope([
+                    [piece.a[0], piece.a[1], piece.a[2], -1, 0, 0]
+                ])
+            )
+            polys.append(Region(Region_Type.POLYTOPE, P))
+        region = Region(Region_Type.DISJOINT_UNION, polys)
+        hyps.append(
+            derived_large_value_energy_region(
+                Large_Value_Energy_Region(region),
+                f"Follows from {lv}",
+                {lv}
+            )
+        )
+    return hyps
+
+# Given a Hypothesis_Set, convert all Hypothesis objects of type "Zeta large value estimate" into 
+# (Zeta) large value energy regions and returns them
+def lvz_to_lvzer(hypotheses):
+    lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
     hyps = []
     for lv in lvs:
         polys = []
@@ -227,7 +251,6 @@ def lv_to_lver(hypotheses):
             )
         )
     return hyps
-
 
 import random as rd
 rd.seed(1007)
