@@ -400,6 +400,29 @@ class Polytope:
         return [Constraint(list(r), Constraint.GREATER_EQUALS) for r in Polytope._matrix_as_list(self.mat, False)] \
                 + [Constraint(list(r), Constraint.EQUALS) for r in Polytope._matrix_as_list(self.mat, True)]
 
+    # Returns the edges of this polytope, returned as 2-tuples of vertices
+    def get_edges(self):
+        if not self.is_canonical:
+            self.canonicalize() 
+            # Need to reset polyhedron and recompute vertices
+            self.polyhedron = cdd.Polyhedron(self.mat)
+            self.compute_V_rep()
+        
+        # Check if V rep is already computed 
+        if self.vertices is None:
+            self.compute_V_rep()
+        
+        # Get adjacency list
+        adj = self.polyhedron.get_adjacency()
+
+        edges = []
+        for i in range(len(adj)):
+            v1 = self.vertices[i]
+            for j in adj[i]:
+                v2 = self.vertices[j]
+                edges.append((v1, v2))
+        return edges
+
     # Returns a new polytope with the ith dimension scaled by a factor
     # Note that i is 1-indexed
     def scale(self, i, factor, additional_constraints):

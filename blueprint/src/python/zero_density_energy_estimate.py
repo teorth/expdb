@@ -8,11 +8,15 @@
 # [-T, T]. 
 
 import additive_energy as ad
+import cdd
+from constants import Constants
 from fractions import Fraction as frac
-from functions import Interval, RationalFunction as RF
+from functions import Interval, RationalFunction as RF, SympyHelper
 from hypotheses import Hypothesis, Hypothesis_Set
 import numpy as np
+from polytope import Polytope
 from reference import Reference
+import sympy
 
 # class representing a zero-density energy estimate 
 # For now, this is identical to the Zero_Density_Estimate class 
@@ -147,12 +151,116 @@ def approx_best_energy_bound(LV_region, LVZ_region, sigma, tau0):
     LVZs = LVZ_region.substitute({0: sigma})
     sup2 = approx_sup_LV_on_tau(LVZs, 2, tau0)
 
-    print(sup1, sup2)
+    #print(sup1, sup2)
 
     return max(sup1, sup2)
+
+# Should give the same result as approx_best_energy_bound
+def compute_best_energy_bound(LV_region, LVZ_region, sigma_interval, tau0):
     
+    sup1 = compute_sup_LV_on_tau(LV_region, sigma_interval, (tau0, 2 * tau0))
+    print("sup1")
+    for s in sup1: print(s[0], s[1])
     
+    sup2 = compute_sup_LV_on_tau(LVZ_region, sigma_interval, (2, tau0))
+    print("sup2")
+    for s in sup2: print(s[0], s[1])
     
+
+
+def compute_sup_LV_on_tau(LV_region, sigma_interval, tau_interval):
     
+    # assume that LV_region is a union of polytopes 
+    polys = [r.child for r in LV_region.child]
+
+    # Crop the appropriate domain
+    domain = Polytope.rect(
+        sigma_interval, 
+        tau_interval, 
+        (0, Constants.LV_DEFAULT_UPPER_BOUND)
+    )
+    cropped_polys = [p.intersect(domain) for p in polys]
+    polys = [p for p in cropped_polys if not p.is_empty(include_boundary=False)]
+
+    # each polytope is 3-dimensional. Find all edges and project them onto the 
+    # sigma dimension. For those with a non-zero projection, compute rho / tau along 
+    # the edge as a function of sigma 
+    fns = []  
+    for p in polys:
+        edges = p.get_edges()
+        for edge in edges:
+            # Vertices on either side of the edge
+            (sigma1, tau1, rho1) = edge[0]
+            (sigma2, tau2, rho2) = edge[1]
+
+            # Skip edges with empty projection onto the sigma domain
+            if sigma1 == sigma2: continue
+
+            # tau as a (linear) function of sigma along this edge
+            tau = RF([
+                (tau1 - tau2) / (sigma1 - sigma2), 
+                (sigma1 * tau2 - sigma2 * tau1) / (sigma1 - sigma2)
+            ])
+            # rho as a linear function of sigma along this edge
+            rho = RF([
+                (rho1 - rho2) / (sigma1 - sigma2), 
+                (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
+            ])
+            fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
+    
+    # Take the maximum of the functions
+    return max_RF(fns, Interval(sigma_interval[0], sigma_interval[1]))
+    
+def max_RF(fns, sigma_interval):
+    # Then, compute their maximums as a piecewise RationalFunction
+    # at this point we can just make use of the same code as best density estimate solver 
+    x = RF.x
+    sup = [(RF.parse("0"), sigma_interval)] # placeholder
+    
+    for (func1, in1) in fns:
+        # For simplicity, work directly with sympy objects
+        f1 = func1.num / func1.den
+        new_sup = []
+        for (func2, in2) in sup:
+            f2 = func2.num / func2.den
+            solns = sympy.solve(f1 - f2)
+            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
+            crits.update([in1.x0, in1.x1])
+            crits = set(c for c in crits if in2.contains(c))
+            crits.update([in2.x0, in2.x1])
+
+            crits = list(crits)
+            crits.sort()
+            for i in range(1, len(crits)):
+                inter = Interval(crits[i - 1], crits[i])
+                mid = inter.midpoint()
+                
+                if not in1.contains(mid):
+                    new_sup.append((func2, inter))
+                elif f2.subs(x, mid) >= f1.subs(x, mid):
+                    new_sup.append((func2, inter))
+                else:
+                    new_sup.append((func1, inter))
+        
+        # Simplify
+        sup = []
+        i = 0
+        while i < len(new_sup):
+            (fi, inti) = new_sup[i]
+            left = inti.x0
+            right = inti.x1
+
+            j = i + 1
+            while j < len(new_sup):
+                (fj, intj) = new_sup[j]
+                if not (fi == fj and right == intj.x0):
+                    break
+                right = intj.x1
+                j += 1
+                
+            sup.append((fi, Interval(left, right)))
+            i = j
+
+    return sup
 
 
