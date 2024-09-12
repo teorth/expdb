@@ -53,10 +53,10 @@ class Region:
         return Region(self.region_type, copy.copy(self.child))
         
     def to_str(region, indentation=0):
-        s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
         if isinstance(region.child, Polytope):
-            s += ("\t" * indentation) + str(region.child) + "\n"
+            s = ("\t" * indentation) + str(region.child) + "\n"
         else:
+            s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
             for r in region.child:
                 s += Region.to_str(r, indentation + 1)
         return s

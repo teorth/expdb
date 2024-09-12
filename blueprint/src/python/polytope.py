@@ -29,7 +29,7 @@ class Constraint:
     def __repr__(self):
 
         # Get symbols
-        ch_set = list("xyzw")
+        ch_set = list("xyzwu")
         if len(self.coefficients) > 5:
             ch_set = [f"x_{i}" for i in range(1, len(self.coefficients) - 1)]
 
@@ -64,6 +64,10 @@ class Constraint:
             self.coefficients[i] == other.coefficients[i]
             for i in range(len(self.coefficients))
         )
+
+    def __hash__(self):
+        # Borrow the hashing function of tuples
+        return hash(tuple(self.coefficients) + (self.inequality_type,))
 
     # Returns whether the point x (dimension d vector) satisfies the constraint
     def satisfies(self, x):
@@ -260,6 +264,14 @@ class Polytope:
         if len(polys) == 1:
             return polys[0]
 
+        # Performance optimisation: see if intersection is nonempty first. This 
+        # is relative cheap compared to the full union operation, since it only
+        # requires solving 1 LP (without canonicalisation, since boundaries are
+        # included) and is expected to occur quite frequently in practice, 
+        # especially for high dimensional polytopes. 
+        if Polytope.intersection(polys, canonicalize=False).is_empty(include_boundary=True):
+            return None
+        
         env = set()  # Stores the constraints used to compute the envelope
         neg = []  # Stores the negation of the removed constraints (1 list per polytope)
 
