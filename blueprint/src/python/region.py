@@ -65,37 +65,56 @@ class Region:
 
     # If the region is a union of polytopes, try to simplify it
     # Returns True if changes were made
-    def _try_simplify_union_of_polytopes(region, max_groupsize=3):
+    def _try_simplify_union_of_polys(region):
+
         if region.region_type not in {Region_Type.UNION, Region_Type.DISJOINT_UNION} or \
             not all(r.region_type == Region_Type.POLYTOPE for r in region.child):
             return False
         
         polys = [r.child for r in region.child]
-        
-        # a single simplification iteration, which tries to represent multiple
-        # Affine2 objects as a single object. The parameter groupsizen represents 
-        # the number of objects we try to combine at a time.
-        def iteration(objs, groupsize):
-            for c in itertools.combinations(range(len(objs)), groupsize):
-                union = Polytope.try_union([objs[i] for i in c])
-                if union is not None:
-                    # Remove indices of c from group, add new element at the end of list 
-                    return [objs[i] for i in range(len(objs)) if i not in c] + [union]
-            return None
-        
-        changed = False
-
-        for n in range(2, max_groupsize + 1):
-            while True:
-                new_polys = iteration(polys, n)
-                if new_polys is None:
-                    break
-                polys = new_polys
-                changed = True
-
+        polys = Region._simplify_union_of_polys(polys)
         region.child = [Region(Region_Type.POLYTOPE, p) for p in polys]  # repack
-            
-    
+
+        return True
+
+    # Simplify a union of polytopes 
+    def _simplify_union_of_polys(polys):
+        
+        # The list of polytopes will be expanded, without removal
+        # Instead we keep track of the indexes of the polytopes included in the union
+        # in this set 
+        index = set(i for i in range(len(polys)))
+
+        # Keep track of the tuples (int, int) of indexes which do not form a pairwise 
+        # union
+        non_unions = set()
+        changed = True
+        while changed:
+
+            changed = False
+            for c in itertools.combinations(list(index), 2):
+                (i, j) = c
+                # First check if i, j have not been removed from a previous iteration
+                if i not in index or j not in index:
+                    continue
+
+                # Skip checking the expensive try_union operation if the combination
+                # is known to be non-unionable
+                if (i, j) in non_unions or (j, i) in non_unions: 
+                    continue
+
+                union = Polytope.try_union([polys[i], polys[j]])
+                if union is not None:
+                    # Union is successful: remove indexes in c and add new index
+                    index.remove(i)
+                    index.remove(j)
+                    index.add(len(polys))
+                    polys.append(union)
+                    changed = True
+                else:
+                    non_unions.add((i, j))
+
+        return [polys[i] for i in index]
     
     # Static methods ---------------------------------------------------------
 
@@ -189,7 +208,8 @@ class Region:
             # Compute intersection of regions using distributive property of set 
             # algebra, i.e. 
             # A ∩ (B1 u B2 u ... u Bn) = (A ∩ B1) u (A ∩ B2) u ... u (A ∩ Bn)
-            
+            SIMPLIFY_EVERY = 10
+        
             # Sets of lists of polytopes
             child_sets = [r._as_disjoint_union_poly() for r in self.child]
             disjoint = child_sets[0]
@@ -200,8 +220,16 @@ class Region:
                         inter = p.intersect(q)
                         if not inter.is_empty(include_boundary=False):
                             new_disjoint.append(inter)
-                print(len(new_disjoint))
+                
+                # Every few rounds, simplify
+                if i % SIMPLIFY_EVERY == 0:
+                    prevlen = len(new_disjoint)
+                    new_disjoint = Region._simplify_union_of_polys(new_disjoint)
+                    print(prevlen, "->", len(new_disjoint))
+
+                print(len(new_disjoint), i + 1, "of", len(child_sets))
                 disjoint = new_disjoint
+
             return disjoint
         if self.region_type == Region_Type.UNION:
             raise NotImplementedError(self.region_type) # TODO: implement this
@@ -233,8 +261,7 @@ class Region:
 
         changed = False
         # If this region is a union of polytopes, it may be simplified
-        changed = changed or Region._try_simplify_union_of_polytopes(self, 2)
+        changed = changed or Region._try_simplify_union_of_polys(self)
 
         return changed
     
-

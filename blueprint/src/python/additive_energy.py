@@ -208,6 +208,7 @@ def lv_to_lver(hypotheses):
                 ])
             )
             polys.append(Region(Region_Type.POLYTOPE, P))
+
         region = Region(Region_Type.DISJOINT_UNION, polys)
         hyps.append(
             derived_large_value_energy_region(
@@ -220,6 +221,7 @@ def lv_to_lver(hypotheses):
 
 # Given a Hypothesis_Set, convert all Hypothesis objects of type "Zeta large value estimate" into 
 # (Zeta) large value energy regions and returns them
+# TODO: finish implementing this method
 def lvz_to_lvzer(hypotheses):
     lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
     hyps = []
