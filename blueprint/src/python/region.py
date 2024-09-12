@@ -222,7 +222,7 @@ class Region:
                             new_disjoint.append(inter)
                 
                 # Every few rounds, simplify
-                if i % SIMPLIFY_EVERY == 0:
+                if i % SIMPLIFY_EVERY == 0 and len(new_disjoint) > 100:
                     prevlen = len(new_disjoint)
                     new_disjoint = Region._simplify_union_of_polys(new_disjoint)
                     print(prevlen, "->", len(new_disjoint))

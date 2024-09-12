@@ -398,25 +398,25 @@ def zero_density_energy_examples():
     for k in range(2, 5):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
-    # Add the L2 bound 
+    # Add classical and literature Large value estimates
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    hyps = ad.lv_to_lver(hypotheses.list_hypotheses(hypothesis_type="Large value estimate"))
-    hypotheses.add_hypotheses(hyps)
-    
     hypotheses.add_hypotheses(literature)
-    # hbhyp = next(h for h in literature if h.name == "Heath-Brown large value energy region 2")
-    # hypotheses.add_hypothesis(hbhyp)
-    
-    # add trivial bounds - this uses literature zero-density estimates
+
+    # Convert all large value estimates -> large value energy region
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    # Convert all zeta large value estimates -> zeta large value energy region
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    # Add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
 
     # Compute the feasible region for LV*(s, t) as a 3-dimensional polytope
     tau0 = 3
     sigma_interval = (frac(1,2), frac(1))
-    LV_star = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), frac(2) * tau0))
+    LV_star = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), frac(2) * tau0), zeta=False)
 
-    # TODO: Compute LV_{\zeta}*(s, t) - currently, fall back to just using the LV* estimates
-    LVZ_star = LV_star
+    # TODO: Compute LV_{\zeta}*(s, t)
+    LVZ_star = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), frac(2) * tau0), zeta=True)
 
     bounds = ze.compute_best_energy_bound(LV_star, LVZ_star, sigma_interval, tau0)
 

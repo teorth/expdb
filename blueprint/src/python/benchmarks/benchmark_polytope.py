@@ -44,13 +44,6 @@ def benchmark_union(N):
         [Region.from_polytope(p) for p in polys]
     )
 
-    starting_count = len(polys)
-    start = time.perf_counter()
-    result = Region._simplify_union_of_polys(polys)
-    end = time.perf_counter()
-    print(f"Computing union of {N ** 5} 5-dimensional polytopes took {end - start} sec.")
-    print(f"Starting boxes: {starting_count}, ending boxes: {len(result)}")
-
     starting_count = len(region.child)
     start = time.perf_counter()
     region.simplify()

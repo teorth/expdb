@@ -111,11 +111,32 @@ def literature_large_value_energy_region(region, ref, params=""):
         ref,
     )
 
+def literature_zeta_large_value_energy_region(region, ref, params=""):
+    return Hypothesis(
+        f"{ref.author()} zeta large value energy region" + params,
+        "Zeta large value energy region",
+        Large_Value_Energy_Region(region),
+        f"See [{ref.author()}, {ref.year()}]",
+        ref,
+    )
+
 def derived_large_value_energy_region(data, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
     bound = Hypothesis(
         "Derived large value energy region",
         "Large value energy region",
+        data,
+        proof,
+        Reference.derived(year),
+    )
+    bound.dependencies = deps
+    return bound
+
+def derived_zeta_large_value_energy_region(data, proof, deps):
+    year = Reference.max_year(tuple(d.reference for d in deps))
+    bound = Hypothesis(
+        "Derived zeta large value energy region",
+        "Zeta large value energy region",
         data,
         proof,
         Reference.derived(year),
@@ -181,18 +202,30 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+
 # Given a list of Hypothesis objects of type "Large value estimate" or "Zeta large value estimate", 
-# convert them into large value energy regions and returns them
-def lv_to_lver(hypotheses):
+# convert them into large value energy regions and returns them as a list of Hypothesis
+#
+# If zeta is True, then "Zeta large value estimate" and "Zeta large value energy region" are
+# considered instead 
+def lv_to_lver(hypotheses, zeta=False):
+    
+    if zeta:
+        lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
+        constructor = derived_zeta_large_value_energy_region
+    else:
+        lvs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
+        constructor = derived_large_value_energy_region
+
     # A large value estimate currently is represented as a 2-dimensional affine function rho
     # <= f(sigma, tau). Convert this into a polytope representing the set of feasible rho
     # values in (sigma, tau, rho, rho*, s) space, with default limits on the unconstrained
     # variables rho* and s.
     hyps = []
-    for lv in hypotheses:
+    for lvh in lvs:
         polys = []
         # Each piece is an affine function of (sigma, tau)
-        for piece in lv.data.bound.pieces:
+        for piece in lvh.data.bound.pieces:
             # Express this piece as a polytope 
             # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
             P = piece.domain.lift([
@@ -210,49 +243,16 @@ def lv_to_lver(hypotheses):
             polys.append(Region(Region_Type.POLYTOPE, P))
 
         region = Region(Region_Type.DISJOINT_UNION, polys)
+        
         hyps.append(
-            derived_large_value_energy_region(
+            constructor(
                 Large_Value_Energy_Region(region),
-                f"Follows from {lv}",
-                {lv}
+                f"Follows from {lvh}",
+                {lvh}
             )
         )
     return hyps
 
-# Given a Hypothesis_Set, convert all Hypothesis objects of type "Zeta large value estimate" into 
-# (Zeta) large value energy regions and returns them
-# TODO: finish implementing this method
-def lvz_to_lvzer(hypotheses):
-    lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
-    hyps = []
-    for lv in lvs:
-        polys = []
-        # Each piece is an affine function of (sigma, tau)
-        for piece in lv.data.bound.pieces:
-            # Express this piece as a polytope 
-            # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
-            P = piece.domain.lift([
-                0, 
-                1,
-                (0, Constants.LV_DEFAULT_UPPER_BOUND),
-                (0, Constants.LV_DEFAULT_UPPER_BOUND),
-                (0, Constants.LV_DEFAULT_UPPER_BOUND)
-            ]).intersect(
-                # rho <= f[0] + f[1] * sigma + f[2] * tau
-                Polytope([
-                    [piece.a[0], piece.a[1], piece.a[2], -1, 0, 0]
-                ])
-            )
-            polys.append(Region(Region_Type.POLYTOPE, P))
-        region = Region(Region_Type.DISJOINT_UNION, polys)
-        hyps.append(
-            derived_large_value_energy_region(
-                Large_Value_Energy_Region(region),
-                f"Follows from {lv}",
-                {lv}
-            )
-        )
-    return hyps
 
 import random as rd
 rd.seed(1007)
@@ -294,15 +294,29 @@ def sample_check2(region1, region2, N=1000, info=None):
 
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
 # as a polytope in R^3 with dimensions (sigma, tau, rho*)
-def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True):
+def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=False):
+
+    # 1. A large value energy region is also a zeta large value energy region
+    # 2. Large value energy regions have the raise to power hypothesis, which is 
+    # a type of Large value energy region transform
+    # 3. Zeta large value energy regions do not have the raise to power hypothesis
+    # Therefore, the set of zeta large value energy regions can be obtained by 
+    # first expanding the set of large value energy regions (by raising to a power)
+    # then adding in the additional zeta large value energy regions later. 
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
-    
-    # Find all LVER transformations and use them to expand the set of LVERs
+        
+    # Use LVER transformations and use them to expand the set of LVERs
     transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
     transformed_lvers = []
     for tf in transforms:
         transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
     lvers.extend(transformed_lvers)
+
+    if zeta:
+        # A large value energy region is also a zeta large value energy region
+        # A zeta large value energy region has no raise to power hypothesis
+        lvers = hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region")
+        print(f"Found {len(lvers)} zeta large value energy regions")
 
     # Compute intersection over the domain
     domain = Region.from_polytope(
@@ -316,7 +330,8 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True):
     )
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers] + [domain])
     
-    print(E)
+    if debug:
+        print(E)
     
     E1 = E.as_disjoint_union()
 
@@ -331,35 +346,12 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True):
         cpy = copy.copy(Eproj)
         print("Before simp", Eproj)
 
-
     Eproj.simplify()
-
 
     if debug:
         print("After simp", Eproj)
         sample_check2(Eproj, cpy, N=10000, info=lvers)
 
-
-    ###########################################################################
-    '''
-    # To debug this: we are getting strange results for sigma = 0.5, iterate 
-    # through the hypotheses and see which one is causing the problems 
-    for lver in lvers:
-        # Take tau0 = 2
-        tau0 = 2
-        N = 100
-        taus = np.linspace(tau0, 3/2 * tau0, N)
-        rhos = np.linspace(0, 10, N)
-        LV_on_tau = []
-        for tau in taus:
-            LV_on_tau.append(max(rho for rho in rhos if LVs.contains([tau, rho])) / tau)
-        lver.data.region
-    '''
-        
-    ###########################################################################
-    
-    
-    
     return Eproj
 
 
