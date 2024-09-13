@@ -801,7 +801,7 @@ def add_lver_ivic_1985():
     )
 add_lver_ivic_1985()
 
-# Implementation of "Heath-Brown relation" Theorem 10.18
+# Implementation of "Heath-Brown relation" Theorem 10.20
 def add_lver_heath_brown_1979b1():
     region = ad.union_of_halfplanes(
         [
@@ -843,7 +843,7 @@ def add_lver_heath_brown_1979b1():
     )
 add_lver_heath_brown_1979b1()
 
-# Implementation of "Simplified Heath-Brown relation" Corollary 10.19
+# Implementation of "Simplified Heath-Brown relation" Corollary 10.21
 def add_lver_heath_brown_1979b2():
     # divide into two cases
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
@@ -870,7 +870,7 @@ def add_lver_heath_brown_1979b2():
     )
 add_lver_heath_brown_1979b2()
 
-# Implementation of second Heath-Brown relation (Lemma 10.20)
+# Implementation of second Heath-Brown relation (Lemma 10.22)
 def add_lver_heath_brown_1979c(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
     for k in range(1, K):
