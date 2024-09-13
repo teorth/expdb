@@ -559,19 +559,4 @@ def apply_huxley_subdivision(hypothesis):
 
     # Iterate through the pieces, extracting the facets (which are just lines)
     # then compute their projection onto the \sigma space
-    for p in lv_hypothesis.data.bound.pieces:
-        p = pieces[k]
-        # Compute vertices and facets of the domain
-        verts = p.domain.get_vertices()
-        incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
-        constraints = p.domain.get_constraints()
-
-        # Iterate through the edges
-        for i in range(len(constraints)):
-            c = constraints[i].coefficients
-            vs = [verts[j] for j in incidences[i]]
-            sub = Interval(min(v[0] for v in vs), max(v[0] for v in vs), True, True)
-            if sub.length() > 0:
-                faces.append((RF([-c[1], -c[0]], [c[2]]), p, sub, lookup[k]))
-
     raise NotImplementedError()
