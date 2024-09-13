@@ -305,11 +305,11 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=F
     if zeta:
         # A large value energy region is also a zeta large value energy region
         # A zeta large value energy region has no raise to power hypothesis
-        lvers = hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region")
+        lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
         print(f"Found {len(lvers)} zeta large value energy regions")
     
     for lver in lvers:
-        print(lver, lver.proof, lver.data)
+        print(lver, ":", lver.proof)
     
     # Compute intersection over the domain
     domain = Region.from_polytope(
@@ -357,7 +357,7 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=F
     cons.discard(set(domain.child.get_constraints()))
         
     for lver in lvers:
-        polys = [r.child for c in lver.data.region.child]
+        polys = [r.child for r in lver.data.region.child]
         is_dep = False
         for poly in polys:
             if cons.discard(set(poly.get_constraints())) is not None:
@@ -374,18 +374,17 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=F
     
     # Project onto the (sigma, tau, rho*) dimension
     Eproj = E1.project({0, 1, 3})
-
+    
     if debug:
         cpy = copy.copy(Eproj)
-        print("Before simp", Eproj)
-
+        
     Eproj.simplify()
 
     if debug:
-        print("After simp", Eproj)
+        print("Simplifying:", len(cpy.child), "->", len(Eproj.child), Eproj)
         sample_check(Eproj, cpy, N=10000, dim=3, info=lvers)
 
-    if zeta:
+    if zeta:    
         return derived_zeta_large_value_energy_region(
             Large_Value_Energy_Region(Eproj), 
             f"Follows from taking the intersection of {len(deps)} zeta large value energy regions" + \
@@ -397,7 +396,7 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=F
             Large_Value_Energy_Region(Eproj), 
             f"Follows from taking the intersection of {len(deps)} large value energy regions" + \
             " then projecting onto the (sigma, tau, rho) dimensions",
-            deps
+            set(deps)
         )
 
 

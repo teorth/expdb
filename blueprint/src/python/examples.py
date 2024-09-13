@@ -395,7 +395,7 @@ def large_value_energy_region_examples():
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 5):
+    for k in range(2, 6):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
@@ -416,14 +416,14 @@ def zero_density_energy_examples():
     # Compute the feasible region for LV*(s, t) as a 3-dimensional polytope
     tau0 = 3
     sigma_interval = (frac(1,2), frac(1))
-    LV_star_hyp = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), frac(2) * tau0), zeta=False)
+    LV_star_hyp = ad.compute_LV_star(hypotheses, sigma_interval, (tau0, frac(2) * tau0), zeta=False)
     LV_star_hyp.desc_with_proof()
 
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
-    LVZ_star_hyp = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), frac(2) * tau0), zeta=True)
+    LVZ_star_hyp = ad.compute_LV_star(hypotheses, sigma_interval, (frac(2), tau0), zeta=True)
     LVZ_star_hyp.desc_with_proof()
 
-    bounds = ze.compute_best_energy_bound(LV_star_hyp.data.region, LVZ_star_hyp.data.region, sigma_interval, tau0)
+    bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval, tau0)
 
 
 def all_examples():

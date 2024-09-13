@@ -155,17 +155,43 @@ def approx_best_energy_bound(LV_region, LVZ_region, sigma, tau0):
 
     return max(sup1, sup2)
 
-# Should give the same result as approx_best_energy_bound
-def compute_best_energy_bound(LV_region, LVZ_region, sigma_interval, tau0):
+# Given two Hypothesis objects of type "Large value energy region", representing 
+# an estimate of the large value energy region and zeta large value energy region
+# respectively, computes and returns the best bound on A*(\sigma) 
+# 
+# This function should give the same result as approx_best_energy_bound
+def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, tau0):
     
-    sup1 = compute_sup_LV_on_tau(LV_region, sigma_interval, (tau0, 2 * tau0))
+    if not isinstance(LVER, Hypothesis) or \
+        LVER.hypothesis_type != "Large value energy region":
+        raise ValueError("Parameter LVER must be a Hypothesis of type 'Large value energy region'.")
+    if not isinstance(LVER_zeta, Hypothesis) or \
+        LVER_zeta.hypothesis_type != "Zeta large value energy region":
+        raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
+        
+    sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval, (tau0, 2 * tau0))
     print("sup1")
-    for s in sup1: print(s[0], s[1])
+    for s in sup1: print(s[0], "for x\in", s[1])
     
-    sup2 = compute_sup_LV_on_tau(LVZ_region, sigma_interval, (2, tau0))
+    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval, (2, tau0))
     print("sup2")
-    for s in sup2: print(s[0], s[1])
+    for s in sup2: print(s[0], "for x\in", s[1])
     
+    # Take maximum
+    sup = max_RF(list(sup1) + list(sup2), Interval(sigma_interval[0], sigma_interval[1]))
+    print("A*(x)(1-x) \leq")
+    for s in sup: print(s[0], "for x\in", s[1])
+    
+    return [
+        derived_zero_density_energy_estimate(
+            Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
+            f"Follows from combining {len(LVER.dependencies)} large value energy regions " + \
+            "and {len(LVER_zeta.dependencies)} zeta large value energy regions",
+            set(list(LVER.dependencies) + list(LVER_zeta.dependencies))
+        )
+        for s in sup
+        ]
+
 
 
 def compute_sup_LV_on_tau(LV_region, sigma_interval, tau_interval):
@@ -210,12 +236,14 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval, tau_interval):
     
     # Take the maximum of the functions
     return max_RF(fns, Interval(sigma_interval[0], sigma_interval[1]))
-    
-def max_RF(fns, sigma_interval):
+
+# TODO: this function is very similar to a function in zero_density_estimate.py - 
+# merge/combine them?
+def max_RF(fns, domain):
     # Then, compute their maximums as a piecewise RationalFunction
     # at this point we can just make use of the same code as best density estimate solver 
     x = RF.x
-    sup = [(RF.parse("0"), sigma_interval)] # placeholder
+    sup = [(RF.parse("0"), domain)] # placeholder
     
     for (func1, in1) in fns:
         # For simplicity, work directly with sympy objects
