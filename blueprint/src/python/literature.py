@@ -801,8 +801,50 @@ def add_lver_ivic_1985():
     )
 add_lver_ivic_1985()
 
+# Implementation of "Heath-Brown relation" Theorem 10.18
+def add_lver_heath_brown_1979b1():
+    region = ad.union_of_halfplanes(
+        [
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (ρ*/2 + 1/2) = 2 - 2σ + ρ/2 + ρ*/2
+            [2, -2, 0, frac(1,2), -frac(1,2), 0],               # 2 - 2σ + ρ/2 - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (ρ) + (ρ*/2 + 1/2) = 3/2 - 2σ + ρ + ρ*/2
+            [frac(3,2), -2, 0, 1, -frac(1,2), 0],               # 3/2 - 2σ + ρ - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (ρ*/2 + 1/2) = 3/2 - 2σ + τ/4 + 5ρ/8 + ρ*/2
+            [frac(3,2), -2, frac(1,4), frac(5,8), -frac(1,2), 0],# 3/2 - 2σ + τ/4 + 5ρ/8 - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (2ρ) = 3/2 - 2σ + 5ρ/2
+            [frac(3,2), -2, 0, frac(5,2), -1, 0],               # 3/2 - 2σ + 5ρ/2 - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (ρ) + (2ρ) = 1 - 2σ + 3ρ
+            [1, -2, 0, 3, -1, 0],                               # 1 - 2σ + 3ρ - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (2ρ) = 1 - 2σ + τ/4 + 21ρ/8
+            [1, -2, frac(1,4), frac(21,8), -1, 0],              # 1 - 2σ + τ/4 + 21ρ/8 - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (3ρ*/8 + ρ/2 + τ/4) = 3/2 - 2σ + τ/4 + ρ + 3ρ*/8
+            [frac(3,2), -2, frac(1,4), 1, -frac(5,8), 0],       # 3/2 - 2σ + τ/4 + ρ - 5ρ*/8 >= 0
+            
+            # ρ* <= 1 - 2σ + (ρ) + (3ρ*/8 + ρ/2 + τ/4) = 1 - 2σ + τ/4 + 3ρ/2 + 3ρ*/8
+            [1, -2, frac(1,4), frac(3,2), -frac(5,8), 0],       # 1 - 2σ + τ/4 + 3ρ/2 - 5ρ*/8 >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (3ρ*/8 + ρ/2 + τ/4) = 1 - 2σ + τ/2 + 9ρ/8 + 3ρ*/8
+            [1, -2, frac(1,2), frac(9,8), -frac(1,2), 0],       # 1 - 2σ + τ/2 + 9ρ/8 - ρ*/2 >= 0
+        ],
+        ad.Large_Value_Energy_Region.default_constraints()
+    )
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("heathbrown_zero_1979"),
+            params=" 2a"
+        )
+    )
+add_lver_heath_brown_1979b1()
+
 # Implementation of "Simplified Heath-Brown relation" Corollary 10.19
-def add_lver_heath_brown_1979b():
+def add_lver_heath_brown_1979b2():
     # divide into two cases
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
@@ -823,10 +865,10 @@ def add_lver_heath_brown_1979b():
         ad.literature_large_value_energy_region(
             region,
             rm.get("heathbrown_zero_1979"),
-            params=" 2"
+            params=" 2b"
         )
     )
-add_lver_heath_brown_1979b()
+add_lver_heath_brown_1979b2()
 
 # Implementation of second Heath-Brown relation (Lemma 10.20)
 def add_lver_heath_brown_1979c(K):
