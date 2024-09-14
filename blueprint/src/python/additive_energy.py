@@ -283,8 +283,10 @@ def sample_check(region1, region2, N=1000, dim=5, info=None):
     print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
-# as a polytope in R^3 with dimensions (sigma, tau, rho*)
-def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=False):
+# as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 
+# (represented as a Polytope)
+# If zeta is true, the best available bound on LV*_\zeta(sigma, tau) is computed instead 
+def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     # 1. A large value energy region is also a zeta large value energy region
     # 2. Large value energy regions have the raise to power hypothesis, which is 
@@ -308,18 +310,21 @@ def compute_LV_star(hypotheses, sigma_interval, tau_interval, debug=True, zeta=F
         lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
         print(f"Found {len(lvers)} zeta large value energy regions")
     
-    for lver in lvers:
-        print(lver, ":", lver.proof)
-    
+    if debug:
+        for lver in lvers:
+            print(lver, ":", lver.proof)
+        
+        print("sigma-tau domain:")
+        print(sigma_tau_domain)
     # Compute intersection over the domain
     domain = Region.from_polytope(
-        Polytope.rect(
-            sigma_interval, 
-            tau_interval,
+        sigma_tau_domain.lift([
+            0, 
+            1, 
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND),
             (0, Constants.LV_DEFAULT_UPPER_BOUND)
-        )
+        ])
     )
 
     # Compute the large value energy bounding region

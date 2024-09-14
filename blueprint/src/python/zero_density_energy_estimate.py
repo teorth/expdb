@@ -160,7 +160,7 @@ def approx_best_energy_bound(LV_region, LVZ_region, sigma, tau0):
 # respectively, computes and returns the best bound on A*(\sigma) 
 # 
 # This function should give the same result as approx_best_energy_bound
-def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, tau0):
+def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval):
     
     if not isinstance(LVER, Hypothesis) or \
         LVER.hypothesis_type != "Large value energy region":
@@ -169,16 +169,16 @@ def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, tau0):
         LVER_zeta.hypothesis_type != "Zeta large value energy region":
         raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
         
-    sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval, (tau0, 2 * tau0))
+    sup1 = compute_sup_LV_on_tau(LVER.data.region)
     print("sup1")
     for s in sup1: print(s[0], "for x\in", s[1])
     
-    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval, (2, tau0))
+    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region)
     print("sup2")
     for s in sup2: print(s[0], "for x\in", s[1])
     
     # Take maximum
-    sup = max_RF(list(sup1) + list(sup2), Interval(sigma_interval[0], sigma_interval[1]))
+    sup = max_RF(list(sup1) + list(sup2), sigma_interval)
     print("A*(x)(1-x) \leq")
     for s in sup: print(s[0], "for x\in", s[1])
     
@@ -194,19 +194,11 @@ def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, tau0):
 
 
 
-def compute_sup_LV_on_tau(LV_region, sigma_interval, tau_interval):
+def compute_sup_LV_on_tau(LV_region, sigma_interval):
     
-    # assume that LV_region is a union of polytopes 
+    # assume that LV_region is a union of polytopes and that the (sigma-tau) domain
+    # is already correct
     polys = [r.child for r in LV_region.child]
-
-    # Crop the appropriate domain
-    domain = Polytope.rect(
-        sigma_interval, 
-        tau_interval, 
-        (0, Constants.LV_DEFAULT_UPPER_BOUND)
-    )
-    cropped_polys = [p.intersect(domain) for p in polys]
-    polys = [p for p in cropped_polys if not p.is_empty(include_boundary=False)]
 
     # each polytope is 3-dimensional. Find all edges and project them onto the 
     # sigma dimension. For those with a non-zero projection, compute rho / tau along 
@@ -235,7 +227,7 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval, tau_interval):
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
     
     # Take the maximum of the functions
-    return max_RF(fns, Interval(sigma_interval[0], sigma_interval[1]))
+    return max_RF(fns, sigma_interval)
 
 # TODO: this function is very similar to a function in zero_density_estimate.py - 
 # merge/combine them?
