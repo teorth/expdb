@@ -638,6 +638,44 @@ class Polytope:
                 return False
         return True
 
+    # Returns true if this polytope is contained in the union of a list of polytopes
+    # This method implements the Algorithm 3 in Mato Baoti\'{c}
+    # "Polytopic Computations in Constrained Optimal Control" (2009) 
+    def is_covered_by(self, polys):
+        if not isinstance(polys, list):
+            raise ValueError("Parameter polys must be of type list.")
+        
+        if len(polys) == 0:
+            return False
+        
+        Q, rem = polys[0], polys[1:]
+        
+        # Get inequality constraints (convert equality constraints to inequality
+        # constraints)
+        cons = Polytope._matrix_as_list(Q.mat, False)
+        for eq in Polytope._matrix_as_list(Q.mat, True):
+            cons.append(eq)
+            cons.append(tuple(-x for x in eq))
+
+        # Matrix P 
+        P = self.mat.copy()
+        for con in cons:
+            # Intersect this polytope with the negation of a constraint
+            mat = P.copy()
+            mat.extend([[-x for x in con]], linear=False)
+            poly = Polytope._from_mat(mat) # Represents P tilde
+
+            # Check if there are any points in the region defined by mat, not including
+            # those points lying on the constraint line. 
+            if not poly.is_empty(include_boundary=False):
+                if not poly.is_covered_by(rem):
+                    return False
+            
+            # Add constraint to P
+            P.extend([con], linear=False)
+            
+        return True
+
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope. 
     def substitute(self, values):

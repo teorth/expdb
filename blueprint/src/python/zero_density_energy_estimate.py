@@ -169,11 +169,11 @@ def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval):
         LVER_zeta.hypothesis_type != "Zeta large value energy region":
         raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
         
-    sup1 = compute_sup_LV_on_tau(LVER.data.region)
+    sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval)
     print("sup1")
     for s in sup1: print(s[0], "for x\in", s[1])
     
-    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region)
+    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval)
     print("sup2")
     for s in sup2: print(s[0], "for x\in", s[1])
     

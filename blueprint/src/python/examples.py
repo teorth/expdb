@@ -400,9 +400,10 @@ def zero_density_energy_examples():
 
     # Add classical and literature Large value estimates
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
     # hypotheses.add_hypotheses(literature) # moved below
-
+    
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     # Convert all zeta large value estimates -> zeta large value energy region
