@@ -11,9 +11,11 @@ import time
 def van_der_corput_pair(k):
     if k < 2:
         raise ValueError("k must be at least 2.")
-    exp_pair = B_transform(trivial_exp_pair)
+    A_transform = literature.find_hypothesis(keywords="van der Corput A transform")
+    B_transform = literature.find_hypothesis(keywords="van der Corput B transform")
+    exp_pair = B_transform.data.transform(trivial_exp_pair)
     for _ in range(k - 2):
-        exp_pair = A_transform(exp_pair)
+        exp_pair = A_transform.data.transform(exp_pair)
     print(f"The van der Corput pair for k = {k} is {exp_pair.desc()}")
     return exp_pair
 
@@ -21,10 +23,12 @@ def van_der_corput_pair(k):
 # Prove the Hardy-Littlewood bound mu(1/2) \leq 1/6 using the van der Corput pair (1/6, 2/3).
 def prove_hardy_littlewood_mu_bound():
     HL_bound = literature.find_hypothesis(data=Bound_mu(frac(1, 2), frac(1, 6)))
+    A_transform = literature.find_hypothesis(keywords="van der Corput A transform")
+    B_transform = literature.find_hypothesis(keywords="van der Corput B transform")
     print(f"We will reprove {HL_bound.desc()}.")
-    B_exp_pair = B_transform(trivial_exp_pair)
+    B_exp_pair = B_transform.data.transform(trivial_exp_pair)
     print(f"We have {B_exp_pair.desc_with_proof()}")
-    AB_exp_pair = A_transform(B_exp_pair)
+    AB_exp_pair = A_transform.data.transform(B_exp_pair)
     print(f"This implies {AB_exp_pair.desc_with_proof()}")
     mu_bound = obtain_mu_bound_from_exponent_pair(AB_exp_pair)
     print(f"This implies {mu_bound.desc_with_proof()}")
@@ -357,6 +361,7 @@ def prove_zero_density_estimates():
     # compute_best_zero_density()
 
 def prove_all():
+    # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
     prove_zero_density_estimates()

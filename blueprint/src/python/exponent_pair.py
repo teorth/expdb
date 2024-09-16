@@ -6,13 +6,8 @@ from bound_beta import *
 import copy
 from fractions import Fraction as frac
 import itertools
-import mpmath as mp
 import numpy as np
 from scipy.spatial import ConvexHull
-
-# The number of decimal places for finite-precision computations
-mp.dps = 1000
-
 
 # Note: for the purposes of this database, we use the definition of exponent pair that allows for epsilon losses in the bound.
 class Exp_pair:

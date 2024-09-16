@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from helpers.region_helper import Region_Helper
 from polytope import Polytope
+import time
 
 class Region_Type:
     
@@ -113,6 +114,30 @@ class Region:
             return all(c.contains(x) for c in self.child)
         raise NotImplementedError(self.region_type)
 
+    # Returns whether this region is a subset of another region
+    # TODO: implement other cases of this method
+    def is_subset_of(self, region) -> bool:
+        if not isinstance(region, Polytope) and not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type Polytope or Region")
+        
+        # Currently: only polytope and union types are supported
+        if self.region_type == Region_Type.POLYTOPE:
+            if isinstance(region, Polytope):
+                return self.child.is_subset_of(region)
+            
+            if region.region_type == Region_Type.POLYTOPE:
+                return self.child.is_subset_of(region.child)
+            elif region.region_type == Region_Type.UNION or region.region_type == Region_Type.DISJOINT_UNION:
+                return self.child.is_covered_by(region.child)
+            elif region.region_type == Region_Type.INTERSECT:
+                return all(self.is_subset_of(p) for p in region.child)
+        
+        elif self.region_type == Region_Type.UNION or self.region_type == Region_Type.DISJOINT_UNION:
+            return all(r.is_subset_of(region) for r in self.child)
+        
+        # Everything else is not implemented yet
+        raise NotImplementedError()
+
     # Returns a new region object where the substitute function is called on each polytope
     def substitute(self, values):
         if self.region_type == Region_Type.POLYTOPE:
@@ -137,7 +162,10 @@ class Region:
     # Project this region onto a set of dimensions (set of integers)
     # Here we make the assumption that the projection of a union (resp. intersection) 
     # of sets is the union (resp. intersection) of the projection of each set. 
-    def project(self, dims):
+    def project(self, dims: set[int]) -> 'Region':
+        if not isinstance(dims, set):
+            raise ValueError("Parameter dims must be of type list[int]")
+        
         if self.region_type == Region_Type.POLYTOPE:
             return Region(Region_Type.POLYTOPE, self.child.project(dims))
         
@@ -145,53 +173,89 @@ class Region:
         if self.region_type == Region_Type.UNION or self.region_type == Region_Type.DISJOINT_UNION:
             return Region(Region_Type.UNION, [c.project(dims) for c in self.child])
         
-        if self.region_type == Region_Type.INTERSECTION:
-            return Region(Region_Type.INTERSECTION, [c.project(dims) for c in self.child])
+        if self.region_type == Region_Type.INTERSECT:
+            return Region(Region_Type.INTERSECT, [c.project(dims) for c in self.child])
         
         # In particular, complements are not yet supported. 
         raise NotImplementedError()
     
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a Region object of type DISJOINT_UNION
-    def as_disjoint_union(self):
+    def as_disjoint_union(self) -> 'Region':
         polys = self._as_disjoint_union_poly()
         return Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
 
     # Internal method 
     # Same as the as_disjoint_union(self) method except it returns the result as a 
     # list of Polytope objects.
-    def _as_disjoint_union_poly(self):
+    def _as_disjoint_union_poly(self) -> list[Polytope]:
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
             return [self.child]
         if self.region_type == Region_Type.INTERSECT:
+
             # Compute intersection of regions using distributive property of set 
             # algebra, i.e. 
+            #
             # A ∩ (B1 u B2 u ... u Bn) = (A ∩ B1) u (A ∩ B2) u ... u (A ∩ Bn)
+            #
+            # This implementation contains some ad-hoc optimizations which improved
+            # performance on some test problems. Once every SIMPLIFY_EVERY iterations 
+            # the number of polytopes in the union is reduced by combining multiple
+            # polytopes into a single polytope (this is an expensive operation but on
+            # balance helps with performance). In addition, every time we take the 
+            # intersection of a polytope with a union of polytopes, if the number of 
+            # nonempty regions is no greater than UNION_THRESHOLD, we try to simplify 
+            # the union of the regions into a single polytope. 
             SIMPLIFY_EVERY = 10
-        
+            UNION_THRESHOLD = 5
+
+            start_time = time.time()
+
             # Sets of lists of polytopes
             child_sets = [r._as_disjoint_union_poly() for r in self.child]
-            disjoint = child_sets[0]
-            for i in range(1, len(child_sets)):
-                new_disjoint = []
-                for p in disjoint:
-                    for q in child_sets[i]:
+            A = child_sets[0]
+            i = 0
+            for B in child_sets[1:]:
+                i += 1
+
+                # # [[ad-hoc performance optimisation]] that did not improve performance 
+                # # check if A is a subset of B, so that A intersect B = A and we may
+                # # avoid computing the intersection altogether. 
+                # if all(p.is_covered_by(B) for p in A):
+                #     continue
+                
+                new_A = []
+                for p in A:
+                    inters = []
+                    for q in B:
                         inter = p.intersect(q)
                         if not inter.is_empty(include_boundary=False):
-                            new_disjoint.append(inter)
+                            inters.append(inter)
+
+                    # [[Ad hoc performance optimisation]]
+                    if 2 <= len(inters) and len(inters) <= UNION_THRESHOLD:
+                        union = Polytope.try_union(inters)
+                        if union is not None:
+                            new_A.append(union)
+                            continue
+                    
+                    # Otherwise, just add the pieces as-is
+                    new_A.extend(inters)
+
                 
-                # Every few rounds, simplify
-                if i % SIMPLIFY_EVERY == 0 and len(new_disjoint) > 100:
-                    prevlen = len(new_disjoint)
-                    new_disjoint = Region_Helper.simplify_union_of_polys(new_disjoint, Polytope.try_union)
-                    print(prevlen, "->", len(new_disjoint))
+                # [[Ad hoc performance optimisation]]
+                # Every few rounds, simplify if the number of polytopes is too large
+                if i % SIMPLIFY_EVERY == 0 and len(new_A) > 100:
+                    prevlen = len(new_A)
+                    new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union)
+                    print(prevlen, "->", len(new_A))
 
-                print(len(new_disjoint), i + 1, "of", len(child_sets))
-                disjoint = new_disjoint
-
-            return disjoint
+                print("Processed", i, "of", len(child_sets) - 1, ":", len(new_A), "pieces, computed in", time.time() - start_time, "sec")
+                A = new_A
+            return A
+        
         if self.region_type == Region_Type.UNION:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.DISJOINT_UNION:

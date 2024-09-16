@@ -465,6 +465,13 @@ def run_scale_test():
     assert B.scale_all([frac(2), frac(3), frac(4)]) == \
         Polytope.from_V_rep([[0, 0, 0], [2, 0, 0], [0, 3, 0], [0, 0, 4]])
 
+def run_polycover_test():
+    P = Polytope.rect((0, 1), (0, 1))
+    assert P.is_covered_by([Polytope.rect((0, 2), (0, 2)), Polytope.rect((-1, 1), (-1, 1))])
+    assert not P.is_covered_by([Polytope.rect((1, 2), (1, 2))])
+    assert P.is_covered_by([Polytope.rect((0, 2), (0, 1)), Polytope.rect((frac(1,2), frac(3,2)), (0, 1))])
+    assert not P.is_covered_by([Polytope.rect((-1, frac(1,2)), (-1, frac(1,2))), Polytope.rect((frac(1,2), 2), (frac(1,2), 2))])
+
 
 run_polytope_tests()
 run_emptiness_tests()
@@ -479,3 +486,4 @@ run_containment_test()
 run_subs_test()
 run_lift_test()
 run_scale_test()
+run_polycover_test()

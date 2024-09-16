@@ -416,9 +416,16 @@ def zero_density_energy_examples():
     
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 3, Interval(frac(1,2), frac(3,4))),
+        # Affine(0, 3, Interval(frac(1,2), frac(3,4))),
         Affine(4, -1, Interval(frac(3,4), 1))
     ]
+
+    for tau0 in tau0s:
+        # Debug
+        for sigma in np.linspace(3/4, 1, 100):
+            tau0 = 4 * sigma - 1
+            ze.approx_best_energy_bound(hypotheses, sigma, tau0)
+        
     # For each interval of tau_0
     for tau0 in tau0s:
         sigma_interval = tau0.domain

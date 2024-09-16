@@ -645,35 +645,37 @@ class Polytope:
         if not isinstance(polys, list):
             raise ValueError("Parameter polys must be of type list.")
         
+        # Given a list of polytopes Q1, ..., Qn, with q1, ..., qn constraints
+        # respectively, return False if there exist n constraints c1, ..., cn
+        # where ci belongs to qi, such that the region P intersect neg c1, ..., cn
+        # is nonempty (not including boundaries)
+        # Strategy is to try and find this region using DFS. 
+
+        # Terminal condition
         if len(polys) == 0:
             return False
         
-        Q, rem = polys[0], polys[1:]
-        
-        # Get inequality constraints (convert equality constraints to inequality
-        # constraints)
+        # Convert the first polytope Q into a list of inequality constraints 
+        # (convert equality constraints to inequality constraints)
+        Q = polys[0]
         cons = Polytope._matrix_as_list(Q.mat, False)
         for eq in Polytope._matrix_as_list(Q.mat, True):
             cons.append(eq)
             cons.append(tuple(-x for x in eq))
 
-        # Matrix P 
-        P = self.mat.copy()
+        # Iterate through the constraints of Q, looking for violations
         for con in cons:
-            # Intersect this polytope with the negation of a constraint
-            mat = P.copy()
+            # Intersect P with the negation of a constraint
+            mat = self.mat.copy()
             mat.extend([[-x for x in con]], linear=False)
-            poly = Polytope._from_mat(mat) # Represents P tilde
+            poly = Polytope._from_mat(mat)
 
-            # Check if there are any points in the region defined by mat, not including
-            # those points lying on the constraint line. 
+            # If there are points in P not in Q, check whether 
+            # these points are also not in the other Qi's
             if not poly.is_empty(include_boundary=False):
-                if not poly.is_covered_by(rem):
+                if not poly.is_covered_by(polys[1:]):
                     return False
-            
-            # Add constraint to P
-            P.extend([con], linear=False)
-            
+        
         return True
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and

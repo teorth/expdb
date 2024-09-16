@@ -16,6 +16,7 @@ from hypotheses import Hypothesis, Hypothesis_Set
 import numpy as np
 from polytope import Polytope
 from reference import Reference
+from region import Region, Region_Type
 import sympy
 
 # class representing a zero-density energy estimate 
@@ -120,16 +121,24 @@ def add_trivial_zero_density_energy_estimates(hypotheses):
 # Numerically approximate 
 # sup_{tau_lower \leq t <= tau_upper} LV*(s, t)/t for a fixed s, given a 2-dimensional
 # region representing the feasible values of (t, LV*(s, t))
-def approx_sup_LV_on_tau(tau_rho_region, tau_lower, tau_upper):
+def approx_sup_LV_on_tau(LVER, sigma, tau_lower, tau_upper):
     taus = np.linspace(tau_lower, tau_upper, 500)
-
-    # TODO: Project to find the largest feasible value of rho
     rhos = np.linspace(0, 10, 100)
+    rho1s = np.linspace(0, 10, 100)
+    ss = np.linspace(0, 10, 100)
 
-    LV_on_tau = []
+    _max = 0
     for tau in taus:
-        LV_on_tau.append(max(rho for rho in rhos if tau_rho_region.contains([tau, rho])) / tau)
-    return max(LV_on_tau)
+        for rho1 in rho1s:
+            ratio = rho1 / tau
+            if ratio < _max:
+                continue
+            if any(LVER.contains([sigma, tau, rho, rho1, s]) 
+                   for rho in rhos 
+                   for s in ss):
+                _max = ratio
+                        
+    return _max
 
 # Given
 # - a (sigma, tau, rho*) Region representing feasible LV*(\sigma, \tau) values 
@@ -138,20 +147,35 @@ def approx_sup_LV_on_tau(tau_rho_region, tau_lower, tau_upper):
 # compute the best bound on A*(\sigma) using t0 = 2 and the bound 
 # A*(s)(1 - s) \leq 
 # max(sup_{2 \leq t < t0} LV*_{\zeta}(s, t)/t, sup_{t0 \leq t \leq 2t0} LV*(s, t)/t)
-def approx_best_energy_bound(LV_region, LVZ_region, sigma, tau0):
+def approx_best_energy_bound(hypotheses, sigma, tau0):
 
-    LVs = LV_region.substitute({0: sigma})
-    LVs.plot2d((tau0, 2 * tau0), (0, 20), resolution=500)
-    #proj = LVs.project({1})
-    #proj.simplify()
-    #print("rho projection", proj)
+    # 1. A large value energy region is also a zeta large value energy region
+    # 2. Large value energy regions have the raise to power hypothesis, which is 
+    # a type of Large value energy region transform
+    # 3. Zeta large value energy regions do not have the raise to power hypothesis
+    # Therefore, the set of zeta large value energy regions can be obtained by 
+    # first expanding the set of large value energy regions (by raising to a power)
+    # then adding in the additional zeta large value energy regions later. 
+    lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+        
+    # Compute the large value energy bounding region
+    # Use LVER transformations and use them to expand the set of LVERs
+    transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
+    transformed_lvers = []
+    for tf in transforms:
+        transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
+    lvers.extend(transformed_lvers)
 
-    sup1 = approx_sup_LV_on_tau(LVs, tau0, 2 * tau0)
+    LVER = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    sup1 = approx_sup_LV_on_tau(LVER, sigma, tau0, 2 * tau0)
     
-    LVZs = LVZ_region.substitute({0: sigma})
-    sup2 = approx_sup_LV_on_tau(LVZs, 2, tau0)
+    # Compute the zeta large value energy bounding region
+    lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
 
-    #print(sup1, sup2)
+    LVER_zeta = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    sup2 = approx_sup_LV_on_tau(LVER_zeta, sigma, 2, tau0)
+
+    print(sigma, tau0, sup1, sup2)
 
     return max(sup1, sup2)
 
