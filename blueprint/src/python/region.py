@@ -179,6 +179,19 @@ class Region:
         # In particular, complements are not yet supported. 
         raise NotImplementedError()
     
+    # See Polytope.lift(var)
+    def lift(self, var) -> 'Region':
+        
+        # Need to check carefully that all operations are preserved under lifting
+        if self.region_type not in {Region_Type.POLYTOPE, Region_Type.UNION, 
+                                    Region_Type.DISJOINT_UNION, Region_Type.INTERSECT, Region_Type.COMPLEMENT}:
+            raise NotImplementedError("lifting operation is not implemented for the region_type {self.region_type}.")
+        
+        if self.region_type in {Region_Type.POLYTOPE, Region_Type.COMPLEMENT}:
+            return Region(Region_Type.POLYTOPE, self.child.lift(var))
+        
+        return Region(self.region_type, [c.lift(var) for c in self.child])
+
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a Region object of type DISJOINT_UNION
     def as_disjoint_union(self) -> 'Region':

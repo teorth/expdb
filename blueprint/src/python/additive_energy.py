@@ -304,45 +304,20 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
         transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
     lvers.extend(transformed_lvers)
 
-    h1 = hypotheses.find_hypothesis(keywords="Heath-Brown large value energy region 2a")
-    x = [frac(5, 6), 3, 1, frac(31, 12), 1000000]
-    x2 = [frac(5,6), frac(3,2), frac(1,2), frac(31,24), 100]
-    print("HERE", h1.data.region.contains(x), h1)
-    print("This poly contains ", x2)
-    for i in range(len(h1.data.region.child)):
-        poly= h1.data.region.child[i]
-        if poly.contains(x2):
-            print(i, poly)
-    for tr in transforms:
-        th = tr.data.transform(h1)
-        print("HERE", th.data.region.contains(x), tr)
-        if "k = 2" in tr.name:
-            for poly in th.data.region.child:
-                if poly.contains(x):
-                    print(poly)
-
     if zeta:
         # A large value energy region is also a zeta large value energy region
         # A zeta large value energy region has no raise to power hypothesis
         lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
         print(f"Found {len(lvers)} zeta large value energy regions")
     
-    if debug:
-        for lver in lvers:
-            print(lver, ":", lver.proof)
-        
-        print("sigma-tau domain:")
-        print(sigma_tau_domain)
     # Compute intersection over the domain
-    domain = Region.from_polytope(
-        sigma_tau_domain.lift([
-            0, 
-            1, 
-            (0, Constants.LV_DEFAULT_UPPER_BOUND),
-            (0, Constants.LV_DEFAULT_UPPER_BOUND),
-            (0, Constants.LV_DEFAULT_UPPER_BOUND)
-        ])
-    )
+    domain = sigma_tau_domain.lift([
+                0, 
+                1, 
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ])
 
     # Compute the large value energy bounding region
     E = Region(Region_Type.INTERSECT, [domain] + [lver.data.region for lver in lvers])
@@ -354,6 +329,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
         sample_check(E, E1, N=10000, dim=5, info=lvers)
     
     # -------------------------------------------------------------------------
+    # TODO
     # Keep track of which hypotheses are required to generate the final region. 
     # 
     # The ultimate goal is that whenever a {Polytope} -> Polytope operation 
@@ -366,31 +342,10 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # we perform a crude match after E has already been computed. Those LVERs 
     # which share a (non-trivial) facet with E are included in its minimal 
     # dependency set.
-
-    def identify_constraint(con):
-        for lver in lvers:
-            polys = [r.child for r in lver.data.region.child]
-            for poly in polys:
-                if con in set(poly.get_constraints()):
-                    return lver
-        return None
-    
-    # Iterate through the non-trivial facets of E1 to work out the min. dep. set 
-    trivial_cons = set(domain.child.get_constraints())
-    for r in E1.child:
-        # Get non-trivial constraints of the current polytope
-        cons = set(
-            c for c in r.child.get_constraints() if c.inequality_type != Constraint.EQUALS
-        )
-        cons.discard(trivial_cons)
-        # Find out where those constraints came from
-        deps = set()
-        for con in cons:
-            h = identify_constraint(con)
-            if h is not None:
-                deps.add(h)
-        r.dependencies = deps
-    
+    # 
+    # For now, we are assuming that all LVERs are part of the dependency set 
+    # (this is very unlikely to be minimal)
+    deps = set(lvers)
     # -------------------------------------------------------------------------
     
     # Project onto the (sigma, tau, rho*) dimension
