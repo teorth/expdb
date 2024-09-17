@@ -39,7 +39,14 @@ class Large_Value_Estimate_Transform:
     def __repr__(self):
         return "Raising to a power"
 
-
+# Object representing a set in R^3 containing feasible (sigma, tau, rho) values 
+class Large_Value_Energy_Estimate:
+    
+    def __init__(self, region):
+        self.region = region
+        
+    def __repr__(self):
+        return f"(σ,τ,ρ) in {self.region}"
 ###############################################################################
 
 

@@ -230,11 +230,19 @@ class Region:
                 for p in A:
                     inters = []
                     for q in B:
-                        inter = p.intersect(q)
-                        if not inter.is_empty(include_boundary=False):
-                            inters.append(inter)
+                        # [[Ad hoc performance optimisation]] - take care of easy cases
+                        # first, which tend to occur frequently in practice
+                        if p.is_subset_of(q):
+                            inters.append(p)
+                        elif q.is_subset_of(p):
+                            inters.append(q)
+                        else:
+                            inter = p.intersect(q)
+                            if not inter.is_empty(include_boundary=False):
+                                inters.append(inter)
 
-                    # [[Ad hoc performance optimisation]]
+                    # [[Ad hoc performance optimisation]] - frequently in practice p is a 
+                    # subset of B, so it is a good candidate for merging
                     if 2 <= len(inters) and len(inters) <= UNION_THRESHOLD:
                         union = Polytope.try_union(inters)
                         if union is not None:

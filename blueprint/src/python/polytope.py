@@ -709,7 +709,19 @@ class Polytope:
         projected_verts = []
         for v in self.vertices:
             projected_verts.append([v[i] for i in range(len(v)) if i in dims])
-        return Polytope.from_V_rep(projected_verts)
+        proj = Polytope.from_V_rep(projected_verts)
+
+        if proj.contains([frac(5,6), 3, frac(31,12)]):
+            print("original")
+            print(self)
+            print("projection")
+            print(proj)
+            print("original points:")
+            print(self.vertices)
+            print("projection points")
+            print(proj.vertices)
+            raise ValueError()
+        return proj
 
     # Given a list (var) x[0], x[1], ..., x[N - 1], with N > self.dimension(), 
     # returns a polytope formed by lifting this polytope to N dimensions. 

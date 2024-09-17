@@ -248,6 +248,19 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
                 (rho1 - rho2) / (sigma1 - sigma2), 
                 (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
             ])
+            
+            # Debugging code
+            if rho.div(tau) == RF([-frac(43,6), frac(41,6)]):
+                print("along offending edge:")
+                print("tau", tau)
+                print("rho", rho)
+                print("offending polytope")
+                print(p)
+                print("offending points:")
+                print(edge[0])
+                print(edge[1])
+                raise ValueError()
+            
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
     
     # Take the maximum of the functions
