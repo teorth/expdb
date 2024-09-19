@@ -156,6 +156,27 @@ def run_emptiness_tests():
     assert not p8.is_empty(include_boundary=True)
     assert p8.is_empty(include_boundary=False)
 
+    # Region reprsenting a 2-d line
+    p9 = Polytope([
+        [12, -12, -1],
+        [frac(15,2), -frac(21,2), frac(1,2)],
+        [-frac(25,32), 1, 0],
+        [6, -10, frac(7,6)],
+        [2, -6, frac(5,3)],
+        [-2, 6, -frac(5,3)]
+    ])
+    assert not p9.is_empty(include_boundary=True)
+    assert p9.is_empty(include_boundary=False)
+
+    # Infeasible region
+    p10 = Polytope([
+        [frac(19,2), -12, 0],
+        [9, -12, 1],
+        [12, -12, -1]
+    ], linear=True)
+    assert p10.is_empty(include_boundary=True)
+    assert p10.is_empty(include_boundary=False)
+
 def run_intersection_test():
 
     # Nonempty intersection example 

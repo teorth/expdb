@@ -385,8 +385,8 @@ def prove_heath_brown_energy_estimate():
     
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 3, Interval(frac(1,2), frac(3,4))),
-        Affine(4, -1, Interval(frac(3,4), 1))
+        Affine(0, 3, Interval(frac(1,2), frac(1))),
+        #Affine(4, -1, Interval(frac(3,4), 1))
     ]
 
     # Convert tau_0 into a Region of (sigma, tau)

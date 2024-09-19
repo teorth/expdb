@@ -131,9 +131,10 @@ class Polytope:
 
         # Cache whether this polytope is guaranteed to be canonical
         self.is_canonical = canonicalize
-        # Cache whether this polytope is empty (including the boundary)
+        # Cache whether this polytope is empty
         self._is_empty_incl_boundary = None 
-
+        self._is_empty_excl_boundary = None 
+        
         self.polyhedron = cdd.Polyhedron(self.mat)
 
         # Workspaces for V representation
@@ -402,6 +403,10 @@ class Polytope:
                 cent[i] += v[i]
 
         den = frac(len(self.vertices), 1)
+        if den == 0:
+            print(self)
+            print(self.vertices)
+
         for i in range(self.dimension()):
             cent[i] /= den
         return cent
@@ -574,35 +579,68 @@ class Polytope:
     # the polytope
     def is_empty(self, include_boundary=True):
 
-        # Check for cached computations
-        if self._is_empty_incl_boundary is not None:
-            if include_boundary:
-                return self._is_empty_incl_boundary
-            else:
-                return self._is_empty_incl_boundary or (not self.is_full_dim())
-        
-        # Case 1: ------------------------------------------------------------------
-        # If the polytope is closed, then one can check for emptiness by solving the 
-        # linear program Ax <= b with an arbitrary objective function to check for 
-        # feasibility. Here we use the objective function (0, 0, ..., 0)
-        # Note: this routine no longer passes unit tests if objective function is set 
-        # to e.g. (1, 1, ..., 1) - possibly because of different lp.status values?
-        A = self.mat.copy()
-        A.obj_type = cdd.LPObjType.MAX
-        A.obj_func = tuple([0] * (1 + self.dimension()))
-        lp = cdd.LinProg(A)
-        lp.solve()
-
-        # If status is "OPTIMAL", then a solution was found for this LP and 
-        # the region represented by this polytope is non-empty
-        self._is_empty_incl_boundary = (lp.status != cdd.LPStatusType.OPTIMAL)
         if include_boundary:
+            # Case 1: ------------------------------------------------------------------
+            if self._is_empty_incl_boundary is not None:
+                return self._is_empty_incl_boundary
+
+            # If the polytope is closed, then one can check for emptiness by solving the 
+            # linear program Ax <= b with an arbitrary objective function to check for 
+            # feasibility. Here we use the objective function (0, 0, ..., 0)
+            # Note: this routine no longer passes unit tests if objective function is set 
+            # to e.g. (1, 1, ..., 1) - possibly because of different lp.status values?
+            A = self.mat.copy()
+            A.obj_type = cdd.LPObjType.MAX
+            A.obj_func = tuple([0] * (1 + self.dimension()))
+            lp = cdd.LinProg(A)
+            lp.solve()
+
+            # If status is "OPTIMAL", then a solution was found for this LP and 
+            # the region represented by this polytope is non-empty
+            self._is_empty_incl_boundary = (lp.status != cdd.LPStatusType.OPTIMAL)
             return self._is_empty_incl_boundary
 
-        # Case 2: ------------------------------------------------------------------
-        # If the boundary is not considered as part of the polytope, check whether 
-        # the polytope is of full dimension as well
-        return self._is_empty_incl_boundary or (not self.is_full_dim())
+        else:
+            # Case 2: ------------------------------------------------------------------
+            if self._is_empty_excl_boundary is not None:
+                return self._is_empty_excl_boundary
+
+            # If we do not consider the boundary, we need to check the feasibility of the 
+            # system Ax < b (with strict inequality). To do this we solve the LP 
+            # 
+            # max epsilon s.t. Ax + epsilon <= b, 0 <= epsilon <= 1
+            # 
+            # If the solution is epsilon = 0 then the polytope (excluding boundaries) is 
+            # empty. 
+
+            # Edge case: if there are any linear constraints, the polytope is empty
+            if len(self.mat.lin_set) > 0:
+                return True
+
+            # coefficient matrix represented as [M 1] . [x epsilon]' where 1 is a column 
+            # of 1's and M is the set of inequality constraints
+            A = cdd.Matrix(
+                [list(row) + [-1] for row in Polytope._matrix_as_list(self.mat, False)] + 
+                [[0] * self.mat.col_size + [1]] +               # epsilon >= 0
+                [[1] + [0] * (self.mat.col_size - 1) + [-1]],   # epsilon <= 1
+                linear=False
+            )
+            A.obj_type = cdd.LPObjType.MAX
+            A.obj_func = tuple([0] * (self.dimension() + 1) + [1]) # objective is epsilon
+            lp = cdd.LinProg(A)
+            lp.solve()
+
+            # If no solution for epsilon, the region is empty
+            if lp.status != cdd.LPStatusType.OPTIMAL:
+                return True
+
+            # If epsilon = 0, then the feasible region = the boundary of the region, 
+            # i.e. there is no interior
+            if lp.primal_solution[-1] == 0:
+                return True
+            return False    
+
+        
 
     # Returns whether this polytope is a subset of another.
     def is_subset_of(self, other):
