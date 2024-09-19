@@ -185,8 +185,15 @@ def approx_LV_star(hypotheses, sigma, tau, debug=True):
 
     # Compute intersection 
     E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+
+    print("E")
+    print(E)
+
     polys = E.to_disjoint_union()
     E1 = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
+
+    print("E1")
+    print(E1)
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
