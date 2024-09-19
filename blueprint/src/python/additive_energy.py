@@ -23,7 +23,6 @@ class Large_Value_Energy_Region:
             raise ValueError("Parameter region must be of type Region.")
         self.region = region
     
-    
     def __repr__(self):
         return str(self.region)
         
@@ -31,29 +30,6 @@ class Large_Value_Energy_Region:
         return Large_Value_Energy_Region(copy.copy(self.region))
     
     # Static methods ---------------------------------------------------------
-
-    # Computes a Large_Value_Energy_Region object representing the union of 
-    # a list of polytopes, where each polytope is defined as the intersection of 
-    # - a box, represented as a list of lists (a list of constraints)
-    # - a halfplane, represented as a single list (a constraint)
-    # The resulting Region object is represented as a DISJOINT_UNION, which 
-    # greatly improves performance over a UNION representation
-    # 
-    # This method is useful for quickly initializing many commonly encountered 
-    # regions in the study of large value energy regions, since they correspond to 
-    # a region implied by a single max() function. 
-    def union_of_halfplanes(halfplanes, box):
-
-        # Once a halfplane has been added, include its complement in the list of 
-        # neg_ineq, to add as a constraint to all remaining polytopes to be 
-        # constructed. 
-        neg_ineq = []
-        polys = []
-        for hp in halfplanes:
-            polys.append(Region(Region_Type.POLYTOPE, Polytope(box + [hp] + neg_ineq)))
-            neg_ineq.append([-x for x in hp])
-        return Region.disjoint_union(polys)
-
 
     # The default bounds on the tuple (sigma, tau, rho, rho*, s). This is to ensure
     # that all large value regions are finite regions. 
@@ -81,7 +57,7 @@ class Large_Value_Energy_Region:
         return bounds
 
     # ------------------------------------------------------------------------
-    
+
     # Returns whether the region contains a 5-dimensional point 
     def contains(self, point):
         if len(point) != 5: 
@@ -89,17 +65,55 @@ class Large_Value_Energy_Region:
         return self.region.contains(point)
     
     # Raise this region to the kth power
-    # (sigma, tau, rho, rho*, s) -> (sigma, tau / k, rho / k, rho* / k, s / k) 
+    # (sigma, tau, rho, rho*, s) -> (sigma, k * tau, k * rho, k * rho*, k * s) 
     # TODO implement 
     def raise_to_power(self, k):
         if not isinstance(k, int) or k < 2:
             raise ValueError("Parameter k must be an integer and >= 2.")
         raise NotImplementedError("TODO") # TODO
 
+#############################################################################
+
+
+# Computes a Region object representing the union of a list of polytopes, 
+# where each polytope is defined as the intersection of 
+# - a box, represented as a list of lists (a list of constraints)
+# - a halfplane, represented as a single list (a constraint)
+# The resulting Region object is represented as a DISJOINT_UNION, which 
+# greatly improves performance over a UNION representation
+# 
+# This method is useful for quickly initializing many commonly encountered 
+# regions in the study of large value energy regions, since they correspond to 
+# a region implied by a single max() function. 
+def union_of_halfplanes(halfplanes, box):
+    # Once a halfplane has been added, include its complement in the list of 
+    # neg_ineq, to add as a constraint to all remaining polytopes to be 
+    # constructed. 
+    neg_ineq = []
+    polys = []
+    for hp in halfplanes:
+        polys.append(
+            Region(
+                Region_Type.POLYTOPE, 
+                Polytope(box + [hp] + neg_ineq, canonicalize=True)
+            )
+        )
+        neg_ineq.append([-x for x in hp])
+    return Region.disjoint_union(polys)
+
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
         f"{ref.author()} large value energy region" + params,
         "Large value energy region",
+        Large_Value_Energy_Region(region),
+        f"See [{ref.author()}, {ref.year()}]",
+        ref,
+    )
+
+def literature_zeta_large_value_energy_region(region, ref, params=""):
+    return Hypothesis(
+        f"{ref.author()} zeta large value energy region" + params,
+        "Zeta large value energy region",
         Large_Value_Energy_Region(region),
         f"See [{ref.author()}, {ref.year()}]",
         ref,
@@ -117,6 +131,18 @@ def derived_large_value_energy_region(data, proof, deps):
     bound.dependencies = deps
     return bound
 
+def derived_zeta_large_value_energy_region(data, proof, deps):
+    year = Reference.max_year(tuple(d.reference for d in deps))
+    bound = Hypothesis(
+        "Derived zeta large value energy region",
+        "Zeta large value energy region",
+        data,
+        proof,
+        Reference.derived(year),
+    )
+    bound.dependencies = deps
+    return bound
+
 # Returns a Hypothesis object representing raising the large value energy region 
 # to a integer power k. 
 def get_raise_to_power_hypothesis(k):
@@ -124,10 +150,9 @@ def get_raise_to_power_hypothesis(k):
     name = f"Large value energy region raise to power hypothesis with k = {k}"
     
     def f(h):
-        region = copy.copy(h.data)
-        region.raise_to_power(k)
+        region = h.data.region.scale_all([frac(1), frac(k), frac(k), frac(k), frac(k)])
         return derived_large_value_energy_region(
-            region, 
+            Large_Value_Energy_Region(region), 
             f"Follows from raising {h} to the k = {k} power",
             {h}
             )
@@ -176,64 +201,183 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+
+# Given a list of Hypothesis objects of type "Large value estimate" or "Zeta large value estimate", 
+# convert them into large value energy regions and returns them as a list of Hypothesis
+#
+# If zeta is True, then "Zeta large value estimate" and "Zeta large value energy region" are
+# considered instead 
+def lv_to_lver(hypotheses, zeta=False):
+    
+    if zeta:
+        lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
+        constructor = derived_zeta_large_value_energy_region
+    else:
+        lvs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
+        constructor = derived_large_value_energy_region
+
+    # A large value estimate currently is represented as a 2-dimensional affine function rho
+    # <= f(sigma, tau). Convert this into a polytope representing the set of feasible rho
+    # values in (sigma, tau, rho, rho*, s) space, with default limits on the unconstrained
+    # variables rho* and s.
+    hyps = []
+    for lvh in lvs:
+        polys = []
+        # Each piece is an affine function of (sigma, tau)
+        for piece in lvh.data.bound.pieces:
+            # Express this piece as a polytope 
+            # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
+            P = piece.domain.lift([
+                0, 
+                1,
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ]).intersect(
+                # rho <= f[0] + f[1] * sigma + f[2] * tau
+                Polytope([
+                    [piece.a[0], piece.a[1], piece.a[2], -1, 0, 0]
+                ])
+            )
+            polys.append(Region(Region_Type.POLYTOPE, P))
+
+        region = Region(Region_Type.DISJOINT_UNION, polys)
+        
+        hyps.append(
+            constructor(
+                Large_Value_Energy_Region(region),
+                f"Follows from {lvh}",
+                {lvh}
+            )
+        )
+    return hyps
+
+
 import random as rd
+rd.seed(1007)
 
-# Given a set of hypotheses and the choices of (sigma, tau), compute 
-# the best available bound on LV*(sigma, tau) numerically. 
-def approx_LV_star(hypotheses, sigma, tau, debug=True):
+# Debugging method to check whether two regions agree
+def sample_check(region1, region2, N=1000, dim=5, info=None):
+    ntrues = 0
+    npassed = 0
+    for i in range(N):
+        # Supports 3 and 5-dimensional tests
+        if dim == 5:
+            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
+        elif dim == 3:
+            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5))
+        else:
+            raise NotImplementedError()
+
+        c1 = region1.contains(x)
+        c2 = region2.contains(x)
+
+        if c1 != c2:
+            print(i, x)
+            print(info)
+            raise ValueError()
+        else:
+            npassed += 1
+        if c1:
+            ntrues += 1
+    print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
+
+# Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
+# as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 
+# (represented as a Polytope)
+# If zeta is true, the best available bound on LV*_\zeta(sigma, tau) is computed instead 
+def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
+
+    # 1. A large value energy region is also a zeta large value energy region
+    # 2. Large value energy regions have the raise to power hypothesis, which is 
+    # a type of Large value energy region transform
+    # 3. Zeta large value energy regions do not have the raise to power hypothesis
+    # Therefore, the set of zeta large value energy regions can be obtained by 
+    # first expanding the set of large value energy regions (by raising to a power)
+    # then adding in the additional zeta large value energy regions later. 
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+    
+    # Use LVER transformations and use them to expand the set of LVERs
+    transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
+    transformed_lvers = []
+    for tf in transforms:
+        transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
+    lvers.extend(transformed_lvers)
 
-    # Compute intersection 
-    E = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
+    if zeta:
+        # A large value energy region is also a zeta large value energy region
+        # A zeta large value energy region has no raise to power hypothesis
+        lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
+        print(f"Found {len(lvers)} zeta large value energy regions")
+    
+    # Compute intersection over the domain
+    domain = sigma_tau_domain.lift([
+                0, 
+                1, 
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND),
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            ])
 
-    print("E")
-    print(E)
+    # Compute the large value energy bounding region
+    E = Region(Region_Type.INTERSECT, [domain] + [lver.data.region for lver in lvers])
 
-    polys = E.to_disjoint_union()
-    E1 = Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
+    E1 = E.as_disjoint_union()
 
     print("E1")
     print(E1)
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
-        ntrues = 0
-        npassed = 0
-        for i in range(1000):
-            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
-            if E.contains(x) != E1.contains(x):
-                print(i, x)
-                raise ValueError()
-            else:
-                npassed += 1
-            if E.contains(x):
-                ntrues += 1
-        print("[Debug info] Passed:", npassed, "Contained:", ntrues)
-
-    print(E1)
-    print("vertices")
-    for r in E1.child:
-        print(r.child.get_vertices())
-
-    E2 = E1.substitute({0: sigma, 1: tau})
-
-    print(E2)
-
-    print("vertices")
-    for r in E2.child:
-        print(r.child.get_vertices())
-
-    # sigma, tau, rho, rho*, s
-    sup = 0
-    argmax = []
-    for rho in np.linspace(0, 10, 100):
-        for s in np.linspace(0, 10, 100):
-            for rho_star in np.linspace(0, 10, 100):
-                if sup < rho_star and E.contains([sigma, tau, rho, rho_star, s]):
-                    sup = rho_star
-                    argmax = [sigma, tau, rho, rho_star, s]
+        sample_check(E, E1, N=10000, dim=5, info=lvers)
     
-    print(sup)
-    print(argmax)
-    return sup
+    # -------------------------------------------------------------------------
+    # TODO
+    # Keep track of which hypotheses are required to generate the final region. 
+    # 
+    # The ultimate goal is that whenever a {Polytope} -> Polytope operation 
+    # (e.g. union, intersection) takes place, we keep track of the minimal set 
+    # of polytopes that are necessary for determining the resulting polytope. 
+    # E.g. during the union of polytopes p1, p2, if p1 is a subset of p2 then 
+    # the set of minimal polytopes is {p2}. 
+    # 
+    # Unfortunately this is likely to be computationally expensive, so instead 
+    # we perform a crude match after E has already been computed. Those LVERs 
+    # which share a (non-trivial) facet with E are included in its minimal 
+    # dependency set.
+    # 
+    # For now, we are assuming that all LVERs are part of the dependency set 
+    # (this is very unlikely to be minimal)
+    deps = set(lvers)
+    # -------------------------------------------------------------------------
+    
+    # Project onto the (sigma, tau, rho*) dimension
+    Eproj = E1.project({0, 1, 3})
+    
+    if debug:
+        cpy = copy.copy(Eproj)
+        
+    Eproj.simplify()
+
+    if debug:
+        print("Simplifying:", len(cpy.child), "->", len(Eproj.child), Eproj)
+        sample_check(Eproj, cpy, N=10000, dim=3, info=lvers)
+
+    if zeta:    
+        return derived_zeta_large_value_energy_region(
+            Large_Value_Energy_Region(Eproj), 
+            f"Follows from taking the intersection of {len(deps)} zeta large value energy regions" + \
+            " then projecting onto the (sigma, tau, rho*) dimensions",
+            deps
+        )
+    else:
+        return derived_large_value_energy_region(
+            Large_Value_Energy_Region(Eproj), 
+            f"Follows from taking the intersection of {len(deps)} large value energy regions" + \
+            " then projecting onto the (sigma, tau, rho*) dimensions",
+            set(deps)
+        )
+
+
+
 

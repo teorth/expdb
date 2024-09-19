@@ -160,8 +160,6 @@ def zero_density_plot():
     zd.add_zero_density(hs, "3/(40 * x - 35)", Interval("[39/40, 40/41)"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), Reference.make("Tao--Trudgian--Yang", 2024))
     
-    
-    
     def best_zd_at(hypotheses, sigma):
         min_ = 1000000
         for h in hypotheses:
@@ -190,10 +188,56 @@ def zero_density_plot():
     plt.title("Zero density estimates")
     plt.legend(loc="lower left")
     plt.show()
+
+# Plot the best zero-density energy estimates known trivially, in the literature, and under the 
+# Lindelof hypothesis
+def zero_density_energy_plot():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density estimate"))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density energy estimate"))
+
+    # add trivial bounds - this uses literature zero-density estimates
+    ze.add_trivial_zero_density_energy_estimates(hypotheses)
+
+    # as an example, plot the trivial bound and the literature bound 
+    sigmas = np.linspace(1/2, 0.999, 1000)
+    trivial_bound = []
+    lit_bound = []
+    lindelof_bound = []
+    for sigma in sigmas:
+        trivial = min(
+                    h.data.at(sigma) 
+                    for h in hypotheses 
+                    if h.name == "Trivial zero density energy estimate" and h.data.interval.contains(sigma)
+                )
+        trivial_bound.append(trivial)
+        
+        lit = min(
+                h.data.at(sigma)
+                for h in literature
+                if h.hypothesis_type == "Zero density energy estimate" and h.data.interval.contains(sigma)
+            )
+        lit_bound.append(min(lit, trivial))
+        
+        if sigma > 3/4:
+            lindelof_bound.append(0)
+        else:
+            lindelof_bound.append(8 - 4 * sigma)
     
-    
+    plt.figure(figsize=(10, 6))
+    plt.xlabel(r"$\sigma$")
+    plt.ylabel(r"$A^*(\sigma)$")
+    plt.plot(sigmas, lit_bound, linewidth=1, label="Literature zero-density energy estimate")
+    plt.plot(sigmas, trivial_bound, linewidth=1, label="\"Trivial\" zero-density energy estimate")
+    plt.plot(sigmas, lindelof_bound, linewidth=1, label="Lindelof zero-density energy estimate")
+    plt.title("Zero density energy estimates")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
 
 # van_der_corput_plot2()
 # beta_bound_plot()
-zero_density_plot()
+#zero_density_plot()
+zero_density_energy_plot()
 

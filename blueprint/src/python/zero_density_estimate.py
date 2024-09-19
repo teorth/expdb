@@ -260,7 +260,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
         hypotheses, Polytope.rect(s_lim, (tau0, 2 * tau0))
     )
     sup1 = compute_sup_LV_on_tau(hyps, sigma_interval)
-    
+
     # Get zeta large value bounds
     hyps = zlv.best_large_value_estimate(
         hypotheses, Polytope.rect(s_lim, (frac(2), tau0))

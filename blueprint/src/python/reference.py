@@ -146,7 +146,7 @@ class Reference_Manager:
         return int(s.split("/")[0])  # year is (hopefully) stored as an integer
 
     def _parse_authors(self, s):
-        authors = [p.strip() for p in s.split("and")]
+        authors = [p.strip() for p in s.split(" and ")]
         for i in range(len(authors)):
             a = authors[i]
             if "," in a:
@@ -162,7 +162,7 @@ class Reference_Manager:
         ref = self._extract(item, "{", "}")
         entries = self._split_level(ref, "{", "}", ",", 0)
         label = entries[0].strip()
-
+        
         fields = {}
         for i in range(1, len(entries)):
             e = entries[i].strip()
@@ -178,6 +178,7 @@ class Reference_Manager:
                     value = self._parse_year(value)
                 elif key == "author":
                     value = self._parse_authors(value)
+
                 fields[key] = value
 
         return Reference(label, typ, fields)

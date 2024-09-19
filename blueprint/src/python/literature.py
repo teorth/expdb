@@ -11,6 +11,7 @@ from bound_mu import *
 import large_values as lv
 import zeta_large_values as zlv
 import zero_density_estimate as zd
+import zero_density_energy_estimate as ze
 from functions import RationalFunction as RF, Interval as Itvl
 import os.path
 from reference import *
@@ -698,7 +699,7 @@ def add_bounds_mu_as_of(hypothesis_set, year):
 
 
 ########################################################################################
-# List of large value estimates in the literature
+# Chapter 7: List of large value estimates in the literature
 
 # Huxley large values theorem: LV(s, t) \leq max(2 - 2s, 4 - 6s + t)
 def add_huxley_large_values_estimate():
@@ -748,13 +749,258 @@ add_bourgain_large_values_estimate()
 add_guth_maynard_large_values_estimate()
 
 ########################################################################################
-# List of zeta large value estimates in the literature
+# Chapter 8: List of zeta large value estimates in the literature
 literature.add_hypothesis(
     zlv.literature_bound_ZLV_Max([[6, -12, 2]], rm.get("heathbrown_twelfth_1978"))
 )
 
+
+#################################################################
+# Chapter 10: List of large value energy region theorems from the literature
+
+def add_lver_heath_brown_1979():
+    region = ad.union_of_halfplanes(
+        [
+            [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
+            [1, 0, 0, 2, 0, -1],                    # 1 + 2 * rho - s >= 0
+            [1, 0, frac(1,2), frac(5,4), 0, -1],    # 1 + 1/2 * tau + 5/4 * rho - s >= 0
+        ],
+        ad.Large_Value_Energy_Region.default_constraints()
+    )
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("heathbrown_large_1979"),
+            params= " 1"
+        )
+    )
+add_lver_heath_brown_1979()
+
+
+def add_lver_ivic_1985():
+    # divide into two cases: tau <= 1 and tau >= 1
+    rect1 = ad.Large_Value_Energy_Region.default_constraints()
+    rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+    region = ad.union_of_halfplanes(
+        [
+            [2, 0, 0, 1, 0, -1],    # 2 + rho - s >= 0
+            [1, 0, 0, 2, 0, -1]     # 1 + 2 * rho - s >= 0
+        ],
+        rect1
+    )
+
+    rect2 = ad.Large_Value_Energy_Region.default_constraints()
+    rect2.append([-1, 0, 1, 0, 0, 0]) # tau >= 1
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
+
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("ivic")
+        )
+    )
+add_lver_ivic_1985()
+
+# Implementation of "Heath-Brown relation" Theorem 10.20
+def add_lver_heath_brown_1979b1():
+    region = ad.union_of_halfplanes(
+        [
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (ρ*/2 + 1/2) = 2 - 2σ + ρ/2 + ρ*/2
+            [2, -2, 0, frac(1,2), -frac(1,2), 0],               # 2 - 2σ + ρ/2 - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (ρ) + (ρ*/2 + 1/2) = 3/2 - 2σ + ρ + ρ*/2
+            [frac(3,2), -2, 0, 1, -frac(1,2), 0],               # 3/2 - 2σ + ρ - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (ρ*/2 + 1/2) = 3/2 - 2σ + τ/4 + 5ρ/8 + ρ*/2
+            [frac(3,2), -2, frac(1,4), frac(5,8), -frac(1,2), 0],# 3/2 - 2σ + τ/4 + 5ρ/8 - ρ*/2 >= 0
+
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (2ρ) = 3/2 - 2σ + 5ρ/2
+            [frac(3,2), -2, 0, frac(5,2), -1, 0],               # 3/2 - 2σ + 5ρ/2 - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (ρ) + (2ρ) = 1 - 2σ + 3ρ
+            [1, -2, 0, 3, -1, 0],                               # 1 - 2σ + 3ρ - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (2ρ) = 1 - 2σ + τ/4 + 21ρ/8
+            [1, -2, frac(1,4), frac(21,8), -1, 0],              # 1 - 2σ + τ/4 + 21ρ/8 - ρ* >= 0
+
+            # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (3ρ*/8 + ρ/2 + τ/4) = 3/2 - 2σ + τ/4 + ρ + 3ρ*/8
+            [frac(3,2), -2, frac(1,4), 1, -frac(5,8), 0],       # 3/2 - 2σ + τ/4 + ρ - 5ρ*/8 >= 0
+            
+            # ρ* <= 1 - 2σ + (ρ) + (3ρ*/8 + ρ/2 + τ/4) = 1 - 2σ + τ/4 + 3ρ/2 + 3ρ*/8
+            [1, -2, frac(1,4), frac(3,2), -frac(5,8), 0],       # 1 - 2σ + τ/4 + 3ρ/2 - 5ρ*/8 >= 0
+
+            # ρ* <= 1 - 2σ + (5ρ/8 + τ/4) + (3ρ*/8 + ρ/2 + τ/4) = 1 - 2σ + τ/2 + 9ρ/8 + 3ρ*/8
+            [1, -2, frac(1,2), frac(9,8), -frac(5,8), 0],       # 1 - 2σ + τ/2 + 9ρ/8 - 5ρ*/8 >= 0
+        ],
+        ad.Large_Value_Energy_Region.default_constraints()
+    )
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("heathbrown_zero_1979"),
+            params=" 2a"
+        )
+    )
+add_lver_heath_brown_1979b1()
+
+# Implementation of "Simplified Heath-Brown relation" Corollary 10.21
+def add_lver_heath_brown_1979b2():
+    # divide into two cases
+    rect1 = ad.Large_Value_Energy_Region.default_constraints()
+    rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
+    region = ad.union_of_halfplanes(
+        [
+            [1, -2, 0, 3, -1, 0],                   # 1 - 2sigma + 3rho - rho* >= 0
+            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
+            [frac(3,2), -2, 0, frac(5,2), -1, 0]    # 3/2 - 2sigma + 5/2rho - rho* >= 0
+        ],
+        rect1
+    )
+
+    rect2 = ad.Large_Value_Energy_Region.default_constraints()
+    rect2.append([-frac(3,2), 0, 1, 0, 0, 0]) # tau >= 3/2
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
+
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("heathbrown_zero_1979"),
+            params=" 2b"
+        )
+    )
+add_lver_heath_brown_1979b2()
+
+# Implementation of second Heath-Brown relation (Lemma 10.22)
+def add_lver_heath_brown_1979c(K):
+    rect = ad.Large_Value_Energy_Region.default_constraints()
+    for k in range(1, K):
+        region = ad.union_of_halfplanes(
+            [
+                [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
+                [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
+                [frac(k,2), -k, frac(k,4), -1, frac(1,4), 0]    # k/2 - k sigma + k/4 tau - rho + rho*/4 >= 0
+            ],
+            rect
+        )
+        literature.add_hypothesis(
+            ad.literature_large_value_energy_region(
+                region,
+                rm.get("heathbrown_zero_1979"),
+                params=f" 3 with k = {k}"
+            )
+        )
+add_lver_heath_brown_1979c(5)
+
+def add_lver_guth_maynard_2024a(K):
+    rect = ad.Large_Value_Energy_Region.default_constraints()
+    for k in range(1, K):
+        # intersection of two regions (arising from S_3 bounds)
+        # The common inequalities are:
+        common = [
+            [2, -2, 0, -1, 0, 0],   # 2 - 2sigma - rho >= 0
+
+            # Bounds arising from rho <= 1 - 2sigma + S_1/3
+            [-frac(7,3), -2, 0, -1, 0, 0],   # S_1 <= -10
+
+            # Bounds arising from rho <= 1 - 2sigma + S_2/3
+            # S_2 <= 2 + 2rho, 
+            # i.e. 5 - 6sigma - rho >= 0
+            [5, -6, 0, -1, 0, 0],
+
+            # S_2 <= tau + 1 + (2 - 1/k)rho 
+            # i.e. 4 - 6sigma + tau - (1 + 1/k)rho >= 0
+            [4, -6, 1, -frac(k + 1, k), 0, 0],
+
+            # S_2 <= 2 + 2rho + (tau/2 - 3rho/4)/k
+            # i.e. 5/3 - 2sigma + t/(6k) - (1/3 + 1/(4k))rho >= 0
+            [frac(5,3), -2, frac(1,6*k), -frac(1,3)-frac(1,4*k), 0, 0]
+        ]
+
+        # First region arising on S_3 <= 2tau + rho/2 + rho*/2
+        reg1 = ad.union_of_halfplanes(
+            common + [
+                [1, -2, frac(2,3), frac(1,6), -frac(5,6), 0]
+            ],
+            rect
+        )
+        # Second region arising from 
+        # S_3 <= max(2tau + 3rho/2, tau + 1 + rho/2 + rho*/2)
+        reg2 = ad.union_of_halfplanes(
+            common + [
+                [1, -2, frac(2,3), -frac(1,2), 0, 0],
+                [frac(4,3), -2, frac(1,3), -frac(5,6), frac(1,6), 0]
+            ],
+            rect
+        )
+        literature.add_hypothesis(
+            ad.literature_large_value_energy_region(
+                Region.intersect([reg1, reg2]),
+                rm.get("guth-maynard"),
+                params=f" 1 with k = {k}"
+            )
+        )
+#add_lver_guth_maynard_2024a(10)
+
+# Lemma 10.18 from Guth--Maynard
+def add_lver_guth_maynard_2024b():
+    
+    # First region: tau <= 3/2
+    rect1 = ad.Large_Value_Energy_Region.default_constraints()
+    rect1.append([frac(3,2), 0, -1, 0, 0, 0])
+    region = ad.union_of_halfplanes(
+        [
+            [1, -2, 0, 3, -1, 0],    # 1 - 2sigma + 3rho - rho* >= 0
+            [2, -2, 0, 2, -1, 0]    # 2 - 2sigma + 2rho - rho* >= 0
+        ],
+        rect1
+    )
+    
+    # Second region: tau >= 3/2: no new bounds in this region
+    rect2 = ad.Large_Value_Energy_Region.default_constraints()
+    rect2.append([-frac(3,2), 0, 1, 0, 0, 0])
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
+
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("guth-maynard"),
+            params=" 2"
+        )
+    )
+add_lver_guth_maynard_2024b()
+
+def add_lver_guth_maynard_2024c():
+    rect1 = ad.Large_Value_Energy_Region.default_constraints()
+    rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
+    rect1.append([-1, 0, 1, 0, 0, 0]) 
+    region = ad.union_of_halfplanes(
+        [
+            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
+            [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
+            [1, -2, 0, 3, -1, 0]                    # 1 - 2sigma + 3rho - rho* >= 0
+        ],
+        rect1
+    )
+    rect2 = ad.Large_Value_Energy_Region.default_constraints()
+    rect2.append([-frac(4,3), 0, 1, 0, 0, 0]) # tau >= 4/3
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
+
+    rect3 = ad.Large_Value_Energy_Region.default_constraints()
+    rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
+    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect3)))
+    
+    literature.add_hypothesis(
+        ad.literature_large_value_energy_region(
+            region,
+            rm.get("guth-maynard"),
+            params=" 3"
+        )
+    )
+#add_lver_guth_maynard_2024c()
+
+
 ########################################################################################
-# List of zero-density estimates in the literature, in chronological order
+# Chapter 11: List of zero-density estimates in the literature, in chronological order
 
 # Carlson (1921) Uber die Nullstellen der Dirichletschen Reihen und der Riemannschen ζ-Funktion
 def add_zero_density_carlson_1921():
@@ -1023,153 +1269,29 @@ def add_zero_density_guth_maynard_2024():
 add_zero_density_guth_maynard_2024()
 
 
-#################################################################
-# List of large value energy region theorems from the literature
-
-def add_lver_heath_brown_1979():
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
-            [1, 0, 0, 2, 0, -1],                    # 1 + 2 * rho - s >= 0
-            [1, 0, frac(1,2), frac(5,4), 0, -1],    # 1 + 1/2 * tau + 5/4 * rho - s >= 0
-        ],
-        ad.Large_Value_Energy_Region.default_constraints()
+########################################################################################
+# Chapter 12: List of zero-density energy estimates in the literature
+def add_zero_density_energy_heath_brown_1979():
+    ref = rm.get("heath_brown_consecutive_II")
+    literature.add_hypothesis(
+        ze.literature_zero_density_energy_estimate(
+            "(10 - 11 * x) / ((2 - x) * (1 - x))",
+            Interval(frac(1,2), frac(2,3), True, True),
+            ref
+        )
     )
     literature.add_hypothesis(
-        ad.literature_large_value_energy_region(
-            region,
-            rm.get("heathbrown_large_1979")
+        ze.literature_zero_density_energy_estimate(
+            "(18 - 19 * x) / ((4 - 2 * x) * (1 - x))",
+            Interval(frac(2,3), frac(3,4), True, True),
+            ref
         )
-    )
-add_lver_heath_brown_1979()
-
-
-def add_lver_ivic_1985():
-    # divide into two cases: tau <= 1 and tau >= 1
-    rect1 = ad.Large_Value_Energy_Region.default_constraints()
-    rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [2, 0, 0, 1, 0, -1],    # 2 + rho - s >= 0
-            [1, 0, 0, 2, 0, -1]     # 1 + 2 * rho - s >= 0
-        ],
-        rect1
-    )
-
-    rect2 = ad.Large_Value_Energy_Region.default_constraints()
-    rect2.append([-1, 0, 1, 0, 0, 0]) # tau >= 1
-    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
-
-    literature.add_hypothesis(
-        ad.literature_large_value_energy_region(
-            region,
-            rm.get("ivic")
-        )
-    )
-add_lver_ivic_1985()
-
-# Implementation of "Simplified Heath-Brown relation" Corollary 10.19
-def add_lver_heath_brown_1979b():
-    # divide into two cases
-    rect1 = ad.Large_Value_Energy_Region.default_constraints()
-    rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [1, -2, 0, 3, -1, 0],                   # 1 - 2sigma + 3rho - rho* >= 0
-            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
-            [frac(3,2), -2, 0, frac(5,2), -1, 0]    # 3/2 - 2sigma + 5/2rho - rho* >= 0
-        ],
-        rect1
-    )
-
-    rect2 = ad.Large_Value_Energy_Region.default_constraints()
-    rect2.append([-frac(3,2), 0, 1, 0, 0, 0]) # tau >= 3/2
-    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
-
-    literature.add_hypothesis(
-        ad.literature_large_value_energy_region(
-            region,
-            rm.get("heathbrown_zero_1979")
-        )
-    )
-add_lver_heath_brown_1979b()
-
-# Implementation of second Heath-Brown relation (Lemma 10.20)
-def add_lver_heath_brown_1979c(K):
-    rect = ad.Large_Value_Energy_Region.default_constraints()
-    for k in range(1, K):
-        region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-            [
-                [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
-                [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
-                [frac(k,2), -k, frac(k,4), -1, frac(1,4), 0]    # k/2 - k sigma + k/4 tau - rho + rho*/4 >= 0
-            ],
-            rect
-        )
-        literature.add_hypothesis(
-            ad.literature_large_value_energy_region(
-                region,
-                rm.get("heathbrown_zero_1979"),
-                params=f" with k = {k}"
-            )
-        )
-add_lver_heath_brown_1979c(5)
-
-def add_lver_guth_maynard_2024a(K):
-    rect = ad.Large_Value_Energy_Region.default_constraints()
-    for k in range(1, K):
-        polys = []
-        # 2 - 2sigma - rho >= 0
-        polys.append(Polytope(rect + [[2, -2, 0, -1, 0, 0]]))
-        # 1 - 2sigma + S_1/3 - rho >= 0 
-        # -7/3 - 2sigma - rho >= 0
-        polys.append(Polytope(rect + [[-frac(7,3), -2, 0, -1, 0, 0]]))
-        
-        # TODO: complete the list of constraints
-        raise NotImplementedError()
-#add_lver_guth_maynard_2024a(10)
-
-def add_lver_guth_maynard_2024b():
-    rect = ad.Large_Value_Energy_Region.default_constraints()
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [0, -2, 0, 1, -1, -1]    # -2sigma + rho - rho* - s >= 0
-        ],
-        rect
     )
     literature.add_hypothesis(
-        ad.literature_large_value_energy_region(
-            region,
-            rm.get("guth-maynard")
+        ze.literature_zero_density_energy_estimate(
+            "12 / (4 * x - 1)",
+            Interval(frac(3,4), frac(1), True, True),
+            ref
         )
     )
-add_lver_guth_maynard_2024b()
-
-def add_lver_guth_maynard_2024c():
-    rect1 = ad.Large_Value_Energy_Region.default_constraints()
-    rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
-    rect1.append([-1, 0, 1, 0, 0, 0]) 
-    region = ad.Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
-            [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
-            [1, -2, 0, 3, -1, 0]                    # 1 - 2sigma + 3rho - rho* >= 0
-        ],
-        rect1
-    )
-    rect2 = ad.Large_Value_Energy_Region.default_constraints()
-    rect2.append([-frac(4,3), 0, 1, 0, 0, 0]) # tau >= 4/3
-    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect2)))
-
-    rect3 = ad.Large_Value_Energy_Region.default_constraints()
-    rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-    region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect3)))
-    
-    literature.add_hypothesis(
-        ad.literature_large_value_energy_region(
-            region,
-            rm.get("guth-maynard")
-        )
-    )
-add_lver_guth_maynard_2024c()
-
+add_zero_density_energy_heath_brown_1979()

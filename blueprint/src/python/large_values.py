@@ -39,7 +39,14 @@ class Large_Value_Estimate_Transform:
     def __repr__(self):
         return "Raising to a power"
 
-
+# Object representing a set in R^3 containing feasible (sigma, tau, rho) values 
+class Large_Value_Energy_Estimate:
+    
+    def __init__(self, region):
+        self.region = region
+        
+    def __repr__(self):
+        return f"(σ,τ,ρ) in {self.region}"
 ###############################################################################
 
 
@@ -48,6 +55,9 @@ class Large_Value_Estimate_Transform:
 # bounds (list of list) vectors a representing a function f(x) = a^Tx with the first
 #                   coefficient denoting the constant term
 # domain (Polytope object) the (sigma, tau) domain of definition
+# 
+# TODO: since we have implemented the Region class this method may be replaced 
+# by e.g. union_of_halfplanes method in additive_energy. 
 def max_of(bounds, domain=None):
 
     # The standard domain of definition is \sigma \in [1/2, 1], \tau \geq 0
@@ -295,8 +305,8 @@ def covers(estimate, xlim, ylim):
 # Returns result as a list of hypotheses, created using the constructor function
 def piecewise_min(estimates, domain, constructor):
 
-    # Compute bounds and crop domains (taking care not the alter the original estimates
-    # objects)
+    # Compute bounds and crop domains (taking care not the alter the original 
+    # estimates objects)
     bounds = [e.data.bound for e in estimates]
     for i in range(len(bounds)):
         bounds[i] = copy.copy(bounds[i])
@@ -556,19 +566,4 @@ def apply_huxley_subdivision(hypothesis):
 
     # Iterate through the pieces, extracting the facets (which are just lines)
     # then compute their projection onto the \sigma space
-    for p in lv_hypothesis.data.bound.pieces:
-        p = pieces[k]
-        # Compute vertices and facets of the domain
-        verts = p.domain.get_vertices()
-        incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
-        constraints = p.domain.get_constraints()
-
-        # Iterate through the edges
-        for i in range(len(constraints)):
-            c = constraints[i].coefficients
-            vs = [verts[j] for j in incidences[i]]
-            sub = Interval(min(v[0] for v in vs), max(v[0] for v in vs), True, True)
-            if sub.length() > 0:
-                faces.append((RF([-c[1], -c[0]], [c[2]]), p, sub, lookup[k]))
-
     raise NotImplementedError()

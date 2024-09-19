@@ -651,7 +651,96 @@ class SympyHelper:
             return float(expr)
         return expr
 
+# Alternative implementation of the univariate function P(x)/Q(x) where P, Q are polynomials
+# This class is currently experimental.
+# Differences to RationalFunction class:
+# 1) Interval is used to represent domain of definition
+# 2) Less reliance on symbolic algebra - interval storage uses tuple of numbers instead of 
+#   symbolic object
+# 3) Object is now immutable 
+class RationalFunction2:
+    
+    # coeffs: either: 
+    # - list of numbers, representing the coefficients of P(x)
+    # - tuple of list of numbers, representing the coefficients of P(x), Q(x)
+    # domain: Interval
+    def __init__(self, coeffs, domain):
+        if not isinstance(coeffs, list) and not isinstance(coeffs, tuple):
+            raise ValueError("Parameter coeffs must be of type list of tuple or tuple")
+        if not isinstance(domain, Interval):
+            raise ValueError("Parameter domain must be of type Interval")
+        
+        if len(coeffs) == 0:
+            raise ValueError("Parameter coeffs must have at least 1 element")
 
+        if len(coeffs) == 1:
+            self._num_coeffs = tuple(coeffs)
+            self._den_coeffs = tuple([1])
+        else:
+            self._num_coeffs = tuple(coeffs[0])
+            self._den_coeffs = tuple(coeffs[1])
+        self.domain = domain
+    
+    def __repr__(self):
+
+        # handle special cases first 
+        if self.is_zero(): 
+            return f"0 on {self.domain}"
+        if self.is_constant(): 
+            return f"{self._num_coeffs[0] / self._den_coeffs[0]} on {self.domain}"
+
+        num = RationalFunction2._poly_str(self._num_coeffs, "x")
+        den = RationalFunction2._poly_str(self._den_coeffs, "x")
+
+        if den == "1":
+            return f"{num} on {self.domain}"
+ 
+        # Add brackets if required 
+        if sum(1 for c in self._num_coeffs if c != 0) > 1: num = "(" + num + ")"
+        if sum(1 for c in self._den_coeffs if c != 0) > 1: den = "(" + den + ")"
+
+        return f"{num}/{den} on {self.domain}"
+
+    # Static functions ------------------------------------------------------------
+    # Pretty-print a polynomial given the coefficients and the variable name 
+    def _poly_str(coeffs, var_name):
+        deg = len(coeffs) - 1
+        s = []
+        front = True
+        for c in coeffs:
+            if front: 
+                if c < 0: s.append("-")
+            else:
+                s.append("-" if c < 0 else "+")
+            s.append(RationalFunction2._mon_str(c, var_name, deg))
+            deg -= 1
+            front = False
+
+        if len(s) == 0: return "0"
+        return " ".join(s)
+
+    # Pretty-print a monomial term |c|x^{deg}
+    def _mon_str(c, var, deg):
+        if c == 0: return ""
+        if deg == 0: return f"{abs(c)}"
+        stem = f"{var}" if deg == 1 else f"{var}^{deg}"
+        if abs(c) == 1: return stem
+        return f"{abs(c)}" + stem
+    
+    # Instance methods -----------------------------------------------------------
+    # Returns whether this polynomial is zero
+    def is_zero(self):
+        return all(c == 0 for c in self._num_coeffs)
+
+    def is_constant(self):
+        return all(c == 0 for c in self._num_coeffs[1:]) and \
+                all(c == 0 for c in self._den_coeffs[1:])
+
+    def is_affine(self):
+        return all(c == 0 for c in self._num_coeffs[2:]) and \
+                all(c == 0 for c in self._den_coeffs[1:])
+
+    
 # Represents the univariate function P(x)/Q(x) where P, Q are polynomials. Currently
 # this is just a wrapper around the sympy symbolic algebra library.
 class RationalFunction:

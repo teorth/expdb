@@ -235,15 +235,38 @@ Finally, from \eqref{S-triangle}, we know that a (possibly yet another subcollec
 \begin{lemma}[Raising to a power]\label{power-energy}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, and $k \geq 1$, then amongst all tuples $(\sigma,\tau/k,\rho',(\rho')^*,s') \in \Energy$ with $\rho' \leq \rho/k$, $(\rho')^* \leq \rho^*/k$, and $s' \leq s/k$, there exists a tuple with $\rho' = \rho/k$, there exists a tuple with $(\rho')^* = \rho^*/k$, and there exists a tuple with $s' = s/k$. (These may be three different tuples.)
 \end{lemma}
 
-Morally speaking, one should be able to obtain equality in all three conclusions simultaneously, i.e., $(\sigma,\tau/k,\rho/k,\rho^*/k,s/k) \in \Energy$.
-
 \begin{proof} By definition, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N > 1$ unbounded, $T = N^{\tau+o(1)}$, $V = N^{\sigma+o(1)}$, $|W| = N^{\rho+o(1)}$, $E_1(W) = N^{\rho^*+o(1)}$, and $S(N,W) = N^{s+o(1)}$.  Observe that
-    $$ (\sum_{n \in [N,2N]} a_n n^{-it})^k = \sum_{n \in [N^k, 2^k N^k]} b_n n^{-it}$$
+    $$ \left( \sum_{n \in [N,2N]} a_n n^{-it} \right)^k = \sum_{n \in [N^k, 2^k N^k]} b_n n^{-it}$$
 for some coefficients $b_n = O(n^{o(1)})$.  In particular, partitioning $[N^k, 2^k N^k]$ into $O(1)$ sub-intervals $[N',2N']$ with $N' = N^{k+o(1)}$, we can partition $W$ into $O(1)$ subcollections $W_{N'}$, such that
-$$ |\sum_{n \in [N',2N']} b_n n^{-it}| \gg V^k = (N')^{\sigma+o(1)}$$
+$$ \left| \sum_{n \in [N',2N']} b_n n^{-it} \right| \gg V^k = (N')^{\sigma+o(1)}$$
 for all $t \in W_{N'}$.  Again by the pigeonhole principle, one of the $W_{N'}$ must have cardinality $N^{\rho+o(1)}$, one must have energy $N^{\rho^*+o(1)}$, and one must have double zeta sum $N^{s+o(1)}$ (but these may be different $W_{N'}$).  Each of these $W_{N'}$ then give the different conclusions to the lemma.
 \end{proof}
 
+Morally speaking, one should be able to obtain equality in all three conclusions of Lemma \ref{power-energy} simultaneously, i.e. that $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ essentially implies $(\sigma,\tau/k,\rho/k,\rho^*/k,s/k) \in \Energy$. This is because in practice one frequently controls $\Energy$ by computing a containment region $\Energy_1$ that possesses precisely the required monotonicity property. Specifically, we have
+
+\begin{lemma}[Monotonicity criterion]\label{lver_e_mono_crit}
+Let $\Energy_1$ be the intersection of sets $E_i$, each of the form
+\begin{align*}
+\{(\sigma, \tau, \rho, \rho^*, s) \in \R^5: \rho \le f_1(\rho^*, s), \rho^* \le f_2(\rho, s), s \le f_3(\rho, \rho^*)\}
+\end{align*}
+for some monotonically increasing functions $f_1, f_2, f_3$ (that possibly also depend on $\sigma$ and $\tau$).
+
+Suppose amongst all tuples $(\sigma, \tau, \rho', (\rho^*)', s') \in \Energy_1$ with $\rho' \le \rho$, $(\rho^*)' \le \rho^*$ and $s' \le s$, there exists a tuple with $\rho' = \rho$, a tuple with $(\rho^*)' = \rho^*$ and a tuple with $s' = s$ (not necessarily the same tuple each time). Then, $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$.
+\end{lemma}
+\begin{proof}
+Suppose that $(\sigma, \tau, \rho, (\rho^*)', s') \in \Energy_1$ for some $(\rho^*)'\le \rho^*$ and $s \le s'$ so that also $(\sigma, \tau, \rho, (\rho^*)', s') \in E_i$. Then by definition $\rho \le f_1((\rho^*)', s')$. Since $f_1$ is monotonically increasing (with respect to both $\rho^*$ and $s$), one has $\rho \le f_1(\rho^*, s)$. Similarly, $(\sigma, \tau, \rho', \rho^*, s') \in \Energy_1$ implies $\rho^* \le f_2(\rho, s)$ and $(\sigma, \tau, \rho', (\rho^*)', s) \in \Energy_1$ implies $s \le f_3(\rho, \rho^*)$, which together imply $(\sigma, \tau, \rho, \rho^*, s) \in E_i$ by definition. Hence $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$ since $\Energy_1$ is the intersection of sets $E_i$. 
+\end{proof}
+
+\begin{lemma}[Raising to a power, alternative formulation]
+Let $k$ be a positive integer, $\mathcal{E}_1 \subseteq \R^{5}$ be a set satisfying the monotonicity criterion of Lemma \ref{lver_e_mono_crit} and
+\[
+\mathcal{E}_k := \{(\sigma, \tau, \rho, \rho^*, s) \in \R^5: (\sigma, \tau/k, \rho/k, \rho^*/k, s/k) \in \mathcal{E}_1\}.
+\]
+If $\mathcal{E}\subseteq \mathcal{E}_1$ then $\mathcal{E} \subseteq \mathcal{E}_k$.
+\end{lemma}
+\begin{proof}
+Suppose that $(\sigma, \tau, \rho, \rho^*, s) \in \mathcal{E}\subseteq \mathcal{E}_1$. By Lemma \ref{power-energy} and Lemma \ref{lver_e_mono_crit}, $(\sigma, \tau/k, \rho/k, \rho^*/k, s/k) \in \mathcal{E}_1$, hence by definition $(\sigma, \tau, \rho, \rho^*, s) \in \mathcal{E}_k$.
+\end{proof}
 \section{Known relations for the large value energy region}
 
 \begin{theorem}[Reflection principle]\label{reflect}\cite[\S 11.5]{ivic}\uses{lv-edef} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$ with $\sigma \geq 3/4$ and $\tau>1$, then for any integer $k \geq 1$, either $\rho \leq 2-2\sigma$, or there exists $0 < \alpha \leq k(\tau-1)$ and $(\sigma, \tau/\alpha, \rho/\alpha, \rho^*/\alpha, s'/\alpha) \in \Energy$ such that
@@ -331,6 +354,9 @@ These bounds on the double zeta sums can be used to control additive energies:
 $$ \rho^* \leq 1-2\sigma + \max(\rho+1, 2\rho, 5\rho/4+\tau/2)/2 + \max(\rho^*+1, 4\rho, 3\rho^*/4+\rho+\tau/2)/2.$$
 \end{theorem}
 
+\literature
+\code{add_lver_heath_brown_1979b1()}
+
 \begin{proof}\uses{wtu-alt} By Lemma \ref{wtu-alt} we have
 $$ \rho^* + 2\sigma \leq \kappa + ( \max( \rho+1, 2\rho, 5\rho/4+\tau/2)+ \max( \rho'+1, 2\rho', 5\rho'/4+\tau/2) )/2 + 1$$
 for some $0 \leq \kappa \leq \rho$ with
@@ -346,7 +372,7 @@ $$ \rho^* \leq \max(3 \rho + 1-2\sigma, \rho +4-4\sigma, 5\rho/2 + (3-4\sigma)/2
 \end{corollary}
 
 \literature
-\code{add_lver_heath_brown_1979b()}
+\code{add_lver_heath_brown_1979b2()}
 
 This result essentially appears as \cite[Lemma 3]{heathbrown_zero_1979}.
 
