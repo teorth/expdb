@@ -19,7 +19,8 @@ for any $1/2 \leq \sigma \leq 1$.
 \end{itemize}
 \end{lemma}
 
-
+\derived 
+\code{prove_heath_brown_energy_estimate()}
 \begin{proof}\uses{add-energy, zero-basic} The claim (i) follows from Lemma \ref{add-energy}(iv), and the remaining claims then follow from Lemma \ref{zero-basic}.\end{proof}
 
 Upper bounds on $\A^*(\sigma)$ can be obtained from large value energy theorems via the following relation.
@@ -184,6 +185,57 @@ Inserting \eqref{rhok-simp} and \eqref{4s}, one can eventually show (again using
 \eqref{rhost} holds as required.
 \end{proof}
 
+We found the following estimates with the aid of computer assistance, which improve on Theorem \ref{hb-energy-bound} in various ranges of $\sigma$. 
+\begin{theorem}
+For $3/4 \le \sigma \le 4/5$ one has 
+\[
+\A^*(\sigma) \le \frac{18 - 19\sigma}{2(3\sigma - 1)(1-\sigma)}.
+\]
+\end{theorem}
+
+\derived 
+\code{prove_improved_heath_brown_energy_estimate()}
+
+\begin{proof}
+Assume throughout that $3/4 \le \sigma \le 4/5$. We choose 
+\[
+\tau_0 = 6\sigma - 2,\qquad \frac{3}{4} \le \sigma \le \frac{4}{5}
+\]
+It suffices to show that 
+\[
+\rho^* \le \frac{18 - 19\sigma}{6\sigma - 2}\tau,\qquad (\sigma, \tau, \rho, \rho^*, s) \in \Energy, \tau_0 \le \tau \le 2\tau_0
+\]
+and 
+\begin{equation}\label{imp_hb_energy_zeta}
+\rho^* \le \frac{18 - 19\sigma}{6\sigma - 2}\tau,\qquad (\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta, 2 \le \tau \le \tau_0.
+\end{equation}
+\]
+First consider \eqref{imp_hb_energy_zeta}. One has $\tau \in [2, \tau_0] \subset [2, 3)$. Apply Lemma \ref{} with $k = 2$ so that $\tau' := \tau/2 \in [1,3/2)$ and 
+\[
+(\sigma, \tau/2, \rho', (\rho^*)/2, s') \in \Energy
+\]
+for some $\rho' \le \rho/2, s' \le s/2$. Applying Lemma \ref{} to this tuple,
+\begin{equation}
+\rho^*/2 \le \max(3\rho' + 1- 2\sigma, \rho' + 4 - 4\sigma, 5\rho'/2 + (3 - 4\sigma)/2)
+\end{equation}
+We bound each term of the maximum individually. First, if $2 \le \tau \le 4 - 2\sigma$ then by Lemma \ref{},
+\begin{equation}\label{eqn:ae:l2raised}
+\rho/2 \le \max(2 - 2\sigma, 1 + \tau/2 - 2\sigma) = 1 + \tau/2 - 2\sigma
+\end{equation}
+so that by $\rho' \le \rho/2$, one has
+\[
+2(3\rho' + 1 - 2\sigma) \le 2 - 4\sigma + 6(1 + \tau/2 - 2\sigma) = 8 - 16\sigma + 3\tau \le \frac{18 - 19\sigma}{6\sigma - 2}\tau
+\]
+The last inequality holds because $(18 - 19\sigma)/(6\sigma - 2) < 3$ and the inequality holds at $\tau = 4 - 2\sigma$ (with equality at $\sigma = 4/5$). On the other hand if $4 - 2\sigma \le \tau \le 6\sigma - 2$ then from Lemma \ref{} and $\tau \le 3$ we also have 
+\[
+\rho/3 \le \max(2 - 2\sigma, 1 + \tau/3 - 2\sigma) = 2 - 2\sigma.
+\]
+so that
+\[
+2(3\rho' + 1 - 2\sigma) \le 2 - 4\sigma + 9(2 - 2\sigma) = 20 - 22\sigma \le \frac{18 - 19\sigma}{6\sigma - 2}\tau
+\]
+The last inequality holds because the RHS is increasing in $\tau$ and the inequality holds at $\tau = 4\sigma - 2$ (with equality at $\sigma = 4/5$). 
+\end{proof}
 
 \begin{figure}
     \centering

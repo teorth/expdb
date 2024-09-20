@@ -324,9 +324,6 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     E1 = E.as_disjoint_union()
 
-    print("E1")
-    print(E1)
-
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
         sample_check(E, E1, N=10000, dim=5, info=lvers)
