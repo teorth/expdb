@@ -40,13 +40,25 @@ class Large_Value_Estimate_Transform:
         return "Raising to a power"
 
 # Object representing a set in R^3 containing feasible (sigma, tau, rho) values 
+class Large_Value_Estimate2:
+    def __init__(self, region):
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type region")
+        self.region = region
+
+    def __repr__(self):
+        return f"(σ,τ,ρ) in {self.region}"
+
+# Object representing a set in R^3 containing feasible (sigma, tau, rho*) values 
 class Large_Value_Energy_Estimate:
     
     def __init__(self, region):
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type Region")
         self.region = region
         
     def __repr__(self):
-        return f"(σ,τ,ρ) in {self.region}"
+        return f"(σ,τ,ρ*) in {self.region}"
 ###############################################################################
 
 
@@ -135,6 +147,19 @@ def derived_bound_LV(bound, proof, deps):
     bound.dependencies = deps
     return bound
 
+# This method may be merged with the above once we combine the Large_Value_Estimate
+# and Large_Value_Estimate2 classes
+def derived_bound_LV2(bound, proof, deps):
+    year = Reference.max_year(tuple(d.reference for d in deps))
+    bound = Hypothesis(
+        "Derived large value estimate",
+        "Large value estimate",
+        Large_Value_Estimate2(bound),
+        proof,
+        Reference.derived(year),
+    )
+    bound.dependencies = deps
+    return bound
 
 def classical_LV_estimate(bounds):
     return Hypothesis(

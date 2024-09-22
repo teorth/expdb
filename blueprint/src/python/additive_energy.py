@@ -202,7 +202,7 @@ def ep_to_lver(eph):
         {eph})
 
 
-# Given a list of Hypothesis objects of type "Large value estimate" or "Zeta large value estimate", 
+# Given a Hypothesis_Set, find Hypothesis of type "Large value estimate" or "Zeta large value estimate", 
 # convert them into large value energy regions and returns them as a list of Hypothesis
 #
 # If zeta is True, then "Zeta large value estimate" and "Zeta large value energy region" are
@@ -252,6 +252,23 @@ def lv_to_lver(hypotheses, zeta=False):
         )
     return hyps
 
+# Given a Hypothesis_Set, find all Hypothesis of type "Large value energy region" and convert then 
+# into "Large value estimate", returning them as a list of Hypothesis. 
+def lver_to_lv(hypotheses, zeta=False):
+
+    if zeta:
+        hyps = hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region")
+    else:
+        hyps = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+    
+    new_hyps = []
+    for hyp in hyps:
+        # Take the energy region (sigma, tau, rho, rho*, s)
+        # Project onto the dimensions (sigma, tau, rho)
+        region = hyp.data.region.project({0, 1, 2})
+        lve = lv.Large_Value_Estimate2(region)
+        new_hyps.append(lv.derived_bound_LV2(lve, {hyp}))
+    return new_hyps
 
 import random as rd
 rd.seed(1007)

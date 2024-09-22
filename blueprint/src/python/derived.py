@@ -421,10 +421,18 @@ def prove_heath_brown_energy_estimate():
     bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
 
 def prove_improved_heath_brown_energy_estimate():
+    
+    # tau_0 as a piecewise affine function 
+    tau0s = [
+        # For tracing the bound (18 - 19s) / (6s - 2)
+        # Choose tau_0 = 6s - 2 for now
+        Affine(8, -4, Interval(frac(3,4), frac(4,5)))
+    ]
+
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 6):
-        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+    for k in range(2, 5):
+       hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
@@ -434,18 +442,6 @@ def prove_improved_heath_brown_energy_estimate():
     
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
-
-    # Add trivial bounds - this uses literature zero-density estimates
-    # Note - this is currently not used 
-    # ze.add_trivial_zero_density_energy_estimates(hypotheses)
-    # hypotheses.add_hypotheses(literature)
-    
-    # tau_0 as a piecewise affine function 
-    tau0s = [
-        # For tracing the bound (18 - 19s) / (6s - 2)
-        # Choose tau_0 = 6s - 2 for now
-        Affine(6, -2, Interval(frac(3,4), frac(4,5)))
-    ]
 
     # Convert tau_0 into a Region of (sigma, tau)
     # domain representing tau0 <= tau <= 2tau0
@@ -464,17 +460,17 @@ def prove_improved_heath_brown_energy_estimate():
     # polytope for a range of sigma
     LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
     LV_star_hyp.desc_with_proof()
-
+    
     # New set of hypothesis for the zeta LVER computation
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 4):
+    for k in range(2, 3):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
-    hypotheses.add_hypothesis(lv.large_value_estimate_L2) # somehow we still need this?
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
-    # hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2b"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2b"))
     
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
