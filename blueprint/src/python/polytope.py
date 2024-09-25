@@ -640,8 +640,6 @@ class Polytope:
                 return True
             return False    
 
-        
-
     # Returns whether this polytope is a subset of another.
     def is_subset_of(self, other):
         if not isinstance(other, Polytope):
@@ -749,16 +747,14 @@ class Polytope:
             projected_verts.append([v[i] for i in range(len(v)) if i in dims])
         proj = Polytope.from_V_rep(projected_verts)
 
-        if proj.contains([frac(5,6), 3, frac(31,12)]):
-            print("original")
+        #if any(v for v in projected_verts if tuple(v) == (frac(5, 6), frac(7, 3), frac(5, 3))):
+        if any(c for c in proj.get_constraints() if tuple(c.coefficients) == (frac(46), frac(-50),frac(1), frac(-4))):
+
+            print("original ----------------------------------------------------")
             print(self)
             print("projection")
             print(proj)
-            print("original points:")
-            print(self.vertices)
-            print("projection points")
-            print(proj.vertices)
-            raise ValueError()
+
         return proj
 
     # Given a list (var) x[0], x[1], ..., x[N - 1], with N > self.dimension(), 

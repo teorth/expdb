@@ -227,13 +227,20 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
     # each polytope is 3-dimensional. Find all edges and project them onto the 
     # sigma dimension. For those with a non-zero projection, compute rho / tau along 
     # the edge as a function of sigma 
-    fns = []  
+    fns = []
+    visited = set() # Keep track of the edges we have already visited to prevent duplication
     for p in polys:
+        print(p)
         edges = p.get_edges()
         for edge in edges:
             # Vertices on either side of the edge
-            (sigma1, tau1, rho1) = edge[0]
-            (sigma2, tau2, rho2) = edge[1]
+            v1 = tuple(edge[0])
+            v2 = tuple(edge[1])
+            if v1 + v2 in visited or v2 + v1 in visited: continue
+            visited.add(v1 + v2)
+
+            (sigma1, tau1, rho1) = v1
+            (sigma2, tau2, rho2) = v2
 
             # Skip edges with empty projection onto the sigma domain
             if sigma1 == sigma2: continue
@@ -249,7 +256,11 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
                 (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
             ])
             
-            #print("sigma", sigma1, sigma2, "tau(sigma)", tau, "rho(sigma)", rho, rho.div(tau))
+            print("\tsigma:", min(sigma1, sigma2), max(sigma1, sigma2), 
+                    "\t tau(sigma):", tau, 
+                    "\t rho(sigma):", rho, 
+                    "\t rho/tau(sigma):", rho.div(tau))
+            
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
     
     # Take the maximum of the functions

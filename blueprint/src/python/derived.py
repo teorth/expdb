@@ -426,7 +426,8 @@ def prove_improved_heath_brown_energy_estimate():
     tau0s = [
         # For tracing the bound (18 - 19s) / (6s - 2)
         # Choose tau_0 = 6s - 2 for now
-        Affine(8, -4, Interval(frac(3,4), frac(4,5)))
+        #Affine(8, -4, Interval(frac(3,4), frac(65,86)))
+        Affine(8, -4, Interval(frac(65,86), frac(5,6)))
     ]
 
     hypotheses = Hypothesis_Set()
