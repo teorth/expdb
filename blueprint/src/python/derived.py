@@ -509,7 +509,7 @@ def prove_all():
     # prove_bourgain_large_values_theorem()
     # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
-    # prove_improved_heath_brown_energy_estimate()
-    prove_guth_maynard_large_value_estimate()
+    prove_improved_heath_brown_energy_estimate()
+    #prove_guth_maynard_large_value_estimate()
 
 prove_all()
