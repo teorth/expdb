@@ -189,7 +189,7 @@ Inserting \eqref{rhok-simp} and \eqref{4s}, one can eventually show (again using
 \end{proof}
 
 We found the following estimates with the aid of computer assistance, which improve on Theorem \ref{hb-energy-bound} in various ranges of $\sigma$. 
-\begin{theorem}
+\begin{theorem}\label{imp-hb-energy-bound}
 For $3/4 \le \sigma \le 5/6$ one has 
 \[
 \A^*(\sigma) \le \min\left(\frac{18 - 19\sigma}{2(3\sigma - 1)(1-\sigma)}, \frac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}\right).
@@ -464,6 +464,29 @@ for $4\sigma - 2 + 2(1 - \sigma)/k \le \tau' \le (4\sigma - 2)(k + 1)/k$, and th
 \]
 for $4\sigma - 2 \le \tau' \le 4\sigma - 2 + 2(1 - \sigma)/k$. The treatment is analogous to before, so we omit the proof. 
 \end{proof}
+
+
+\begin{table}[ht]
+    \def\arraystretch{2}
+    \centering
+    \caption{Current best upper bound on $\A(\sigma)$}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    $\A^*(\sigma)$ bound & Range & Reference\\
+    \hline
+    $\dfrac{10 - 11\sigma}{(2 - \sigma)(1 - \sigma)}$ & $\dfrac{1}{2} \leq \sigma \le \dfrac{2}{3} = 0.6666\ldots$ & Theorem \ref{hb-energy-bound}\\
+    \hline
+    $\dfrac{18 - 19\sigma}{(4 - 2\sigma)(1 - \sigma)}$ & $\dfrac{2}{3} \leq \sigma \le \dfrac{3}{4} = 0.75\ldots$ & Theorem \ref{hb-energy-bound}\\
+    \hline
+    $\dfrac{18 - 19\sigma}{(6\sigma - 2)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{143 + \sqrt{13889}}{328} = 0.7952\ldots$ & Theorem \ref{imp-hb-energy-bound}\\
+    \hline
+    $\dfrac{40 - 36\sigma}{(20\sigma - 5)(1 - \sigma)}$ & $\dfrac{143 + \sqrt{13889}}{328} \leq \sigma \le \dfrac{5}{6} = 0.8333\ldots$ & Theorem \ref{imp-hb-energy-bound}\\
+    \hline
+    $\dfrac{12}{4\sigma - 1}$ & $\dfrac{5}{6} \leq \sigma \le 1$ & Theorem \ref{hb-energy-bound}\\
+    \hline
+    \end{tabular}
+    \label{zero_density_energy_estimates_table}
+\end{table}
 
 \begin{figure}
     \centering
