@@ -42,8 +42,9 @@ class Region:
             raise ValueError("Parameter region_type must be of type int.")
 
         if not isinstance(children, Polytope) and \
+            not isinstance(children, Region) and \
             not isinstance(children, list):
-            raise ValueError("Parameter polytope must either be of type Polytope or list of Polytope")
+            raise ValueError("Parameter polytope must either be of type Polytope, Region or list of Polytope/Region")
             
         self.region_type = region_type
         self.child = children
@@ -279,7 +280,7 @@ class Region:
                 
                 # [[Ad hoc performance optimisation]]
                 # Every few rounds, simplify if the number of polytopes is too large
-                if i % SIMPLIFY_EVERY == 0 and len(new_A) > 100:
+                if (i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100):
                     prevlen = len(new_A)
                     new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union)
                     print(prevlen, "->", len(new_A))

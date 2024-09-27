@@ -122,6 +122,37 @@ def prove_bourgain_large_values_theorem():
     for lvh in lv_hyps:
         print(lvh.data, lvh.proof)
 
+# Prove the Guth--Maynard large values theorem (Theorem 10.26) using the Large Value Energy 
+# Region estimates due to Guth--Maynard
+def prove_guth_maynard_large_values_theorem():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(
+        [h for h in literature if "Guth--Maynard large value energy region" in h.name]
+    )
+    
+    # Compute the feasible region of (\sigma, \tau, \rho) values 
+    region = ad.lver_to_lv(hypotheses)
+
+    # Take \tau = 6/5 (TODO: replace this step with Huxley subdivision once it is implemented)
+    region = region.substitute({1: frac(6,5)})
+    print("after subs:", region)
+    # Take the range 7/10 \leq \sigma \leq 8/10, \rho unconstrained
+    region = Region.intersect(
+        [
+            Region.from_polytope(
+                Polytope.rect((frac(7,10), frac(8,10), (0, 100000)))
+            ),
+            region
+        ]
+    )
+    print("after intersection:", region)
+    # Simplify the region
+    region = region.as_disjoint_union()
+    print("as disjoint union", region)
+    poly = Polytope.try_union([r.child for r in region.child])
+
+    print(poly)
+
 
 
 ######################################################################################
@@ -494,14 +525,6 @@ def prove_improved_heath_brown_energy_estimate():
 
     bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
 
-def prove_guth_maynard_large_value_estimate():
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(
-        [h for h in literature if "Guth--Maynard large value energy region" in h.name]
-    )
-    
-    ad.lver_to_lv(hypotheses)
-
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
@@ -509,7 +532,7 @@ def prove_all():
     # prove_bourgain_large_values_theorem()
     # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
-    prove_improved_heath_brown_energy_estimate()
-    #prove_guth_maynard_large_value_estimate()
+    # prove_improved_heath_brown_energy_estimate()
+    prove_guth_maynard_large_values_theorem()
 
 prove_all()

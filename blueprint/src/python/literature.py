@@ -900,7 +900,8 @@ def add_lver_guth_maynard_2024a(K):
             [2, -2, 0, -1, 0, 0],   # 2 - 2sigma - rho >= 0
 
             # Bounds arising from rho <= 1 - 2sigma + S_1/3
-            [-frac(7,3), -2, 0, -1, 0, 0],   # S_1 <= -10
+            # S_1 <= -10
+            [-frac(7,3), -2, 0, -1, 0, 0],   
 
             # Bounds arising from rho <= 1 - 2sigma + S_2/3
             # S_2 <= 2 + 2rho, 
@@ -939,7 +940,7 @@ def add_lver_guth_maynard_2024a(K):
                 params=f" 1 with k = {k}"
             )
         )
-add_lver_guth_maynard_2024a(5)
+add_lver_guth_maynard_2024a(4)
 
 # Lemma 10.18 from Guth--Maynard
 def add_lver_guth_maynard_2024b():

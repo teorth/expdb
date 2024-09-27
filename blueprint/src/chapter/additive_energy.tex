@@ -457,12 +457,14 @@ giving the claim.
 
 We can put this all together to prove the Guth--Maynard large values theorem.
 
-\begin{theorem}[Guth--Maynard large values theorem, again]\label{guth-maynard-lvt}\cite[Theorem~1.1]{guth-maynard} One has
+\begin{theorem}[Guth--Maynard large values theorem]\label{guth-maynard-lvt}\cite[Theorem~1.1]{guth-maynard} One has
     $$ \LV(\sigma,\tau) \leq \max(2-2\sigma, 18/5 - 4 \sigma, \tau + 12/5 - 4\sigma).$$
 \end{theorem}
 
 \literature
 \code{add_guth_maynard_large_values_estimate()}
+\derived 
+\code{prove_guth_maynard_large_values_theorem()}
 
 \begin{proof}\uses{l2-mvt,huxley-lv, gm-1, gm-3, montgomery-subdivide} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{montgomery-subdivide}) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
     $$ \rho \leq 18/5-4\sigma$$

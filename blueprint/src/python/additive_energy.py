@@ -255,6 +255,8 @@ def lv_to_lver(hypotheses, zeta=False):
 # Given a Hypothesis_Set, find all Hypothesis of type "Large value energy region", computes 
 # their intersection as a (simplified) polytope, then projects onto the (sigma, tau, rho)
 # domain, returning the result as Region in R^3
+# TODO: when the large value estimates are converted to their Polytope representation, 
+# change the return type of this function to Hypothesis. 
 def lver_to_lv(hypotheses, zeta=False):
 
     if zeta:
@@ -268,14 +270,8 @@ def lver_to_lv(hypotheses, zeta=False):
 
     # Project onto the dimensions (sigma, tau, rho)
     proj = E1.project({0, 1, 2})
-
-    print(proj)
-    n = len(proj.child)
     proj.simplify()
-    print(n, "->", len(proj.child))
-
     return proj
-    return new_hyps
 
 import random as rd
 rd.seed(1007)
