@@ -427,7 +427,7 @@ def prove_improved_heath_brown_energy_estimate():
         # For tracing the bound (18 - 19s) / (6s - 2)
         # Choose tau_0 = 6s - 2 for now
         #Affine(8, -4, Interval(frac(3,4), frac(65,86)))
-        Affine(8, -4, Interval(frac(65,86), frac(5,6)))
+        Affine(8, -4, Interval(frac(3,4), frac(4,5)))
     ]
 
     hypotheses = Hypothesis_Set()
@@ -436,11 +436,9 @@ def prove_improved_heath_brown_energy_estimate():
        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
-    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2b"))
-    
+
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
 
@@ -496,6 +494,13 @@ def prove_improved_heath_brown_energy_estimate():
 
     bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
 
+def prove_guth_maynard_large_value_estimate():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypotheses(
+        [h for h in literature if "Guth--Maynard large value energy region" in h.name]
+    )
+    
+    ad.lver_to_lv(hypotheses)
 
 def prove_all():
     # van_der_corput_pair(10)
@@ -504,6 +509,7 @@ def prove_all():
     # prove_bourgain_large_values_theorem()
     # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
-    prove_improved_heath_brown_energy_estimate()
+    # prove_improved_heath_brown_energy_estimate()
+    prove_guth_maynard_large_value_estimate()
 
 prove_all()

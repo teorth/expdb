@@ -252,8 +252,9 @@ def lv_to_lver(hypotheses, zeta=False):
         )
     return hyps
 
-# Given a Hypothesis_Set, find all Hypothesis of type "Large value energy region" and convert then 
-# into "Large value estimate", returning them as a list of Hypothesis. 
+# Given a Hypothesis_Set, find all Hypothesis of type "Large value energy region", computes 
+# their intersection as a (simplified) polytope, then projects onto the (sigma, tau, rho)
+# domain, returning the result as Region in R^3
 def lver_to_lv(hypotheses, zeta=False):
 
     if zeta:
@@ -261,13 +262,19 @@ def lver_to_lv(hypotheses, zeta=False):
     else:
         hyps = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
     
-    new_hyps = []
-    for hyp in hyps:
-        # Take the energy region (sigma, tau, rho, rho*, s)
-        # Project onto the dimensions (sigma, tau, rho)
-        region = hyp.data.region.project({0, 1, 2})
-        lve = lv.Large_Value_Estimate2(region)
-        new_hyps.append(lv.derived_bound_LV2(lve, {hyp}))
+    # Take the energy region (sigma, tau, rho, rho*, s)
+    E = Region.intersect([h.data.region for h in hyps])
+    E1 = E.as_disjoint_union()
+
+    # Project onto the dimensions (sigma, tau, rho)
+    proj = E1.project({0, 1, 2})
+
+    print(proj)
+    n = len(proj.child)
+    proj.simplify()
+    print(n, "->", len(proj.child))
+
+    return proj
     return new_hyps
 
 import random as rd

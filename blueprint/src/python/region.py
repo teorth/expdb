@@ -40,10 +40,11 @@ class Region:
         if not isinstance(region_type, int):
             print(region_type)
             raise ValueError("Parameter region_type must be of type int.")
+
         if not isinstance(children, Polytope) and \
             not isinstance(children, list):
             raise ValueError("Parameter polytope must either be of type Polytope or list of Polytope")
-        
+            
         self.region_type = region_type
         self.child = children
 
@@ -164,17 +165,27 @@ class Region:
     # of sets is the union (resp. intersection) of the projection of each set. 
     def project(self, dims: set[int]) -> 'Region':
         if not isinstance(dims, set):
-            raise ValueError("Parameter dims must be of type list[int]")
+            raise ValueError("Parameter dims must be of type set[int]")
         
         if self.region_type == Region_Type.POLYTOPE:
-            return Region(Region_Type.POLYTOPE, self.child.project(dims))
+            p = self.child.project(dims)
+            if p is None: return None
+            return Region(Region_Type.POLYTOPE, p)
         
         # Unfortunately the disjointness of unions are not preserved under projection
         if self.region_type == Region_Type.UNION or self.region_type == Region_Type.DISJOINT_UNION:
-            return Region(Region_Type.UNION, [c.project(dims) for c in self.child])
+            ps = [c.project(dims) for c in self.child]
+            ps = [p for p in ps if p is not None]
+            if len(ps) == 0: return None
+            if len(ps) == 1: return ps[0]
+            return Region(Region_Type.UNION, ps)
         
         if self.region_type == Region_Type.INTERSECT:
-            return Region(Region_Type.INTERSECT, [c.project(dims) for c in self.child])
+            ps = [c.project(dims) for c in self.child]
+            ps = [p for p in ps if p is not None]
+            if len(ps) == 0: return None
+            if len(ps) == 1: return ps[1]
+            return Region(Region_Type.INTERSECT, ps)
         
         # In particular, complements are not yet supported. 
         raise NotImplementedError()

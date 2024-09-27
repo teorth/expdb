@@ -939,7 +939,7 @@ def add_lver_guth_maynard_2024a(K):
                 params=f" 1 with k = {k}"
             )
         )
-#add_lver_guth_maynard_2024a(10)
+add_lver_guth_maynard_2024a(5)
 
 # Lemma 10.18 from Guth--Maynard
 def add_lver_guth_maynard_2024b():
@@ -996,7 +996,7 @@ def add_lver_guth_maynard_2024c():
             params=" 3"
         )
     )
-#add_lver_guth_maynard_2024c()
+add_lver_guth_maynard_2024c()
 
 
 ########################################################################################

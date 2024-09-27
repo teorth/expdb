@@ -343,6 +343,11 @@ class Polytope:
     # Create a polytope from its vertices
     # TODO: add support for extreme rays
     def from_V_rep(verts):
+
+        # cdd does not support empty polytopes, so we return None
+        if len(verts) == 0:
+            return None
+
         V = cdd.Matrix([[1] + v for v in verts], number_type="fraction")
         V.rep_type = cdd.RepType.GENERATOR
         poly = cdd.Polyhedron(V)
@@ -746,15 +751,6 @@ class Polytope:
         for v in self.vertices:
             projected_verts.append([v[i] for i in range(len(v)) if i in dims])
         proj = Polytope.from_V_rep(projected_verts)
-
-        #if any(v for v in projected_verts if tuple(v) == (frac(5, 6), frac(7, 3), frac(5, 3))):
-        if any(c for c in proj.get_constraints() if tuple(c.coefficients) == (frac(46), frac(-50),frac(1), frac(-4))):
-
-            print("original ----------------------------------------------------")
-            print(self)
-            print("projection")
-            print(proj)
-
         return proj
 
     # Given a list (var) x[0], x[1], ..., x[N - 1], with N > self.dimension(), 
