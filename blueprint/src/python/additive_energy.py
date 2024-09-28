@@ -373,7 +373,10 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     
     if debug:
         cpy = copy.copy(Eproj)
-        
+    
+    # Handle empty projection
+    if Eproj is None: return None
+    
     Eproj.simplify()
 
     if debug:

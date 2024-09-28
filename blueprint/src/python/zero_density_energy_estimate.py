@@ -186,32 +186,44 @@ def approx_best_energy_bound(hypotheses, sigma, tau0):
 # This function should give the same result as approx_best_energy_bound
 def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval):
     
-    if not isinstance(LVER, Hypothesis) or \
-        LVER.hypothesis_type != "Large value energy region":
+    if LVER is not None and (not isinstance(LVER, Hypothesis) or \
+        LVER.hypothesis_type != "Large value energy region"):
         raise ValueError("Parameter LVER must be a Hypothesis of type 'Large value energy region'.")
-    if not isinstance(LVER_zeta, Hypothesis) or \
-        LVER_zeta.hypothesis_type != "Zeta large value energy region":
+    if LVER_zeta is not None and (not isinstance(LVER_zeta, Hypothesis) or \
+        LVER_zeta.hypothesis_type != "Zeta large value energy region"):
         raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
-        
-    sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval)
-    print("sup1")
-    for s in sup1: print(s[0], "for x\in", s[1])
     
-    sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval)
-    print("sup2")
-    for s in sup2: print(s[0], "for x\in", s[1])
+    fns = []
+    deps = set()
+    depcount = [0, 0] # The number of dependencies
+
+    if LVER is not None:
+        sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval)
+        print("sup1")
+        for s in sup1: print(s[0], "for x\in", s[1])
+        fns.extend(list(sup1))
+        deps.update(list(LVER.dependencies))
+        depcount[0] = len(LVER.dependencies)
+    
+    if LVER_zeta is not None:
+        sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval)
+        print("sup2")
+        for s in sup2: print(s[0], "for x\in", s[1])
+        fns.extend(list(sup2))
+        deps.update(list(LVER_zeta.dependencies))
+        depcount[1] = len(LVER_zeta.dependencies)
     
     # Take maximum
-    sup = max_RF(list(sup1) + list(sup2), sigma_interval)
+    sup = max_RF(fns, sigma_interval)
     print("A*(x)(1-x) \leq")
     for s in sup: print(s[0], "for x\in", s[1])
     
     return [
         derived_zero_density_energy_estimate(
             Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
-            f"Follows from combining {len(LVER.dependencies)} large value energy regions " + \
-            "and {len(LVER_zeta.dependencies)} zeta large value energy regions",
-            set(list(LVER.dependencies) + list(LVER_zeta.dependencies))
+            f"Follows from combining {depcount[0]} large value energy regions " + \
+            "and {depcount[1]} zeta large value energy regions",
+            deps
         )
         for s in sup
         ]
