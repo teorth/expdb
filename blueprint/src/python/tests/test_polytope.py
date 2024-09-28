@@ -382,6 +382,29 @@ def run_3_way_union_test():
         ]
     )
 
+def run_n_way_union_test():
+
+    # 4-way polytope union
+    assert Polytope.try_union([
+        Polytope.rect((0, 1), (0, 1), (0, 1)),
+        Polytope.rect((1, 2), (0, 1), (0, 1)),
+        Polytope.rect((0, 1), (1, 2), (0, 1)),
+        Polytope.rect((1, 2), (1, 2), (0, 1)),
+    ]) == Polytope.rect((0, 2), (0, 2), (0, 1))
+    
+    # Another union test example
+    p1 = Polytope([[frac(18,5), -4, -1], [-2, 2, 1], [-frac(156,5), 36, frac(15,2)]])
+    p2 = Polytope([[-2, 2, 1], [-frac(26,5), 6, frac(4,3)], [-5, 6, 1], [frac(156,5), -36, -frac(15,2)]])
+    p3 = Polytope([[0, 0, 1], [2, -2, -1], [-frac(7,10), 1, 0], [frac(4,5), -1, 0]])
+    p4 = Polytope([[-2, 2, 1], [frac(26,5), -6, -frac(4,3)], [-5, 6, 1]])
+    p5 = Polytope([[-2, 2, 1], [5, -6, -1], [-frac(7,10), 1, 0]])
+    assert Polytope.try_union([p1, p2, p3, p4, p5]) == Polytope([
+        [-frac(7,10), 1, 0],
+        [frac(18,5), -4, -1],
+        [0, 0, 1],
+        [frac(4,5), -1, 0]
+    ])
+
 def run_setminus_test():
     A = Polytope.rect((0, 5), (0, 5))
     B = Polytope.rect((1, 2), (1, 2))
@@ -502,6 +525,7 @@ run_union_test()
 run_union_3d_test()
 run_union_linset_test()
 run_3_way_union_test()
+run_n_way_union_test()
 run_setminus_test()
 run_containment_test()
 run_subs_test()

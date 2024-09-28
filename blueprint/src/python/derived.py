@@ -126,32 +126,27 @@ def prove_bourgain_large_values_theorem():
 # Region estimates due to Guth--Maynard
 def prove_guth_maynard_large_values_theorem():
     hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(
-        [h for h in literature if "Guth--Maynard large value energy region" in h.name]
-    )
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 3"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
     
     # Compute the feasible region of (\sigma, \tau, \rho) values 
     region = ad.lver_to_lv(hypotheses)
 
     # Take \tau = 6/5 (TODO: replace this step with Huxley subdivision once it is implemented)
     region = region.substitute({1: frac(6,5)})
-    print("after subs:", region)
-    # Take the range 7/10 \leq \sigma \leq 8/10, \rho unconstrained
-    region = Region.intersect(
-        [
-            Region.from_polytope(
-                Polytope.rect((frac(7,10), frac(8,10), (0, 100000)))
-            ),
-            region
-        ]
-    )
-    print("after intersection:", region)
+
+    # Constrain to the range 7/10 \leq \sigma \leq 8/10 (\rho unconstrained)
+    domain = Polytope([
+        [-frac(7,10), 1, 0], [frac(8,10), -1, 0]
+    ])
+    region.child = [Region.from_polytope(r.child.intersect(domain)) for r in region.child]
+    region.child = [r for r in region.child if not r.child.is_empty(include_boundary=False)]
+
     # Simplify the region
-    region = region.as_disjoint_union()
-    print("as disjoint union", region)
     poly = Polytope.try_union([r.child for r in region.child])
 
-    print(poly)
+    print("Proved feasible region for (σ, τ, ρ):", poly.to_str("στρ"))
 
 
 

@@ -147,16 +147,21 @@ class Polytope:
         return p
 
     def __repr__(self):
-        def to_str(row, is_lin):
-            ch_set = list("xyzwu")
-            if len(row) > 6:
-                ch_set = [f"x_{i}" for i in range(1, len(row))]
+        if self.dimension() <= 5:
+            return self.to_str("xyzwu") # Default variable names
+        return self.to_str([f"x_{i}" for i in range(1, self.dimension() + 1)])
+        
+    def to_str(self, variables):
 
+        if len(variables) < self.dimension():
+            raise ValueError(f"Parameter variables must be a list of length >= {self.dimension()}.")
+        
+        def _to_str(row, is_equality):
             f = ""
             if row[0] != 0:
                 f += str(row[0])
             for i in range(1, len(row)):
-                v = ch_set[i - 1]
+                v = variables[i - 1]
                 c = row[i]
                 if c == 0:
                     continue
@@ -166,12 +171,10 @@ class Polytope:
                     f += v
                 else:
                     f += str(abs(c)) + v
-            if is_lin:
-                return f"{f} = 0"
-            return f"{f} >= 0"
+            return f"{f} = 0" if is_equality else f"{f} >= 0"
 
         return str(
-            [to_str(self.mat[i], i in self.mat.lin_set) for i in range(len(self.mat))]
+            [_to_str(self.mat[i], i in self.mat.lin_set) for i in range(len(self.mat))]
         )
 
     def __eq__(self, other):
@@ -269,8 +272,10 @@ class Polytope:
         # is relative cheap compared to the full union operation, since it only
         # requires solving 1 LP (without canonicalisation, since boundaries are
         # included) and is expected to occur quite frequently in practice, 
-        # especially for high dimensional polytopes. 
-        if Polytope.intersection(polys, canonicalize=False).is_empty(include_boundary=True):
+        # especially for high dimensional polytopes. However, this only works 
+        # when taking the union of 2 polytopes 
+        if len(polys) == 2 and \
+            Polytope.intersection(polys, canonicalize=False).is_empty(include_boundary=True):
             return None
         
         env = set()  # Stores the constraints used to compute the envelope
