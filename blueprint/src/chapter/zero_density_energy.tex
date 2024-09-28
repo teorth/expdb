@@ -465,7 +465,31 @@ for $4\sigma - 2 + 2(1 - \sigma)/k \le \tau' \le (4\sigma - 2)(k + 1)/k$, and th
 for $4\sigma - 2 \le \tau' \le 4\sigma - 2 + 2(1 - \sigma)/k$. The treatment is analogous to before, so we omit the proof. 
 \end{proof}
 
+\begin{theorem}\label{imp-energy-bound2}
+For $7/10 \le \sigma \le 3/4$, one has 
+\[
+\A^*(\sigma) \le \min\left(\frac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}, \frac{2(45 - 44\sigma)}{(2\sigma + 15)(1 
+- \sigma)}\right).
+\]
+\end{theorem}
 
+\derived 
+\code{prove_zero_density_energy_improved2()}
+
+
+\begin{theorem}\label{imp-energy-bound3}
+For $3/4 \le \sigma \le 289/380$, one has 
+\[
+\A^*(\sigma) \le \frac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}.
+\]
+\end{theorem}
+
+\begin{theorem}\label{imp-energy-bound4}
+For $3/4 \le \sigma \le 5/6$, one has 
+\[
+\A^*(\sigma) \le \frac{3(29 - 30\sigma)}{5(5\sigma - 1)(1 - \sigma)}.
+\]
+\end{theorem}
 \begin{table}[ht]
     \def\arraystretch{2}
     \centering
@@ -476,17 +500,24 @@ for $4\sigma - 2 \le \tau' \le 4\sigma - 2 + 2(1 - \sigma)/k$. The treatment is 
     \hline
     $\dfrac{10 - 11\sigma}{(2 - \sigma)(1 - \sigma)}$ & $\dfrac{1}{2} \leq \sigma \le \dfrac{2}{3} = 0.6666\ldots$ & Theorem \ref{hb-energy-bound}\\
     \hline
-    $\dfrac{18 - 19\sigma}{(4 - 2\sigma)(1 - \sigma)}$ & $\dfrac{2}{3} \leq \sigma \le \dfrac{3}{4} = 0.75$ & Theorem \ref{hb-energy-bound}\\
+    $\dfrac{18 - 19\sigma}{(4 - 2\sigma)(1 - \sigma)}$ & $\dfrac{2}{3} \leq \sigma \le \dfrac{7}{10} = 0.7$ & Theorem \ref{hb-energy-bound}\\
     \hline
-    $\dfrac{18 - 19\sigma}{(6\sigma - 2)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{143 + \sqrt{13889}}{328} = 0.7952\ldots$ & Theorem \ref{imp-hb-energy-bound}\\
+    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{7}{10} \leq \sigma \le \dfrac{539 - \sqrt{42121}}{460} = 0.7255\ldots$ & Theorem \ref{imp-energy-bound2}\\
     \hline
-    $\dfrac{40 - 36\sigma}{(20\sigma - 5)(1 - \sigma)}$ & $\dfrac{143 + \sqrt{13889}}{328} \leq \sigma \le \dfrac{5}{6} = 0.8333\ldots$ & Theorem \ref{imp-hb-energy-bound}\\
+    $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{3}{4} = 0.75$ & Theorem \ref{imp-energy-bound2}\\
+    \hline
+    $\dfrac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{289}{380} = 0.7605\ldots$ & Theorem \ref{imp-energy-bound3}\\
+    \hline
+    $\dfrac{3(29 - 30\sigma)}{5(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{289}{380} \leq \sigma \le \dfrac{101 + \sqrt{1741}}{180} = 0.7929\ldots$ & Theorem \ref{imp-energy-bound4}\\
+    \hline
+    $\dfrac{40 - 36\sigma}{(20\sigma - 5)(1 - \sigma)}$ & $\dfrac{101 + \sqrt{1741}}{180} \leq \sigma \le \dfrac{5}{6} = 0.8333\ldots$ & Theorem \ref{imp-hb-energy-bound}\\
     \hline
     $\dfrac{12}{4\sigma - 1}$ & $\dfrac{5}{6} \leq \sigma \le 1$ & Theorem \ref{hb-energy-bound}\\
     \hline
     \end{tabular}
     \label{zero-density-energy-estimates-table}
 \end{table}
+
 
 \begin{figure}
     \centering
