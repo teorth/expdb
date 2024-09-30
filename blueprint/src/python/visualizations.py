@@ -198,11 +198,21 @@ def zero_density_energy_plot():
 
     # add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
-
+    
+    # List of new derived estimates so far. TODO: replace with actual derivations
+    energy_estimates = [
+            (RF.parse("1000000"), Interval(frac(1,2), 1)), # default
+            (RF.parse("5 * (18 - 19 * x) / ((2 * (5 * x + 3)) * (1 - x))"), Interval(frac(7,10), 0.7255)),
+            (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, frac(3,4))),
+            (RF.parse("(197 - 220 * x) / (8 * (5 * x - 1) * (1 - x))"), Interval(frac(3,4), frac(289, 380))),
+            (RF.parse("3 * (29 - 30 * x) / (5 * (5 * x - 1) * (1 - x))"), Interval(frac(289, 380), 0.7929)),
+            (RF.parse("(40 - 36 * x) / ((20 * x - 5) * (1 - x))"), Interval(0.7929, frac(5, 6))),
+        ]
     # as an example, plot the trivial bound and the literature bound 
     sigmas = np.linspace(1/2, 0.999, 1000)
     trivial_bound = []
     lit_bound = []
+    best_bound = []
     lindelof_bound = []
     for sigma in sigmas:
         trivial = min(
@@ -219,6 +229,13 @@ def zero_density_energy_plot():
             )
         lit_bound.append(min(lit, trivial))
         
+        best = min(
+                bound.at(sigma)
+                for (bound, interval) in energy_estimates
+                if interval.contains(sigma)
+            )
+        best_bound.append(min(best, lit, trivial))
+        
         if sigma > 3/4:
             lindelof_bound.append(0)
         else:
@@ -227,10 +244,11 @@ def zero_density_energy_plot():
     plt.figure(figsize=(10, 6))
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A^*(\sigma)$")
-    plt.plot(sigmas, lit_bound, linewidth=1, label="Literature zero-density energy estimate")
-    plt.plot(sigmas, trivial_bound, linewidth=1, label="\"Trivial\" zero-density energy estimate")
-    plt.plot(sigmas, lindelof_bound, linewidth=1, label="Lindelof zero-density energy estimate")
-    plt.title("Zero density energy estimates")
+    plt.plot(sigmas, lit_bound, linewidth=1, label="Literature additive energy estimate")
+    plt.plot(sigmas, trivial_bound, linewidth=1, label="\"Trivial\" additive energy estimate")
+    plt.plot(sigmas, best_bound, linewidth=1, label="Best additive energy estimate")
+    plt.plot(sigmas, lindelof_bound, linewidth=1, label="Additive energy estimate on the Lindelof hypothesis")
+    plt.title("Additive energy estimates")
     plt.legend()
     plt.grid(True)
     plt.show()
