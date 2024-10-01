@@ -192,7 +192,7 @@ We found the following estimates with the aid of computer assistance, which impr
 \begin{theorem}\label{imp-hb-energy-bound}
 For $3/4 \le \sigma \le 5/6$ one has 
 \[
-\A^*(\sigma) \le \min\left(\frac{18 - 19\sigma}{2(3\sigma - 1)(1-\sigma)}, \frac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}\right).
+\A^*(\sigma) \le \max\left(\frac{18 - 19\sigma}{2(3\sigma - 1)(1-\sigma)}, \frac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}\right).
 \]
 \end{theorem}
 
@@ -476,6 +476,157 @@ For $7/10 \le \sigma \le 3/4$, one has
 \derived 
 \code{prove_zero_density_energy_improved2()}
 
+\begin{proof}
+
+Throughout assume $7/10 \le \sigma \le 3/4$ and take $\tau_0 = 2$ in Corollary \ref{}. It suffices to show that if $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ with $2 \le \tau \le 4$, then 
+\begin{equation}
+\rho^* \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau
+\end{equation}
+and 
+\begin{equation}
+\rho^* \le \frac{2(45 - 44\sigma)}{2\sigma + 15}\tau.
+\end{equation}
+Note for future reference that 
+\begin{equation}
+1 < \frac{5(18 - 19\sigma)}{2(5\sigma + 3)} < 2,\qquad \frac{7}{10} \le \sigma \le \frac{3}{4}. 
+\end{equation}
+Let 
+\[
+k := \begin{cases}
+2,& 2 \le \tau < 3,\\
+3,& 3 \le \tau \le 4,
+\end{cases},\qquad \tau' := \tau/k.
+\]
+Note that this implies $1 \le \tau' < 3/2$. 
+
+Via Theorem \ref{} and Lemma \ref{}, one has 
+\begin{equation}\label{ze-bound2-rho1}
+\rho \le k\max(2 - 2\sigma, 1 - 2\sigma + \tau/k)
+\end{equation}
+and via Theorem \ref{} and Lemma \ref{}, one has 
+\[
+\rho \le k\max(2 - 2\sigma, 18/5 - 4\sigma, 12/5 - 4\sigma + \tau/k)
+\]
+Since $\sigma \le 4/5$, we may drop the first term, i.e. 
+\begin{equation}\label{ze-bound2-rho2}
+\rho \le k\max(2 - 2\sigma, 12/5 - 4\sigma + \tau/k)
+\end{equation}
+Combining \eqref{ze-bound2-rho1} and \eqref{ze-bound2-rho2}
+\[
+\rho/k \le \begin{cases}
+1 - 2\sigma + \tau',&1 \le \tau' \le 13/5 - 2\sigma\\
+18/5 - 4\sigma,& 13/5 - 2\sigma \le \tau' \le 6/5\\
+12/5 - 4\sigma + \tau',& 6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1 - \sigma)/k\\
+(2 - 2\sigma)(k + 1)/k,& 2(\sigma - 1/5) + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k
+\end{cases}
+\]
+One can verify that all intervals are proper for $7/10 \le \sigma \le 3/4$, $k = 2,3$. 
+
+We divide into two cases: 
+
+\textbf{Case 1: $1 \le \tau' \le 6/5$:} By Theorem \ref{}, one has 
+
+\begin{align*}
+\rho^* &\leq 1-2\sigma + \frac{1}{2}\max(\rho+1, 2\rho, \frac{5}{4}\rho+\frac{\tau}{2}) + \frac{1}{2}\max(\rho^*+1, 4\rho, \frac{3}{4}\rho^*+\rho+\frac{\tau}{2})
+\end{align*}
+Substituting the upper bound $\tau' \le 6/5$ into \eqref{ze-bound2-rho1}, one has $\rho < 1$. Therefore the second term in the first maximum may be removed. We consider two cases.  
+
+If $\rho + 1 \ge 5\rho/4 + \tau'/2$ then 
+\[
+\rho^* \le \frac{3 - 4 + \rho}{2} + \frac{1}{2}\max(\rho^* + 1, 4\rho, \frac{3}{4}\rho^*+\rho +\frac{\tau}{2}).
+\]
+Solving for $\rho^*$, we get 
+\[
+\rho^* \le \max(4 - 4\sigma + \rho, \frac{3 - 4\sigma + 5\rho}{2}, \frac{2}{5}(6 - 8\sigma + \tau + 4\rho))
+\]
+For $1 \le \tau' \le 13/5 - 2\sigma$, one has $\rho/k \le 1 - 2\sigma + \tau'$ and also one may verify that
+\begin{align*}
+\rho^*/k \le \max\Big(&\frac{4 - 4\sigma}{k} + 1 - 2\sigma + \tau', \frac{3 - 4\sigma + 5(1 - 2\sigma + \tau')}{2},\\
+&\qquad \frac{2}{5}(6 - 8\sigma + k\tau' + 4(1 - 2\sigma + \tau'))\Big) \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\end{align*}
+for $7/10 \le \sigma \le 3/4$ and $k = 2, 3$. Similarly, for $13/5 - 2\sigma \le \tau' \le 6/5$, one has $\rho/k \le 18/5 - 4\sigma$ and also one may verify that 
+\begin{align*}
+\rho^*/k \le \max\Big(&\frac{4 - 4\sigma}{k} + 18/5 - 4\sigma, \frac{3 - 4\sigma + 5(18/5 - 4\sigma)}{2},\\
+&\qquad \frac{2}{5}(6 - 8\sigma + k\tau' + 4(18/5 - 4\sigma))\Big) \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\end{align*}
+for $7/10 \le \sigma \le 3/4$ and $k = 2, 3$.
+
+On the other hand, if $\rho + 1 < 5\rho/4 + \tau'/2$ then 
+\[
+\rho^* \le 1 - 2\sigma + \frac{5}{8}\rho + \frac{\tau}{4} + \frac{1}{2}\max(\rho^* + 1, 4\rho, \frac{3}{4}\rho^*+\rho +\frac{\tau}{2})
+\]
+Solving for $\rho$ gives 
+\[
+\rho^* \le \max(3 - 4\sigma + \frac{\tau}{2} + \frac{5}{4}\rho, 1 - 2\sigma + \frac{\tau}{4} + \frac{21}{8}\rho, \frac{8 - 16\sigma + 4\tau + 9\rho}{5})
+\]
+For $1 \le \tau' \le 13/5 - 2\sigma$, one has $\rho/k \le 1 - 2\sigma + \tau'$ and also one may verify that
+\begin{align*}
+\rho^*/k \le \max\Big(&\frac{3 - 4\sigma}{k} + \frac{5}{4}(1 - 2\sigma) + \frac{7}{4}\tau', \frac{1 - 2\sigma}{k} + \frac{21}{8}(1 - 2\sigma) + \frac{23}{8}\tau',\\
+&\qquad \frac{8(1 - 2\sigma)}{5k} + \frac{9}{5}(1 - 2\sigma) + \frac{13}{5}\tau'\Big)
+\end{align*}
+For $13/5 - 2\sigma \le \tau' \le 6/5$, one has $\rho/k \le 18/5 - 4\sigma$ and 
+\begin{align*}
+\rho^*/k \le \max\Big(&\frac{3 - 4\sigma}{k} + \frac{\tau'}{2} + \frac{5}{4}(\frac{18}{5} - 4\sigma), \frac{1 - 2\sigma}{k} + \frac{\tau'}{4} + \frac{21}{8}(\frac{18}{5} - 4\sigma),\\ &\qquad \frac{(8 - 16\sigma)/k + 4\tau' + 9(18/5 - 4\sigma)}{5}\Big)
+\end{align*}
+\textbf{TODO complete the argument}
+
+
+\textbf{Case 2: $6/5 \le \tau' \le 1 + 1/k$}
+By Lemma \ref{}, 
+\[
+(\sigma, \tau/2, \rho', \rho^*/2, s') \in \Energy
+\]
+for some $\rho' \le \rho/2$, $s' \le s/2$. Applying Lemma \ref{} to this tuple, then applying $\rho' \le \rho/2$, we have 
+\begin{equation}\label{ze-bound2-rhostar}
+\frac{\rho^*}{2} \leq 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{2}+1, \frac{2\rho}{2}, \frac{5\rho}{8} + \frac{\tau}{4}) + \frac{1}{2}\max(\frac{\rho^*}{2}+1, 2\rho, \frac{3}{8}\rho^* +\frac{\rho}{2}+\frac{\tau}{4}).
+\end{equation}
+Note that \eqref{ze-bound2-rho-finalbound} also implies that $\rho/2 \le 1$, so that the middle term in the first maximum of \eqref{ze-bound2-rhostar} may be removed. 
+
+If $\rho/2 + 1 \ge 5\rho/8 + \tau/4$ then:
+\[
+\frac{\rho^*}{2} \leq \frac{3}{2} - 2\sigma + \frac{\rho}{4} + \frac{1}{2}\max(\frac{\rho^*}{2}+1, 2\rho, \frac{3}{8}\rho^* +\frac{\rho}{2}+\frac{\tau}{4}).
+\]
+Solving for $\rho^*$ gives 
+\begin{equation}\label{ze-bound2-rho-star-bound}
+\begin{split}
+\rho^* &\le \max(8(1 - \sigma) + \rho, 3 - 4\sigma + \frac{5\rho}{2}, \frac{2}{5}(12 - 16\sigma + \tau + 4\rho))
+\end{split}
+\end{equation}
+since $\sigma \le 3/4$ and $k \ge 2$.
+
+If $6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1 - \sigma)/k$, then by \eqref{ze-bound2-rho-finalbound}
+\begin{equation}
+\rho/k \le \frac{12}{5} - 4\sigma + \tau'.
+\end{equation}
+Substituting this into \eqref{ze-bound2-rho-star-bound}, one has (since $\sigma \le 3/4$ and $k \ge 2$)
+\begin{align*}
+\rho^*/k &\le \max(\frac{8(1 - \sigma)}{k} + \frac{12}{5} - 4\sigma + \tau', \frac{3 - 4\sigma}{k} + \frac{5}{2}(\frac{12}{5} - 4\sigma + \tau'), \\
+&\qquad\qquad\frac{2}{5}(\frac{12 - 16\sigma}{k} + \tau' + 4(\frac{12}{5} - 4\sigma + \tau')))\\
+& \le \max(\frac{32}{5} - 8\sigma + \tau', \frac{15}{2} - 12\sigma + \frac{5}{2}\tau', \frac{156}{25} - \frac{48}{5}\sigma + 2\tau')
+\end{align*}
+By \eqref{}, we conclude by verifying that
+\begin{equation}
+\frac{32}{5} - 8\sigma + \tau' \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\end{equation}
+at the lower limit $\tau' = 6/5$, and
+\[
+\max(\frac{15}{2} - 12\sigma + \frac{5}{2}\tau', \frac{156}{25} - \frac{48}{5}\sigma + 2\tau') \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\]
+at the upper limit $\tau' = 2(\sigma - 1/5) + 1 - \sigma = \sigma + 3/5$. 
+
+On the other hand, if $2(\sigma - 1/5) + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k$, then 
+\[
+\frac{\rho}{k} \le (2 - 2\sigma)\frac{k + 1}{k}.
+\]
+Substituting into \eqref{ze-bound2-rho-star-bound}, one obtains 
+\begin{align*}
+\rho^*/k &\le \max(\frac{8(1 - \sigma) + 2(1 - \sigma)(k + 1)}{k}, \frac{3 - 4\sigma + 5(1 - \sigma)(k + 1)}{k}, \\
+&\qquad\qquad\frac{2}{5}(\frac{12 - 16\sigma + 8(1 - \sigma)(k + 1)}{k} + \tau'))\\
+&\le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\end{align*}
+where the last inequality follows since the LHS is increasing slower in $\tau$ than the RHS, and at one may verify (after a tedious calculation) that the inequality holds at the lower-limit $\tau' = 2(\sigma - 1/5) + 2(1 - \sigma)/k$ for $k = 2, 3$.
+
+\end{proof}
 
 \begin{theorem}\label{imp-energy-bound3}
 For $3/4 \le \sigma \le 289/380$, one has 
