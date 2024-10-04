@@ -488,7 +488,7 @@ and
 \end{equation}
 Note for future reference that 
 \begin{equation}\label{ze-bound2-tau-factor-bounds}
-6/5 < \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}, \frac{2(45 - 44\sigma)}{2\sigma + 15} < 2.
+\frac{6}{5} < \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}, \frac{2(45 - 44\sigma)}{2\sigma + 15} < \frac{7}{4}.
 \end{equation}
 Next we record some useful results. Let 
 \[
@@ -588,11 +588,14 @@ Solving for $\rho^*/k$ gives
 \begin{equation}\label{ze-bound2-rho-star-bound}
 \rho^*/k \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})).
 \end{equation}
-If $6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1 - \sigma)/k$, then by \eqref{ze-bound2-rhok-bound}
-\begin{equation}
-\rho/k \le \frac{12}{5} - 4\sigma + \tau'.
+Recall that from \eqref{ze-bound2-rhok-bound} we have 
+\begin{equation}\label{ze-bound2-rho-bound-temp}
+\rho/k \le \begin{cases}
+12/5 - 4\sigma + \tau',& 6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1 - \sigma)/k\\
+(2 - 2\sigma)(k + 1)/k,& 2(\sigma - 1/5) + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k
+\end{cases}
 \end{equation}
-Substituting this into \eqref{ze-bound2-rho-star-bound}, one has (since $\sigma \le 3/4$ and $k \ge 2$)
+Substituting the first case into \eqref{ze-bound2-rho-star-bound}, one has (since $\sigma \le 3/4$ and $k \ge 2$)
 \begin{align*}
 \rho^*/k \le \max(\frac{32}{5} - 8\sigma + \tau', \frac{15}{2} - 12\sigma + \frac{5}{2}\tau', \frac{156}{25} - \frac{48}{5}\sigma + 2\tau')
 \end{align*}
@@ -610,7 +613,7 @@ holds at the lower limit $\tau' = 6/5$, and
 \]
 holds at the upper limit $\tau' = 2(\sigma - 1/5) + 2(1 - \sigma)/k$ for $k = 2,3$. 
 
-On the other hand, if $2(\sigma - 1/5) + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k$, then 
+Substituting the second case of \eqref{ze-bound2-rho-bound-temp} into \eqref{ze-bound2-rho-star-bound}
 \[
 \frac{\rho}{k} \le (2 - 2\sigma)\frac{k + 1}{k}.
 \]
@@ -622,6 +625,32 @@ Substituting into \eqref{ze-bound2-rho-star-bound}, one obtains
 \end{align*}
 where the last inequality follows since the LHS is increasing slower in $\tau$ than the RHS, and one may verify (after a tedious calculation) that the inequality holds at the lower-limit $\tau' = 2(\sigma - 1/5) + 2(1 - \sigma)/k$ for $k = 2, 3$.
 
+On the other hand if $\rho/k  + 1 < 5\rho/(4k) + \tau'/2$, then 
+\[
+\rho^*/k \leq 1-2\sigma + \frac{5\rho}{8k} + \frac{\tau'}{4} + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3}{4}\frac{\rho^*}{k} + \frac{\rho}{k}+\frac{\tau'}{2})
+\]
+Solving for $\rho^*/k$ gives 
+\[
+\rho^*/k \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k}))
+\]
+As before, if $6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1-\sigma)/k$ then 
+\[
+\rho/k \le 12/5 - 4\sigma + \tau'
+\]
+so that 
+\[
+\rho^*/k \le \max(6 - 9\sigma + \frac{7}{4}\tau', \frac{73}{10} - \frac{25}{2}\sigma + \frac{23}{8}\tau', \frac{148 - 260\sigma + 65\tau'}{25}) \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\]
+where the last inequality follows from \eqref{ze-bound2-tau-factor-bounds} and since the inequality holds at the upper limit $\tau = 2(\sigma - 1/5) + 2(1-\sigma)/k$. If $2(\sigma - 1/5) + 2(1-\sigma)/k \le \tau' \le 1 + 1/k$ then 
+\[
+\rho/k \le (2 - 2\sigma)\frac{k + 1}{k}
+\]
+so that 
+\begin{align*}
+\max(&3 - 4\sigma + \frac{\tau'}{2} + \frac{5(2 - 2\sigma)}{4}\frac{k + 1}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21(2 - 2\sigma)}{8}\frac{k + 1}{k}, \\
+&\qquad\frac{1}{5}(8 - 16\sigma + 4\tau' + 9(2 - 2\sigma)\frac{k + 1}{k})) \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
+\end{align*}
+where the last inequality holds in light of \eqref{ze-bound2-tau-factor-bounds} and verifying the inequality holds at the lower limit $\tau = 2(\sigma - 1/5) + 2(1-\sigma)/k$.
 \end{proof}
 
 \begin{theorem}\label{imp-energy-bound3}
