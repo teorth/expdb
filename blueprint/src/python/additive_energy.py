@@ -346,7 +346,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
-        sample_check(E, E1, N=10000, dim=5, info=lvers)
+        sample_check(E, E1, N=100000, dim=5, info=lvers)
     
     # -------------------------------------------------------------------------
     # TODO
@@ -371,6 +371,25 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # Project onto the (sigma, tau, rho*) dimension
     Eproj = E1.project({0, 1, 3})
     
+    if Eproj is None:
+        return None
+    
+    if debug:
+        print("Unsimplified projection:")
+        for i in range(len(Eproj.child)):
+            tau_min = min(v[1] for v in E1.child[i].child.get_vertices())
+            tau_max = max(v[1] for v in E1.child[i].child.get_vertices())
+
+            # Filter those regions most relevant to our exploration
+            if tau_min == 2:
+                print("-----------------------------------------------------------")
+                print(Eproj.child[i])
+                print(["(" + " ".join([str(x) for x in v]) + ")" for v in E1.child[i].child.get_vertices()])
+                print("Vertex ranges:")
+                for j in range(5):
+                    print(min(v[j] for v in E1.child[i].child.get_vertices()), max(v[j] for v in E1.child[i].child.get_vertices()))
+                print(E1.child[i])
+
     if debug:
         cpy = copy.copy(Eproj)
     
@@ -381,7 +400,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     if debug:
         print("Simplifying:", len(cpy.child), "->", len(Eproj.child), Eproj)
-        sample_check(Eproj, cpy, N=10000, dim=3, info=lvers)
+        sample_check(Eproj, cpy, N=100000, dim=3, info=lvers)
 
     if zeta:    
         return derived_zeta_large_value_energy_region(

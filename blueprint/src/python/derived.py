@@ -451,7 +451,7 @@ def prove_zero_density_energy_improved2():
         
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 2, Interval(frac(1,2), frac(3,4)))
+        Affine(0, 2, Interval(frac(7,10), frac(3,4)))
     ]
 
     # For each interval of tau_0
