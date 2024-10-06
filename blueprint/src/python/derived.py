@@ -432,7 +432,7 @@ def prove_improved_heath_brown_energy_estimate():
     bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
 
 # Prove a zero density energy estimates using Guth--Maynard's LV theorems
-def prove_zero_density_energy_improved2():
+def prove_zero_density_energy_2():
     hypotheses = Hypothesis_Set()
 
     for k in range(2, 5):
@@ -596,6 +596,6 @@ def prove_all():
     # prove_heath_brown_energy_estimate()
     # prove_improved_heath_brown_energy_estimate()
     # prove_guth_maynard_large_values_theorem()
-    prove_zero_density_energy_improved2()
+    prove_zero_density_energy_2()
 
 prove_all()
