@@ -511,6 +511,7 @@ def prove_zero_density_energy_3():
     
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
     # tau_0 = 8\sigma - 4
     tau0 = Affine(8, -4, Interval(frac(3,4), frac(4,5)))
