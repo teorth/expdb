@@ -645,10 +645,10 @@ def prove_all():
     # prove_exponent_pairs()
     # prove_bourgain_large_values_theorem()
     # prove_zero_density_estimates()
-    # prove_heath_brown_energy_estimate()
+    prove_heath_brown_energy_estimate()
     # prove_improved_heath_brown_energy_estimate()
     # prove_guth_maynard_large_values_theorem()
     # prove_zero_density_energy_2()
-    prove_zero_density_energy_3()
+    # prove_zero_density_energy_3()
 
 prove_all()
