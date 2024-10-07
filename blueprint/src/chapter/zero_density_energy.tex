@@ -556,7 +556,7 @@ for $k = 2, 3$ and $6/5 \le \tau' \le 2(\sigma - 1/5) + 2(1-\sigma)/k$;
 &\qquad\frac{1}{5}(8 - 16\sigma + 4\tau' + 9(2 - 2\sigma)\frac{k + 1}{k})) \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
 \end{split}
 \end{equation*}
-for $k = 2, 3$ and $2(\sigma - 1/5) + 2(1-\sigma)/k \le \tau' \le 1 + 1/k$. For instance, in the case of \eqref{ze-bound2-rho-case1-1}, the LHS is increasing with respect to $\tau'$ than the RHS in view of \eqref{ze-bound2-tau-factor-bounds}, and the inequality holds at the upper limit $\tau' = 13/5 - 2\sigma$ (with some room to spare). The other inequalities may be verified similarly, with the exception of 
+for $k = 2, 3$ and $2(\sigma - 1/5) + 2(1-\sigma)/k \le \tau' \le 1 + 1/k$. For instance, in the case of \eqref{ze-bound2-rho-case1-1}, the LHS is increasing faster with respect to $\tau'$ than the RHS in view of \eqref{ze-bound2-tau-factor-bounds}, and the inequality holds at the upper limit $\tau' = 13/5 - 2\sigma$ (with some room to spare). The other inequalities may be verified similarly, with the exception of 
 \[
 6 - 9\sigma + \frac{7}{4}\tau' \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
 \]
@@ -700,12 +700,147 @@ For $3/4 \le \sigma \le 289/380$, one has
 \]
 \end{theorem}
 
+\derived 
+\code{prove_zero_density_energy_3()}
+
+\begin{proof}
+Throughout assume that $3/4 \le \sigma \le 289/380$ and take $\tau_0 := 8\sigma - 4$ in Corollary \ref{zeroe-large-cor-0}. It suffices to show that 
+\begin{equation}\label{ze-bound3-energy-req}
+\rho^* \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau\quad \text{for all}\quad (\sigma, \tau, \rho, \rho^*, s) \in \Energy, \quad\text{and}\quad \tau_0 \le \tau \le 2\tau_0
+\end{equation}
+and 
+\begin{equation}\label{ze-bound3-energyzeta-req}
+\rho^* \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau\quad \text{for all}\quad (\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta, \quad\text{and}\quad 2 \le \tau \le \tau_0.
+\end{equation}
+In the proof of Theorem \ref{imp-hb-energy-bound} we have already shown that if $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta$ with $2 \le \tau \le 8\sigma - 4$, then 
+\[
+\rho^*/\tau \le \begin{cases}
+\dfrac{45 - 46\sigma}{4(4\sigma - 1)},& 3/4 \le \sigma< 65/86,\\
+\dfrac{4(10 - 9\sigma)}{5(4\sigma - 1)},&65/86 \le \sigma \le 5/6.
+\end{cases}
+\]
+However, one may verify that the RHS is bounded by $(197 - 220\sigma)/(8(5\sigma - 1))$ for all $3/4 \le \sigma \le 289/380$ so that \eqref{ze-bound3-energyzeta-req} follows. 
+
+Now consider \eqref{ze-bound3-energy-req}. Given $\sigma, \tau$, let $k \ge 2$ be the integer for which 
+\[
+k \le \frac{\tau}{4\sigma - 2} < k + 1
+\]
+and as before write $\tau' := \tau/k$. 
+
+By Theorem \ref{guth-maynard-lvt} and Lemma \ref{power-lemma}, one has 
+\[
+\rho/k \le \max(18/5 - 4\sigma, 12/5 - 4\sigma + \tau') = \begin{cases}
+18/5 - 4\sigma,& \tau' \le 6/5\\
+12/5 - 4\sigma + \tau',&\tau' > 6/5
+\end{cases}
+\]
+and from Theorem \ref{huxley-lv} and Lemma \ref{power-lemma}, one has 
+\[
+\rho/k \le \max(2 -2\sigma, 4 - 6\sigma + \tau') = \begin{cases}
+2 - 2\sigma,&\tau' \le 4\sigma - 2,\\
+4 - 6\sigma + \tau',& \tau' > 4\sigma - 2.
+\end{cases}
+\]
+Combining everything, one obtains (for $k \ge 2$)
+\begin{equation}
+\label{ze-bound3-rhok}
+\rho/k \le \begin{cases}
+4 - 6\sigma + \tau',& 4\sigma - 2 \le \tau' \le 2\sigma - 2/5,\\
+18/5 - 4\sigma,& 2\sigma - 2/5 \le \tau' \le 6/5,\\
+12/5 - 4\sigma + \tau', &6/5 \le \tau' \le \sigma + 3/5,\\
+(2 - 2\sigma)(k + 1)/k,& \sigma + 3/5 \le \tau' \le (4\sigma - 2)(k + 1)/k.
+\end{cases}
+\end{equation}
+First, suppose that $6/5 \le \tau' \le (4\sigma - 2)(k + 1)/k$. By Lemma \ref{power-energy}, $(\sigma, \tau', \rho', \rho^*/k, s') \in \Energy$ for some $\rho' \le \rho/k$ and $s' \le s/k$. Applying Theorem \ref{hbt}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$ by \eqref{ze-bound3-rhok}, 
+\[
+\frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
+\]
+If $\rho/k + 1 \ge 5\rho/(4k) + \tau'/2$, then 
+    \[
+    \frac{\rho^*}{k} \le \frac{3}{2} - 2\sigma + \frac{\rho}{2k} + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
+    \]
+Solving for $\rho^*/k$ gives
+\[
+\rho^*/k \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})).
+\]
+Applying $\rho/k \le \min(12/5 - 4\sigma + \tau', (2 - 2\sigma)(k + 1)/k)$, one ultimately obtains 
+\[
+\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
+\]
+If $\rho/k + 1 \le 5\rho/(4k) + \tau'/2$ one has 
+\[
+\rho^*/k \leq 1-2\sigma + \frac{5\rho}{8k} + \frac{\tau'}{4} + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3}{4}\frac{\rho^*}{k} + \frac{\rho}{k}+\frac{\tau'}{2})
+\]
+and solving for $\rho^*/k$ gives 
+\[
+\rho^*/k \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
+\]
+Once again applying $\rho/k \le \min(12/5 - 4\sigma + \tau', (2 - 2\sigma)(k + 1)/k)$, one ultimately obtains 
+\[
+\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
+\]
+
+Now suppose that $4\sigma - 2 \le \tau' \le 6/5$. By Lemma \ref{power-energy}, for any integer $k \ge 2$ one has $(\sigma, \tau/(k - 1), \rho', \rho^*/(k - 1), s') \in \Energy$ for some $\rho' \le \rho/(k - 1)$ and $s' \le s/(k - 1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho' \le \rho/(k - 1)$ and rearranging, one obtains 
+\begin{equation}\label{ze-bound3-rhostar2}
+\begin{split}
+\rho^* \le (1-2\sigma)(k - 1) &+ \frac{1}{2}\max(\rho+k - 1, 2\rho, \frac{5\rho}{4} + \frac{\tau}{2}) \\
+&+ \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
+\end{split}
+\end{equation}
+Consider the first maximum of \eqref{ze-bound3-rhostar2}. If $\rho + k - 1$ is maximal, then 
+\[
+\rho^* \le (\frac{3}{2} - 2\sigma)(k - 1) + \frac{\rho}{2} + \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
+\]
+Solving for $\rho^*$ and dividing by $k$ gives 
+\[
+\frac{\rho^*}{k} \le \max((4 - 4\sigma)\frac{k - 1}{k} + \frac{\rho}{k}, \frac{(3 - 4\sigma)(k - 1)/k + 5\rho/k}{2}, \frac{2}{5}((6 - 8\sigma)(k - 1)/k + \tau' + \frac{4\rho}{k})).
+\]
+However, using $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$, one ultimately obtains 
+\[
+\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
+\]
+Now suppose $5\rho/4 + \tau'/2$ is maximal in \eqref{ze-bound3-rhostar2}. Then 
+\[
+\rho^* \le (1 - 2\sigma)(k - 1) + \frac{5}{8}\rho + \frac{\tau}{4} + \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
+\]
+Solving for $\rho^*$ and dividing by $k$ gives 
+\[
+\frac{\rho^*}{k} \le \max((3 - 4\sigma)\frac{k - 1}{k} + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, (1 - 2\sigma)\frac{k - 1}{k} + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{8}{5}((1 - 2\sigma)\frac{k - 1}{k} + \frac{\tau'}{2} + \frac{9}{8}\frac{\rho}{k})).
+\]
+Once again we apply $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$ to ultimately obtain
+\[
+\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
+\]
+Lastly, if $2\rho$ is maximal in \eqref{ze-bound3-rhostar2}, then 
+\[
+\rho^* \le (1 - 2\sigma)(k - 1) + \rho + \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
+\]
+Solving for $\rho^*$ and dividing by $k$ gives
+\[
+\rho^*/k \le \max((3 - 4\sigma)\frac{k - 1}{k} + \frac{2\rho}{k}, (1 - 2\sigma)\frac{k - 1}{k} + \frac{3\rho}{k}, \frac{8}{5}((1 - 2\sigma)\frac{k - 1}{k} + \frac{\tau'}{4} + \frac{3}{2}\frac{\rho}{k})).
+\]
+Once again we apply $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$ to ultimately obtain
+\[
+\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'
+\]
+in this case too. 
+\end{proof}
+
 \begin{theorem}\label{imp-energy-bound4}
 For $3/4 \le \sigma \le 5/6$, one has 
 \[
-\A^*(\sigma) \le \frac{3(29 - 30\sigma)}{5(5\sigma - 1)(1 - \sigma)}.
+\A^*(\sigma) \le \max\left(\frac{3(29 - 30\sigma)}{5(5\sigma - 1)(1 - \sigma)}, \frac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}\right).
 \]
 \end{theorem}
+
+\derived 
+\code{prove_zero_density_energy_4()}
+
+\begin{proof}
+
+\end{proof}
+
+
 \begin{table}[ht]
     \def\arraystretch{2}
     \centering

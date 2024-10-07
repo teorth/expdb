@@ -373,7 +373,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     
     if Eproj is None:
         return None
-    
+    """
     if debug:
         print("Unsimplified projection:")
         for i in range(len(Eproj.child)):
@@ -389,7 +389,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
                 for j in range(5):
                     print(min(v[j] for v in E1.child[i].child.get_vertices()), max(v[j] for v in E1.child[i].child.get_vertices()))
                 print(E1.child[i])
-
+    """
     if debug:
         cpy = copy.copy(Eproj)
     

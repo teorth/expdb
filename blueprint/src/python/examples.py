@@ -429,7 +429,7 @@ def zero_density_energy_examples():
         
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 2, Interval(frac(1,2), frac(3,4)))
+        Affine(0, 3, Interval(frac(3,4), frac(4,5)))
     ]
 
     # For each interval of tau_0
