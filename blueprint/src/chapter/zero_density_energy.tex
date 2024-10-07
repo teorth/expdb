@@ -19,8 +19,9 @@ for any $1/2 \leq \sigma \leq 1$.
 \end{itemize}
 \end{lemma}
 
-\derived 
-\code{prove_heath_brown_energy_estimate()}
+\python{zero_density_energy_estimate}
+\code{add_trivial_zero_density_energy_estimates(hypotheses)}
+
 \begin{proof}\uses{add-energy, zero-basic} The claim (i) follows from Lemma \ref{add-energy}(iv), and the remaining claims then follow from Lemma \ref{zero-basic}.\end{proof}
 
 Upper bounds on $\A^*(\sigma)$ can be obtained from large value energy theorems via the following relation.
@@ -87,6 +88,11 @@ $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zet
         \frac{12}{4\sigma-1} & \hbox{ for } 3/4 \leq \sigma \leq 1.
     \end{align*}
 \end{theorem}
+
+\literature
+\code{add_zero_density_energy_heath_brown_1979()}
+\derived
+\code{prove_heath_brown_energy_estimate()}
 
 \begin{proof}\uses{zeroe-large-cor-0, power-energy, hb-energy-simp, l2-mvt, hb-density, zeroe-basic, lvz-basic} We first suppose that $\sigma \leq 3/4$.  Here we apply Corollary \ref{zeroe-large-cor-0} with $\tau_0 = 2$.  The $\LV^*_\zeta$ supremum is now trivial, so it suffices to show that
 \begin{equation}\label{second-claim}
