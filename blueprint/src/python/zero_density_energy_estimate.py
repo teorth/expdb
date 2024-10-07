@@ -184,7 +184,7 @@ def approx_best_energy_bound(hypotheses, sigma, tau0):
 # respectively, computes and returns the best bound on A*(\sigma) 
 # 
 # This function should give the same result as approx_best_energy_bound
-def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval):
+def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
     
     if LVER is not None and (not isinstance(LVER, Hypothesis) or \
         LVER.hypothesis_type != "Large value energy region"):
@@ -199,16 +199,18 @@ def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval):
 
     if LVER is not None:
         sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval)
-        print("sup1")
-        for s in sup1: print(s[0], "for x\in", s[1])
+        if debug:
+            print("sup1")
+            for s in sup1: print(s[0], "for x\in", s[1])
         fns.extend(list(sup1))
         deps.update(list(LVER.dependencies))
         depcount[0] = len(LVER.dependencies)
     
     if LVER_zeta is not None:
         sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval)
-        print("sup2")
-        for s in sup2: print(s[0], "for x\in", s[1])
+        if debug:
+            print("sup2")
+            for s in sup2: print(s[0], "for x\in", s[1])
         fns.extend(list(sup2))
         deps.update(list(LVER_zeta.dependencies))
         depcount[1] = len(LVER_zeta.dependencies)
@@ -242,7 +244,6 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
     fns = []
     visited = set() # Keep track of the edges we have already visited to prevent duplication
     for p in polys:
-        print(p)
         edges = p.get_edges()
         for edge in edges:
             # Vertices on either side of the edge
@@ -267,12 +268,7 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
                 (rho1 - rho2) / (sigma1 - sigma2), 
                 (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
             ])
-            """
-            print("\tsigma:", min(sigma1, sigma2), max(sigma1, sigma2), 
-                    "\t tau(sigma):", tau, 
-                    "\t rho(sigma):", rho, 
-                    "\t rho/tau(sigma):", rho.div(tau))
-            """
+            
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
     
     # Take the maximum of the functions

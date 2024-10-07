@@ -328,7 +328,6 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
         # A large value energy region is also a zeta large value energy region
         # A zeta large value energy region has no raise to power hypothesis
         lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
-        print(f"Found {len(lvers)} zeta large value energy regions")
     
     # Compute intersection over the domain
     domain = sigma_tau_domain.lift([
@@ -342,7 +341,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # Compute the large value energy bounding region
     E = Region(Region_Type.INTERSECT, [domain] + [lver.data.region for lver in lvers])
 
-    E1 = E.as_disjoint_union()
+    E1 = E.as_disjoint_union(verbose=debug)
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
@@ -373,28 +372,13 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     
     if Eproj is None:
         return None
-    """
-    if debug:
-        print("Unsimplified projection:")
-        for i in range(len(Eproj.child)):
-            tau_min = min(v[1] for v in E1.child[i].child.get_vertices())
-            tau_max = max(v[1] for v in E1.child[i].child.get_vertices())
-
-            # Filter those regions most relevant to our exploration
-            if tau_min == 2:
-                print("-----------------------------------------------------------")
-                print(Eproj.child[i])
-                print(["(" + " ".join([str(x) for x in v]) + ")" for v in E1.child[i].child.get_vertices()])
-                print("Vertex ranges:")
-                for j in range(5):
-                    print(min(v[j] for v in E1.child[i].child.get_vertices()), max(v[j] for v in E1.child[i].child.get_vertices()))
-                print(E1.child[i])
-    """
+    
     if debug:
         cpy = copy.copy(Eproj)
     
     # Handle empty projection
-    if Eproj is None: return None
+    if Eproj is None: 
+        return None
     
     Eproj.simplify()
 

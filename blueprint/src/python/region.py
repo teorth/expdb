@@ -206,14 +206,14 @@ class Region:
 
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a Region object of type DISJOINT_UNION
-    def as_disjoint_union(self) -> 'Region':
-        polys = self._as_disjoint_union_poly()
+    def as_disjoint_union(self, verbose=False) -> 'Region':
+        polys = self._as_disjoint_union_poly(verbose=verbose)
         return Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
 
     # Internal method 
     # Same as the as_disjoint_union(self) method except it returns the result as a 
     # list of Polytope objects.
-    def _as_disjoint_union_poly(self) -> list[Polytope]:
+    def _as_disjoint_union_poly(self, verbose=False) -> list[Polytope]:
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
@@ -236,7 +236,8 @@ class Region:
             SIMPLIFY_EVERY = 10
             UNION_THRESHOLD = 5
 
-            start_time = time.time()
+            if verbose:
+                start_time = time.time()
 
             # Sets of lists of polytopes
             child_sets = [r._as_disjoint_union_poly() for r in self.child]
@@ -283,9 +284,11 @@ class Region:
                 if (i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100):
                     prevlen = len(new_A)
                     new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union)
-                    print(prevlen, "->", len(new_A))
+                    if verbose:
+                        print("Simplifying", prevlen, "->", len(new_A))
 
-                print("Processed", i, "of", len(child_sets) - 1, ":", len(new_A), "pieces, computed in", time.time() - start_time, "sec")
+                if verbose:
+                    print("Processed", i, "of", len(child_sets) - 1, ":", len(new_A), "pieces, computed in", time.time() - start_time, "sec")
                 A = new_A
             return A
         

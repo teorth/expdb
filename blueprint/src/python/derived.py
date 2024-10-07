@@ -580,33 +580,20 @@ def prove_zero_density_estimates():
     # compute_best_zero_density()
 
 def prove_heath_brown_energy_estimate():
-    hypotheses = Hypothesis_Set()
 
-    for k in range(2, 6):
+    # Part 1: \sigma \in [1/2, 3/4]
+    hypotheses = Hypothesis_Set()
+    for k in range(2, 5):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2b"))
-    
-    # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
-    # Convert all zeta large value estimates -> zeta large value energy region
-    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    # tau_0 as a piecewise affine function 
-    tau0s = [
-        Affine(0, 3, Interval(frac(1,2), frac(1))),
-        Affine(4, -1, Interval(frac(3,4), 1))
-    ]
-
-    # Convert tau_0 into a Region of (sigma, tau)
-    # domain representing tau0 <= tau <= 2tau0
-    LVER_domain = Region.disjoint_union([
-        Region.from_polytope(
+    # tau_0 as an affine function 
+    tau0 = Affine(0, 2, Interval(frac(1,2), frac(3,4)))
+    LVER_domain = Region.from_polytope(
             Polytope([
                 [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
                 [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
@@ -614,16 +601,12 @@ def prove_heath_brown_energy_estimate():
                 [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
             ])
         )
-        for tau0 in tau0s
-    ])
-    # Compute the feasible region for LV*(s, t) as a 3-dimensional 
-    # polytope for a range of sigma
-    LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
-    LV_star_hyp.desc_with_proof()
+    
+    # Compute the feasible region for LV*(s, t) as a 3-dimensional polytope
+    LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False, debug=False)
 
     # domain representing 2 <= tau <= tau0
-    LVER_zeta_domain = Region.disjoint_union([
-        Region.from_polytope(
+    LVER_zeta_domain = Region.from_polytope(
             Polytope([
                 [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
                 [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
@@ -631,13 +614,54 @@ def prove_heath_brown_energy_estimate():
                 [tau0.c, tau0.m, -1],           # tau <= tau0 = m sigma + c
             ])
         )
-        for tau0 in tau0s
-    ])
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
-    LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
-    LVZ_star_hyp.desc_with_proof()
+    LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True, debug=False)
+    ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
 
-    bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
+
+    # Part 2: \sigma \in [3/4, 25/28] ----------------------------------------------------------
+
+    hypotheses = Hypothesis_Set()
+    for k in range(2, 5):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    # Add classical and literature Large value estimates
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    # Convert all large value estimates -> large value energy region
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    # Convert all zeta large value estimates -> zeta large value energy region
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    # tau_0 as an affine function 
+    tau0 = Affine(4, -1, Interval(frac(3,4), frac(25,28)))
+    LVER_domain = Region.from_polytope(
+            Polytope([
+                [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+                [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+                [-tau0.c, -tau0.m, 1],       # tau >= tau0 = m sigma + c
+                [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
+            ])
+        )
+    
+    # Compute the feasible region for LV*(s, t) as a 3-dimensional 
+    # polytope for a range of sigma
+    LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False, debug=False)
+
+    # domain representing 2 <= tau <= tau0
+    LVER_zeta_domain = Region.from_polytope(
+            Polytope([
+                [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+                [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+                [-2, 0, 1],                     # tau0 >= 2
+                [tau0.c, tau0.m, -1],           # tau <= tau0 = m sigma + c
+            ])
+        )
+    # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
+    LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True, debug=False)
+    ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
 
 def prove_all():
     # van_der_corput_pair(10)
