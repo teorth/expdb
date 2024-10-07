@@ -721,25 +721,30 @@ In the proof of Theorem \ref{imp-hb-energy-bound} we have already shown that if 
 \]
 However, one may verify that the RHS is bounded by $(197 - 220\sigma)/(8(5\sigma - 1))$ for all $3/4 \le \sigma \le 289/380$ so that \eqref{ze-bound3-energyzeta-req} follows. 
 
-Now consider \eqref{ze-bound3-energy-req}. Given $\sigma, \tau$, let $k \ge 2$ be the integer for which 
-\[
-k \le \frac{\tau}{4\sigma - 2} < k + 1
-\]
-and as before write $\tau' := \tau/k$. 
+Now consider \eqref{ze-bound3-energy-req}. Given $\sigma, \tau$, let $k \ge 2$ be the smallest integer for which 
+\begin{equation}
+\label{ze-bound3-kdefn}
+k \le \frac{\tau}{4\sigma - 2} \le k + 1
+\end{equation}
+so that $k = 2, 3$ for $\tau_0 \le \tau < 2\tau_0$, and as before write $\tau' := \tau/k$. 
 
-By Theorem \ref{guth-maynard-lvt} and Lemma \ref{power-lemma}, one has 
+By Theorem \ref{guth-maynard-lvt} and Lemma \ref{power-lemma} one has 
 \[
 \rho/k \le \max(18/5 - 4\sigma, 12/5 - 4\sigma + \tau') = \begin{cases}
 18/5 - 4\sigma,& \tau' \le 6/5\\
 12/5 - 4\sigma + \tau',&\tau' > 6/5
 \end{cases}
 \]
-and from Theorem \ref{huxley-lv} and Lemma \ref{power-lemma}, one has 
+and from Theorem \ref{huxley-lv} and Lemma \ref{power-lemma}, for any integer $\ell$,
 \[
-\rho/k \le \max(2 -2\sigma, 4 - 6\sigma + \tau') = \begin{cases}
-2 - 2\sigma,&\tau' \le 4\sigma - 2,\\
-4 - 6\sigma + \tau',& \tau' > 4\sigma - 2.
+\rho/\ell \le \max(2 -2\sigma, 4 - 6\sigma + \tau/\ell) = \begin{cases}
+2 - 2\sigma,&\tau/\ell \le 4\sigma - 2,\\
+4 - 6\sigma + \tau/\ell,& \tau/\ell > 4\sigma - 2.
 \end{cases}
+\]
+so that in particular, taking $\ell = k + 1$ and noting that $\tau/(k + 1) \le 4\sigma - 2$ by \eqref{ze-bound3-kdefn}, 
+\[
+\rho/k = \frac{k + 1}{k}\frac{\rho}{k + 1} \le \frac{k + 1}{k}\max(2 - 2\sigma, 4 - 6\sigma + \frac{\tau}{k + 1}) = (2 - 2\sigma)\frac{k + 1}{k} \le 3 - 3\sigma. 
 \]
 Combining everything, one obtains (for $k \ge 2$)
 \begin{equation}
@@ -748,24 +753,24 @@ Combining everything, one obtains (for $k \ge 2$)
 4 - 6\sigma + \tau',& 4\sigma - 2 \le \tau' \le 2\sigma - 2/5,\\
 18/5 - 4\sigma,& 2\sigma - 2/5 \le \tau' \le 6/5,\\
 12/5 - 4\sigma + \tau', &6/5 \le \tau' \le \sigma + 3/5,\\
-(2 - 2\sigma)(k + 1)/k,& \sigma + 3/5 \le \tau' \le (4\sigma - 2)(k + 1)/k.
+3 - 3\sigma,& \sigma + 3/5 \le \tau' \le (4\sigma - 2)(k + 1)/k.
 \end{cases}
 \end{equation}
 First, suppose that $6/5 \le \tau' \le (4\sigma - 2)(k + 1)/k$. By Lemma \ref{power-energy}, $(\sigma, \tau', \rho', \rho^*/k, s') \in \Energy$ for some $\rho' \le \rho/k$ and $s' \le s/k$. Applying Theorem \ref{hbt}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$ by \eqref{ze-bound3-rhok}, 
 \[
-\frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
+\frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max\left(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}\right) + \frac{1}{2}\max\left(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}\right).
 \]
 If $\rho/k + 1 \ge 5\rho/(4k) + \tau'/2$, then 
-    \[
-    \frac{\rho^*}{k} \le \frac{3}{2} - 2\sigma + \frac{\rho}{2k} + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
-    \]
+\[
+\frac{\rho^*}{k} \le \frac{3}{2} - 2\sigma + \frac{\rho}{2k} + \frac{1}{2}\max\left(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}\right).
+\]
 Solving for $\rho^*/k$ gives
 \[
-\rho^*/k \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})).
+\frac{\rho^*}{k} \le \max\left(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})\right).
 \]
-Applying $\rho/k \le \min(12/5 - 4\sigma + \tau', (2 - 2\sigma)(k + 1)/k)$, one ultimately obtains 
+Applying $\rho/k \le \min(12/5 - 4\sigma + \tau', 3 - 3\sigma)$ to the RHS, one may ultimately verify that 
 \[
-\rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
+\frac{\rho^*}{k} \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
 \]
 If $\rho/k + 1 \le 5\rho/(4k) + \tau'/2$ one has 
 \[
@@ -775,7 +780,7 @@ and solving for $\rho^*/k$ gives
 \[
 \rho^*/k \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
 \]
-Once again applying $\rho/k \le \min(12/5 - 4\sigma + \tau', (2 - 2\sigma)(k + 1)/k)$, one ultimately obtains 
+Once again applying $\rho/k \le \min(12/5 - 4\sigma + \tau', 3 - 3\sigma)$, one again ultimately obtains 
 \[
 \rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
 \]
@@ -795,7 +800,11 @@ Solving for $\rho^*$ and dividing by $k$ gives
 \[
 \frac{\rho^*}{k} \le \max((4 - 4\sigma)\frac{k - 1}{k} + \frac{\rho}{k}, \frac{(3 - 4\sigma)(k - 1)/k + 5\rho/k}{2}, \frac{2}{5}((6 - 8\sigma)(k - 1)/k + \tau' + \frac{4\rho}{k})).
 \]
-However, using $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$, one ultimately obtains 
+Since $3/4 \le \sigma \le 1$ and $1/2 \le (k - 1)/k \le 2/3$, we have 
+\[
+\frac{\rho^*}{k} \le \max\left(\frac{8}{3}(1 - \sigma) + \frac{\rho}{k}, \frac{3}{4} - \sigma + \frac{5}{2}\frac{\rho}{k}, \frac{2}{5}(3 - 4\sigma + \tau' + \frac{4\rho}{k})\right).
+\]
+Bounding the RHS with $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$, one ultimately obtains 
 \[
 \rho^*/k \le \frac{197 - 220\sigma}{8(5\sigma - 1)}\tau'.
 \]
@@ -806,6 +815,10 @@ Now suppose $5\rho/4 + \tau'/2$ is maximal in \eqref{ze-bound3-rhostar2}. Then
 Solving for $\rho^*$ and dividing by $k$ gives 
 \[
 \frac{\rho^*}{k} \le \max((3 - 4\sigma)\frac{k - 1}{k} + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, (1 - 2\sigma)\frac{k - 1}{k} + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{8}{5}((1 - 2\sigma)\frac{k - 1}{k} + \frac{\tau'}{2} + \frac{9}{8}\frac{\rho}{k})).
+\]
+As before, since $3/4 \le \sigma \le 1$ and $1/2 \le (k - 1)/k \le 2/3$, one has 
+\[
+\frac{\rho^*}{k} \le \max(\frac{3 - 4\sigma}{2} + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, \frac{1}{2} - \sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{8}{5}(\frac{1}{2} - \sigma + \frac{\tau'}{2} + \frac{9}{8}\frac{\rho}{k})).
 \]
 Once again we apply $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$ to ultimately obtain
 \[
