@@ -606,82 +606,33 @@ def compute_pintz_density_estimate_subdiv():
 def best_zero_density_estimate(hypotheses, verbose=False):
     hs = hypotheses.list_hypotheses(hypothesis_type="Zero density estimate")
 
-    # Ensure bound is computed
+    # Ensure bound is computed (i.e any RationalFunction objects that use lazy initialization
+    # is parsed)
     for h in hs:
         h.data._ensure_bound_is_computed()
 
-    # Start with default bound
-    default = Zero_Density_Estimate("10000000", Interval(frac(1,2), 1))
-    default._ensure_bound_is_computed()
-    best_bound = [
-        Hypothesis(
-            "Placeholder zero density estimate",
-            "Zero density estimate",
-            default,
-            "Placeholder zero density estimate",
-            Reference.trivial(),
-        )
-    ]
-    x = RF.x
+    minimum = RF.min([(h.data.bound, h.data.interval) for h in hs], Interval(frac(1,2), 1))
 
-    for h1 in hs:
-        # For simplicity, work directly with sympy objects
-        f1 = h1.data.bound.num / h1.data.bound.den
-        in1 = h1.data.interval
-
-        new_best_bound = []
-        for h2 in best_bound:
-            f2 = h2.data.bound.num / h2.data.bound.den
-            in2 = h2.data.interval
-            solns = sympy.solve(f1 - f2)
-            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
-            crits.update([in1.x0, in1.x1])
-            crits = set(c for c in crits if in2.contains(c))
-            crits.update([in2.x0, in2.x1])
-
-            crits = list(crits)
-            crits.sort()
-            for i in range(1, len(crits)):
-                inter = Interval(crits[i - 1], crits[i])
-                mid = inter.midpoint()
-                if not in1.contains(mid) or f2.subs(x, mid) < f1.subs(x, mid):
-                    # f2 is the better bound
-                    zde = Zero_Density_Estimate(str(f2), inter)
-                    h = h2
-                else:
-                    zde = Zero_Density_Estimate(str(f1), inter)
-                    h = h1
-
-                zde._ensure_bound_is_computed()
-                # name, hypothesis_type, data, proof, reference
-                new_best_bound.append(
-                    Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
+    # Pack into Hypothesis objects
+    best_bound = []
+    for (func, interval, ref) in minimum:
+        zde = Zero_Density_Estimate.from_rational_func(func, interval)
+        if ref < 0:
+            best_bound.append(
+                Hypothesis(
+                    "Placeholder zero density estimate",
+                    "Zero density estimate",
+                    zde,
+                    "Placeholder zero density estimate",
+                    Reference.trivial(),
                 )
-
-        # Simplify
-        best_bound = []
-        i = 0
-        while i < len(new_best_bound):
-            bi = new_best_bound[i]
-            (fi, inti) = (bi.data.bound, bi.data.interval)
-            left = inti.x0
-            right = inti.x1
-
-            j = i + 1
-            while j < len(new_best_bound):
-                bj = new_best_bound[j]
-                (fj, intj) = (bj.data.bound, bj.data.interval)
-                if not (fi == fj and right == intj.x0 and \
-                        bi.proof == bj.proof):
-                    break
-
-                right = intj.x1
-                j += 1
-
-            bi.data.interval = Interval(left, right)
-            best_bound.append(bi)
-            i = j
-
+            )
+        else:
+            h = hs[ref]
+            best_bound.append(
+                Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
+            )
+    
     if verbose:
         for b in best_bound:
             if b.data.interval.x0 < Constants.ZERO_DENSITY_SIGMA_LIMIT:

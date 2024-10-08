@@ -773,7 +773,14 @@ class RationalFunction:
         return f"{sympy.latex(sympy.simplify(self.num / self.den))}"
 
     def __eq__(self, other):
-        return (self.num * other.den - self.den * other.num).equals(0)
+        res = self.num * other.den - self.den * other.num
+
+        # Direct test if result is numeric
+        if isinstance(res, numbers.Number): 
+            return res == 0
+        
+        # Symbolic test otherwise 
+        return res.equals(0)
 
 
     # Static functions -------------------------------------------------
@@ -786,6 +793,56 @@ class RationalFunction:
         r.den = den
         return r
 
+    # Given a list of (RationalFunction, Interval) tuples, compute their minimum over a 
+    # domain, returning a list of (RationalFunction, Interval, Integer) tuples. The last 
+    # element of each tuple indicates the index of where piece comes from in the original 
+    # func_and_domains list 
+    def min(func_and_domains: list, domain: Interval) -> list:
+        
+        # Start with default bound with reference index -1
+        best_bound = [(RationalFunction([1000000]), domain, -1)]
+
+        for ref1 in range(len(func_and_domains)):
+            (func1, in1) = func_and_domains[ref1]
+
+            new_best_bound = []
+            for (func2, in2, ref2) in best_bound:
+                solns = sympy.solve(func1.num / func1.den - func2.num / func2.den)
+                crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
+                crits.update([in1.x0, in1.x1])
+                crits = set(c for c in crits if in2.contains(c))
+                crits.update([in2.x0, in2.x1])
+
+                crits = list(crits)
+                crits.sort()
+                for i in range(1, len(crits)):
+                    inter = Interval(crits[i - 1], crits[i])
+                    mid = inter.midpoint()
+                    if not in1.contains(mid) or func2.at(mid) < func1.at(mid):
+                        new_best_bound.append((func2, inter, ref2)) # f2 is the better bound
+                    else:
+                        new_best_bound.append((func1, inter, ref1))
+
+            # Simplify
+            best_bound = []
+            i = 0
+            while i < len(new_best_bound):
+                (fi, inti, refi) = new_best_bound[i]
+                left = inti.x0
+                right = inti.x1
+
+                j = i + 1
+                while j < len(new_best_bound):
+                    (fj, intj, refj) = new_best_bound[j]
+                    #print(type(refi), type(refj))
+                    if not (fi == fj and right == intj.x0 and refi == refj):
+                        break
+                    right = intj.x1
+                    j += 1
+
+                best_bound.append((fi, Interval(left, right), refi))
+                i = j
+        return best_bound
     # ------------------------------------------------------------------
 
     def at(self, x):

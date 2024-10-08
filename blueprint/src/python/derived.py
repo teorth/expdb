@@ -676,7 +676,7 @@ def prove_prime_gap2():
     # TODO: add zero-density estimates and energy theorems from derived 
 
     # Compute \theta_{gap, 2}
-    pg.compute_gap2(hypotheses)
+    pg.compute_gap2(hypotheses, debug=True)
 
 
 def prove_all():
