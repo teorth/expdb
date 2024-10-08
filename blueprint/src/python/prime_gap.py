@@ -3,6 +3,7 @@
 from fractions import Fraction as frac
 from functions import Interval, RationalFunction as RF
 from hypotheses import *
+import numpy as np
 import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
 
@@ -45,7 +46,11 @@ def compute_gap2(hypotheses, debug=False):
         alpha = 4 * x - 2 + 2 * (B * (1 - x) - 1) / (B - A)
         beta = 4 * x - 2 + (B * (1 - x) - 1) / A
 
-        print(interval, alpha.simplify(), beta.simplify())
+        sup = 0
+        for sigma in np.linspace(float(interval.x0), float(interval.x1), 100):
+            v = max(alpha.subs(x, sigma), beta.subs(x, sigma))
+            if sup < v: sup = v
+        print(interval, v, alpha.simplify(), beta.simplify())
 
 
 
