@@ -184,7 +184,7 @@ def approx_best_energy_bound(hypotheses, sigma, tau0):
 # respectively, computes and returns the best bound on A*(\sigma) 
 # 
 # This function should give the same result as approx_best_energy_bound
-def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
+def lver_to_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
     
     if LVER is not None and (not isinstance(LVER, Hypothesis) or \
         LVER.hypothesis_type != "Large value energy region"):
@@ -229,8 +229,6 @@ def compute_best_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
         )
         for s in sup
         ]
-
-
 
 def compute_sup_LV_on_tau(LV_region, sigma_interval):
     

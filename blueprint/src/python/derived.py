@@ -395,7 +395,7 @@ def prove_heath_brown_energy_estimate():
         )
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True, debug=False)
-    ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
+    ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
 
 
     # Part 2: \sigma \in [3/4, 25/28] ----------------------------------------------------------
@@ -440,7 +440,7 @@ def prove_heath_brown_energy_estimate():
         )
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True, debug=False)
-    ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
+    ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, tau0.domain)
 
 def prove_improved_heath_brown_energy_estimate():
     
@@ -514,7 +514,7 @@ def prove_improved_heath_brown_energy_estimate():
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
     LVZ_star_hyp.desc_with_proof()
 
-    bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
+    bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, Interval(frac(1,2), 1))
 
 def prove_zero_density_energy_2():
     hypotheses = Hypothesis_Set()
@@ -578,7 +578,7 @@ def prove_zero_density_energy_2():
         if LVZ_star_hyp is not None:
             LVZ_star_hyp.desc_with_proof()
 
-        bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
+        bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
 
 def prove_zero_density_energy_3():
     hypotheses = Hypothesis_Set()
@@ -631,7 +631,7 @@ def prove_zero_density_energy_3():
     if LVZ_star_hyp is not None:
         LVZ_star_hyp.desc_with_proof()
 
-    bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
+    bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
 
 #################################################################################################
 

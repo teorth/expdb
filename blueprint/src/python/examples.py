@@ -472,7 +472,7 @@ def zero_density_energy_examples():
         if LVZ_star_hyp is not None:
             LVZ_star_hyp.desc_with_proof()
 
-        bounds = ze.compute_best_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
+        bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
 
 
 def all_examples():
