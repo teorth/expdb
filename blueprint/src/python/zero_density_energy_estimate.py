@@ -326,4 +326,39 @@ def max_RF(fns, domain):
 
     return sup
 
+# Given a Hypothesis_Set, compute a piecewise function representing the best bound 
+# on A*(\sigma)
+# TODO: this function is quite similar to compute_best_density_estimate in zero_density_estimate.py
+# Combine/merge them?
+def compute_best_energy_bound(hypotheses: Hypothesis_Set) -> list:
+    if not isinstance(hypotheses, Hypothesis_Set):
+        raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
+    
+    hs = hypotheses.list_hypotheses(hypothesis_type="Zero density energy estimate")
 
+    # Ensure bound is computed (i.e any RationalFunction objects that use lazy initialization
+    # is parsed)
+    for h in hs:
+        h.data._ensure_bound_is_computed()
+
+    minimum = RF.min([(h.data.bound, h.data.interval) for h in hs], Interval(frac(1,2), 1))
+
+    # Pack into Hypothesis objects
+    best_bound = []
+    for (func, interval, ref) in minimum:
+        zde = Zero_Density_Energy_Estimate.from_rational_func(func, interval)
+        if ref < 0:
+            best_bound.append(
+                Hypothesis(
+                    "Placeholder zero density estimate",
+                    "Zero density estimate",
+                    zde,
+                    "Placeholder zero density estimate",
+                    Reference.trivial(),
+                )
+            )
+        else:
+            h = hs[ref]
+            best_bound.append(
+                Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
+            )
