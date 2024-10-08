@@ -793,11 +793,15 @@ class RationalFunction:
         r.den = den
         return r
 
-    # Given a list of (RationalFunction, Interval) tuples, compute their minimum over a 
-    # domain, returning a list of (RationalFunction, Interval, Integer) tuples. The last 
-    # element of each tuple indicates the index of where piece comes from in the original 
-    # func_and_domains list 
-    def min(func_and_domains: list, domain: Interval) -> list:
+    # Given a list of (RationalFunction, Interval) tuples, compute the "most optimal" function 
+    # on a domain, returning a list of (RationalFunction, Interval, Integer) tuples. Optimality 
+    # is typically taken to be either the minimum or the maximum. The last element of each tuple 
+    # indicates the index of where piece comes from in the original func_and_domains list.
+    # If a function is not defined on an interval, it is treated as +infinity (resp. -infinity). 
+    # The comparator parameter compares two RationalFunction instances on an interval 
+    # on which they are guaranteed to be defined. Returns true if the first RationalFunction
+    # instance is more "optimal" 
+    def _compute_optimal(func_and_domains: list, domain: Interval, comparator) -> list:
         
         # Start with default bound with reference index -1
         best_bound = [(RationalFunction([1000000]), domain, -1)]
@@ -818,7 +822,7 @@ class RationalFunction:
                 for i in range(1, len(crits)):
                     inter = Interval(crits[i - 1], crits[i])
                     mid = inter.midpoint()
-                    if not in1.contains(mid) or func2.at(mid) < func1.at(mid):
+                    if not in1.contains(mid) or comparator(func2.at(mid), func1.at(mid)):
                         new_best_bound.append((func2, inter, ref2)) # f2 is the better bound
                     else:
                         new_best_bound.append((func1, inter, ref1))
@@ -843,6 +847,31 @@ class RationalFunction:
                 best_bound.append((fi, Interval(left, right), refi))
                 i = j
         return best_bound
+    
+    # Given a list of (RationalFunction, Interval) tuples, compute their (piecewise) minimum. 
+    # The result is returned as a list of (RationalFunction, Interval, Integer) tuples, where 
+    # the last element indicates the index of the RationalFunction piece in the original 
+    # list of functions.
+    # If a function is not defined on an interval, it is treated as -infinity. 
+    def min(func_and_domains: list, domain: Interval) -> list:
+        if not isinstance(func_and_domains, list):
+            raise ValueError("Parameter piecewise_funcs must be of type list")
+        if not isinstance(domain, Interval):
+            raise ValueError("Parameter domain must be of type Interval")
+        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x < y)
+
+    # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The 
+    # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where 
+    # the last element indicates the index of the RationalFunction piece in the original 
+    # list of functions
+    # If a function is not defined on an interval, it is treated as -infinity. 
+    def max(func_and_domains: list, domain: Interval) -> list:
+        if not isinstance(func_and_domains, list):
+            raise ValueError("Parameter piecewise_funcs must be of type list")
+        if not isinstance(domain, Interval):
+            raise ValueError("Parameter domain must be of type Interval")
+        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x > y)
+
     # ------------------------------------------------------------------
 
     def at(self, x):

@@ -9,16 +9,16 @@ def compute_gap2(hypotheses, debug=False):
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
     
-    # Compute the best zero-density estimate
-    zds = hypotheses.list_hypotheses(hypothesis_type="Zero density estimate")
-    if debug:
-        n_derived = sum(1 for z in zds if z.reference.is_derived())
-        print(f"Collected {len(zds)} zero-density estimates (including {n_derived} derived estimates)")
+    best_zd = zd.best_zero_density_estimate(hypotheses, verbose=False)
+    for zdh in best_zd:
+        print(zdh.data)
+    best_ze = ze.compute_best_energy_bound(hypotheses)
+    for zeh in best_ze:
+        print(zeh.data)
 
-    zd.best_zero_density_estimate(hypotheses, verbose=True)
+    
 
-    # Compute the best zero-density energy estimate
-    zes = hypotheses.list_hypotheses(hypothesis_type="Zero density energy estimate")
-    if debug:
-        n_derived = sum(1 for z in zes if z.reference.is_derived())
-        print(f"Collected {len(zes)} additive energy estimates (including {n_derived} derived estimates)")
+
+
+
+

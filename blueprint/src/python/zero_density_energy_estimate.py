@@ -362,3 +362,4 @@ def compute_best_energy_bound(hypotheses: Hypothesis_Set) -> list:
             best_bound.append(
                 Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
             )
+    return best_bound
