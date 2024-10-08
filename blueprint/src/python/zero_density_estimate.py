@@ -323,15 +323,7 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
 #   - tau0: (RationalFunction) the choice of tau0 as a function of sigma 
 #   - sigma_interval: (Interval) the range of sigma values to consider
 def prove_density_estimate(hypothesis, tau0, sigma_interval):
-
-    # TODO: Upper-bound LV(s, t) / t for s in sigma_interval and t in [2/3 tau0(s), tau0(s))
-    lv.prove_LV_on_tau_bound(hypothesis, bound.mul(RF([-1, 1])), sigma_interval, (RF([2]), bound))
-    
-    # TODO: Upper-bound LVZ(s, t) / t for s in sigma_interval and t in [2, 4/3 tau0(s))
-    zlv.prove_LV_on_tau_bound(hypothesis, bound.mul(RF([-1, 1])), sigma_interval, (RF([2]), bound))
-
     raise NotImplementedError()
-
 
 # Computes the zero-density estimate obtained from
 #
@@ -531,11 +523,7 @@ def ep_to_zd(hypotheses):
     hypotheses.add_hypotheses(ep.compute_best_beta_bounds(hypotheses))
     ephs = ep.beta_bounds_to_exponent_pairs(hypotheses)
 
-    # zdts = [bourgain_ep_to_zd(ephs)]
-    approx_bourgain_ep_to_zd(ephs)
-    # zdts.append(ivic_ep_to_zd(ephs, m=2))
-
-    return zdts
+    return bourgain_ep_to_zd(ephs) + [ivic_ep_to_zd(ephs, m=2)]
 
 
 # Returns the maximum of two RationalFunction instances over an interval 
