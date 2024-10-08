@@ -62,7 +62,7 @@ class Interval:
             and self.include_lower == other.include_lower
             and self.include_upper == other.include_upper
         )
-
+    
     # -------------------------------------------------------------------------
     # Public static functions
     def parse(s):
@@ -782,7 +782,18 @@ class RationalFunction:
         # Symbolic test otherwise 
         return res.equals(0)
 
+    def __add__(self, other):
+        return self.add(other)
+    
+    def __sub__(self, other):
+        return self.sub(other)
 
+    def __mul__(self, other):
+        return self.mul(other)
+    
+    def __truediv__(self, other):
+        return self.div(other)
+    
     # Static functions -------------------------------------------------
 
     def parse(expr):
@@ -886,29 +897,49 @@ class RationalFunction:
             r.num = self.num + self.den * other
             r.den = self.den
             return r
-
-        # Hacky initialisation
+        if isinstance(other, RationalFunction):
+            r = RationalFunction([])
+            r.num = self.num * other.den + self.den * other.num
+            r.den = self.den * other.den
+            return r
+        return NotImplementedError()
+    
+    def subtract(self, other):
         r = RationalFunction([])
-        r.num = self.num * other.den + self.den * other.num
-        r.den = self.den * other.den
-        return r
+        if isinstance(other, numbers.Number):
+            r.num = self.num - self.den * other
+            r.den = self.den
+            return r
+        if isinstance(other, RationalFunction):
+            r.num = self.num * other.den - self.den * other.num
+            r.den = self.den * other.den
+            return r
+        raise NotImplementedError()
 
     def mul(self, other):
+        r = RationalFunction([])
         if isinstance(other, numbers.Number):
-            # Hacky initialisation
-            r = RationalFunction([])
             r.num = self.num * other
             r.den = self.den
+            return r
+        if isinstance(other, RationalFunction):
+            r.num = self.num * other.num
+            r.den = self.den * other.den
             return r
         raise NotImplementedError
 
     # Computes this function divided by another
     def div(self, other):
-        # Hacky initialisation
-        r = RationalFunction([1])
-        r.num = self.num * other.den
-        r.den = self.den * other.num
-        return r
+        r = RationalFunction([])
+        if isinstance(other, numbers.Number):
+            r.num = self.num * other
+            r.den = self.den
+            return r
+        if isinstance(other, numbers.Number):
+            r.num = self.num * other.den
+            r.den = self.den * other.num
+            return r
+        raise NotImplementedError()
 
     # find all critical points
     # TODO: cache the critical points
