@@ -202,11 +202,19 @@ def zero_density_energy_plot():
     # List of new derived estimates so far. TODO: replace with actual derivations
     energy_estimates = [
             (RF.parse("1000000"), Interval(frac(1,2), 1)), # default
-            (RF.parse("5 * (18 - 19 * x) / ((2 * (5 * x + 3)) * (1 - x))"), Interval(frac(7,10), 0.7255)),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(frac(7,10), 0.7255)),
             (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, frac(3,4))),
-            (RF.parse("(197 - 220 * x) / (8 * (5 * x - 1) * (1 - x))"), Interval(frac(3,4), frac(289, 380))),
-            (RF.parse("3 * (29 - 30 * x) / (5 * (5 * x - 1) * (1 - x))"), Interval(frac(289, 380), 0.7929)),
-            (RF.parse("(40 - 36 * x) / ((20 * x - 5) * (1 - x))"), Interval(0.7929, frac(5, 6))),
+            (RF.parse("(197 - 220 * x) / (8 * (5 * x - 1) * (1 - x))"), Interval(frac(3,4), frac(25,33))),
+            (RF.parse("(110 * x - 53) / (16 * (85 * x - 63) * (1 - x))"), Interval(frac(25,33), frac(3039,4010))),
+            (RF.parse("(570 * x - 413) / (10 * (85 * x - 63) * (1 - x))"), Interval(frac(3039,4010), frac(254,335))),
+            (RF.parse("(66 - 83 * x) / ((69 * x - 50) * (1 - x))"), Interval(frac(254,335), 0.758233)),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(0.758233, frac(42,55))),
+            (RF.parse("(18 - 19 * x) / (6 * (15 * x - 11) * (1 - x))"), Interval(frac(42,55), frac(97,127))),
+            (RF.parse("3 * (18 - 19 * x) / (4 * (4 * x - 1) * (1 - x))"), Interval(frac(97,127), frac(79,103))),
+            (RF.parse("(18 - 19 * x) / (2 * (37 * x - 27) * (1 - x))"), Interval(frac(79,103), frac(33,43))),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (13 * x - 3) * (1 - x))"), Interval(frac(33,43), frac(84,109))),
+            (RF.parse("(18 - 19 * x) / (9 * (3 * x - 2) * (1 - x))"), Interval(frac(33,43), 0.7721)),
+            (RF.parse("4 * (10 - 9 * x) / (5 * (4 * x - 1) * (1 - x))"), Interval(0.7721, frac(5, 6))),
         ]
     # as an example, plot the trivial bound and the literature bound 
     sigmas = np.linspace(1/2, 0.999, 1000)
