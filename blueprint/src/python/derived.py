@@ -316,10 +316,6 @@ def prove_zero_density_heathbrown_extended(verbose=True):
     # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
     # which will be used to calculate the best zeta large value estimate
     new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
-    
-    # TODO: this proof currently has a missing range \sigma \in [37/40, 1], 
-    # which requires Huxley subdivision to prove. We could also prove this by 
-    # incorporating more bounds
     return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5), plot=True)
 
 def prove_zero_density_bourgain_improved(verbose=True):
@@ -446,9 +442,6 @@ def prove_improved_heath_brown_energy_estimate():
     
     # tau_0 as a piecewise affine function 
     tau0s = [
-        # For tracing the bound (18 - 19s) / (6s - 2)
-        # Choose tau_0 = 6s - 2 for now
-        #Affine(8, -4, Interval(frac(3,4), frac(65,86)))
         Affine(8, -4, Interval(frac(3,4), frac(4,5)))
     ]
 
@@ -723,14 +716,14 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
-    # prove_zero_density_ingham_1940()
-    # prove_zero_density_huxley_1972()
-    # prove_zero_density_jutila_1977()
-    # prove_zero_density_heathbrown_1979()
-    # prove_zero_density_heathbrown_1979_2()
-    # prove_zero_density_ivic_1984()
-    # prove_zero_density_guth_maynard_2024()
-    # prove_zero_density_heathbrown_extended()
+    prove_zero_density_ingham_1940()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979()
+    prove_zero_density_heathbrown_1979_2()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+    prove_zero_density_heathbrown_extended()
     prove_zero_density_bourgain_improved()
     # compute_best_zero_density()
 
