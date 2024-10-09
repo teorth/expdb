@@ -147,6 +147,7 @@ def zero_density_plot():
     sigmas = []
     literature_zd = []
     best_zd = []
+    lindelof_zd = []
     
     hs = Hypothesis_Set()
     hs.add_hypotheses(literature)
@@ -170,12 +171,12 @@ def zero_density_plot():
                         min_ = q
         return min_
     
-    print(len(literature), len(hs))
     for i in range(N):
         sigma = 1 / 2 + 1 / 2 * i / N
         sigmas.append(sigma)
         literature_zd.append(best_zd_at(literature, sigma))
         best_zd.append(best_zd_at(hs, sigma))
+        lindelof_zd.append(2 if sigma <= 3/4 else 0)
     
     for i in range(len(sigmas)):
         print(sigmas[i], literature_zd[i], best_zd[i])
@@ -183,10 +184,12 @@ def zero_density_plot():
     plt.figure(figsize=(10, 6))
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A(\sigma)$")
-    plt.plot(sigmas, best_zd, linewidth=0.5, label="Best zero-density estimate")
-    plt.plot(sigmas, literature_zd, linewidth=0.5, label="Literature zero-density estimate")
+    plt.plot(sigmas, literature_zd, label="Literature zero-density estimate")
+    plt.plot(sigmas, lindelof_zd, label="Zero-density estimate under the Lindelof hypothesis")
+    plt.plot(sigmas, best_zd, label="Best zero-density estimate")
     plt.title("Zero density estimates")
     plt.legend(loc="lower left")
+    plt.grid(True)
     plt.show()
 
 # Plot the best zero-density energy estimates known trivially, in the literature, and under the 
@@ -264,6 +267,6 @@ def zero_density_energy_plot():
 
 # van_der_corput_plot2()
 # beta_bound_plot()
-#zero_density_plot()
-zero_density_energy_plot()
+zero_density_plot()
+#zero_density_energy_plot()
 
