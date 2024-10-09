@@ -395,7 +395,7 @@ def large_value_energy_region_examples():
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 6):
+    for k in range(2, 10):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
@@ -431,7 +431,7 @@ def zero_density_energy_examples():
         
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 3, Interval(frac(3,4), 1))
+        Affine(0, 5, Interval(frac(5,6), 1))
     ]
 
     # For each interval of tau_0

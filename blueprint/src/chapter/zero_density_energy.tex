@@ -840,7 +840,41 @@ Once again we apply $\rho/k \le \min(4 - 6\sigma + \tau', 18/5 - 4\sigma)$ to ul
 in this case too. 
 \end{proof}
 
+Modest improvements are possible by incorporating more large value estimates; these are recorded in the next few theorems. 
 
+\begin{theorem}\label{imp-energy-bound4}
+For $25/33 \le \sigma \le 254/335$, one has 
+\[
+\A^*(\sigma)\le \max\left(\frac{110\sigma - 53}{16(85\sigma - 63)(1 - \sigma)}, \frac{570\sigma - 413}{10(85\sigma - 63)(1 - \sigma)}\right).
+\]
+\end{theorem}
+\begin{theorem}\label{imp-energy-bound5}
+For $254/335 \le \sigma \le 42/55$, one has 
+\[
+\A^*(\sigma) \le \max\left(\frac{66 - 83\sigma}{(69\sigma - 50)(1 - \sigma)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}\right).
+\]
+\end{theorem}
+\begin{theorem}\label{imp-energy-bound6}
+For $42/55 \le \sigma \le 79/103$, one has 
+\[
+\A^*(\sigma) \le \max\left(\frac{18 - 19\sigma}{6(15\sigma - 11)(1- \sigma)}, \frac{3(18-19\sigma)}{4(4\sigma-1)(1 - \sigma)}\right).
+\]
+\end{theorem}
+\begin{theorem}\label{imp-energy-bound7}
+For $79/103 \le \sigma \le 84/109$, one has 
+\[
+\A^*(\sigma) \le \max\left(\frac{18 - 19\sigma}{2(37\sigma - 27)(1 - \sigma)}, \frac{5(18 - 19\sigma)}{2(13\sigma - 3)(1 - \sigma)}\right).
+\]
+\end{theorem}
+\begin{theorem}\label{imp-energy-bound8}
+For $84/109 \le \sigma \le 5/6$, one has 
+\[
+\A^*(\sigma) \le \max\left(\frac{18 - 19\sigma}{9(3\sigma - 2)(1 - \sigma)}, \frac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}\right).
+\]
+\end{theorem}
+
+
+Table \ref{zero-density-energy-estimates-table} records the sharpest known unconditional upper bounds on $\A^*(\sigma)$ for $1/2 \le \sigma \le 1$ (except when close to $\sigma = 1$, when sharper estimates are available by applying Lemma \ref{zeroe-basic} with known zero-density bounds).
 \begin{table}[ht]
     \def\arraystretch{2}
     \centering
@@ -857,11 +891,27 @@ in this case too.
     \hline
     $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{3}{4} = 0.75$ & Theorem \ref{imp-energy-bound2}\\
     \hline
-    $\dfrac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{289}{380} = 0.7605\ldots$ & Theorem \ref{imp-energy-bound3}\\
+    $\dfrac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{25}{33} = 0.7575\ldots$ & Theorem \ref{imp-energy-bound3}\\
     \hline
-    $\dfrac{3(29 - 30\sigma)}{5(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{289}{380} \leq \sigma \le \dfrac{101 + \sqrt{1741}}{180} = 0.7929\ldots$ & Theorem \ref{imp-energy-bound3}\\
+    $\dfrac{110\sigma - 53}{16(85\sigma - 63)(1 - \sigma)}$ & $\dfrac{25}{33} \leq \sigma \le \dfrac{3039}{4010} = 0.7578\ldots$ & Theorem \ref{imp-energy-bound4}\\
     \hline
-    $\dfrac{40 - 36\sigma}{(20\sigma - 5)(1 - \sigma)}$ & $\dfrac{101 + \sqrt{1741}}{180} \leq \sigma \le \dfrac{5}{6} = 0.8333\ldots$ & Theorem \ref{imp-hb-energy-bound}, \ref{imp-energy-bound3}\\
+    $\dfrac{570\sigma - 413}{10(85\sigma - 63)(1 - \sigma)}$ & $\dfrac{3039}{4010} \leq \sigma \le \dfrac{254}{335} = 0.7582\ldots$ & Theorem \ref{imp-energy-bound4}\\
+    \hline
+    $\dfrac{66 - 83\sigma}{(69\sigma - 50)(1 - \sigma)}$ & $\dfrac{254}{335} \leq \sigma \le \dfrac{5399 - 7\sqrt{22849}}{5725} = 0.7582\ldots$ & Theorem \ref{imp-energy-bound5}\\
+    \hline
+    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{5399 - 7\sqrt{22849}}{5725} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{imp-energy-bound5}\\
+    \hline
+    $\dfrac{18 - 19\sigma}{6(15\sigma - 11)(1- \sigma)}$ & $\dfrac{42}{55} \leq \sigma \le \dfrac{97}{127} = 0.7637\ldots$ & Theorem \ref{imp-energy-bound6}\\
+    \hline
+    $\dfrac{3(18-19\sigma)}{4(4\sigma-1)(1 - \sigma)}$ & $\dfrac{97}{127} \leq \sigma \le \dfrac{79}{103} = 0.7669\ldots$ & Theorem \ref{imp-energy-bound6}\\
+    \hline
+    $\dfrac{18 - 19\sigma}{2(37\sigma - 27)(1 - \sigma)}$ & $\dfrac{79}{103} \leq \sigma \le \dfrac{33}{43} = 0.7674\ldots$ & Theorem \ref{imp-energy-bound7}\\
+    \hline
+    $\dfrac{5(18 - 19\sigma)}{2(13\sigma - 3)(1 - \sigma)}$ & $\dfrac{33}{43} \leq \sigma \le \dfrac{84}{109} = 0.7706\ldots$ & Theorem \ref{imp-energy-bound7}\\
+    \hline
+    $\dfrac{18 - 19\sigma}{9(3\sigma - 2)(1 - \sigma)}$ & $\dfrac{84}{109} \leq \sigma \le \dfrac{1273 - \sqrt{128689}}{1184} = 0.7721\ldots$ & Theorem \ref{imp-energy-bound8}\\
+    \hline
+    $\dfrac{4(10 - 9\sigma)}{5(4\sigma - 1)(1 - \sigma)}$ & $\dfrac{1273 - \sqrt{128689}}{1184} \leq \sigma \le \dfrac{5}{6} = 0.8333\ldots$ & Theorem \ref{imp-hb-energy-bound}, \ref{imp-energy-bound3}, \ref{imp-energy-bound8}\\
     \hline
     $\dfrac{12}{4\sigma - 1}$ & $\dfrac{5}{6} \leq \sigma \le 1$ & Theorem \ref{hb-energy-bound}\\
     \hline
