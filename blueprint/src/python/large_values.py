@@ -7,10 +7,9 @@ from fractions import Fraction as frac
 from functions import *
 from hypotheses import *
 import itertools
-import matplotlib.pyplot as plt
-import numpy as np
 from polytope import *
 from reference import *
+from region import Region
 import scipy
 import time
 

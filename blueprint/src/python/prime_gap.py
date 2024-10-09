@@ -6,6 +6,7 @@ from hypotheses import *
 import numpy as np
 import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
+import sympy
 
 # Compute the best estimate of \theta_{gap, 2} using Corollary 13.9
 def compute_gap2(hypotheses, debug=False):
@@ -46,11 +47,28 @@ def compute_gap2(hypotheses, debug=False):
         alpha = 4 * x - 2 + 2 * (B * (1 - x) - 1) / (B - A)
         beta = 4 * x - 2 + (B * (1 - x) - 1) / A
 
-        sup = 0
-        for sigma in np.linspace(float(interval.x0), float(interval.x1), 100):
-            v = max(alpha.subs(x, sigma), beta.subs(x, sigma))
-            if sup < v: sup = v
-        print(interval, v, alpha.simplify(), beta.simplify())
+        # Find all critical points and evaluate alpha at each 
+        statpts = sympy.solve(sympy.diff(alpha, x))
+        statpts = set(p for p in statpts if p.is_real and interval.contains(p))
+        statpts.update([interval.x0, interval.x1])
+        sup_alpha = max(float(alpha.subs(x, p)) for p in statpts)
+        if debug:
+            print("alpha -------------------------------------------------")
+            for p in statpts:
+                print(p, float(p), alpha.subs(x, p), float(alpha.subs(x, p)))
+        
+        # Do the same for beta
+        statpts = sympy.solve(sympy.diff(beta, x))
+        statpts = set(p for p in statpts if p.is_real and interval.contains(p))
+        statpts.update([interval.x0, interval.x1])
+        sup_beta = max(float(beta.subs(x, p)) for p in statpts)
+        if debug:
+            print("beta --------------------------------------------------")
+            for p in statpts:
+                print(p, float(p), alpha.subs(x, p), float(alpha.subs(x, p)))
+
+        print(interval, max(sup_alpha, sup_beta), alpha.simplify(), beta.simplify())
+
 
 
 

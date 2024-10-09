@@ -399,11 +399,13 @@ def zero_density_energy_examples():
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
-    hypotheses.add_hypothesis(lv.large_value_estimate_L2)
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
-    
+    # hypotheses.add_hypothesis(lv.large_value_estimate_L2)
+    # hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
+    # hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    # hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Bourgain large value estimate"))
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
+
     
     # Add Heath-Brown estimates 
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
@@ -429,7 +431,7 @@ def zero_density_energy_examples():
         
     # tau_0 as a piecewise affine function 
     tau0s = [
-        Affine(0, 3, Interval(frac(3,4), frac(4,5)))
+        Affine(0, 3, Interval(frac(3,4), 1))
     ]
 
     # For each interval of tau_0

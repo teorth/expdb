@@ -7,14 +7,10 @@
 # satisfying with real part \in [\sigma, 1] and imaginary part \in 
 # [-T, T]. 
 
-import additive_energy as ad
-import cdd
-from constants import Constants
 from fractions import Fraction as frac
 from functions import Interval, RationalFunction as RF, SympyHelper
 from hypotheses import Hypothesis, Hypothesis_Set
 import numpy as np
-from polytope import Polytope
 from reference import Reference
 from region import Region, Region_Type
 import sympy

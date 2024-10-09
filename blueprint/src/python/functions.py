@@ -935,7 +935,7 @@ class RationalFunction:
             r.num = self.num * other
             r.den = self.den
             return r
-        if isinstance(other, numbers.Number):
+        if isinstance(other, RationalFunction):
             r.num = self.num * other.den
             r.den = self.den * other.num
             return r

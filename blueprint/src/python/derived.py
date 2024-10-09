@@ -667,16 +667,32 @@ def prove_zero_density_estimates():
 # Derivations for prime gap theorems 
 
 def prove_prime_gap2():
-    hypotheses = Hypothesis_Set()
+    hs = Hypothesis_Set()
 
     # Add zero-density estimates and energy theorems from the literature
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density estimate"))
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density energy estimate"))
-
-    # TODO: add zero-density estimates and energy theorems from derived 
-
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density estimate"))
+    hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Zero density energy estimate"))
+    
+    # New zero-density estimates
+    ref = Reference.make("Tao--Trudgian--Yang", 2024)
+    zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), ref)
+    zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), ref)
+    zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), ref)
+    hs.add_hypotheses(zd.bourgain_ep_to_zd())
+    zd.add_zero_density(hs, "3/(40 * x - 35)", Interval("[39/40, 40/41)"), ref)
+    zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), ref)
+           
+    # Set of new additive energy estimates 
+    hs.add_hypotheses([
+        ze.literature_zero_density_energy_estimate("5 * (18 - 19 * x) / ((2 * (5 * x + 3)) * (1 - x))", Interval(frac(7,10), 0.7255782330963900973348270455), ref),
+        ze.literature_zero_density_energy_estimate("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))", Interval(0.7255782330963900973348270455, frac(3,4)), ref),
+        ze.literature_zero_density_energy_estimate("(197 - 220 * x) / (8 * (5 * x - 1) * (1 - x))", Interval(frac(3,4), frac(289,380)), ref),
+        ze.literature_zero_density_energy_estimate("3 * (29 - 30 * x) / (5 * (5 * x - 1) * (1 - x))", Interval(frac(289,380), 0.7929182893891673924914902646), ref),
+        ze.literature_zero_density_energy_estimate("(40 - 36 * x) / ((20 * x - 5) * (1 - x))", Interval(0.7929182893891673924914902646, frac(5,6)), ref)
+    ])
+    
     # Compute \theta_{gap, 2}
-    pg.compute_gap2(hypotheses, debug=True)
+    pg.compute_gap2(hs, debug=False)
 
 
 def prove_all():
