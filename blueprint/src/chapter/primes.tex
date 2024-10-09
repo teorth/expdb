@@ -211,8 +211,16 @@ This proposition recovers the known bounds (both conditional and unconditional) 
 
 For (ii), from Theorem \ref{lindelof_implies_density} we may take $A(\sigma)=2$ for $\sigma \leq 3/4$ and $A(\sigma)=\eps$ for $3/4 < \sigma \leq 1$ and any $\eps>0$, while from Theorem \ref{zeroe-lindelof} one can take $B(\sigma) = 8-4\sigma$ for $\sigma \leq 3/4$ and $B(\sigma)=\eps$ for $3/4 < \sigma \leq 1$.  The claim now follows from Proposition \ref{gapsquare-from-a} and a routine calculation.
 
-Part (iii) follows from applying Proposition \ref{gapsquare-from-a} using the bounds from Theorem \ref{hb-energy-bound}, together and various bounds on $\A(\sigma)$; see \cite[Theorem 12.14]{ivic} for details.  {\bf Presumably with modern zero density bounds one can obtain an improvement.}
+Part (iii) follows from applying Proposition \ref{gapsquare-from-a} using the bounds from Theorem \ref{hb-energy-bound}, together and various bounds on $\A(\sigma)$; see \cite[Theorem 12.14]{ivic} for details. 
 \end{proof}
+
+Incorporating modern zero density bounds and additive energy estimates, one can obtain an improved bound on $\GAPSQUARE$. 
+\begin{theorem}
+Unconditionally, one has $\GAPSQUARE \le 19/15 = 1.2666\ldots$. 
+\end{theorem}
+
+\derived 
+\code{prove_prime_gap2()}
 
 A variant of $\GAPSQUARE$ is $\GAPLARGE$, defined as the least exponent for which
 $$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2+\eps}} (p_{n+1}-p_n) \ll x^{\GAPLARGE+o(1)}$$
