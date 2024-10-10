@@ -812,10 +812,10 @@ class RationalFunction:
     # The comparator parameter compares two RationalFunction instances on an interval 
     # on which they are guaranteed to be defined. Returns true if the first RationalFunction
     # instance is more "optimal" 
-    def _compute_optimal(func_and_domains: list, domain: Interval, comparator) -> list:
+    def _compute_optimal(func_and_domains: list, domain: Interval, comparator, default) -> list:
         
         # Start with default bound with reference index -1
-        best_bound = [(RationalFunction([1000000]), domain, -1)]
+        best_bound = [(RationalFunction([default]), domain, -1)]
 
         for ref1 in range(len(func_and_domains)):
             (func1, in1) = func_and_domains[ref1]
@@ -869,7 +869,7 @@ class RationalFunction:
             raise ValueError("Parameter piecewise_funcs must be of type list")
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
-        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x < y)
+        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x < y, 1000000)
 
     # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The 
     # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where 
@@ -881,7 +881,7 @@ class RationalFunction:
             raise ValueError("Parameter piecewise_funcs must be of type list")
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
-        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x > y)
+        return RationalFunction._compute_optimal(func_and_domains, domain, lambda x, y: x > y, -1000000)
 
     # ------------------------------------------------------------------
 
