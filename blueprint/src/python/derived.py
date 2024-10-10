@@ -604,7 +604,7 @@ def prove_zero_density_energy_3():
 def prove_zero_density_energy_4():
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 6):
+    for k in range(2, 8):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
@@ -744,8 +744,8 @@ def prove_all():
     # prove_improved_heath_brown_energy_estimate()
     # prove_guth_maynard_large_values_theorem()
     # prove_zero_density_energy_2()
-    prove_zero_density_energy_3()
+    # prove_zero_density_energy_3()
     # prove_zero_density_energy_4()
-    # prove_prime_gap2()
+    prove_prime_gap2()
 
 prove_all()

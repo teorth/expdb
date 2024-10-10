@@ -222,6 +222,24 @@ Unconditionally, one has $\GAPSQUARE \le 19/15 = 1.2666\ldots$.
 \derived 
 \code{prove_prime_gap2()}
 
+\begin{proof}
+Using the bounds in Table \ref{} and \ref{}, in the range $1/2 \le \sigma \le 3/4$ we may take 
+\[
+A(\sigma) = \frac{30}{13}, \qquad B(\sigma) = \frac{1931 - 2020\sigma}{286(1 - \sigma)}
+\]
+Applying \eqref{} and after a routine computation, one gets $\alpha(\sigma)$, $\beta(\sigma) \le 19/15$ (with room to spare). Next, for $3/4 \le \sigma \le 5/6$ we use 
+\[
+A(\sigma) = \frac{3}{3\sigma - 1},\qquad B(\sigma) = \frac{526 - 552\sigma}{77(1 - \sigma)}.
+\]
+For $\sigma \ge 5/6$ we use $B(\sigma) = 12/(4\sigma - 1)$ from Theorem \ref{hb-energy-bound}, along with 
+\[
+A(\sigma) = \begin{cases}
+\dfrac{3}{2\sigma},&5/6 \le \sigma \le 7/8,\\
+\max\left(\dfrac{3}{10\sigma - 7}, \dfrac{4}{4\sigma - 1}\right),& 7/8 \le \sigma \le 1.
+\end{cases}
+\]
+The first case comes from Theorem \ref{} and the second case comes from Theorem \ref{hb-density}, to once again obtain the required bounds (with equality at $\sigma = 7/8$). 
+\end{proof}
 A variant of $\GAPSQUARE$ is $\GAPLARGE$, defined as the least exponent for which
 $$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2+\eps}} (p_{n+1}-p_n) \ll x^{\GAPLARGE+o(1)}$$
 for any fixed $\eps>0$ and unbounded $x \geq 1$.  The trivial bounds are
