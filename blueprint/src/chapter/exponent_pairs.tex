@@ -259,10 +259,58 @@ The following new exponent pairs were derived using this database:
 
 \begin{theorem}[New exponent pairs]\label{new-exp-pair}\uses{exp-pair-def} The following are exponent pairs:
 \[
-\left(\frac{1101653}{15854002}, \frac{12327829}{15854002}\right),\qquad \left(\frac{1175779}{38456886}, \frac{16690288}{19228443}\right),\qquad \left(\frac{89}{3478}, \frac{15327}{17390}\right).
+\left(\frac{89}{1282}, \frac{997}{1282}\right),\quad \left(\frac{652397}{9713986}, \frac{7599781}{9713986}\right),\quad \left(\frac{10769}{351096}, \frac{609317}{702192}\right),\quad \left(\frac{89}{3478}, \frac{15327}{17390}\right).
 \]
 \end{theorem}
 \derived
-\code{prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))}
-\code{prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))}
+\code{prove_exponent_pair(frac(89,1282), frac(997,1282))}
+\code{prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))}
+\code{prove_exponent_pair(frac(10769,351096), frac(609317,702192))}
 \code{prove_exponent_pair(frac(89,3478), frac(15327,17390))}
+
+In summary, the current set of known exponent pairs is the convex hull with vertices $(0, 1)$, $(1/2, 1/2)$ and the points $(k_n, \ell_n)$ for $n \in \Z$ that are recorded in Table \ref{exp_pair_table}. 
+
+\begin{table}[ht]
+\label{exp_pair_table}
+\caption{Vertices of the convex hull of known exponent pairs.}
+\centering
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|}
+\hline
+$n$ & $(k_n, \ell_n)$ & Reference \\
+\hline
+0 & $\left(\dfrac{13}{84}, \dfrac{55}{84}\right)$ & \cite[p. 307]{bourgain_decoupling_2017} \\
+\hline
+1 & $\left(\dfrac{4742}{38463}, \dfrac{35731}{51284}\right)$ & Theorem \ref{trudgian_yang_eps} \\
+\hline
+2 & $\left(\dfrac{18}{199}, \dfrac{593}{796}\right)$ & Theorem \ref{trudgian_yang_eps} \\
+\hline
+3 & $\left(\dfrac{2779}{38033}, \dfrac{58699}{76066}\right)$ & Theorem \ref{trudgian_yang_eps} \\
+\hline
+4 & $\left(\dfrac{89}{1282}, \dfrac{997}{1282}\right)$ & Theorem \ref{new-exp-pair} \\
+\hline
+5 & $\left(\dfrac{652397}{9713986}, \dfrac{7599781}{9713986}\right)$ & Theorem \ref{new-exp-pair} \\
+\hline
+6 & $\left(\dfrac{2371}{43205}, \dfrac{280013}{345640}\right)$ & $A(k_1, \ell_1)$ \\
+\hline
+7 & $\left(\dfrac{9}{217}, \dfrac{1461}{1736}\right)$ & $A(k_2, \ell_2)$\\
+\hline
+8 & $\left(\dfrac{10769}{351096}, \dfrac{609317}{702192}\right)$ & Theorem \ref{new-exp-pair} \\
+\hline
+9 & $\left(\dfrac{89}{3478}, \dfrac{15327}{17390}\right)$ & Theorem \ref{new-exp-pair} \\
+\hline 
+$n \ge 10$ & \begin{tabular}{@{}c@{}}$(p_{n + 4}, q_{n + 4})$, where \\
+$(p_m, q_m) = \left(\dfrac{2}{(m-1)^2(m+2)}, 1 - \dfrac{3m-2}{m(m-1)(m+2)}\right)$\end{tabular} & Theorem \ref{heath-brown_exp_pair_2017} \\
+\hline 
+$n < 0$ & $B(k_{-n}, \ell_{-n})$ & Proposition \ref{vdc-b} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{chapter/exp_pair_plot.png}
+    \caption{The convex hull of known exponent pairs, whose vertices $(k_n, \ell_n)$ are given in Table \ref{exp_pair_table}.}
+    \label{fig:exp_pair_plot}
+\end{figure}

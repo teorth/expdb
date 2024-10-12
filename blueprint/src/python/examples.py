@@ -418,7 +418,6 @@ def zero_density_energy_examples():
     hypotheses.add_hypotheses(ep.beta_bounds_to_exponent_pairs(hypotheses))
     ephs = ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
     for eph in ephs:
-        print(eph.data)
         if frac(1,100) <= eph.data.k and eph.data.k <= frac(13,84):
             hypotheses.add_hypothesis(ad.ep_to_lver(eph))
     
@@ -458,7 +457,6 @@ def zero_density_energy_examples():
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
     bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
-
 
 def all_examples():
     # mu_bound_examples()

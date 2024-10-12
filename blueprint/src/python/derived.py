@@ -679,9 +679,12 @@ def prove_zero_density_energy_4():
 
 def prove_exponent_pairs():
     # prove_heathbrown_exponent_pairs()
-    prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
-    prove_exponent_pair(frac(1959,47230), frac(3975,4723))
-    prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
+    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
+    # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
+    prove_exponent_pair(frac(89,1282), frac(997,1282))
+    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
+    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
     prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
     best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
@@ -740,7 +743,7 @@ def prove_prime_gap2():
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
-    # prove_exponent_pairs()
+    prove_exponent_pairs()
     # prove_bourgain_large_values_theorem()
     # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
@@ -749,6 +752,6 @@ def prove_all():
     # prove_zero_density_energy_2()
     # prove_zero_density_energy_3()
     # prove_zero_density_energy_4()
-    prove_prime_gap2()
+    # prove_prime_gap2()
 
 prove_all()
