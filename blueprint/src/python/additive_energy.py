@@ -196,12 +196,12 @@ def ep_to_lver(eph):
             constraint = [c * factor for c in constraint]
             constraints.append(constraint)
 
-    region = Large_Value_Energy_Region.union_of_halfplanes(
+    region = union_of_halfplanes(
         constraints, 
         Large_Value_Energy_Region.default_constraints()
     )
     return derived_large_value_energy_region(
-        region,
+        Large_Value_Energy_Region(region),
         f"Follows from {eph.data}",
         {eph})
 

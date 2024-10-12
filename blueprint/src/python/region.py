@@ -233,7 +233,7 @@ class Region:
             # intersection of a polytope with a union of polytopes, if the number of 
             # nonempty regions is no greater than UNION_THRESHOLD, we try to simplify 
             # the union of the regions into a single polytope. 
-            SIMPLIFY_EVERY = 10
+            SIMPLIFY_EVERY = 20
             UNION_THRESHOLD = 5
 
             if verbose:

@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 from literature import *
 
 
@@ -139,6 +140,59 @@ def beta_bound_plot():
         )
     )
 
+def exp_pair_plot():
+    exp_pairs = [
+        (0, 1),
+        (1/980688, 3105401/3105512),
+        (1/490512, 9319081/9319728),
+        (1/326808, 1552181/1552338),
+        (1/163416, 1034765/1034968),
+        (1/81720, 155209/155268),
+        (1/40872, 775997/776568),
+        (1/27230, 258409/258685),
+        (1/13614, 258133/258666),
+        (1/6806, 64400/64657),
+        (1/3402, 7127/7182),
+        (1/2890, 1517/1530),
+        (1/2432, 5119/5168),
+        (1/2025, 2137/2160),
+        (1/1666, 3527/3570),
+        (1/1352, 359/364),
+        (1/1080, 2303/2340),
+        (1/847, 907/924),
+        (1/650, 1399/1430),
+        (1/486, 263/270),
+        (1/352, 767/792),
+        (1/245, 269/280),
+        (1/162, 359/378),
+        (1/100, 14/15),
+        (89/3478, 15327/17390),
+        (1175779/38456886, 16690288/19228443),
+        (2779/81624, 140323/163248),
+        (9/217, 1461/1736),
+        (2371/43205, 280013/345640),
+        (1101653/15854002, 12327829/15854002),
+        (2779/38033, 58699/76066),
+        (18/199, 593/796),
+        (4742/38463, 35731/51284),
+        (13/84, 55/84)
+    ]
+    n = len(exp_pairs)
+    for i in range(n):
+        p = exp_pairs[n - i - 1]
+        exp_pairs.append((p[1] - 1/2, p[0] + 1/2))
+    
+    fig, ax = plt.subplots()
+    fig.set_size_inches(10, 10)
+    ax.add_patch(Polygon(exp_pairs, color=[0.7, 0.7, 0.7]))
+    ax.set_xlim([0, 1/2])
+    ax.set_ylim([1/2, 1])
+    ax.scatter([p[0] for p in exp_pairs], [p[1] for p in exp_pairs], color="k")
+    plt.ylabel(r"$\ell$")
+    plt.xlabel(r"$k$")
+    plt.title(r"Convex hull of known exponent pairs $(k, \ell)$")
+    plt.show()
+
 # Compare the best literature zero-density estimates against the 
 # best-known zero-density estimate
 def zero_density_plot():
@@ -267,6 +321,7 @@ def zero_density_energy_plot():
 
 # van_der_corput_plot2()
 # beta_bound_plot()
-zero_density_plot()
+exp_pair_plot()
+# zero_density_plot()
 #zero_density_energy_plot()
 
