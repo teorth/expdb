@@ -430,6 +430,18 @@ def add_literature_exponent_pairs():
             ep.literature_exp_pair(
                 frac(1, 915), 1 - frac(10, 915), rm.get("robert_2002b")
             ),
+            ep.literature_exp_pair(
+                frac(4742, 38463), frac(35731, 51284), rm.get("trudgian-yang")
+            ),
+            ep.literature_exp_pair(
+                frac(18, 199), frac(593, 796), rm.get("trudgian-yang")
+            ),
+            ep.literature_exp_pair(
+                frac(2779, 38033), frac(58699, 76066), rm.get("trudgian-yang")
+            ),
+            ep.literature_exp_pair(
+                frac(715, 10238), frac(7955, 10238), rm.get("trudgian-yang")
+            )
         ]
     )
 
