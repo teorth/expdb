@@ -8,6 +8,8 @@ for all unbounded $T$ and infinitesimal $\delta>0$.
 
 The exponent $\A^*(\sigma)$ is also essentially referred to as $B(\sigma)$ in \cite{heath_brown_consecutive_II} (though without the technical shift by $\delta$ in that reference).
 
+\python{zero_density_energy_estimate}
+\code{Zero_Density_Energy_Estimate}
 
 \begin{lemma}[Basic properties of $\A^*$]\label{zeroe-basic}\uses{zeroe-def}\
 \begin{itemize}
@@ -70,8 +72,13 @@ The Type II case similarly follows from \eqref{lve-bound} exactly as in the proo
 $$ \A^*(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < \tau_0} \LV^*_\zeta(\sigma,\tau)/\tau, \sup_{\tau_0 \leq \tau \leq 2\tau_0} \LV^*(\sigma,\tau)/\tau\right)$$
 \end{corollary}
 
+\python{zero_density_energy_estimate}
+\code{lver_to_energy_bound(LVER, LVER_zeta, sigma_interval)}
+
 \begin{proof}  Repeat the proof of Corollary \ref{zero-large-cor-0}.
 \end{proof}
+
+\section{Known additive energy bounds}
 
 \begin{proposition}[Additive energy under the Lindelof hypothesis]\label{zeroe-lindelof}\uses{zeroe-def}  Let $1/2 \leq \sigma \leq 1$ be fixed.  Then one has
     $$ \A^*(\sigma) \leq 8 - 4\sigma$$

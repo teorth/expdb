@@ -171,8 +171,6 @@ def approx_best_energy_bound(hypotheses, sigma, tau0):
     LVER_zeta = Region(Region_Type.INTERSECT, [lver.data.region for lver in lvers])
     sup2 = approx_sup_LV_on_tau(LVER_zeta, sigma, 2, tau0)
 
-    print(sigma, tau0, sup1, sup2)
-
     return max(sup1, sup2)
 
 # Given two Hypothesis objects of type "Large value energy region", representing 
@@ -212,9 +210,10 @@ def lver_to_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
         depcount[1] = len(LVER_zeta.dependencies)
     
     # Take maximum
-    sup = max_RF(fns, sigma_interval)
+    bounds, indexes = [(f[0], f[1]) for f in fns], [(f[2],) for f in fns]
+    sup = RF.max(bounds, sigma_interval)
     print("A*(x)(1-x) \leq")
-    for s in sup: print(s[0], "for x\in", s[1])
+    for s in sup: print(s[0], "for x \in", s[1])
     
     return [
         derived_zero_density_energy_estimate(
@@ -243,7 +242,8 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
             # Vertices on either side of the edge
             v1 = tuple(edge[0])
             v2 = tuple(edge[1])
-            if v1 + v2 in visited or v2 + v1 in visited: continue
+            if v1 + v2 in visited or v2 + v1 in visited: 
+                continue
             visited.add(v1 + v2)
 
             (sigma1, tau1, rho1) = v1
@@ -266,61 +266,7 @@ def compute_sup_LV_on_tau(LV_region, sigma_interval):
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
     
     # Take the maximum of the functions
-    return max_RF(fns, sigma_interval)
-
-# TODO: this function is very similar to a function in zero_density_estimate.py - 
-# merge/combine them?
-def max_RF(fns, domain):
-    # Then, compute their maximums as a piecewise RationalFunction
-    # at this point we can just make use of the same code as best density estimate solver 
-    x = RF.x
-    sup = [(RF.parse("0"), domain)] # placeholder
-    
-    for (func1, in1) in fns:
-        # For simplicity, work directly with sympy objects
-        f1 = func1.num / func1.den
-        new_sup = []
-        for (func2, in2) in sup:
-            f2 = func2.num / func2.den
-            solns = sympy.solve(f1 - f2)
-            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
-            crits.update([in1.x0, in1.x1])
-            crits = set(c for c in crits if in2.contains(c))
-            crits.update([in2.x0, in2.x1])
-
-            crits = list(crits)
-            crits.sort()
-            for i in range(1, len(crits)):
-                inter = Interval(crits[i - 1], crits[i])
-                mid = inter.midpoint()
-                
-                if not in1.contains(mid):
-                    new_sup.append((func2, inter))
-                elif f2.subs(x, mid) >= f1.subs(x, mid):
-                    new_sup.append((func2, inter))
-                else:
-                    new_sup.append((func1, inter))
-        
-        # Simplify
-        sup = []
-        i = 0
-        while i < len(new_sup):
-            (fi, inti) = new_sup[i]
-            left = inti.x0
-            right = inti.x1
-
-            j = i + 1
-            while j < len(new_sup):
-                (fj, intj) = new_sup[j]
-                if not (fi == fj and right == intj.x0):
-                    break
-                right = intj.x1
-                j += 1
-                
-            sup.append((fi, Interval(left, right)))
-            i = j
-
-    return sup
+    return RF.max(fns, sigma_interval)
 
 # Given a Hypothesis_Set, compute a piecewise function representing the best bound 
 # on A*(\sigma)
