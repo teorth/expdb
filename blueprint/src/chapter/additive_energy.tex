@@ -297,7 +297,7 @@ for any fixed $\eps>0$, which gives the claim.    .
 
 Another bound is
 
-\begin{lemma}\label{double-zeta_from_exp_pair}\cite[Lemma 11.2]{ivic}\uses{lv-edef}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
+\begin{lemma}\label{double-zeta-from-exp-pair}\cite[Lemma 11.2]{ivic}\uses{lv-edef}  If $(k,\ell)$ is an exponent pair with $k>0$, and $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
 $$ s \leq \max\left( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right) + 1.$$
 \end{lemma}
 
@@ -351,7 +351,7 @@ $(\sigma,\tau,\rho',(\rho')^*,s') \in \Energy$, and the claim follows.
 These bounds on the double zeta sums can be used to control additive energies:
 
 \begin{theorem}[Heath-Brown relation]\label{hbt}\cite[(33)]{heathbrown_zero_1979}\uses{lv-edef} If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then one has
-$$ \rho^* \leq 1-2\sigma + \max(\rho+1, 2\rho, 5\rho/4+\tau/2)/2 + \max(\rho^*+1, 4\rho, 3\rho^*/4+\rho+\tau/2)/2.$$
+$$ \rho^* \leq 1-2\sigma + \frac{1}{2}\max\left(\rho+1, 2\rho, \frac{5}{4}\rho+\frac{\tau}{2}\right) + \frac{1}{2}\max\left(\rho^*+1, 4\rho, \frac{3}{4}\rho^*+\rho+\frac{\tau}{2}\right).$$
 \end{theorem}
 
 \literature
@@ -385,6 +385,29 @@ $$ \rho^* \leq \max( 4-4\sigma + \rho, (3-4\sigma)/2 + 5\rho/2, 3-4\sigma + 2\rh
 But since $\sigma \geq 1/2$, $3-4\sigma + 2\rho$ is less than $5/2-3\sigma + 2\rho$, which is the mean of $4-4\sigma+\rho$ and $1-2\sigma+3\rho$. Thus
 $$ \rho^* \leq \max( 4-4\sigma + \rho, (3-4\sigma)/2 + 5\rho/2, 1-2\sigma + 3\rho),$$
 which gives the claim.
+\end{proof}
+
+Similarly, using Lemma \ref{double-zeta-from-exp-pair} and Lemma \ref{wtu-alt}, one has 
+
+\begin{theorem}
+If $(k, \ell)$ be an exponent pair with $k > 0$ and $(\sigma, \tau, \rho, \rho^*, s)\in \Energy$, then 
+\begin{align*}
+\rho^* \le 1 - 2\sigma &+ \frac{1}{2}\max\left(\rho+1, \frac{5}{3}\rho + \frac{\tau}{3}, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right)\\
+&+ \frac{1}{2}\max\left(\rho^*+1, 4\rho, \frac{3}{4}\rho^*+\rho+\frac{\tau}{2}\right).
+\end{align*}
+\end{theorem}
+
+\begin{proof}\uses{wtu-alt}
+By Lemma \ref{wtu-alt} and Lemma \ref{double-zeta-from-exp-pair}, there exists some $(\sigma, \tau, \rho', (\rho^*)', s') \in \Energy$ satisfying
+\begin{equation}\label{kappa-bounds}
+0 \le \kappa \le \rho,\qquad \kappa + \rho' \le 2\rho,\qquad 2\kappa + \rho' \le \rho^*
+\end{equation}
+and
+\begin{align*}
+\rho^* + 2\sigma \le \kappa &+ \frac{1}{2}\max\left( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right)\\
+&+ \frac{1}{2}\max\left(\rho' + 1, 2\rho', \frac{5}{4}\rho' + \frac{\tau}{2}\right) + 1.
+\end{align*}
+The result follows by moving the $\kappa$ term into the second maximum and applying \eqref{kappa-bounds}. 
 \end{proof}
 
 
