@@ -165,36 +165,40 @@ def get_raise_to_power_hypothesis(k):
         Reference.classical(),
         )
 
-# Convert an exponent pair (k, l) to a large value energy region 
-# Lemma 10.15 
-# s \leq 1 + max(
-# rho + 1,
-# 5/3 rho + tau / 3
-# (2 + 3k + 4l) / (1 + 2k + 2l) rho + (k + l) / (1 + 2k + 2l) tau
-# )
+# Convert an exponent pair (k, l) to a large value energy region
 def ep_to_lver(eph):
 
     k, l = eph.data.k, eph.data.l
     
-    # Construct Polytope of (sigma, tau, rho, rho*, s)
-    polys = []
+    # Terms of the first maximum in the form
+    # [constant, sigma, tau, rho, rho^*, s] 
+    first_max = [
+        [1, 0, 0, 1, 0, 0],
+        [0, 0, frac(1,3), frac(5,3), 0, 0],
+        [0, 0, (k + l) / (1 + 2*k + 2*l), (2 + 3*k + 4*l) / (1 + 2*k + 2*l), 0, 0]
+    ]
+    # Terms of the second maximum
+    second_max = [
+        [1, 0, 0, 0, 1, 0],
+        [0, 0, 0, 4, 0, 0],
+        [0, 0, frac(1,2), 1, frac(3,4), 0]
+    ]
 
-    # default limits 
-    rect = Large_Value_Energy_Region.default_constraints()
+    # Iterate through all combinations of first and second maximum
+    constraints = []
+    for max1 in first_max:
+        for max2 in second_max:
+            # additional terms
+            add = [1, -2, 0, 0, -1, 0]
+            constraint = [add[i] + frac(1,2) * (max1[i] + max2[i]) for i in range(6)] # constraint >= 0
+            # Solve for \rho^* (this step is not strictly necessary - only for presentation)
+            factor = -frac(1, constraint[4])
+            constraint = [c * factor for c in constraint]
+            constraints.append(constraint)
+
     region = Large_Value_Energy_Region.union_of_halfplanes(
-        [
-            [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
-            [1, 0, frac(1,3), frac(5,3), 0, -1],    # 1 + 1/3 * tau + 5/3 * rho - s >= 0
-            [   # 1 + (k + l) / (1 + 2k + 2l) tau + (2 + 3k + 4l) / (1 + 2k + 2l) rho - s >= 0
-                1,
-                0,
-                frac(k + l, 1 + 2 * k + 2 * l),
-                frac(2 + 3 * k + 4 * l, 1 + 2 * k + 2 * l),
-                0,
-                -1
-            ]
-        ],
-        rect
+        constraints, 
+        Large_Value_Energy_Region.default_constraints()
     )
     return derived_large_value_energy_region(
         region,
