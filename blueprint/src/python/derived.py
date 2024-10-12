@@ -629,7 +629,7 @@ def prove_zero_density_energy_3():
 def prove_zero_density_energy_4():
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 6):
+    for k in range(2, 8):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     # Add classical and literature Large value estimates
@@ -644,6 +644,9 @@ def prove_zero_density_energy_4():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 4"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 5"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 6"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 7"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 8"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
 
     # Add Heath-Brown estimates 
