@@ -306,9 +306,6 @@ $$ N^{-1} S(N,W) \ll |W| N + |W|^{5/3} T^{1/3+\eps} + |W|^{\frac{2+3k+4\ell}{1+2
 for any fixed $\eps>0$, which gives the claim.
 \end{proof}
 
-\python{additive_energy}
-\code{ep_to_lver(eph)}
-
 Finally, we have the useful
 
 \begin{lemma}[Heath-Brown bound on double sums]\label{hb-double}\uses{lv-edef}  If $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$, then
@@ -396,6 +393,9 @@ If $(k, \ell)$ be an exponent pair with $k > 0$ and $(\sigma, \tau, \rho, \rho^*
 &+ \frac{1}{2}\max\left(\rho^*+1, 4\rho, \frac{3}{4}\rho^*+\rho+\frac{\tau}{2}\right).
 \end{align*}
 \end{theorem}
+
+\python{additive_energy}
+\code{ep_to_lver(eph)}
 
 \begin{proof}\uses{wtu-alt}
 By Lemma \ref{wtu-alt} and Lemma \ref{double-zeta-from-exp-pair}, there exists some $(\sigma, \tau, \rho', (\rho^*)', s') \in \Energy$ satisfying
