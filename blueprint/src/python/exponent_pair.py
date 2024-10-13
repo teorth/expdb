@@ -21,7 +21,7 @@ class Exp_pair:
     def __eq__(self, other):
         if isinstance(other, Exp_pair):
             return (self.k, self.l) == (other.k, other.l)
-        return NotImplemented
+        return False
 
 
 ########################################################################################
