@@ -15,21 +15,6 @@ import time
 
 
 ###############################################################################
-"""
-# Object representing a large value bound for a certain domain on (\sigma, \tau)
-class Large_Value_Estimate:
-
-    # parameters:
-    #   - bound: (Piecewise type) the piecewise affine function (of 2 variables)
-    #           representing the bound on LV(\sigma, \tau)
-    def __init__(self, bound):
-        if not isinstance(bound, Piecewise):
-            raise ValueError("bound must be of type Piecewise")
-        self.bound = bound
-
-    def __repr__(self):
-        return "LV(σ,τ) \leq " + str(self.bound)
-"""
 
 # Object representing a large value estimate LV(σ,τ)
 class Large_Value_Estimate:
@@ -64,68 +49,6 @@ class Large_Value_Energy_Estimate:
         return f"(σ,τ,ρ*) in {self.region}"
 
 ###############################################################################
-"""
-# Compute the maximum of a list of bounds represented in coefficient vector form
-# Returns the result as a piecewise function
-# bounds (list of list) vectors a representing a function f(x) = a^Tx with the first
-#                   coefficient denoting the constant term
-# domain (Polytope object) the (sigma, tau) domain of definition
-# 
-# TODO: since we have implemented the Region class this method may be replaced 
-# by e.g. union_of_halfplanes method in additive_energy. 
-def max_of(bounds, domain=None):
-
-    # The standard domain of definition is \sigma \in [1/2, 1], \tau \geq 0
-    if domain is None:
-        domain_ineq = [
-            [-frac(1, 2), 1, 0],  # \sigma >= 1/2
-            [1, -1, 0],  # \sigma <= 1
-            [0, 0, 1],  # \tau >= 0
-            [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= large number
-        ]
-        domain = Polytope(domain_ineq)
-
-    # Construct affine objects to represent the bounds
-    fns = [Affine2(b, domain) for b in bounds]
-    
-    # Handle edge cases
-    if len(fns) == 1:
-        return Piecewise(fns)
-
-    # Compute the pairwise intersections
-    intersections = []
-    for i in range(len(bounds)):
-        for j in range(0, i):
-            intersections.append(fns[i].intersection(fns[j]))
-
-    # Iterate over the power set of intersection lines
-    regions = []
-    for i in range(2 ** len(intersections)):
-        b = bin(i)[2:].zfill(len(intersections))  # binary representation
-        s = []
-        for j in range(len(b)):
-            if b[j] == "1":
-                s.append(intersections[j].constraint.coefficients)
-            else:
-                s.append([-x for x in intersections[j].constraint.coefficients])
-        p = Polytope(s).intersect(domain)
-        if not p.is_empty(include_boundary=False):
-            regions.append(p)
-
-    # For each region, compute the centroid and find the maximal function
-    pieces = []
-    for r in regions:
-        center = r.get_centroid()
-        index = max(range(len(bounds)), key=lambda i: fns[i].at(center))
-        argmax = fns[index]
-        pieces.append(Affine2(argmax.a, r))
-
-    # Construct the piecewise function and simplify
-    bound = Piecewise(pieces)
-    bound.simplify()
-
-    return bound
-"""
 
 def convert_bounds_to_region(bounds):
     # The default domain of definition in (\sigma, \tau, \rho) space
@@ -189,79 +112,10 @@ def conjectured_LV_estimate(bounds, name):
 # L^2 mean value theorem: LV(s, t) \leq max(2 - 2s, 1 - 2s + t)
 large_value_estimate_L2 = classical_LV_estimate([[2, -2, 0], [1, -2, 1]])
 
+# Montgometry's conjecture
 montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjecture")
 
 ###############################################################################
-
-def get_optimized_bourgain_lv_estimate(ref):
-    region = Region.as_disjoint_union([
-        # For now - assume that we can't say anthing about LV estimates
-        # for tau < 1
-        Polytope.rect(
-            (frac(1,2), frac(1)),                       # 1/2 \le \sigma \le 1
-            (frac(0), frac(1)),                         # 0 \le \tau \le 1
-            (frac(0), Constants.LV_DEFAULT_UPPER_BOUND) # 0 \le \rho
-        ),
-        Polytope([
-            [frac(16,3), -frac(20,3), frac(1,3), -1],
-            [10, -14, 1, 0],            # 10 - 14s + t >= 0
-            [-1, 0, 1, 0],              # t >= 1
-            [4, 4, -5, 0],              # 4/5 + 4/5s - t >= 0
-            [-11, 16, -1, 0]            # t <= 16s - 11
-        ]),
-        Polytope([
-            [5, -7, frac(3,4), -1],     # p <= 5 - 7s + 3s/4
-            [8, -8, -1, 0],             # t <= 8 - 8s
-            [-16, 20, frac(1,3), 0],    # t >= 3(20s - 16)
-            [-6, 10, -frac(7,6), 0],    # -6 + 10s - 7t/6 >= 0
-            [-4, -4, 5, 0]              # -4 - 4s + 5t >= 0
-        ]),
-        Polytope([
-            [3, -5, 1, -1],             # p <= 3 - 5s + t
-            [-8, 8, 1, 0],
-            [2, -6, 2, 0],
-            [-10, 14, -frac(2,3), 0],
-            [6, -2, -2, 0]
-        ]),
-        Polytope([
-            [0, -4, 2, -1],             # p <= -4s + 2t
-            [-6, 2, 2, 0],
-            [-12, 12, 1, 0],
-            [Constants.TAU_UPPER_LIMIT, 0, -1, 0],
-            [1, -1, 0, 0]
-        ]),
-        Polytope([
-            [8, -12, frac(4,3), 0],     # p <= 8 - 12s + 4t/3
-            [15, -21, 1, 0],
-            [12, -12, -1, 0],
-            [-frac(3,2), 0, 1, 0],
-            [6, -10, frac(7,6), 0]
-        ]),
-        Polytope([
-            [2, -2, 0, -1],             # p <= 2 - 2s
-            [1, -1, 0, 0],
-            [-10, 14, -1, 0],
-            [-1, 0, 1, 0],
-            [-2, 6, -2, 0]
-        ]),
-        Polytope([
-            [9, -12, frac(2,3), -1],    # p <= 9 - 12s + 2t/3
-            [frac(3,2), 0, -1, 0],
-            [-frac(1,2), 1, 0, 0],
-            [-1, 0, 1, 0],
-            [11, -16, 1, 0],
-            [16, -20, -frac(1,3), 0]
-        ])
-    ])
-    
-    return Hypothesis(
-        f"{ref.author()} optimized large value estimate",
-        "Large value estimate",
-        Large_Value_Estimate(region),
-        f"See [{ref.author()}, {ref.year()}]",
-        ref,
-    )
-
 
 # Raising to a power (large value estimate transform theorem)
 def raise_to_power_hypothesis(k):
@@ -291,24 +145,6 @@ def raise_to_power_hypothesis(k):
         "Classical",
         Reference.classical(),
     )
-
-
-###############################################################################
-
-# Debugging functions
-def covers(estimate, xlim, ylim):
-    N = 100
-    for xi in range(1, N):
-        for yi in range(1, N):
-            x = xlim[0] + (xlim[1] - xlim[0]) * xi / N
-            y = ylim[0] + (ylim[1] - ylim[0]) * yi / N
-            if estimate.at([x, y]) is None:
-                for p in estimate.pieces:
-                    print(p)
-                raise ValueError(f"{x}, {y}")
-
-
-###############################################################################
 
 # Given a list of Piecewise objects, compute their minimum over a given domain
 # Returns result as a list of hypotheses, created using the constructor function
@@ -365,13 +201,12 @@ def piecewise_min(estimates, domain, constructor):
 
     return hyps
 
-
 # Returns the best estimate on LV(\sigma, \tau) by combining all hypotheses of
 # type 'Large value estimate' in the hypothesis set.
 # Warning: this method is not thread safe
 # Parmeters:
 #   - hypotheses: (Hypothesis_Set object) the set of hypothesis to assume
-#   - domain: (Polytope object) [Optional]the domain on which to compute the large value estimate
+#   - domain: (Polytope object) [Optional] the domain on which to compute the large value estimate
 #               must be of dimension 2.
 # Returns: (list of Hypothesis objects)
 def best_large_value_estimate(hypotheses, domain=None):
