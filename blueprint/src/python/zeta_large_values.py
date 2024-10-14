@@ -8,6 +8,7 @@ from constants import *
 import bound_beta as bbeta
 import large_values as lv
 from reference import Reference
+from region import Region, Region_Type
 
 ###############################################################################
 
@@ -133,64 +134,53 @@ def beta_to_zlv(hypotheses):
         # piecewise function defined on the whole domain. Only the first of
         # these pieces if the bound, the other 3 pieces complete the domain with
         # the trivial bound LVZ(s, t) \leq t
-        f = Piecewise(
-            [
-                Affine2(
-                    [0, 0, 0],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [-tau_lower, 0, 1],  # \tau >= max(2, 1/a1)
-                            [tau_upper, 0, -1],  # \tau <= min(some large number, 1/a0)
-                            [-B, 1, -A],  # \sigma >= A\tau + B
-                        ]
-                    ),
-                ),
-                # Trivial bound elsewhere -----------------------------------------
-                Affine2(
-                    [0, 0, 1],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [-tau_lower, 0, 1],  # \tau >= max(2, 1/a1)
-                            [tau_upper, 0, -1],  # \tau <= min(some large number, 1/a0)
-                            [B, -1, A],  # \sigma <= A\tau + B
-                        ]
-                    ),
-                ),
-                Affine2(
-                    [0, 0, 1],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [tau_lower, 0, -1],  # \tau <= max(2, 1/a1)
-                            [-2, 0, 1],  # \tau >= 2
-                        ]
-                    ),
-                ),
-                Affine2(
-                    [0, 0, 1],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [-tau_upper, 0, 1],  # \tau >= min(some large number, 1/a0)
-                            [
-                                Constants.TAU_UPPER_LIMIT,
-                                0,
-                                -1,
-                            ],  # \tau <= TAU_UPPER_LIMIT
-                        ]
-                    ),
-                ),
-            ]
+        polys = [
+            Polytope([
+                [0, 0, 0, -1],          # \rho <= 0 
+                [0, 0, 0, 1],           # \rho >= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-tau_lower, 0, 1, 0],  # \tau >= max(2, 1/a1)
+                [tau_upper, 0, -1, 0],  # \tau <= min(some large number, 1/a0)
+                [-B, 1, -A, 0],         # \sigma >= A\tau + B
+            ]),
+            # Trivial bound elsewhere -----------------------------------------
+            Polytope([
+                [0, 0, 1, -1],          # \rho <= \tau
+                [0, 0, 0, 1],           # \rho >= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0],    # \sigma > 1/2
+                [-tau_lower, 0, 1, 0],  # \tau >= max(2, 1/a1)
+                [tau_upper, 0, -1, 0],  # \tau <= min(some large number, 1/a0)
+                [B, -1, A, 0],          # \sigma <= A\tau + B
+            ]),
+            Polytope([
+                [0, 0, 1, -1],          # \rho <= \tau
+                [0, 0, 0, 1],           # \rho >= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [tau_lower, 0, -1, 0],  # \tau <= max(2, 1/a1)
+                [-2, 0, 1, 0],          # \tau >= 2
+            ]),
+            Polytope([
+                [0, 0, 1, -1],          # \rho <= \tau
+                [0, 0, 0, 1],           # \rho >= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-tau_upper, 0, 1, 0],  # \tau >= min(some large number, 1/a0)
+                [
+                    Constants.TAU_UPPER_LIMIT,
+                    0,
+                    -1,
+                    0
+                ],  # \tau <= TAU_UPPER_LIMIT
+            ])
+        ]
+        region = Region(
+            Region_Type.DISJOINT_UNION, 
+            [Region.from_polytope(p) for p in polys]
         )
-        f.simplify()
-
-        zlv_estimates.append(derived_bound_zeta_LV(f, f"Follows from {be.name}", {be}))
+        zlv_estimates.append(derived_bound_zeta_LV(region, f"Follows from {be.name}", {be}))
 
     return zlv_estimates
 
@@ -205,44 +195,41 @@ def mu_to_zlv(hypotheses):
     for mb in mu_bounds:
         sigma0 = mb.data.sigma
         mu0 = mb.data.mu
-        f = Piecewise(
-            [
-                Affine2(
-                    [0, 0, 0],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [-2, 0, 1],  # \tau >= 2
-                            [
-                                Constants.TAU_UPPER_LIMIT,
-                                0,
-                                -1,
-                            ],  # \tau <= min(some large number, 1/a0)
-                            [-sigma0, 1, -mu0],  # \sigma >= sigma0 + \tau * mu0
-                        ]
-                    ),
-                ),
-                # Trivial bound elsewhere -----------------------------------------
-                Affine2(
-                    [0, 0, 1],
-                    Polytope(
-                        [
-                            [1, -1, 0],  # \sigma <= 1
-                            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-                            [-2, 0, 1],  # \tau >= 2
-                            [
-                                Constants.TAU_UPPER_LIMIT,
-                                0,
-                                -1,
-                            ],  # \tau <= min(some large number, 1/a0)
-                            [sigma0, -1, mu0],  # \sigma <= sigma0 + \tau * mu0
-                        ]
-                    ),
-                ),
-            ]
+        polys = [
+            Polytope([
+                [0, 0, 0, 1],           # \rho >= 0
+                [0, 0, 0, -1],          # \rho <= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-2, 0, 1, 0],          # \tau >= 2
+                [
+                    Constants.TAU_UPPER_LIMIT,
+                    0,
+                    -1,
+                    0
+                ],  # \tau <= min(some large number, 1/a0)
+                [-sigma0, 1, -mu0, 0],  # \sigma >= sigma0 + \tau * mu0
+            ]),
+            # Trivial bound elsewhere -----------------------------------------
+            Polytope([
+                [0, 0, 1, -1],          # \rho <= \tau
+                [0, 0, 0, 1],           # \rho >= 0
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-2, 0, 1, 0],          # \tau >= 2
+                [
+                    Constants.TAU_UPPER_LIMIT,
+                    0,
+                    -1,
+                    0
+                ],  # \tau <= min(some large number, 1/a0)
+                [sigma0, -1, mu0, 0],  # \sigma <= sigma0 + \tau * mu0
+            ])
+        ]
+        region = Region(
+            Region_Type.DISJOINT_UNION, 
+            [Region.from_polytope(p) for p in polys]
         )
-        f.simplify()
-        zlv_estimates.append(derived_bound_zeta_LV(f, f"Follows from {mb.name}", {mb}))
+        zlv_estimates.append(derived_bound_zeta_LV(region, f"Follows from {mb.name}", {mb}))
 
     return zlv_estimates

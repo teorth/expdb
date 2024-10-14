@@ -165,8 +165,10 @@ class Polytope:
                 c = row[i]
                 if c == 0:
                     continue
-                if len(f) != 0:
-                    f += " + " if c > 0 else " - "
+                elif c > 0:
+                    if len(f) != 0: f += " + "
+                else:
+                    f += " - " if len(f) != 0 else "-"
                 if c == 1 or c == -1:
                     f += v
                 else:
