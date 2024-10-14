@@ -75,32 +75,6 @@ class Large_Value_Energy_Region:
 #############################################################################
 
 
-# Computes a Region object representing the union of a list of polytopes, 
-# where each polytope is defined as the intersection of 
-# - a box, represented as a list of lists (a list of constraints)
-# - a halfplane, represented as a single list (a constraint)
-# The resulting Region object is represented as a DISJOINT_UNION, which 
-# greatly improves performance over a UNION representation
-# 
-# This method is useful for quickly initializing many commonly encountered 
-# regions in the study of large value energy regions, since they correspond to 
-# a region implied by a single max() function. 
-def union_of_halfplanes(halfplanes, box):
-    # Once a halfplane has been added, include its complement in the list of 
-    # neg_ineq, to add as a constraint to all remaining polytopes to be 
-    # constructed. 
-    neg_ineq = []
-    polys = []
-    for hp in halfplanes:
-        polys.append(
-            Region(
-                Region_Type.POLYTOPE, 
-                Polytope(box + [hp] + neg_ineq, canonicalize=True)
-            )
-        )
-        neg_ineq.append([-x for x in hp])
-    return Region.disjoint_union(polys)
-
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
         f"{ref.author()} large value energy region" + params,
@@ -196,7 +170,7 @@ def ep_to_lver(eph):
             constraint = [c * factor for c in constraint]
             constraints.append(constraint)
 
-    region = union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         constraints, 
         Large_Value_Energy_Region.default_constraints()
     )

@@ -742,8 +742,75 @@ def add_jutila_large_values_estimate(K):
 # Bourgain large-values theorem with optimal choices of \alpha_1, \alpha_2 given by
 # Given in Table 7.1 of the LaTeX blueprint
 def add_bourgain_large_values_estimate():
-    literature.add_hypotheses(
-        lv.get_optimized_bourgain_lv_estimate(rm.get("bourgain_large_2000"))
+    region = Region.as_disjoint_union([
+        # For now - assume that we can't say anthing about LV estimates
+        # for tau < 1
+        Polytope.rect(
+            (frac(1,2), frac(1)),                       # 1/2 \le \sigma \le 1
+            (frac(0), frac(1)),                         # 0 \le \tau \le 1
+            (frac(0), Constants.LV_DEFAULT_UPPER_BOUND) # 0 \le \rho
+        ),
+        Polytope([
+            [frac(16,3), -frac(20,3), frac(1,3), -1],
+            [10, -14, 1, 0],            # 10 - 14s + t >= 0
+            [-1, 0, 1, 0],              # t >= 1
+            [4, 4, -5, 0],              # 4/5 + 4/5s - t >= 0
+            [-11, 16, -1, 0]            # t <= 16s - 11
+        ]),
+        Polytope([
+            [5, -7, frac(3,4), -1],     # p <= 5 - 7s + 3s/4
+            [8, -8, -1, 0],             # t <= 8 - 8s
+            [-16, 20, frac(1,3), 0],    # t >= 3(20s - 16)
+            [-6, 10, -frac(7,6), 0],    # -6 + 10s - 7t/6 >= 0
+            [-4, -4, 5, 0]              # -4 - 4s + 5t >= 0
+        ]),
+        Polytope([
+            [3, -5, 1, -1],             # p <= 3 - 5s + t
+            [-8, 8, 1, 0],
+            [2, -6, 2, 0],
+            [-10, 14, -frac(2,3), 0],
+            [6, -2, -2, 0]
+        ]),
+        Polytope([
+            [0, -4, 2, -1],             # p <= -4s + 2t
+            [-6, 2, 2, 0],
+            [-12, 12, 1, 0],
+            [Constants.TAU_UPPER_LIMIT, 0, -1, 0],
+            [1, -1, 0, 0]
+        ]),
+        Polytope([
+            [8, -12, frac(4,3), 0],     # p <= 8 - 12s + 4t/3
+            [15, -21, 1, 0],
+            [12, -12, -1, 0],
+            [-frac(3,2), 0, 1, 0],
+            [6, -10, frac(7,6), 0]
+        ]),
+        Polytope([
+            [2, -2, 0, -1],             # p <= 2 - 2s
+            [1, -1, 0, 0],
+            [-10, 14, -1, 0],
+            [-1, 0, 1, 0],
+            [-2, 6, -2, 0]
+        ]),
+        Polytope([
+            [9, -12, frac(2,3), -1],    # p <= 9 - 12s + 2t/3
+            [frac(3,2), 0, -1, 0],
+            [-frac(1,2), 1, 0, 0],
+            [-1, 0, 1, 0],
+            [11, -16, 1, 0],
+            [16, -20, -frac(1,3), 0]
+        ])
+    ])
+    
+    ref = rm.get("bourgain_large_2000")
+    literature.add_hypothesis(
+        Hypothesis(
+            f"{ref.author()} optimized large value estimate",
+            "Large value estimate",
+            lv.Large_Value_Estimate(region),
+            f"See [{ref.author()}, {ref.year()}]",
+            ref,
+        )
     )
 
 # Guth-Maynard (2024) large values theorem: LV(s, t) \leq max(2 - 2s, 18/5 - 4s, t + 12/5 - 4s)
@@ -771,7 +838,7 @@ literature.add_hypothesis(
 # Chapter 10: List of large value energy region theorems from the literature
 
 def add_lver_heath_brown_1979():
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             [2, 0, 0, 1, 0, -1],                    # 2 + rho - s >= 0
             [1, 0, 0, 2, 0, -1],                    # 1 + 2 * rho - s >= 0
@@ -793,7 +860,7 @@ def add_lver_ivic_1985():
     # divide into two cases: tau <= 1 and tau >= 1
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([1, 0, -1, 0, 0, 0]) # tau <= 1
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             [2, 0, 0, 1, 0, -1],    # 2 + rho - s >= 0
             [1, 0, 0, 2, 0, -1]     # 1 + 2 * rho - s >= 0
@@ -815,7 +882,7 @@ add_lver_ivic_1985()
 
 # Implementation of "Heath-Brown relation" Theorem 10.20
 def add_lver_heath_brown_1979b1():
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (ρ*/2 + 1/2) = 2 - 2σ + ρ/2 + ρ*/2
             [2, -2, 0, frac(1,2), -frac(1,2), 0],               # 2 - 2σ + ρ/2 - ρ*/2 >= 0
@@ -860,7 +927,7 @@ def add_lver_heath_brown_1979b2():
     # divide into two cases
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0]) # tau <= 3/2
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             [1, -2, 0, 3, -1, 0],                   # 1 - 2sigma + 3rho - rho* >= 0
             [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
@@ -886,7 +953,7 @@ add_lver_heath_brown_1979b2()
 def add_lver_heath_brown_1979c(K):
     rect = ad.Large_Value_Energy_Region.default_constraints()
     for k in range(1, K):
-        region = ad.union_of_halfplanes(
+        region = Region.from_union_of_halfplanes(
             [
                 [2, -2, 0, -1, 0, 0],                           # 2 - 2sigma - rho >= 0
                 [frac(3*k,4), -k, frac(1,4), -1, frac(1,4), 0], # 3k/4 - k sigma + tau/4 - rho + rho*/4 >= 0
@@ -930,7 +997,7 @@ def add_lver_guth_maynard_2024a(K):
         ]
 
         # First region arising on S_3 <= 2tau + rho/2 + rho*/2
-        reg1 = ad.union_of_halfplanes(
+        reg1 = Region.from_union_of_halfplanes(
             common + [
                 [1, -2, frac(2,3), frac(1,6), -frac(5,6), 0]
             ],
@@ -938,7 +1005,7 @@ def add_lver_guth_maynard_2024a(K):
         )
         # Second region arising from 
         # S_3 <= max(2tau + 3rho/2, tau + 1 + rho/2 + rho*/2)
-        reg2 = ad.union_of_halfplanes(
+        reg2 = Region.from_union_of_halfplanes(
             common + [
                 [1, -2, frac(2,3), -frac(1,2), 0, 0],
                 [frac(4,3), -2, frac(1,3), -frac(5,6), frac(1,6), 0]
@@ -960,7 +1027,7 @@ def add_lver_guth_maynard_2024b():
     # First region: tau <= 3/2
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0])
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             [1, -2, 0, 3, -1, 0],    # 1 - 2sigma + 3rho - rho* >= 0
             [2, -2, 0, 2, -1, 0]    # 2 - 2sigma + 2rho - rho* >= 0
@@ -986,7 +1053,7 @@ def add_lver_guth_maynard_2024c():
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
     rect1.append([-1, 0, 1, 0, 0, 0]) 
-    region = ad.union_of_halfplanes(
+    region = Region.from_union_of_halfplanes(
         [
             [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
             [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 

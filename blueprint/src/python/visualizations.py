@@ -188,6 +188,7 @@ def exp_pair_plot():
     ax.set_xlim([0, 1/2])
     ax.set_ylim([1/2, 1])
     ax.scatter([p[0] for p in exp_pairs], [p[1] for p in exp_pairs], color="k")
+    
     plt.ylabel(r"$\ell$")
     plt.xlabel(r"$k$")
     plt.title(r"Convex hull of known exponent pairs $(k, \ell)$")

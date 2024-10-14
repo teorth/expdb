@@ -64,8 +64,7 @@ class Large_Value_Energy_Estimate:
         return f"(σ,τ,ρ*) in {self.region}"
 
 ###############################################################################
-
-
+"""
 # Compute the maximum of a list of bounds represented in coefficient vector form
 # Returns the result as a piecewise function
 # bounds (list of list) vectors a representing a function f(x) = a^Tx with the first
@@ -126,18 +125,32 @@ def max_of(bounds, domain=None):
     bound.simplify()
 
     return bound
+"""
 
+def convert_bounds_to_region(bounds):
+    # The default domain of definition in (\sigma, \tau, \rho) space
+    domain = Polytope.rect(
+        (frac(1,2), frac(1)),                       # 1/2 \le \sigma \le 1
+        (frac(0), Constants.TAU_UPPER_LIMIT),       # 0 \le \tau \le TAU_UPPER_LIMIT
+        (frac(0), Constants.LV_DEFAULT_UPPER_BOUND),# 0 \le \rho \le RHO_UPPER_LIMIT
+    )
+    # Convert bounds from 'bounds', of the form 
+    # \rho \le f(\sigma, \tau) 
+    # into a region in R^3 of the form 
+    # f(\sigma, \tau, \rho) \ge 0.
+    return Region.from_union_of_halfplanes(
+        [b + [-1] for b in bounds],
+        domain
+    )
 
 def literature_bound_LV_max(bounds, ref, params=""):
-    piecewise = max_of(bounds)
     return Hypothesis(
         f"{ref.author()} large value estimate" + params,
         "Large value estimate",
-        Large_Value_Estimate(piecewise),
+        Large_Value_Estimate(convert_bounds_to_region(bounds)),
         f"See [{ref.author()}, {ref.year()}]",
         ref,
     )
-
 
 def derived_bound_LV(bound, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
@@ -151,129 +164,23 @@ def derived_bound_LV(bound, proof, deps):
     bound.dependencies = deps
     return bound
 
-# This method may be merged with the above once we combine the Large_Value_Estimate
-# and Large_Value_Estimate2 classes
-def derived_bound_LV2(bound, proof, deps):
-    year = Reference.max_year(tuple(d.reference for d in deps))
-    bound = Hypothesis(
-        "Derived large value estimate",
-        "Large value estimate",
-        Large_Value_Estimate2(bound),
-        proof,
-        Reference.derived(year),
-    )
-    bound.dependencies = deps
-    return bound
-
 def classical_LV_estimate(bounds):
     return Hypothesis(
         "Classical large value estimate",
         "Large value estimate",
-        Large_Value_Estimate(max_of(bounds)),
+        Large_Value_Estimate(convert_bounds_to_region(bounds)),
         "Classical",
         Reference.classical(),
     )
-
 
 def conjectured_LV_estimate(bounds, name):
     return Hypothesis(
         name,
         "Large value estimate",
-        max_of(bounds),
-        f"Conjecture",
+        Large_Value_Estimate(convert_bounds_to_region(bounds)),
+        "Conjecture",
         Reference.conjectured(),
     )
-
-montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjecture")
-
-def get_optimized_bourgain_lv_estimate(ref):
-    pieces = [
-        # For now - assume that we can't say anthing about LV estimates
-        # for tau < 1
-        Affine2(
-            [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0],
-            Polytope([
-                [-frac(1,2), 1, 0],  # \sigma >= 1/2
-                [1, -1, 0],  # \sigma <= 1
-                [0, 0, 1],  # \tau >= 0
-                [1, 0, -1],  # \tau <= 1
-            ])
-        ),
-        Affine2(
-            [frac(16,3), -frac(20,3), frac(1,3)],
-            Polytope([
-                [10, -14, 1], # 10 - 14s + t >= 0
-                [-1, 0, 1], # -1 + t >= 0
-                [4, 4, -5], # 4/5 + 4/5s - t >= 0
-                [-11, 16, -1]
-            ])
-        ),
-        Affine2(
-            [5, -7, frac(3,4)],
-            Polytope([
-                [8, -8, -1],
-                [-16, 20, frac(1,3)],
-                [-6, 10, -frac(7,6)],
-                [-4, -4, 5]
-            ])
-        ),
-        Affine2(
-            [3, -5, 1],
-            Polytope([
-                [-8, 8, 1],
-                [2, -6, 2],
-                [-10, 14, -frac(2,3)],
-                [6, -2, -2]
-            ])
-        ),
-        Affine2(
-            [0, -4, 2],
-            Polytope([
-                [-6, 2, 2],
-                [-12, 12, 1],
-                [Constants.TAU_UPPER_LIMIT, 0, -1],
-                [1, -1, 0]
-            ])
-        ),
-        Affine2(
-            [8, -12, frac(4,3)],
-            Polytope([
-                [15, -21, 1],
-                [12, -12, -1],
-                [-frac(3,2), 0, 1],
-                [6, -10, frac(7,6)]
-            ])
-        ),
-        Affine2(
-            [2, -2, 0],
-            Polytope([
-                [1, -1, 0],
-                [-10, 14, -1],
-                [-1, 0, 1],
-                [-2, 6, -2]
-            ])
-        ),
-        Affine2(
-            [9, -12, frac(2,3)],
-            Polytope([
-                [frac(3,2), 0, -1],
-                [-frac(1,2), 1, 0],
-                [-1, 0, 1],
-                [11, -16, 1],
-                [16, -20, -frac(1,3)]
-            ])
-        )
-    ]
-    return Hypothesis(
-        f"{ref.author()} optimized large value estimate",
-        "Large value estimate",
-        Large_Value_Estimate(Piecewise(pieces)),
-        f"See [{ref.author()}, {ref.year()}]",
-        ref,
-    )
-
-
-
 
 ###############################################################################
 
@@ -281,6 +188,79 @@ def get_optimized_bourgain_lv_estimate(ref):
 
 # L^2 mean value theorem: LV(s, t) \leq max(2 - 2s, 1 - 2s + t)
 large_value_estimate_L2 = classical_LV_estimate([[2, -2, 0], [1, -2, 1]])
+
+montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjecture")
+
+###############################################################################
+
+def get_optimized_bourgain_lv_estimate(ref):
+    region = Region.as_disjoint_union([
+        # For now - assume that we can't say anthing about LV estimates
+        # for tau < 1
+        Polytope.rect(
+            (frac(1,2), frac(1)),                       # 1/2 \le \sigma \le 1
+            (frac(0), frac(1)),                         # 0 \le \tau \le 1
+            (frac(0), Constants.LV_DEFAULT_UPPER_BOUND) # 0 \le \rho
+        ),
+        Polytope([
+            [frac(16,3), -frac(20,3), frac(1,3), -1],
+            [10, -14, 1, 0],            # 10 - 14s + t >= 0
+            [-1, 0, 1, 0],              # t >= 1
+            [4, 4, -5, 0],              # 4/5 + 4/5s - t >= 0
+            [-11, 16, -1, 0]            # t <= 16s - 11
+        ]),
+        Polytope([
+            [5, -7, frac(3,4), -1],     # p <= 5 - 7s + 3s/4
+            [8, -8, -1, 0],             # t <= 8 - 8s
+            [-16, 20, frac(1,3), 0],    # t >= 3(20s - 16)
+            [-6, 10, -frac(7,6), 0],    # -6 + 10s - 7t/6 >= 0
+            [-4, -4, 5, 0]              # -4 - 4s + 5t >= 0
+        ]),
+        Polytope([
+            [3, -5, 1, -1],             # p <= 3 - 5s + t
+            [-8, 8, 1, 0],
+            [2, -6, 2, 0],
+            [-10, 14, -frac(2,3), 0],
+            [6, -2, -2, 0]
+        ]),
+        Polytope([
+            [0, -4, 2, -1],             # p <= -4s + 2t
+            [-6, 2, 2, 0],
+            [-12, 12, 1, 0],
+            [Constants.TAU_UPPER_LIMIT, 0, -1, 0],
+            [1, -1, 0, 0]
+        ]),
+        Polytope([
+            [8, -12, frac(4,3), 0],     # p <= 8 - 12s + 4t/3
+            [15, -21, 1, 0],
+            [12, -12, -1, 0],
+            [-frac(3,2), 0, 1, 0],
+            [6, -10, frac(7,6), 0]
+        ]),
+        Polytope([
+            [2, -2, 0, -1],             # p <= 2 - 2s
+            [1, -1, 0, 0],
+            [-10, 14, -1, 0],
+            [-1, 0, 1, 0],
+            [-2, 6, -2, 0]
+        ]),
+        Polytope([
+            [9, -12, frac(2,3), -1],    # p <= 9 - 12s + 2t/3
+            [frac(3,2), 0, -1, 0],
+            [-frac(1,2), 1, 0, 0],
+            [-1, 0, 1, 0],
+            [11, -16, 1, 0],
+            [16, -20, -frac(1,3), 0]
+        ])
+    ])
+    
+    return Hypothesis(
+        f"{ref.author()} optimized large value estimate",
+        "Large value estimate",
+        Large_Value_Estimate(region),
+        f"See [{ref.author()}, {ref.year()}]",
+        ref,
+    )
 
 
 # Raising to a power (large value estimate transform theorem)

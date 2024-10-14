@@ -29,9 +29,8 @@ class Region_Type:
         elif region_type == Region_Type.COMPLEMENT:
             return "Complement"
         raise ValueError("Unknown type", region_type)
-    
-    
-    
+
+
 # A region represents a boolean combination of polytopes 
 class Region:
     def __init__(self, region_type, children):
@@ -84,6 +83,32 @@ class Region:
     # Construct a region from a polytope
     def from_polytope(polytope):
         return Region(Region_Type.POLYTOPE, polytope)
+    
+    # Computes a Region object representing the union of a list of polytopes, 
+    # where each polytope is defined as the intersection of 
+    # - a box, represented as a list of lists (a list of constraints)
+    # - a halfplane, represented as a single list (a constraint)
+    # The resulting Region object is represented as a DISJOINT_UNION, which 
+    # greatly improves performance over a UNION representation
+    # 
+    # This method is useful for quickly initializing many commonly encountered 
+    # regions in the study of large value energy regions, since they correspond to 
+    # a region implied by a single max() function. 
+    def from_union_of_halfplanes(halfplanes, box):
+        # Once a halfplane has been added, include its complement in the list of 
+        # neg_ineq, to add as a constraint to all remaining polytopes to be 
+        # constructed. 
+        neg_ineq = []
+        polys = []
+        for hp in halfplanes:
+            polys.append(
+                Region(
+                    Region_Type.POLYTOPE, 
+                    Polytope(box + [hp] + neg_ineq, canonicalize=True)
+                )
+            )
+            neg_ineq.append([-x for x in hp])
+        return Region.disjoint_union(polys)
 
     # Construct a region as the complement of another region 
     def complement(region):
