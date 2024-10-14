@@ -15,6 +15,7 @@ import time
 
 
 ###############################################################################
+"""
 # Object representing a large value bound for a certain domain on (\sigma, \tau)
 class Large_Value_Estimate:
 
@@ -27,7 +28,20 @@ class Large_Value_Estimate:
         self.bound = bound
 
     def __repr__(self):
-        return "LV(x, y) \leq " + str(self.bound)
+        return "LV(σ,τ) \leq " + str(self.bound)
+"""
+
+# Object representing a large value estimate LV(σ,τ)
+class Large_Value_Estimate:
+    # Parameters: region (Region) a region in R^3 representing the set of 
+    # feasible (sigma, tau, rho) values 
+    def __init__(self, region):
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type region")
+        self.region = region
+
+    def __repr__(self):
+        return f"(σ,τ,ρ) in {self.region}"
 
 
 class Large_Value_Estimate_Transform:
@@ -37,16 +51,6 @@ class Large_Value_Estimate_Transform:
 
     def __repr__(self):
         return "Raising to a power"
-
-# Object representing a set in R^3 containing feasible (sigma, tau, rho) values 
-class Large_Value_Estimate2:
-    def __init__(self, region):
-        if not isinstance(region, Region):
-            raise ValueError("Parameter region must be of type region")
-        self.region = region
-
-    def __repr__(self):
-        return f"(σ,τ,ρ) in {self.region}"
 
 # Object representing a set in R^3 containing feasible (sigma, tau, rho*) values 
 class Large_Value_Energy_Estimate:
@@ -58,6 +62,7 @@ class Large_Value_Energy_Estimate:
         
     def __repr__(self):
         return f"(σ,τ,ρ*) in {self.region}"
+
 ###############################################################################
 
 

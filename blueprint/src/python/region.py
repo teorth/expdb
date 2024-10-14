@@ -17,8 +17,6 @@ class Region_Type:
     POLYTOPE = 3
     COMPLEMENT = 4
 
-
-    
     def to_str(region_type):
         if region_type == Region_Type.INTERSECT:
             return "Intersection"
@@ -55,9 +53,10 @@ class Region:
     def __copy__(self):
         return Region(self.region_type, copy.copy(self.child))
         
-    def to_str(region, indentation=0):
+    def to_str(region, indentation=0, variables=None):
         if isinstance(region.child, Polytope):
-            s = ("\t" * indentation) + str(region.child) + "\n"
+            p = str(region.child) if variables is None else region.child.to_str(variables)
+            s = ("\t" * indentation) + p + "\n"
         else:
             s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
             for r in region.child:

@@ -104,7 +104,6 @@ def derived_zero_density_estimate(data, proof, deps):
     bound.dependencies = deps
     return bound
 
-
 # Adds a zero-density estimate to the hypothesis set
 # estimate - bound on A(\sigma)
 # interval - the domain of \sigma for which the estimate holds
