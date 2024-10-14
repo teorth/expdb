@@ -698,14 +698,14 @@ def prove_exponent_pairs():
 
 def prove_zero_density_estimates():
     prove_zero_density_ingham_1940()
-    prove_zero_density_huxley_1972()
-    prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979()
-    prove_zero_density_heathbrown_1979_2()
-    prove_zero_density_ivic_1984()
-    prove_zero_density_guth_maynard_2024()
-    prove_zero_density_heathbrown_extended()
-    prove_zero_density_bourgain_improved()
+    # prove_zero_density_huxley_1972()
+    # prove_zero_density_jutila_1977()
+    # prove_zero_density_heathbrown_1979()
+    # prove_zero_density_heathbrown_1979_2()
+    # prove_zero_density_ivic_1984()
+    # prove_zero_density_guth_maynard_2024()
+    # prove_zero_density_heathbrown_extended()
+    # prove_zero_density_bourgain_improved()
     # compute_best_zero_density()
 
 #################################################################################################
@@ -743,9 +743,9 @@ def prove_prime_gap2():
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
-    prove_exponent_pairs()
+    # prove_exponent_pairs()
     # prove_bourgain_large_values_theorem()
-    # prove_zero_density_estimates()
+    prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
     # prove_improved_heath_brown_energy_estimate()
     # prove_guth_maynard_large_values_theorem()

@@ -16,6 +16,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from reference import Reference
+from region import Region, Region_Type
 import sympy
 import scipy
 import zeta_large_values as zlv
@@ -144,14 +145,65 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
 
     return sup
 
-# Given a list of large value estimates or zeta large value estimates, compute
-#
-# f(s) := sup_{(s, t) \in H} LV(s, t) / t
-#
-# for s in sigma_interval, returning the result as a piecewise function in s. Here, 
-# H represents the union of domains of bounds on LV(s, t) contained in hypotheses. 
-# Returns: list of (RationalFunction, Interval) tuples.
-def compute_sup_LV_on_tau(hypotheses, sigma_interval):
+def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=False, debug=False) -> Region:
+
+    if not isinstance(hypotheses, Hypothesis_Set):
+        raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
+    if not isinstance(domain, Region):
+        raise ValueError("Parameter domain must be of type Region.")
+    
+    # Get a list of all large value estimates from the hypothesis set
+    hyps = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
+    if zeta:
+        hyps.extend(hypotheses.list_hypotheses("Zeta large value estimate"))
+
+    # Compute the large value energy bounding region
+    LV_region = Region(Region_Type.INTERSECT, [domain] + [h.data.region for h in hyps])
+    LV_region = LV_region.as_disjoint_union(verbose=debug)
+
+    return LV_region
+
+# Given a set of Polytope objects in R^3, with dimensions (sigma, tau, rho), compute
+# the supremum of rho/tau as a function of sigma contained in the union of the polytopes
+def compute_sup_rho_on_tau(polys, sigma_interval):
+
+    # each polytope is 3-dimensional. Find all edges and project them onto the 
+    # sigma dimension. For those with a non-zero projection, compute rho / tau along 
+    # the edge as a function of sigma 
+    fns = []
+    visited = set() # Keep track of the edges we have already visited to prevent duplication
+    for p in polys:
+        edges = p.get_edges()
+        for edge in edges:
+            # Vertices on either side of the edge
+            v1 = tuple(edge[0])
+            v2 = tuple(edge[1])
+            if v1 + v2 in visited or v2 + v1 in visited: continue
+            visited.add(v1 + v2)
+
+            (sigma1, tau1, rho1) = v1
+            (sigma2, tau2, rho2) = v2
+
+            # Skip edges with empty projection onto the sigma domain
+            if sigma1 == sigma2: continue
+
+            # tau as a (linear) function of sigma along this edge
+            tau = RF([
+                (tau1 - tau2) / (sigma1 - sigma2), 
+                (sigma1 * tau2 - sigma2 * tau1) / (sigma1 - sigma2)
+            ])
+            # rho as a linear function of sigma along this edge
+            rho = RF([
+                (rho1 - rho2) / (sigma1 - sigma2), 
+                (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
+            ])
+
+            fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
+    
+    # Take the maximum of the functions
+    return RF.max(fns, sigma_interval)
+
+    """
 
     pieces = []
     for h in hypotheses:
@@ -241,7 +293,7 @@ def compute_sup_LV_on_tau(hypotheses, sigma_interval):
         extended.append((f, inter, deps))
 
     return extended
-
+    """
 
 # Computes the maximum of
 #
@@ -255,16 +307,20 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     s_lim = (sigma_interval.x0, sigma_interval.x1)
 
     # Get large value bounds
-    hyps = lv.best_large_value_estimate(
-        hypotheses, Polytope.rect(s_lim, (tau0, 2 * tau0))
+    lvr = compute_large_value_region(
+        hypotheses,
+        Region(Polytope.rect(s_lim, (tau0, 2 * tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))),
+        zeta = False
     )
-    sup1 = compute_sup_LV_on_tau(hyps, sigma_interval)
+    sup1 = compute_sup_rho_on_tau([r.child for r in lvr.child], sigma_interval)
 
     # Get zeta large value bounds
-    hyps = zlv.best_large_value_estimate(
-        hypotheses, Polytope.rect(s_lim, (frac(2), tau0))
+    zlvr = compute_large_value_region(
+        hypotheses,
+        Region(Polytope.rect(s_lim, (frac(2), tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))),
+        zeta = True
     )
-    sup2 = compute_sup_LV_on_tau(hyps, sigma_interval)
+    sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.child], sigma_interval)
 
     # Compute the maximum as a piecewise function
     crits = set(s[1].x0 for s in sup1)
