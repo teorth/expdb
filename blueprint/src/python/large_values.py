@@ -52,18 +52,21 @@ class Large_Value_Energy_Estimate:
 
 def convert_bounds_to_region(bounds):
     # The default domain of definition in (\sigma, \tau, \rho) space
-    domain = Polytope.rect(
-        (frac(1,2), frac(1)),                       # 1/2 \le \sigma \le 1
-        (frac(0), Constants.TAU_UPPER_LIMIT),       # 0 \le \tau \le TAU_UPPER_LIMIT
-        (frac(0), Constants.LV_DEFAULT_UPPER_BOUND),# 0 \le \rho \le RHO_UPPER_LIMIT
-    )
+    box = [
+        [-frac(1,2), 1, 0, 0],                      # sigma >= 1/2
+        [1, -1, 0, 0],                              # sigma <= 1
+        [0, 0, 1, 0],                               # tau >= 0
+        [Constants.TAU_UPPER_LIMIT, 0, -1, 0],      # tau <= TAU_UPPER_LIMIT
+        [0, 0, 0, 1],                               # rho >= 0
+        [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0, -1]# rho <= RHO_UPPER_LIMIT
+    ]
     # Convert bounds from 'bounds', of the form 
     # \rho \le f(\sigma, \tau) 
     # into a region in R^3 of the form 
     # f(\sigma, \tau, \rho) \ge 0.
     return Region.from_union_of_halfplanes(
         [b + [-1] for b in bounds],
-        domain
+        box
     )
 
 def literature_bound_LV_max(bounds, ref, params=""):
@@ -126,14 +129,9 @@ def raise_to_power_hypothesis(k):
     # LV(s, kt) \leq kLV(s, t)
     def transform(hypothesis):
         # Scale while re-imposing upper limit on tau
-        new_bound = hypothesis.data.bound.scale(
-            2, k, [[Constants.TAU_UPPER_LIMIT, 0, -1]]
-        )
-        for piece in new_bound.pieces:
-            piece.a = [k * ai for ai in piece.a]
-            piece.a[2] /= k
+        new_region = hypothesis.data.region.scale_all([1, k, k])
         return derived_bound_LV(
-            new_bound,
+            new_region,
             f"Follows from raising {hypothesis} to the k = {k} power",
             {hypothesis},
         )

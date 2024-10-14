@@ -698,15 +698,15 @@ def prove_exponent_pairs():
 
 def prove_zero_density_estimates():
     prove_zero_density_ingham_1940()
-    # prove_zero_density_huxley_1972()
-    # prove_zero_density_jutila_1977()
-    # prove_zero_density_heathbrown_1979()
-    # prove_zero_density_heathbrown_1979_2()
-    # prove_zero_density_ivic_1984()
-    # prove_zero_density_guth_maynard_2024()
-    # prove_zero_density_heathbrown_extended()
-    # prove_zero_density_bourgain_improved()
-    # compute_best_zero_density()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979()
+    prove_zero_density_heathbrown_1979_2()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+    prove_zero_density_heathbrown_extended()
+    prove_zero_density_bourgain_improved()
+    compute_best_zero_density()
 
 #################################################################################################
 # Derivations for prime gap theorems 

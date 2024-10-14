@@ -742,7 +742,7 @@ def add_jutila_large_values_estimate(K):
 # Bourgain large-values theorem with optimal choices of \alpha_1, \alpha_2 given by
 # Given in Table 7.1 of the LaTeX blueprint
 def add_bourgain_large_values_estimate():
-    region = Region.as_disjoint_union([
+    polys = [
         # For now - assume that we can't say anthing about LV estimates
         # for tau < 1
         Polytope.rect(
@@ -800,7 +800,12 @@ def add_bourgain_large_values_estimate():
             [11, -16, 1, 0],
             [16, -20, -frac(1,3), 0]
         ])
-    ])
+    ]
+
+    region = Region(
+        Region_Type.DISJOINT_UNION,
+        [Region.from_polytope(p) for p in polys]
+    )
     
     ref = rm.get("bourgain_large_2000")
     literature.add_hypothesis(

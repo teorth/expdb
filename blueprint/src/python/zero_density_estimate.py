@@ -154,6 +154,14 @@ def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=Fa
     
     # Get a list of all large value estimates from the hypothesis set
     hyps = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
+
+    # Use LVER transformations and use them to expand the set of LVERs
+    tfs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate transform")
+    transformed_lvs = []
+    for tf in tfs:
+        transformed_lvs.extend(tf.data.transform(h) for h in hyps)
+    hyps.extend(transformed_lvs)
+
     if zeta:
         hyps.extend(hypotheses.list_hypotheses("Zeta large value estimate"))
 
@@ -203,97 +211,6 @@ def compute_sup_rho_on_tau(polys, sigma_interval):
     # Take the maximum of the functions
     return RF.max(fns, sigma_interval)
 
-    """
-
-    pieces = []
-    for h in hypotheses:
-        pieces.extend(h.data.bound.pieces)
-
-    # This implementation assumes that hypotheses is a piecewise-linear function 
-    # on the domain sigma_interval x [tau_lower, tau_upper]. Additionally, it is 
-    # assumed that there are no multiple-definitions of the function. 
-    # 
-    # The strategy is to compute all facets of the domains of each piece (which are
-    # 2-dimensional convex polytopes), then compute the value of 
-    # LV(s, t) / t along each facet as a RationalFunction for a particular range 
-    # of sigma. Store the pieces as tuples of (RationalFunction, Interval).
-    facets = []
-    for p in pieces:
-        # Compute vertices and faces of the domain
-        verts = p.domain.get_vertices()
-        incidences = [list(x) for x in p.domain.polyhedron.get_input_incidence()]
-        constraints = p.domain.get_constraints()
-        
-        # Iterate through the edges
-        for i in range(len(constraints)):
-            c = constraints[i].coefficients
-            vs = [verts[j] for j in incidences[i]]
-            sub = Interval(min(v[0] for v in vs), max(v[0] for v in vs), True, True)
-
-            if sub.length() > 0:
-                f = RF([p.a[1], p.a[0]]).div(RF([-c[1], -c[0]], [c[2]])).add(p.a[2])
-                facets.append((f, sub))
-    
-    # Then, compute their maximums as a piecewise RationalFunction
-    # at this point we can just make use of the same code as best density estimate solver 
-    x = RF.x
-    sup = [(RF.parse("0"), sigma_interval)] # placeholder
-    
-    for (func1, in1) in facets:
-        # For simplicity, work directly with sympy objects
-        f1 = func1.num / func1.den
-        new_sup = []
-        for (func2, in2) in sup:
-            f2 = func2.num / func2.den
-            solns = sympy.solve(f1 - f2)
-            crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
-            crits.update([in1.x0, in1.x1])
-            crits = set(c for c in crits if in2.contains(c))
-            crits.update([in2.x0, in2.x1])
-
-            crits = list(crits)
-            crits.sort()
-            for i in range(1, len(crits)):
-                inter = Interval(crits[i - 1], crits[i])
-                mid = inter.midpoint()
-                
-                if not in1.contains(mid):
-                    new_sup.append((func2, inter))
-                elif f2.subs(x, mid) >= f1.subs(x, mid):
-                    new_sup.append((func2, inter))
-                else:
-                    new_sup.append((func1, inter))
-
-        # Simplify
-        sup = []
-        i = 0
-        while i < len(new_sup):
-            (fi, inti) = new_sup[i]
-            left = inti.x0
-            right = inti.x1
-
-            j = i + 1
-            while j < len(new_sup):
-                (fj, intj) = new_sup[j]
-                if not (fi == fj and right == intj.x0):
-                    break
-                right = intj.x1
-                j += 1
-                
-            sup.append((fi, Interval(left, right)))
-            i = j
-    
-    # Finally, work out the set of dependencies for each piece 
-    extended = []
-    for (f, inter) in sup:
-        s = inter.midpoint()
-        plane = Hyperplane([-s, 1, 0])
-        deps = [h for h in hypotheses 
-                   if any(p for p in h.data.bound.pieces if p.domain.intersects(plane))]
-        extended.append((f, inter, deps))
-
-    return extended
-    """
 
 # Computes the maximum of
 #
@@ -309,7 +226,9 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     # Get large value bounds
     lvr = compute_large_value_region(
         hypotheses,
-        Region(Polytope.rect(s_lim, (tau0, 2 * tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))),
+        Region.from_polytope(
+            Polytope.rect(s_lim, (tau0, 2 * tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))
+        ),
         zeta = False
     )
     sup1 = compute_sup_rho_on_tau([r.child for r in lvr.child], sigma_interval)
@@ -317,10 +236,17 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     # Get zeta large value bounds
     zlvr = compute_large_value_region(
         hypotheses,
-        Region(Polytope.rect(s_lim, (frac(2), tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))),
+        Region.from_polytope(
+            Polytope.rect(s_lim, (frac(2), tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))
+        ),
         zeta = True
     )
     sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.child], sigma_interval)
+
+    #print("sup1")
+    #for s in sup1: print(s)
+    #print("sup2")
+    #for s in sup2: print(s)
 
     # Compute the maximum as a piecewise function
     crits = set(s[1].x0 for s in sup1)
@@ -361,9 +287,11 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     # pack into Hypothesis
     hyps = []
     for s in soln:
-        proof = f'Follows from {len(s[2][0])} large value estimates and {len(s[2][1])} zeta large value estimates'
-        deps = s[2][0]          # the LV dependencies
-        deps.extend(s[2][1])    # the LVZ dependencies
+        # proof = f'Follows from {len(s[2][0])} large value estimates and {len(s[2][1])} zeta large value estimates'
+        proof = f'Follows from ? large value estimates and ? zeta large value estimates'
+        # deps = s[2][0]          # the LV dependencies
+        # deps.extend(s[2][1])    # the LVZ dependencies
+        deps = set()
         hyps.append(derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),
             proof,
