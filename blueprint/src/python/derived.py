@@ -173,6 +173,8 @@ def prove_zero_density(
     
     if verbose and len(zdes) > 0:
         sigma = sigma_interval.midpoint()
+        for h in zdes:
+            print(h.data)
         hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
         if hyp is not None:
             print()
@@ -337,8 +339,8 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        #prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), "part 1/2 of optimized Bourgain", tau0=frac(3)),
-        prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), "part 2/2 of optimized Bourgain", tau0=frac(3))
+        prove_zero_density(new_hyps, verbose, Interval(frac(3,4), frac(4,5)), "part 1/2 of optimized Bourgain", tau0=frac(3)),
+        prove_zero_density(new_hyps, verbose, Interval(frac(4,5), 1), "part 2/2 of optimized Bourgain", tau0=frac(3))
     ]
 
 # Compute the best zero-density estimates from the literature

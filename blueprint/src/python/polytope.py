@@ -429,6 +429,9 @@ class Polytope:
         for i in range(len(adj)):
             v1 = self.vertices[i]
             for j in adj[i]:
+                if j >= len(self.vertices):
+                    print(self)
+                    print(self.mat)
                 v2 = self.vertices[j]
                 edges.append((v1, v2))
         return edges

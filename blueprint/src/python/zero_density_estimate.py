@@ -6,6 +6,7 @@
 # in the rectangle \sigma \le \Re z \le 1 and |\Im z| \le T.
 
 from constants import Constants
+import copy
 import exponent_pair as ep
 from fractions import Fraction as frac
 from functions import Affine, Interval, RationalFunction as RF
@@ -16,41 +17,49 @@ import matplotlib.pyplot as plt
 import numpy as np
 from polytope import Polytope
 from reference import Reference
-from region import Region, Region_Type
-import sympy
+from region import Region
 import scipy
 import zeta_large_values as zlv
 
-
-###############################################################################
-# Object representing an estimate on A(\sigma) represented as a piecewise affine
-# function.
-#
-# The life cycle of this object is:
-# 1) Creation with expr (string), interval (Interval)
-# 2) As needed, lazily parse expr to create bound (RationalFunction) that handles
-# evaluations
-# 3) Once bound is set, expr is only used for stringify methods
-#
-# When creating derived zero-density estimates, occasionally it is more convenient
-# to initialise with the bound object directly. In that case, use the static
-# from_rational_func function to create the an instance which sets expr to the
-# default __str__ representation of RationalFunction, which may or may not coincide
-# with the original expr used to generate the bound object in the first place.
-# This should cause any circular reference problems (only potential display
-# inconsistencies) since, once the bound object is initialised, the expr object
-# is not used for computation.
-#
-# In the future, we will probably move to a canonical model with a guaranteed
-# one-to-one correspondence between expr and bound. At present this is challenging
-# since for each rational function there are multiple possible valid representations.
 class Zero_Density_Estimate:
 
-    # parameters:
-    #   - expr: an expression that represents a function of x
-    #   - interval: the Interval object representing the range of validity of the
-    #               bound.
+    """
+    Object representing an estimate on A(\\sigma) represented as a RationalFunction
+    on an Interval.
+
+    The life cycle of this object is:
+    1) Creation with the parameters expr (string) and interval (Interval)
+    2) As needed, lazily parse expr to create bound (RationalFunction) that handles
+    evaluations
+    3) Once bound is set, expr is only used for stringify methods
+
+    When creating derived zero-density estimates, occasionally it is more convenient
+    to initialise with the bound object directly. In that case, use the static
+    from_rational_func function to create the an instance which sets expr to the
+    default __str__ representation of RationalFunction, which may or may not coincide
+    with the original expr used to generate the bound object in the first place.
+    This should cause any circular reference problems (only potential display
+    inconsistencies) since, once the bound object is initialised, the expr object
+    is not used for computation.
+
+    In the future, we will probably move to a canonical model with a guaranteed
+    one-to-one correspondence between expr and bound. At present this is challenging
+    since for each rational function there are multiple possible valid representations.
+
+    """
+    
     def __init__(self, expr, interval):
+
+        """
+        Constructor
+
+        Parameters
+        ----------
+        expr : str
+            A function of x representing the zero-density bound A(sigma) <= f(sigma).
+        interval : Interval 
+            The range of validity of the zero-density estimate.
+        """
         if not isinstance(expr, str):
             raise ValueError("Parameter expr must be of type string")
         if not isinstance(interval, Interval):
@@ -169,13 +178,32 @@ def compute_large_value_region(
     if zeta:
         hyps.extend(hypotheses.list_hypotheses("Zeta large value estimate"))
 
-    # Temporarily assign labels to each polytope to enable hypothesis tracking 
-    domain.set_label(-1)
+    # Clip each hypothesis large value region to domain. Benefits of doing this 
+    # (as opposed to taking an intersection with the domain region in the main 
+    # intersection step) are:
+    # 1) There tends to be many duplicate hypotheses after clipping - so we can 
+    # identify them early (in a shallow fashion) and remove them
+    # 2) We may copy region objects so that any labelling does not affect the 
+    # Polytopes in the original hypotheses
+    regions = []
+    uniq_hash = set()
     for i in range(len(hyps)):
-        hyps[i].data.region.set_label(i)
-    
+        r = Region.intersect([domain, hyps[i].data.region])
+        r = r.as_disjoint_union(verbose=False, track_dependencies=False)
+        r.simplify()
+        # Simple hash to quickly remove most duplicates
+        hsh = str(r) 
+        if hsh in uniq_hash: 
+            continue
+        uniq_hash.add(hsh)
+        # Create a copy of the current region object, then set label
+        r = copy.copy(r)
+        r.set_label(i)
+        regions.append(r)
+
     # Compute the large value energy bounding region
-    LV_region = Region(Region_Type.INTERSECT, [domain] + [h.data.region for h in hyps])
+    # LV_region = Region(Region_Type.INTERSECT, [domain] + [h.data.region for h in hyps])
+    LV_region = Region.intersect(regions)
     LV_region = LV_region.as_disjoint_union(verbose=debug, track_dependencies=True)
 
     # Calculate dependency set using labels 
@@ -184,10 +212,6 @@ def compute_large_value_region(
         deps = deps | r.child.dependencies 
     deps = set(hyps[d] for d in deps if d >= 0)
 
-    # Remove temporary labels 
-    for h in hyps:
-        h.data.region.set_label(None)
-    
     # Construct hypothesis object and return
     if zeta:
         return zlv.derived_bound_zeta_LV(
@@ -274,7 +298,8 @@ def lv_zlv_to_zd(
 
     given a choice of \\tau_0, where LV(sigma, tau) and LV_{\\zeta}(sigma, tau)
     represent respectively the best large value estimate and zeta large 
-    value estimate obtainable from hypotheses present in hypotheses.
+    value estimate obtainable from hypotheses present in the given hypothesis
+    set.
 
     Parameters
     ----------
@@ -297,24 +322,25 @@ def lv_zlv_to_zd(
     if not isinstance(sigma_interval, Interval):
         raise ValueError("Parameter sigma_interval must be of type Interval.")
     
-    s_lim = (sigma_interval.x0, sigma_interval.x1)
+    sigma_lim = (sigma_interval.x0, sigma_interval.x1)
+    rho_lim = (0, Constants.LV_DEFAULT_UPPER_BOUND)
 
-    # Get large value bounds
+    # Get large value bounds in the interval tau0 <= tau <= 2 * tau0
     lvr = compute_large_value_region(
         hypotheses,
         Region.from_polytope(
-            Polytope.rect(s_lim, (tau0, 2 * tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))
+            Polytope.rect(sigma_lim, (tau0, 2 * tau0), rho_lim)
         ),
         zeta = False
     )
     sup1 = compute_sup_rho_on_tau([r.child for r in lvr.data.region.child], sigma_interval)
 
-    # Get zeta large value bounds
+    # Get zeta large value bounds in the interval 2 <= tau <= tau0
     hypotheses.add_hypotheses(zlv.compute_large_value_estimate(hypotheses))
     zlvr = compute_large_value_region(
         hypotheses,
         Region.from_polytope(
-            Polytope.rect(s_lim, (frac(2), tau0), (0, Constants.LV_DEFAULT_UPPER_BOUND))
+            Polytope.rect(sigma_lim, (frac(2), tau0), rho_lim)
         ),
         zeta = True
     )

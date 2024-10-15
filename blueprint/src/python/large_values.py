@@ -2,7 +2,6 @@
 # of length N can be large. For
 
 from constants import *
-import copy
 from fractions import Fraction as frac
 from functions import *
 from helpers.str_helper import Str_Helper
@@ -12,7 +11,6 @@ from polytope import *
 from reference import *
 from region import Region
 import scipy
-import time
 
 
 ###############################################################################
@@ -85,8 +83,24 @@ class Large_Value_Energy_Estimate:
 
 ###############################################################################
 
-def convert_bounds_to_region(bounds):
-    # The default domain of definition in (\sigma, \tau, \rho) space
+def convert_bounds(bounds):
+    """
+    Given a list of upper bounds for rho, generate the associated 
+    Large_Value_Estimate object.
+
+    Parameters
+    ----------
+    bounds : list of list
+        A list of upper bounds on rho, each represented as a list of coefficients
+        [c0, c1, c2] in the inequality rho <= c0 + c1 * sigma + c2 * tau
+
+    Returns
+    -------
+    Large_Value_Estimate
+        The correponding Large_Value_Estimate object
+    """
+
+    # The default domain of definition in (sigma, tau, rho) space
     box = [
         [-frac(1,2), 1, 0, 0],                      # sigma >= 1/2
         [1, -1, 0, 0],                              # sigma <= 1
@@ -96,22 +110,27 @@ def convert_bounds_to_region(bounds):
         [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0, -1]# rho <= RHO_UPPER_LIMIT
     ]
     # Convert bounds from 'bounds', of the form 
-    # \rho \le f(\sigma, \tau) 
+    # rho <= f(sigma, tau) 
     # into a region in R^3 of the form 
-    # f(\sigma, \tau, \rho) \ge 0.
-    return Region.from_union_of_halfplanes(
+    # f(sigma, tau, rho) >= 0.
+    region = Region.from_union_of_halfplanes(
         [b + [-1] for b in bounds],
         box
     )
 
-def literature_bound_LV_max(bounds, ref, params=""):
-    # Compute a string representation of bounds
-    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
+    # Compute a string representation of the bounds 
+    if len(bounds) > 1:
+        repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
+    else:
+        repr = "ρ <= " + Str_Helper.format(bounds[0], ['σ','τ'])
+    
+    return Large_Value_Estimate(region, repr=repr)
 
+def literature_bound_LV_max(bounds, ref, params=""):
     return Hypothesis(
         f"{ref.author()} large value estimate" + params,
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
+        convert_bounds(bounds),
         f"See [{ref.author()}, {ref.year()}]",
         ref,
     )
@@ -129,25 +148,19 @@ def derived_bound_LV(region, proof, deps):
     return bound
 
 def classical_LV_estimate(bounds):
-    # Compute a string representation of bounds
-    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
-
     return Hypothesis(
         "Classical large value estimate",
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
+        convert_bounds(bounds),
         "Classical",
         Reference.classical(),
     )
 
 def conjectured_LV_estimate(bounds, name):
-    # Compute a string representation of bounds
-    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
-    
     return Hypothesis(
         name,
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
+        convert_bounds(bounds),
         "Conjecture",
         Reference.conjectured(),
     )
@@ -215,7 +228,7 @@ def optimize_bourgain_large_value_estimate():
 
     box = Polytope.rect(
         (frac(1,2), frac(1)), 
-        (frac(1), frac(3))
+        (frac(1), frac(3)),
         (0, Constants.LV_DEFAULT_UPPER_BOUND)
     )
 
