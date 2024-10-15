@@ -468,8 +468,8 @@ def all_examples():
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
-    # zd.optimize_pintz_zero_density(literature)
+    zd.compute_pintz_density_estimate_subdiv()
     # large_value_energy_region_examples()
-    zero_density_energy_examples()
+    # zero_density_energy_examples()
 
 all_examples()

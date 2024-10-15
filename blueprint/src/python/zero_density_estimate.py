@@ -119,29 +119,6 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 
 ###############################################################################
 
-# Numerically compute
-# sup_{t \in [tau_lower, tau_upper]} LV(s, t) / t
-# for a particular sigma value. This method should give the same result (up to
-# numerical precision) as compute_sup_LV_on_tau
-def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100):
-
-    ts = np.linspace(tau_lower, tau_upper, resolution)
-    pieces = []
-    for h in hypotheses:
-        pieces.extend(h.data.bound.pieces)
-
-    sup = float("-inf")
-    for t in ts:
-        inf = float("inf")
-        for h in hypotheses:
-            v = h.data.bound.at([sigma, t])
-            if v is not None and v / t < inf:
-                inf = v / t
-        if inf > sup:
-            sup = inf
-
-    return sup
-
 # Computes the feasible region of large value tuples (\sigma, \tau, \rho) implied by 
 # the hypothesis set, returning a Hypothesis object representing the computed region.
 def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=False, debug=False) -> list:
@@ -193,10 +170,28 @@ def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=Fa
             LV_region, f"Follows from {len(deps)} large value estimates", deps
         )
 
-# Given a set of Polytope objects in R^3, with dimensions (sigma, tau, rho), compute
-# the supremum of rho/tau as a function of sigma contained in the union of the polytopes
-def compute_sup_rho_on_tau(polys, sigma_interval):
+def compute_sup_rho_on_tau(polys: list, sigma_interval: Interval) -> list:
 
+    """
+    Given a set of feasible (sigma, tau, rho) tuples (represented as the union of 
+    a list of Polytope objects in R^3), compute the supremum of rho / tau as a 
+    function of sigma, as sigma varies in sigma_interval. 
+
+    Parameters
+    ----------
+    polys : list of Polytope 
+        The convex polytopes whose union represents the set of feasible 
+        (sigma, tau, rho) values. 
+    sigma_interval : Interval
+        The range of values of sigma to consider. 
+
+    Returns
+    -------
+    list of (RationalFunction, Interval) tuples 
+        The supremum of rho / tau represented as a piecewise-defined function 
+        of sigma.
+    """
+    
     # each polytope is 3-dimensional. Find all edges and project them onto the 
     # sigma dimension. For those with a non-zero projection, compute rho / tau along 
     # the edge as a function of sigma 
@@ -493,22 +488,6 @@ def ep_to_zd(hypotheses):
     return bourgain_ep_to_zd(ephs) + [ivic_ep_to_zd(ephs, m=2)]
 
 
-# Returns the maximum of two RationalFunction instances over an interval 
-def max_of(f1, f2, interval):
-    crits = sympy.solve(f1.num * f2.den - f1.den * f2.num)
-    crits = set(c for c in crits if interval.contains(c))
-    crits.update([interval.x0, interval.x1])
-    crits = list(crits)
-    crits.sort()
-    
-    maxfs = []
-    for i in range(1, len(crits)):
-        sub = Interval(crits[i - 1], crits[i])
-        x = sub.midpoint()
-        maxf = f2 if f1.at(x) < f2.at(x) else f1 
-        maxfs.append((maxf, sub))
-    return maxfs
-    
 # Given a list of tuples (RationalFunction, interval), 
 # returns a simplified list of tuples representing the same piecewise defined 
 # function         
@@ -559,9 +538,14 @@ def compute_pintz_density_estimate_subdiv():
     for b in bounds:
         interval = b[2]
         (b1, b2) = b[3]
-        zdes.extend(max_of(b1, b2, interval))
-        
-    # zdes.sort(key=lambda b: b[1].x0)
+        zdes.extend(
+            RF.max(
+                [(b1, interval), (b2, interval)], 
+                interval, 
+                track_dependencies=False
+            )
+        )
+    
     zdes = simplify(zdes)
     return zdes
     
