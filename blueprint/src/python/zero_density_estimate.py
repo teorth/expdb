@@ -266,13 +266,6 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     )
     sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.data.region.child], sigma_interval)
 
-    """
-    print("sup1")
-    for s in sup1: print(s)
-    print("sup2")
-    for s in sup2: print(s)
-    """
-
     bounds = [(s[0], s[1]) for s in sup1]
     bounds.extend((s[0], s[1]) for s in sup2)
     sup = RF.max(bounds, sigma_interval)
@@ -280,7 +273,8 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
     # pack into Hypothesis
     hyps = []
     for s in sup:
-        proof = f'Follows from computed large value estimates and zeta large value estimates'
+        proof = f'Follows from computed large value estimates (for σ in {sigma_interval}, ' + \
+                f'τ in [{tau0}, {2 * tau0}]) and zeta large value estimates (σ in {sigma_interval}, τ in [{2}, {tau0}])'
         deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),

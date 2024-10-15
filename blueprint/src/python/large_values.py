@@ -16,17 +16,43 @@ import time
 
 ###############################################################################
 
-# Object representing a large value estimate LV(σ,τ)
 class Large_Value_Estimate:
-    # Parameters: region (Region) a region in R^3 representing the set of 
-    # feasible (sigma, tau, rho) values 
-    def __init__(self, region):
+
+    """
+    Class representing a large value estimate ρ \\le LV(σ, τ).
+
+    Internally a large value estimate is stored as a 3-dimensional Region 
+    representing the set of feasible tuples of (σ, τ, ρ). 
+    """
+
+    def __init__(self, region, repr=None):
+        
+        """
+        Constructs a large value estimate.
+
+        Parameters
+        ----------
+        region : Region
+            The 3-dimensional region representing a set of feasible (σ, τ, ρ)
+            values 
+        repr : str, optional
+            The string representation for this object. Defaults to None. 
+        """
+
         if not isinstance(region, Region):
-            raise ValueError("Parameter region must be of type region")
+            raise ValueError("Parameter region must be of type Region")
+        
         self.region = region
+        if repr is not None:
+            self.repr = repr
 
     def __repr__(self):
-        # Special formatting of region object
+        # If there is a specified string representation for this object, 
+        # return it
+        if self.repr is not None:
+            return self.repr
+        
+        # Otherwise: use specially formatted Region object
         s = self.region.to_str(use_indentation=False, variables="στρ")
         return f"(σ,τ,ρ) in {s}"
 
@@ -38,6 +64,7 @@ class Large_Value_Estimate_Transform:
 
     def __repr__(self):
         return "Raising to a power"
+
 
 # Object representing a set in R^3 containing feasible (sigma, tau, rho*) values 
 class Large_Value_Energy_Estimate:
