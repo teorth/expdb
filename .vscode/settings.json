@@ -24,14 +24,5 @@
   "files.trimTrailingWhitespace": true,
 
   // Automatically format strings in Python files
-  "python.analysis.autoFormatStrings": true,
-
-  // Set the Python formatter to Black
-  "python.formatting.provider": "black",
-
-  // Automatically format the file on save
-  "editor.formatOnSave": true,
-
-  // Pass additional arguments to Black (set the line length to 120 characters)
-  "python.formatting.blackArgs": ["--line-length", "120"]
+  "python.analysis.autoFormatStrings": true
 }
