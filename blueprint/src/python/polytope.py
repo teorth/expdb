@@ -157,25 +157,6 @@ class Polytope:
         if len(variables) < self.dimension():
             raise ValueError(f"Parameter variables must be a list of length >= {self.dimension()}.")
         
-        def _to_str(row, is_equality):
-            f = ""
-            if row[0] != 0:
-                f += str(row[0])
-            for i in range(1, len(row)):
-                v = variables[i - 1]
-                c = row[i]
-                if c == 0:
-                    continue
-                elif c > 0:
-                    if len(f) != 0: f += " + "
-                else:
-                    f += " - " if len(f) != 0 else "-"
-                if c == 1 or c == -1:
-                    f += v
-                else:
-                    f += str(abs(c)) + v
-            return f"{f} = 0" if is_equality else f"{f} >= 0"
-
         return str(
             [
                 Str_Helper.format(self.mat[i], variables) + (" = 0" if i in self.mat.lin_set else " >= 0")

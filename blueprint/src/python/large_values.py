@@ -188,95 +188,15 @@ def raise_to_power_hypothesis(k):
         Reference.classical(),
     )
 
-# Given a list of Piecewise objects, compute their minimum over a given domain
-# Returns result as a list of hypotheses, created using the constructor function
-def piecewise_min(estimates, domain, constructor):
-
-    # Compute bounds and crop domains (taking care not the alter the original 
-    # estimates objects)
-    bounds = [e.data.bound for e in estimates]
-    for i in range(len(bounds)):
-        bounds[i] = copy.copy(bounds[i])
-        bounds[i].crop(domain)
-
-    # No combination required - just crop a copy of the pieces to the required domain
-    if len(estimates) == 1:
-        parent = estimates[0]
-        return [constructor(bounds[0], f"Follows from {parent.name}", {parent})]
-
-    # Temporarily set the 'label' field of all estimates, and create a lookup table
-    lookup = {}
-    for i in range(len(bounds)):
-        b = bounds[i]
-        lookup[i] = estimates[i]
-        for piece in b.pieces:
-            piece.label = i
-
-    # Iterate through the list of estimates, taking pairwise minimum each time
-    best_est = None
-    simplify_every = 5
-    for i in range(len(bounds)):
-        b = bounds[i]
-        if best_est is None:
-            best_est = b
-        else:
-            best_est = best_est.min_with(b)
-        if i % simplify_every == 0:
-            best_est.simplify()
-
-    if len(bounds) % simplify_every != 0:
-        best_est.simplify()
-
-    # Set hypothesis objects with dependencies and proofs
-    hyps = []
-    if best_est is not None:
-        for e in best_est.pieces:
-            parent = lookup[e.label]
-            hyps.append(
-                constructor(Piecewise([e]), f"Follows from {parent.name}", {parent})
-            )
-
-    # Remove 'label' field
-    for b in bounds:
-        for piece in b.pieces:
-            piece.label = None
-
-    return hyps
-
-# Returns the best estimate on LV(\sigma, \tau) by combining all hypotheses of
-# type 'Large value estimate' in the hypothesis set.
-# Warning: this method is not thread safe
-# Parmeters:
-#   - hypotheses: (Hypothesis_Set object) the set of hypothesis to assume
-#   - domain: (Polytope object) [Optional] the domain on which to compute the large value estimate
-#               must be of dimension 2.
-# Returns: (list of Hypothesis objects)
-def best_large_value_estimate(hypotheses, domain=None):
-    if not isinstance(hypotheses, Hypothesis_Set):
-        raise ValueError("hypotheses must be of type Hypothesis_Set")
-    if domain is not None and not isinstance(domain, Polytope):
-        raise ValueError("domain must be of type Polytope")
-
-    # Default domain (\sigma, \tau) \in [1/2, 1] x [0, TAU_UPPER_LIMIT]
-    if domain is None:
-        domain = Polytope.rect((frac(1, 2), frac(1)), (0, Constants.TAU_UPPER_LIMIT))
-
-    lves = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
-    lv_transforms = hypotheses.list_hypotheses(
-        hypothesis_type="Large value estimate transform"
-    )
-
-    # Generate set of LV estimates (original + transformed)
-    lv_estimates = list(lves)
-    for tr_hyp in lv_transforms:
-        lv_estimates.extend([tr_hyp.data.transform(lve) for lve in lves])
-
-    return piecewise_min(lv_estimates, domain, derived_bound_LV)
-
-
-# Optimise Bourgain's large value estimate by choosing the best value of \alpha_1, \alpha_2
-# in each subregion of (\sigma, \tau)
 def optimize_bourgain_large_value_estimate():
+    """
+    Finds the optimal choice of alpha_1, alpha_2 in Bourgain's large values theorem
+    (Corollary 10.30 in the web blueprint) by solving a series of linear programs. 
+
+    The optimal choice of alpha_1, alpha_2 is a piecewise-defined function of sigma
+    and tau. 
+    """
+
     # Variables are (in order)
     # [a1, a2, sigma, tau, M, constant]
     # Regions over (sigma, tau) are defined by solving a system of 3 equations
@@ -293,13 +213,19 @@ def optimize_bourgain_large_value_estimate():
         [0, 1, 0, 0, 0, 0],              # a2 = 0
     ]
 
-    domain = Polytope.rect((frac(1,2), frac(1)), (frac(1), frac(3)))
+    box = Polytope.rect(
+        (frac(1,2), frac(1)), 
+        (frac(1), frac(3))
+        (0, Constants.LV_DEFAULT_UPPER_BOUND)
+    )
 
     # Sympy solvers give empty solution sets for these systems - so instead we
     # (temporarily) use sympy's matrix rref computer
     # a1, a2, s, t, M = sympy.symbols("a1, a2, s, t, M")
     # var = [a1, a2, s, t, M]
-    hypotheses = []
+    regions = []
+    dependencies = []
+
     for c in itertools.combinations(eqns, 3):
         mat = sympy.Matrix([eq for eq in c])
         (rows, cols) = (len(c), len(c[0]))
@@ -338,9 +264,11 @@ def optimize_bourgain_large_value_estimate():
         a2_defn = [-mat[1][5], -mat[1][2], -mat[1][3]] # C + A s + B t
 
         # This is the region where a1 >= 0, a2 >= 0
-        region = Polytope([a1_defn, a2_defn]).intersect(domain)
+        domain = Polytope([a1_defn, a2_defn]).lift(
+            0, 1, (0, Constants.LV_DEFAULT_UPPER_BOUND)
+        )
 
-        if not region.is_empty(include_boundary=False):
+        if not domain.is_empty(include_boundary=False):
             # Hack to ensure uniqueness (using the fact that tuples are hashable)
             fns = set()
             for i in range(6):
@@ -348,23 +276,32 @@ def optimize_bourgain_large_value_estimate():
                 fn = tuple(fn[j] + eqns[i][0] * a1_defn[j] + eqns[i][1] * a2_defn[j] for j in range(len(fn)))
                 fns.add(fn)
 
-            # Compute maximum
-            start_time = time.time()
-            lst = [list(fn) for fn in fns]
-            func = max_of(lst, region)
-            neg_regions = domain.set_minus(region)
-        else:
-            func = Piecewise([])
-            neg_regions = [domain]
+            # Compute feasible (sigma, tau, rho) region
+            union = [
+                domain.intersect(Polytope([list(fn) + [-1]])) # Region where f(sigma, tau) - rho >= 0
+                for fn in fns
+            ]
 
-        for reg in neg_regions:
-            func.pieces.append(Affine2([10000000, 0, 0], reg))
+            # Deal with the unbounded region
+            neg = box.set_minus(domain)
+            if not neg.is_empty(include_boundary=False):
+                union.extend(neg)
+
+            regions.append(Region.union(union))
+        else:
+            regions.append(box)
 
         a1_proof = "a1 = " + Affine2.to_string(a1_defn, "st")
         a2_proof = "a2 = " + Affine2.to_string(a2_defn, "st")
-        hypotheses.append(derived_bound_LV(func, f"Follows from taking {a1_proof} and {a2_proof}", {}))
+        dependencies.append(f"Follows from taking {a1_proof} and {a2_proof}")
 
-    return piecewise_min(hypotheses, domain, derived_bound_LV)
+    # Compute intersection
+    R = Region.intersect(regions)
+    R = R.to_disjoint_union()
+
+    # TODO: implement dependency tracking
+
+    return R
 
 # Check the literature Hypothesis object against a linear program computing the numerical
 # solution for fixed (sigma, tau)
@@ -428,14 +365,6 @@ def check_bourgain_large_value_estimate(hypothesis):
             assert abs(res.x[2] - hypothesis.data.bound.at([sigma, tau])) < TOL
 
     print("Check complete")
-
-
-# Tries to prove the bound LV(s, t) / t \leq f(s) on the specified domain defined by
-# s \in sigma_range
-# t \in tau_range(s)
-def prove_LV_on_tau_bound(hypotheses, f, sigma_range, tau_range):
-    pass
-
 
 # Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic
 # properties (ii) of Large value estimates section) to obtain a better large
