@@ -63,13 +63,9 @@ def derived_bound_zeta_LV(bound, proof, deps):
 
 
 # Compute the set of best zeta large values estimates using the hypotheses
-def best_large_value_estimate(hypotheses, domain=None):
+def compute_large_value_estimate(hypotheses):
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("hypotheses must be of type Hypothesis_Set")
-
-    # Default domain (\sigma, \tau) \in [1/2, 1] x [2, TAU_UPPER_LIMIT]
-    if domain is None:
-        domain = Polytope.rect((frac(1, 2), frac(1)), (2, Constants.TAU_UPPER_LIMIT))
 
     # Generate set of LV estimates (original + transformed)
     lv_estimates = list(
@@ -79,8 +75,7 @@ def best_large_value_estimate(hypotheses, domain=None):
     lv_estimates.extend(beta_to_zlv(hypotheses))
     # lv_estimates.extend(mu_to_zlv(hypotheses))
 
-    # Returns the piecewise minimum of different large-values estimates
-    return lv.piecewise_min(lv_estimates, domain, derived_bound_zeta_LV)
+    return lv_estimates
 
 
 # Use existing large value estimates in the hypothesis set to derive zeta large
@@ -95,12 +90,11 @@ def lv_to_zlv(hypotheses):
 
     # As a convention we restrict the domain to tau >= 2, while large value estimates
     # are restricted to tau >= 0
-    domain = Polytope([[2, 0, 1]])
+    domain = Region.from_polytope(Polytope([[-2, 0, 1, 0]]))
     zlvs = []
     for lve in hyps:
-        cpy = copy.copy(lve.data.bound)
-        cpy.crop(domain)
-        zlvs.append(derived_bound_zeta_LV(cpy, f"Follows from {lve.name}", {lve}))
+        region = Region.intersect([domain, lve.data.region])
+        zlvs.append(derived_bound_zeta_LV(region, f"Follows from {lve.name}", {lve}))
     return zlvs
 
 
@@ -139,7 +133,7 @@ def beta_to_zlv(hypotheses):
                 [0, 0, 0, -1],          # \rho <= 0 
                 [0, 0, 0, 1],           # \rho >= 0
                 [1, -1, 0, 0],          # \sigma <= 1
-                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-frac(1, 2), 1, 0, 0], # \sigma >= 1/2
                 [-tau_lower, 0, 1, 0],  # \tau >= max(2, 1/a1)
                 [tau_upper, 0, -1, 0],  # \tau <= min(some large number, 1/a0)
                 [-B, 1, -A, 0],         # \sigma >= A\tau + B
@@ -149,7 +143,7 @@ def beta_to_zlv(hypotheses):
                 [0, 0, 1, -1],          # \rho <= \tau
                 [0, 0, 0, 1],           # \rho >= 0
                 [1, -1, 0, 0],          # \sigma <= 1
-                [-frac(1, 2), 1, 0],    # \sigma > 1/2
+                [-frac(1, 2), 1, 0, 0], # \sigma >= 1/2
                 [-tau_lower, 0, 1, 0],  # \tau >= max(2, 1/a1)
                 [tau_upper, 0, -1, 0],  # \tau <= min(some large number, 1/a0)
                 [B, -1, A, 0],          # \sigma <= A\tau + B
@@ -158,7 +152,7 @@ def beta_to_zlv(hypotheses):
                 [0, 0, 1, -1],          # \rho <= \tau
                 [0, 0, 0, 1],           # \rho >= 0
                 [1, -1, 0, 0],          # \sigma <= 1
-                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-frac(1, 2), 1, 0, 0], # \sigma >= 1/2
                 [tau_lower, 0, -1, 0],  # \tau <= max(2, 1/a1)
                 [-2, 0, 1, 0],          # \tau >= 2
             ]),
@@ -166,7 +160,7 @@ def beta_to_zlv(hypotheses):
                 [0, 0, 1, -1],          # \rho <= \tau
                 [0, 0, 0, 1],           # \rho >= 0
                 [1, -1, 0, 0],          # \sigma <= 1
-                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [-frac(1, 2), 1, 0, 0], # \sigma >= 1/2
                 [-tau_upper, 0, 1, 0],  # \tau >= min(some large number, 1/a0)
                 [
                     Constants.TAU_UPPER_LIMIT,

@@ -5,24 +5,21 @@
 # where N(\sigma, T) is the number of zeroes of the Riemann zeta-function
 # in the rectangle \sigma \le \Re z \le 1 and |\Im z| \le T.
 
-from constants import Constants, Proof_Optimization_Method
-import bound_beta as bb
+from constants import Constants
 import exponent_pair as ep
 from fractions import Fraction as frac
-from functions import Affine, Affine2, Hyperplane, Interval, Piecewise, Polytope, RationalFunction as RF, SympyHelper
+from functions import Affine, Interval, RationalFunction as RF
 from hypotheses import *
 import large_values as lv
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+from polytope import Polytope
 from reference import Reference
 from region import Region, Region_Type
 import sympy
 import scipy
 import zeta_large_values as zlv
-
-
-import time
 
 
 ###############################################################################
@@ -145,7 +142,9 @@ def approx_sup_LV_on_tau(hypotheses, sigma, tau_lower, tau_upper, resolution=100
 
     return sup
 
-def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=False, debug=False) -> Region:
+# Computes the feasible region of large value tuples (\sigma, \tau, \rho) implied by 
+# the hypothesis set, returning a Hypothesis object representing the computed region.
+def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=False, debug=False) -> list:
 
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
@@ -165,11 +164,34 @@ def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=Fa
     if zeta:
         hyps.extend(hypotheses.list_hypotheses("Zeta large value estimate"))
 
+    # Temporarily assign labels to each polytope to enable hypothesis tracking 
+    domain.set_label(-1)
+    for i in range(len(hyps)):
+        hyps[i].data.region.set_label(i)
+    
     # Compute the large value energy bounding region
     LV_region = Region(Region_Type.INTERSECT, [domain] + [h.data.region for h in hyps])
-    LV_region = LV_region.as_disjoint_union(verbose=debug)
+    LV_region = LV_region.as_disjoint_union(verbose=debug, track_dependencies=True)
 
-    return LV_region
+    # Calculate dependency set using labels 
+    deps = set()
+    for r in LV_region.child:
+        deps = deps | r.child.dependencies 
+    deps = set(hyps[d] for d in deps if d >= 0)
+
+    # Remove temporary labels 
+    for h in hyps:
+        h.data.region.set_label(None)
+    
+    # Construct hypothesis object and return
+    if zeta:
+        return lv.derived_bound_LV(
+            LV_region, f"Follows from {len(deps)} zeta large value estimates", deps
+        )
+    else:
+        return lv.derived_bound_LV(
+            LV_region, f"Follows from {len(deps)} large value estimates", deps
+        )
 
 # Given a set of Polytope objects in R^3, with dimensions (sigma, tau, rho), compute
 # the supremum of rho/tau as a function of sigma contained in the union of the polytopes
@@ -231,9 +253,10 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
         ),
         zeta = False
     )
-    sup1 = compute_sup_rho_on_tau([r.child for r in lvr.child], sigma_interval)
+    sup1 = compute_sup_rho_on_tau([r.child for r in lvr.data.region.child], sigma_interval)
 
     # Get zeta large value bounds
+    hypotheses.add_hypotheses(zlv.compute_large_value_estimate(hypotheses))
     zlvr = compute_large_value_region(
         hypotheses,
         Region.from_polytope(
@@ -241,57 +264,24 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
         ),
         zeta = True
     )
-    sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.child], sigma_interval)
+    sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.data.region.child], sigma_interval)
 
-    #print("sup1")
-    #for s in sup1: print(s)
-    #print("sup2")
-    #for s in sup2: print(s)
+    """
+    print("sup1")
+    for s in sup1: print(s)
+    print("sup2")
+    for s in sup2: print(s)
+    """
 
-    # Compute the maximum as a piecewise function
-    crits = set(s[1].x0 for s in sup1)
-    crits.update(s[1].x1 for s in sup1)
-    crits.update(s[1].x0 for s in sup2)
-    crits.update(s[1].x1 for s in sup2)
-
-    for func1, int1, _ in sup1:
-        for func2, int2, _ in sup2:
-            crits.update(func1.intersections(func2, int1.intersect(int2)))
-
-    crits = list(crits)
-    crits.sort()
-    soln = []
-    for i in range(1, len(crits)):
-        s1 = crits[i - 1]
-        s2 = crits[i]
-        interval = Interval(s1, s2)
-        if interval.length() == 0:
-            continue
-
-        s = interval.midpoint()  # the test point
-
-        f1 = next(f for f in sup1 if f[1].contains(s))
-        f2 = next(f for f in sup2 if f[1].contains(s))
-        f = f1[0] if f1[0].at(s) > f2[0].at(s) else f2[0]
-        soln.append((f, interval, [f1[2], f2[2]]))
-
-    # Simplify ranges by merging neighbouring intervals
-    for i in range(len(soln) - 1, 0, -1):
-        s1 = soln[i - 1]
-        s2 = soln[i]
-        if s1[0] == s2[0] and s1[1].x1 == s2[1].x0:
-            # Merge
-            s1[1].x1 = s2[1].x1
-            soln.pop(i)
+    bounds = [(s[0], s[1]) for s in sup1]
+    bounds.extend((s[0], s[1]) for s in sup2)
+    sup = RF.max(bounds, sigma_interval)
 
     # pack into Hypothesis
     hyps = []
-    for s in soln:
-        # proof = f'Follows from {len(s[2][0])} large value estimates and {len(s[2][1])} zeta large value estimates'
-        proof = f'Follows from ? large value estimates and ? zeta large value estimates'
-        # deps = s[2][0]          # the LV dependencies
-        # deps.extend(s[2][1])    # the LVZ dependencies
-        deps = set()
+    for s in sup:
+        proof = f'Follows from computed large value estimates and zeta large value estimates'
+        deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),
             proof,

@@ -210,7 +210,7 @@ def lver_to_energy_bound(LVER, LVER_zeta, sigma_interval, debug=False):
         depcount[1] = len(LVER_zeta.dependencies)
     
     # Take maximum
-    bounds, indexes = [(f[0], f[1]) for f in fns], [(f[2],) for f in fns]
+    bounds = [(f[0], f[1]) for f in fns]
     sup = RF.max(bounds, sigma_interval)
     print("A*(x)(1-x) \leq")
     for s in sup: print(s[0], "for x \in", s[1])

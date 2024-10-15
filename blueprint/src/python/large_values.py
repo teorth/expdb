@@ -26,7 +26,9 @@ class Large_Value_Estimate:
         self.region = region
 
     def __repr__(self):
-        return f"(σ,τ,ρ) in {self.region}"
+        # Special formatting of region object
+        s = self.region.to_str(use_indentation=False, variables="στρ")
+        return f"(σ,τ,ρ) in {s}"
 
 
 class Large_Value_Estimate_Transform:

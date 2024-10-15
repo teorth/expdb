@@ -165,8 +165,6 @@ def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)
     zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1), tau0)
     
     if verbose and len(zdes) > 0:
-        # for h in zdes:
-        #     print(h.data)
         hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
         if hyp is not None:
             print()
@@ -698,15 +696,15 @@ def prove_exponent_pairs():
 
 def prove_zero_density_estimates():
     prove_zero_density_ingham_1940()
-    prove_zero_density_huxley_1972()
-    prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979()
-    prove_zero_density_heathbrown_1979_2()
-    prove_zero_density_ivic_1984()
-    prove_zero_density_guth_maynard_2024()
-    prove_zero_density_heathbrown_extended()
-    prove_zero_density_bourgain_improved()
-    compute_best_zero_density()
+    # prove_zero_density_huxley_1972()
+    # prove_zero_density_jutila_1977()
+    # prove_zero_density_heathbrown_1979()
+    # prove_zero_density_heathbrown_1979_2()
+    # prove_zero_density_ivic_1984()
+    # prove_zero_density_guth_maynard_2024()
+    # prove_zero_density_heathbrown_extended()
+    # prove_zero_density_bourgain_improved()
+    # compute_best_zero_density()
 
 #################################################################################################
 # Derivations for prime gap theorems 

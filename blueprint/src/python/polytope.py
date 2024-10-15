@@ -415,10 +415,6 @@ class Polytope:
                 cent[i] += v[i]
 
         den = frac(len(self.vertices), 1)
-        if den == 0:
-            print(self)
-            print(self.vertices)
-
         for i in range(self.dimension()):
             cent[i] /= den
         return cent

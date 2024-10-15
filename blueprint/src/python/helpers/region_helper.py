@@ -7,7 +7,7 @@ class Region_Helper:
     # polys: list of Polytope
     # union_fn: function taking a list of Polytope and returns Polytope if union is 
     # a convex polytope, None otherwise. 
-    def simplify_union_of_polys(polys, union_fn):
+    def simplify_union_of_polys(polys, union_fn, track_dependencies=False):
         
         # The list of polytopes will be expanded, without removal
         # Instead we keep track of the indexes of the polytopes included in the union
@@ -34,6 +34,8 @@ class Region_Helper:
 
                 union = union_fn([polys[i], polys[j]])
                 if union is not None:
+                    if track_dependencies:
+                        union.dependencies = polys[i].dependencies | polys[j].dependencies
                     # Union is successful: remove indexes in c and add new index
                     index.remove(i)
                     index.remove(j)

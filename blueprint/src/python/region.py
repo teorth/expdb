@@ -52,16 +52,27 @@ class Region:
     def __copy__(self):
         return Region(self.region_type, copy.copy(self.child))
         
-    def to_str(region, indentation=0, variables=None):
-        if isinstance(region.child, Polytope):
-            p = str(region.child) if variables is None else region.child.to_str(variables)
-            s = ("\t" * indentation) + p + "\n"
+    def to_str(region, use_indentation=True, indentation=0, variables=None):
+        # Returns a long-form expression
+        if use_indentation:
+            if isinstance(region.child, Polytope):
+                p = str(region.child) if variables is None else region.child.to_str(variables)
+                return ("\t" * indentation) + p + "\n"
+            else:
+                s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
+                for r in region.child:
+                    s += Region.to_str(r, use_indentation, indentation + 1, variables)
+                return s
+            
+        # Returns a short form expression
         else:
-            s = ("\t" * indentation) + Region_Type.to_str(region.region_type) + "\n"
-            for r in region.child:
-                s += Region.to_str(r, indentation + 1)
-        return s
+            if isinstance(region.child, Polytope):
+                return str(region.child) if variables is None else region.child.to_str(variables)
+            else:
+                return Region_Type.to_str(region.region_type) + " of {" + \
+                    ", ".join(Region.to_str(r, use_indentation=False, variables=variables) for r in region.child) + "}"
     
+
     # Private methods --------------------------------------------------------
 
     # If the region is a union of polytopes, try to simplify it
@@ -127,6 +138,22 @@ class Region:
         return Region(Region_Type.INTERSECT, regions)
     
     # Instance methods -------------------------------------------------------
+
+    def set_label(self, label):
+        """
+        Sets a label for each Polytope in this Region object 
+        """
+        if self.region_type == Region_Type.POLYTOPE:
+            self.child.label = label
+            return 
+        
+        # Recursively set the label attribute
+        if isinstance(self.child, Region):
+            self.child.set_label(label)
+        else:
+            for r in self.child:
+                r.set_label(label)
+
 
     # Returns whether this region contains the point x
     def contains(self, x):
@@ -230,18 +257,65 @@ class Region:
 
     # Returns a representation of this region as a disjoint union of convex polytopes.
     # Returns the result as a Region object of type DISJOINT_UNION
-    def as_disjoint_union(self, verbose=False) -> 'Region':
-        polys = self._as_disjoint_union_poly(verbose=verbose)
+    def as_disjoint_union(self, verbose=False, track_dependencies=False) -> 'Region':
+        """
+        Computes a representation of this region as a union of convex polytopes. 
+        
+        Parameters 
+        ----------
+        verbose : boolean, optional
+            If True, debugging information will be logged to the console 
+            (default is False)
+        track_dependencies : boolean, optional
+            If True, each polytope in the output will contain a "dependencies" 
+            attribute that contains the "label" attribute of all polytopes used 
+            to generate that polytope (default is False).
+
+        Returns
+        -------
+        Region
+            A region object of type "DISJOINT_UNION"
+        """
+        polys = self._as_disjoint_union_poly(verbose=verbose, track_dependencies=track_dependencies)
         return Region.disjoint_union([Region(Region_Type.POLYTOPE, p) for p in polys])
 
-    # Internal method 
-    # Same as the as_disjoint_union(self) method except it returns the result as a 
-    # list of Polytope objects.
-    def _as_disjoint_union_poly(self, verbose=False) -> list[Polytope]:
+    def _as_disjoint_union_poly(self, verbose=False, track_dependencies=False) -> list[Polytope]:
+        """
+        Computes a representation of this region as a union of convex polytopes. 
+        
+        Parameters 
+        ----------
+        verbose : boolean, optional
+            If True, debugging information will be logged to the console 
+            (default is False)
+        track_dependencies : boolean, optional
+            If True, each polytope in the output will contain a "dependencies" 
+            attribute that contains the "label" attribute of all polytopes used 
+            to generate that polytope (default is False).
+
+        Raises
+        ------
+        NotImplementedError
+            If the disjoint union operation is not yet implemented for the 
+            region type. 
+        
+        Returns
+        -------
+        list
+            a list of Polytope objects, whose union equals this Region.  
+        """
+
         if self.region_type == Region_Type.COMPLEMENT:
             raise NotImplementedError(self.region_type) # TODO: implement this
         if self.region_type == Region_Type.POLYTOPE:
-            return [self.child]
+            if track_dependencies:
+                # If tracking labels, create a copy so as to not add the 
+                # dependencies attribute to the original polytope object. 
+                poly = copy.copy(self.child)
+                poly.dependencies = {self.child.label}
+                return [poly]
+            else:
+                return [self.child]
         if self.region_type == Region_Type.INTERSECT:
 
             # Compute intersection of regions using distributive property of set 
@@ -264,13 +338,19 @@ class Region:
                 start_time = time.time()
 
             # Sets of lists of polytopes
-            child_sets = [r._as_disjoint_union_poly() for r in self.child]
+            child_sets = [
+                r._as_disjoint_union_poly(
+                    verbose=verbose, 
+                    track_dependencies=track_dependencies
+                ) 
+                for r in self.child
+            ]
             A = child_sets[0]
             i = 0
             for B in child_sets[1:]:
                 i += 1
 
-                # # [[ad-hoc performance optimisation]] that did not improve performance 
+                # # [[Ad-hoc performance optimisation]] that did not improve performance 
                 # # check if A is a subset of B, so that A intersect B = A and we may
                 # # avoid computing the intersection altogether. 
                 # if all(p.is_covered_by(B) for p in A):
@@ -280,7 +360,7 @@ class Region:
                 for p in A:
                     inters = []
                     for q in B:
-                        # [[Ad hoc performance optimisation]] - take care of easy cases
+                        # [[Ad-hoc performance optimisation]] - take care of easy cases
                         # first, which tend to occur frequently in practice
                         if p.is_subset_of(q):
                             inters.append(p)
@@ -289,25 +369,32 @@ class Region:
                         else:
                             inter = p.intersect(q)
                             if not inter.is_empty(include_boundary=False):
+                                if track_dependencies:
+                                    inter.dependencies = p.dependencies | q.dependencies
                                 inters.append(inter)
 
-                    # [[Ad hoc performance optimisation]] - frequently in practice p is a 
+                    # [[Ad-hoc performance optimisation]] - frequently in practice p is a 
                     # subset of B, so it is a good candidate for merging
                     if 2 <= len(inters) and len(inters) <= UNION_THRESHOLD:
                         union = Polytope.try_union(inters)
                         if union is not None:
+                            if track_dependencies:
+                                deps = set()
+                                for a in inters: deps = deps | a.dependencies
+                                union.dependencies = deps
                             new_A.append(union)
                             continue
                     
-                    # Otherwise, just add the pieces as-is
+                    # Otherwise, just add the pieces as-is. Dependencies (if they are 
+                    # being tracked) will propagate automatically
                     new_A.extend(inters)
 
                 
-                # [[Ad hoc performance optimisation]]
+                # [[Ad-hoc performance optimisation]]
                 # Every few rounds, simplify if the number of polytopes is too large
                 if (i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100):
                     prevlen = len(new_A)
-                    new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union)
+                    new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union, track_dependencies)
                     if verbose:
                         print("Simplifying", prevlen, "->", len(new_A))
 
@@ -321,7 +408,10 @@ class Region:
         if self.region_type == Region_Type.DISJOINT_UNION:
             result = []
             for r in self.child:
-                result.extend(r._as_disjoint_union_poly())
+                result.extend(r._as_disjoint_union_poly(
+                    verbose=verbose, 
+                    track_dependencies=track_dependencies
+                ))
             return result
         raise NotImplementedError(self.region_type)
     
