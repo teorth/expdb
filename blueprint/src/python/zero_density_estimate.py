@@ -185,7 +185,7 @@ def compute_large_value_region(hypotheses:Hypothesis_Set, domain:Region, zeta=Fa
     
     # Construct hypothesis object and return
     if zeta:
-        return lv.derived_bound_LV(
+        return zlv.derived_bound_zeta_LV(
             LV_region, f"Follows from {len(deps)} zeta large value estimates", deps
         )
     else:
@@ -268,13 +268,13 @@ def lv_zlv_to_zd(hypotheses, sigma_interval, tau0=frac(3)):
 
     bounds = [(s[0], s[1]) for s in sup1]
     bounds.extend((s[0], s[1]) for s in sup2)
-    sup = RF.max(bounds, sigma_interval)
+    sup = RF.max(bounds, sigma_interval, track_dependencies=False)
 
     # pack into Hypothesis
     hyps = []
     for s in sup:
         proof = f'Follows from computed large value estimates (for σ in {sigma_interval}, ' + \
-                f'τ in [{tau0}, {2 * tau0}]) and zeta large value estimates (σ in {sigma_interval}, τ in [{2}, {tau0}])'
+                f'τ in [{tau0},{2 * tau0}]) and zeta large value estimates (for σ in {sigma_interval}, τ in [{2},{tau0}])'
         deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),

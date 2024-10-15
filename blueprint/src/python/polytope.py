@@ -4,6 +4,7 @@ from fractions import Fraction as frac
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
+from helpers.str_helper import Str_Helper
 
 
 
@@ -176,7 +177,10 @@ class Polytope:
             return f"{f} = 0" if is_equality else f"{f} >= 0"
 
         return str(
-            [_to_str(self.mat[i], i in self.mat.lin_set) for i in range(len(self.mat))]
+            [
+                Str_Helper.format(self.mat[i], variables) + (" = 0" if i in self.mat.lin_set else " >= 0")
+                for i in range(len(self.mat))
+            ]
         )
 
     def __eq__(self, other):

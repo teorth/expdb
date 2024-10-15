@@ -5,6 +5,7 @@ from constants import *
 import copy
 from fractions import Fraction as frac
 from functions import *
+from helpers.str_helper import Str_Helper
 from hypotheses import *
 import itertools
 from polytope import *
@@ -25,7 +26,7 @@ class Large_Value_Estimate:
     representing the set of feasible tuples of (σ, τ, ρ). 
     """
 
-    def __init__(self, region, repr=None):
+    def __init__(self, region:Region, repr:str=None):
         
         """
         Constructs a large value estimate.
@@ -43,8 +44,7 @@ class Large_Value_Estimate:
             raise ValueError("Parameter region must be of type Region")
         
         self.region = region
-        if repr is not None:
-            self.repr = repr
+        self.repr = repr
 
     def __repr__(self):
         # If there is a specified string representation for this object, 
@@ -59,6 +59,10 @@ class Large_Value_Estimate:
 
 class Large_Value_Estimate_Transform:
 
+    """
+    Class representing a large value estimate transform 
+    """
+
     def __init__(self, transform):
         self.transform = transform
 
@@ -66,9 +70,11 @@ class Large_Value_Estimate_Transform:
         return "Raising to a power"
 
 
-# Object representing a set in R^3 containing feasible (sigma, tau, rho*) values 
 class Large_Value_Energy_Estimate:
     
+    """
+    Class representing a additive energy estimate ρ* \\le LV*(σ, τ)
+    """
     def __init__(self, region):
         if not isinstance(region, Region):
             raise ValueError("Parameter region must be of type Region")
@@ -99,20 +105,23 @@ def convert_bounds_to_region(bounds):
     )
 
 def literature_bound_LV_max(bounds, ref, params=""):
+    # Compute a string representation of bounds
+    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
+
     return Hypothesis(
         f"{ref.author()} large value estimate" + params,
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds)),
+        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
         f"See [{ref.author()}, {ref.year()}]",
         ref,
     )
 
-def derived_bound_LV(bound, proof, deps):
+def derived_bound_LV(region, proof, deps):
     year = Reference.max_year(tuple(d.reference for d in deps))
     bound = Hypothesis(
         "Derived large value estimate",
         "Large value estimate",
-        Large_Value_Estimate(bound),
+        Large_Value_Estimate(region),
         proof,
         Reference.derived(year),
     )
@@ -120,19 +129,25 @@ def derived_bound_LV(bound, proof, deps):
     return bound
 
 def classical_LV_estimate(bounds):
+    # Compute a string representation of bounds
+    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
+
     return Hypothesis(
         "Classical large value estimate",
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds)),
+        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
         "Classical",
         Reference.classical(),
     )
 
 def conjectured_LV_estimate(bounds, name):
+    # Compute a string representation of bounds
+    repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
+    
     return Hypothesis(
         name,
         "Large value estimate",
-        Large_Value_Estimate(convert_bounds_to_region(bounds)),
+        Large_Value_Estimate(convert_bounds_to_region(bounds), repr=repr),
         "Conjecture",
         Reference.conjectured(),
     )

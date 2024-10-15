@@ -154,17 +154,25 @@ def prove_guth_maynard_large_values_theorem():
 
 # Given additional_hypotheses, a list of new hypothesis (other than classical results),
 # find the best density estimate as a piecewise function, then if 'verbose' is true
-# displays the proof of the piece containing 'sigma'. 
-def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3), plot=False):
+# displays the proof of the piece containing the midpoint of sigma_interval. 
+def prove_zero_density(
+        additional_hypotheses : list, 
+        verbose : bool, 
+        sigma_interval : Interval, 
+        name : str, 
+        tau0 : numbers.Number = frac(3), 
+        plot : bool = False):
+    
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
-    for k in range(2, 10):
+    for k in range(2, 6):
         hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
     hypotheses.add_hypotheses(additional_hypotheses)
     
-    zdes = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1,2), 1), tau0)
+    zdes = zd.lv_zlv_to_zd(hypotheses, sigma_interval, tau0)
     
     if verbose and len(zdes) > 0:
+        sigma = sigma_interval.midpoint()
         hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
         if hyp is not None:
             print()
@@ -189,7 +197,7 @@ def prove_zero_density(additional_hypotheses, verbose, sigma, name, tau0=frac(3)
     
 # Prove Ingham's zero density estimate A(s) < 3/(1-s)
 def prove_zero_density_ingham_1940(verbose=True):
-    return prove_zero_density([], verbose, frac(1,2), 'Ingham')
+    return prove_zero_density([], verbose, Interval(frac(1,2), frac(3,4)), 'Ingham')
 
 # Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
 def prove_zero_density_huxley_1972(verbose=True):
@@ -207,7 +215,7 @@ def prove_zero_density_huxley_1972(verbose=True):
     )
     new_hyps.extend(zlv.mu_to_zlv(hypotheses))
     
-    return prove_zero_density(new_hyps, verbose, frac(7,8), 'Huxley')
+    return prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), 'Huxley')
 
 # Prove Jutila's proof of the density hypothesis for s > 11/14.
 def prove_zero_density_jutila_1977(verbose=True):
@@ -217,7 +225,7 @@ def prove_zero_density_jutila_1977(verbose=True):
             keywords='Jutila, k = 3'
             )
         ]
-    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Jutila')
+    return prove_zero_density(new_hyps, verbose, Interval(frac(11,14), 1), 'Jutila')
 
 # Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
 def prove_zero_density_heathbrown_1979(verbose=True):
@@ -231,7 +239,7 @@ def prove_zero_density_heathbrown_1979(verbose=True):
             keywords="Heath-Brown"
             )
         ]
-    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown')
+    return prove_zero_density(new_hyps, verbose, Interval(frac(11,14), 1), 'Heath-Brown')
 
 # Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
 def prove_zero_density_heathbrown_1979_2(verbose=True):
@@ -250,8 +258,8 @@ def prove_zero_density_heathbrown_1979_2(verbose=True):
             )
         ]
     zdts = []
-    zdts.append(prove_zero_density(new_hyps, verbose, frac(20,23), 'part 1/2 of the second Heath-Brown'))
-    zdts.append(prove_zero_density(new_hyps, verbose, frac(22,23), 'part 2/2 of the second Heath-Brown'))
+    zdts.append(prove_zero_density(new_hyps, verbose, Interval(frac(20,23), frac(25,28)), 'part 1/2 of the second Heath-Brown'))
+    zdts.append(prove_zero_density(new_hyps, verbose, Interval(frac(25,28), 1), 'part 2/2 of the second Heath-Brown'))
     return zdts
 
 # Prove Ivi\'{c}'s zero-density estimates 
@@ -286,7 +294,7 @@ def prove_zero_density_guth_maynard_2024(verbose=True):
             keywords="Guth, Maynard"
             )
         ]
-    return prove_zero_density(new_hyps, verbose, frac(3,4), "Guth--Maynard")
+    return prove_zero_density(new_hyps, verbose, Interval(frac(7,10), frac(9,10)), "Guth--Maynard")
 
 # Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
 def prove_zero_density_heathbrown_extended(verbose=True):
@@ -314,7 +322,7 @@ def prove_zero_density_heathbrown_extended(verbose=True):
     # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
     # which will be used to calculate the best zeta large value estimate
     new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
-    return prove_zero_density(new_hyps, verbose, frac(9,10), 'Heath-Brown', tau0=frac(5), plot=True)
+    return prove_zero_density(new_hyps, verbose, Interval(frac(20,23), 1), 'Heath-Brown', tau0=frac(4), plot=True)
 
 def prove_zero_density_bourgain_improved(verbose=True):
     new_hyps = [
@@ -329,8 +337,8 @@ def prove_zero_density_bourgain_improved(verbose=True):
         )
     ]
     return [
-        #prove_zero_density(new_hyps, verbose, frac(22,29), "part 1/2 of optimized Bourgain", tau0=frac(3)),
-        prove_zero_density(new_hyps, verbose, frac(25,32), "part 2/2 of optimized Bourgain", tau0=frac(3))
+        #prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), "part 1/2 of optimized Bourgain", tau0=frac(3)),
+        prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), "part 2/2 of optimized Bourgain", tau0=frac(3))
     ]
 
 # Compute the best zero-density estimates from the literature
@@ -696,15 +704,15 @@ def prove_exponent_pairs():
 
 def prove_zero_density_estimates():
     prove_zero_density_ingham_1940()
-    # prove_zero_density_huxley_1972()
-    # prove_zero_density_jutila_1977()
-    # prove_zero_density_heathbrown_1979()
-    # prove_zero_density_heathbrown_1979_2()
-    # prove_zero_density_ivic_1984()
-    # prove_zero_density_guth_maynard_2024()
-    # prove_zero_density_heathbrown_extended()
-    # prove_zero_density_bourgain_improved()
-    # compute_best_zero_density()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979()
+    prove_zero_density_heathbrown_1979_2()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+    prove_zero_density_heathbrown_extended()
+    prove_zero_density_bourgain_improved()
+    compute_best_zero_density()
 
 #################################################################################################
 # Derivations for prime gap theorems 
