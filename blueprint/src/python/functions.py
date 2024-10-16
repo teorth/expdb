@@ -146,14 +146,7 @@ class Affine:
         self.label = label
 
     def __repr__(self):
-        s1 = "x" if self.m == 1 else f"{self.m}x"
-        s2 = ""
-        if self.c > 0:
-            s2 = f" + {self.c}"
-        elif self.c < 0:
-            s2 = f" - {abs(self.c)}"
-        s3 = f"   ({self.label})" if self.label is not None else ""
-        return f"{s1}{s2}  for  x \\in {self.domain}{s3}"
+        return self.to_str("x")
 
     def __eq__(self, other):
         if isinstance(other, Affine):
@@ -171,6 +164,10 @@ class Affine:
     def deep_copy(self):
         return Affine(self.m, self.c, self.domain.deep_copy())
 
+    def to_str(self, variable):
+        s3 = f"  ({self.label})" if self.label is not None else ""
+        return f"{Str_Helper.format([self.c, self.m], [variable])} for {variable} \\in {self.domain}{s3}"
+    
     # Evaluates the function at x. If extend_domain is True, then the domain of
     # the function will be ignored.
     def at(self, x, extend_domain=False):

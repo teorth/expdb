@@ -152,29 +152,71 @@ def prove_guth_maynard_large_values_theorem():
 ######################################################################################
 # Derivations of zero-density estimates for the Riemann zeta-function
 
-# Given additional_hypotheses, a list of new hypothesis (other than classical results),
-# find the best density estimate as a piecewise function, then if 'verbose' is true
-# displays the proof of the piece containing the midpoint of sigma_interval. 
 def prove_zero_density(
         additional_hypotheses : list, 
         verbose : bool, 
         sigma_interval : Interval, 
         name : str, 
-        tau0 : numbers.Number = frac(3), 
-        plot : bool = False):
+        tau0 : numbers.Number | Affine = frac(3), 
+        plot : bool = False,
+        method : int = 1):
     
+    """
+    Prove a zero density estimate for zeta given a set of hypotheses, a range of
+    values of sigma, and a choice of tau0.
+
+    Paramters
+    ---------
+    additional_hypotheses : list of Hypothesis
+        The list of hypothesis from the literature to assume (other than classical
+        results). 
+    verbose : bool, optional 
+        If True, results will be logged to console. 
+    sigma_interval : Interval
+        The range of sigma values to consider.
+    name : str
+        The name of this density estimate, for plotting/logging purposes.
+    tau0 : Number or Affine, optional
+        The tau_0 value to use. If method = 1 (i.e. using Corollary 11.7), then 
+        tau_0 can be any sufficiently large number (default is 3). If method = 2
+        (i.e. using Corollary 11.8), tau_0 must be an affine function of sigma, 
+        represented as an Affine object.  
+    plot : bool, optional
+        If True, a graph of the zero-density estimate will be plotted (default
+        is False).
+    method : int, optional
+        The method of converting large value estimates to zero density theorems. 
+        If method = 1, then Corollary 11.7 (zd.lv_zlv_to_zd(...)) is used, and if 
+        method = 2, then Corollary 11.8 (zd.lv_zlv_to_zd2(...)) is used. Note 
+        this parameter affects the expected type of tau0 parameter. 
+
+    Returns
+    -------
+    list of Hypothesis
+        A list of zero density estimates, each valid for a range of sigma. 
+    """
+
+    # Given additional_hypotheses, a list of new hypothesis (other than classical results),
+    # find the best density estimate as a piecewise function, then if 'verbose' is true
+    # displays the proof of the piece containing the midpoint of sigma_interval. 
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(lv.large_value_estimate_L2)
-    for k in range(2, 6):
-        hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
+
+    # Only add raise to power hypothesis if proof method = 1
+    if method == 1:
+        for k in range(2, 6):
+            hypotheses.add_hypothesis(lv.raise_to_power_hypothesis(k))
     hypotheses.add_hypotheses(additional_hypotheses)
     
-    zdes = zd.lv_zlv_to_zd(hypotheses, sigma_interval, tau0)
+    if method == 1:
+        zdes = zd.lv_zlv_to_zd(hypotheses, sigma_interval, tau0)
+    elif method == 2:
+        zdes = zd.lv_zlv_to_zd2(hypotheses, sigma_interval, tau0)
+    else:
+        raise NotImplementedError(f"Unknown proof method: {method}")
     
     if verbose and len(zdes) > 0:
         sigma = sigma_interval.midpoint()
-        for h in zdes:
-            print(h.data)
         hyp = next((h for h in zdes if h.data.interval.contains(sigma)), None)
         if hyp is not None:
             print()
@@ -201,15 +243,17 @@ def prove_zero_density(
 def prove_zero_density_ingham_1940(verbose=True):
     return prove_zero_density([], verbose, Interval(frac(1,2), frac(3,4)), 'Ingham')
 
+def prove_zero_density_ingham_1940_v2(verbose=True):
+    sigma = Interval(frac(1,2), frac(3,4))
+    tau0 = Affine(-1, 2, sigma)
+    return prove_zero_density([], verbose, sigma, 'Ingham', tau0=tau0, method=2)
+
 # Prove Huxley's zero density estimate A(s) < 3/(3s - 1)
 def prove_zero_density_huxley_1972(verbose=True):
     
     new_hyps = [
-        literature.find_hypothesis(
-            hypothesis_type='Large value estimate',
-            keywords='Huxley'
-            )
-        ]
+        literature.find_hypothesis(keywords='Huxley large value estimate')
+    ]
     
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(
@@ -219,15 +263,36 @@ def prove_zero_density_huxley_1972(verbose=True):
     
     return prove_zero_density(new_hyps, verbose, Interval(frac(3,4), 1), 'Huxley')
 
+def prove_zero_density_huxley_1972_v2(verbose=True):
+    
+    new_hyps = [
+        literature.find_hypothesis(keywords='Huxley large value estimate')
+    ]
+    
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(
+        literature.find_hypothesis(data=Bound_mu(frac(1,2), frac(1,6)))
+    )
+    new_hyps.extend(zlv.mu_to_zlv(hypotheses))
+    
+    sigma = Interval(frac(3,4), 1)
+    tau0 = Affine(3, -1, sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, 'Huxley', tau0=tau0, method=2)
+
 # Prove Jutila's proof of the density hypothesis for s > 11/14.
 def prove_zero_density_jutila_1977(verbose=True):
     new_hyps = [
-        literature.find_hypothesis(
-            hypothesis_type='Large value estimate', 
-            keywords='Jutila, k = 3'
-            )
-        ]
+        literature.find_hypothesis(keywords='Jutila large value estimate, k = 3')
+    ]
     return prove_zero_density(new_hyps, verbose, Interval(frac(11,14), 1), 'Jutila')
+
+def prove_zero_density_jutila_1977_v2(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(keywords='Jutila large value estimate, k = 3')
+    ]
+    sigma = Interval(frac(11,14), 1)
+    tau0 = Affine(0, frac(3,2), sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, 'Jutila', tau0=tau0, method=2)
 
 # Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
 def prove_zero_density_heathbrown_1979(verbose=True):
@@ -705,6 +770,13 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 def prove_zero_density_estimates():
+    print("Proofs using Corollary 11.8 -------------------------------------------------------")
+    prove_zero_density_ingham_1940_v2()
+    prove_zero_density_huxley_1972_v2()
+    prove_zero_density_jutila_1977_v2()
+
+    print()
+    print("Proofs using Corollary 11.7 -------------------------------------------------------")
     prove_zero_density_ingham_1940()
     prove_zero_density_huxley_1972()
     prove_zero_density_jutila_1977()

@@ -38,7 +38,7 @@ def get_trivial_zlv():
 def literature_bound_ZLV_Max(bounds, ref, params=""):
     hyp = lv.literature_bound_LV_max(bounds, ref, params)
     return Hypothesis(
-        f"{ref.author()} ({ref.year()}) large value estimate{params}",
+        f"{ref.author()} ({ref.year()}) zeta large value estimate{params}",
         "Zeta large value estimate",
         hyp.data,
         f"See [{ref.author(), ref.year()}]",

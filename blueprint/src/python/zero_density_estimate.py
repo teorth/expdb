@@ -47,7 +47,7 @@ class Zero_Density_Estimate:
     since for each rational function there are multiple possible valid representations.
 
     """
-    
+
     def __init__(self, expr, interval):
 
         """
@@ -301,6 +301,12 @@ def lv_zlv_to_zd(
     value estimate obtainable from hypotheses present in the given hypothesis
     set.
 
+    Compared with the function lv_zlv_to_zd2(), there is less reliance on 
+    making a good choice of \\tau_0 since the method uses raise-to-power 
+    hypotheses to ensure that as long as \\tau_0 is taken to be sufficiently 
+    large, the zero density estimate can be obtained. However the use of 
+    raise-to-power hypotheses means this function is typically slower. 
+
     Parameters
     ----------
     hypotheses : Hypothesis_Set
@@ -363,13 +369,84 @@ def lv_zlv_to_zd(
         ))
     return hyps
 
-# Tries to prove the zero-density estimate using Corollary 11.8 by specifying the 
-# value of tau0 to use and the range of sigma to consider. 
-# Parameters:
-#   - tau0: (RationalFunction) the choice of tau0 as a function of sigma 
-#   - sigma_interval: (Interval) the range of sigma values to consider
-def prove_density_estimate(hypothesis, tau0, sigma_interval):
-    raise NotImplementedError()
+
+def lv_zlv_to_zd2(
+        hypotheses:Hypothesis_Set, 
+        sigma_interval:Interval, 
+        tau0:Affine
+    ) -> list[Hypothesis]:
+
+    """
+    Tries to prove the zero-density estimate using Corollary 11.8 by specifying the 
+    value of tau0 to use and the range of sigma to consider. 
+
+    Parameters
+    ----------
+    hypotheses : Hypothesis_Set
+        The set of hypotheses to assume. 
+    tau0 : RationalFunction 
+        The choice of tau0 as a function of sigma 
+    sigma_interval : Interval 
+        The range of sigma values to consider
+    """
+
+    if not isinstance(hypotheses, Hypothesis_Set):
+        raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
+    if not isinstance(sigma_interval, Interval):
+        raise ValueError("Parameter sigma_interval must be of type Interval.")
+    if not isinstance(tau0, Affine):
+        raise ValueError("Parameter tau0 must be of type Affine.")
+    
+    sigma_rho_constraints = [
+        [-sigma_interval.x0, 1, 0, 0],              # sigma >= x0
+        [sigma_interval.x1, -1, 0, 0],              # sigma <= x1
+        [0, 0, 0, 1],                               # rho >= 0
+        [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0, -1] # rho <= large number
+    ]
+
+    # Get large value bounds in the interval 2/3 tau0 <= tau <= tau0
+    lvr = compute_large_value_region(
+        hypotheses,
+        Region.from_polytope(
+            Polytope([
+                [-frac(2,3) * tau0.c, -frac(2,3) * tau0.m, 1, 0], # tau >= 2/3 * tau0
+                [tau0.c, tau0.m, -1, 0] # tau <= tau0
+            ] + sigma_rho_constraints)
+        ),
+        zeta = False
+    )
+    sup1 = compute_sup_rho_on_tau([r.child for r in lvr.data.region.child], sigma_interval)
+
+    # Get zeta large value bounds in the interval 2 <= tau <= 4/3 tau0
+    hypotheses.add_hypotheses(zlv.compute_large_value_estimate(hypotheses))
+    zlvr = compute_large_value_region(
+        hypotheses,
+        Region.from_polytope(
+            Polytope([
+                [-2, 0, 1, 0], # tau >= 2
+                [frac(4,3) * tau0.c, frac(4,3) * tau0.m, 1, 0] # tau <= 4/3 * tau0
+            ])
+        ),
+        zeta = True
+    )
+    sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.data.region.child], sigma_interval)
+
+    bounds = [(s[0], s[1]) for s in sup1]
+    bounds.extend((s[0], s[1]) for s in sup2)
+    sup = RF.max(bounds, sigma_interval, track_dependencies=False)
+
+    # pack into Hypothesis
+    hyps = []
+    for s in sup:
+        proof = "Follows from computed large value estimates and zeta large " + \
+                f"value estimates with τ0 = {tau0.to_str('σ')})"
+        deps = {lvr, zlvr}
+        hyps.append(derived_zero_density_estimate(
+            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+            proof,
+            deps
+        ))
+    return hyps
 
 # Computes the zero-density estimate obtained from
 #
