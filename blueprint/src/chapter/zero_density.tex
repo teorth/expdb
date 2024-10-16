@@ -246,7 +246,6 @@ Optimizing in $\tau_0$, we obtain the claim.
 \code{add_zero_density_ingham_1940()}
 \derived
 \code{prove_zero_density_ingham_1940()}
-\derived 
 \code{prove_zero_density_ingham_1940_v2()}
 
 \begin{proof}\uses{zero-large-cor3, l2-mvt}
@@ -263,7 +262,6 @@ Either of Theorem \ref{thm:ingham-first} or Theorem \ref{thm:ingham_zero_density
 \code{add_zero_density_huxley_1972()}
 \derived
 \code{prove_zero_density_huxley_1972()}
-\derived
 \code{prove_zero_density_huxley_1972_v2()}
 
 \begin{proof}\uses{zero-large-cor3, huxley-lv, lvz-mu} We apply Corollary \ref{zero-large-cor3} with $\tau_0 := 3\sigma-1$.  The Montgomery conjecture hypothesis follows from Theorem \ref{huxley-lv}. So it remains to show that \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.  For $\sigma \leq 5/6$ we have $4\tau_0/3 \leq 2$, so the claim is vacuously true in this case.  For $\sigma > 5/6$ we use Corollary \ref{lvz-mu} and the bound $\mu(1/2) \leq 1/6$ from Table \ref{mu-table} to conclude that
@@ -276,6 +274,7 @@ $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > 1/2 + \tau/6$, but this is
 \code{add_zero_density_guth_maynard_2024()}
 \derived
 \code{prove_zero_density_guth_maynard_2024()}
+\code{prove_zero_density_guth_maynard_2024_v2()}
 
 \begin{proof}\uses{thm:ingham_zero_density2, huxley-lv,zero-large-cor2, guth-maynard-lvt, l2-mvt} We may assume that $7/10 < \sigma < 8/10$, since the bound follows from the Ingham and Huxley bounds otherwise.  We apply Corollary \ref{zero-large-cor2} with $\tau_0 := \frac{3+5\sigma}{5}$.  We have $4\tau_0/3 < 2$, so the claim \eqref{lvoz} is vacuous and we only need to establish \eqref{lvo}.  We split into the subranges $13/5-2\sigma \leq \tau < \tau_0$ and $2\tau_0/3 \leq \tau \leq 13/5-2\sigma$. In the former range we use Theorem \ref{guth-maynard-lvt} (and \eqref{obvious}), and reduce to showing that
 $$ 18/5 - 4 \sigma \leq (3-3\sigma) \frac{\tau}{\tau_0},$$
@@ -296,7 +295,6 @@ in this range.  This follows again from \eqref{18-5} which guarantees the inequa
 \end{theorem}
 \derived
 \code{prove_zero_density_jutila_1977()}
-\derived
 \code{prove_zero_density_jutila_1977_v2()}
 
 \begin{proof}\uses{zero-large-cor, jutila-lvt}
@@ -316,8 +314,10 @@ In fact, we can do better:
 \literature
 \code{add_zero_density_heathbrown_1979()}
 \derived
-\code{prove_zero_density_heathbrown_1979()}
-\code{prove_zero_density_heathbrown_1979_2()}
+\code{prove_zero_density_heathbrown_1979a()}
+\code{prove_zero_density_heathbrown_1979b()}
+\code{prove_zero_density_heathbrown_1979a_v2()}
+\code{prove_zero_density_heathbrown_1979b_v2()}
 
 \begin{proof}\uses{zero-large-cor2, jutila-lvt, hb-12, hb-opt} For the first estimate, we apply Corollary \ref{zero-large-cor2} with $\tau_0 := \frac{7\sigma-1}{3}$.  To verify \eqref{lvo}, we apply the $k=3$ version of Theorem \ref{jutila-lvt}, which gives
 $$ \LV(\sigma,\tau) \leq \max \bigg( 2-2\sigma, \tau + \frac{10-16\sigma}{3}, \tau + 18-24\sigma \bigg).$$

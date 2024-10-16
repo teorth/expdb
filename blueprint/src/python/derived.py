@@ -295,12 +295,9 @@ def prove_zero_density_jutila_1977_v2(verbose=True):
     return prove_zero_density(new_hyps, verbose, sigma, 'Jutila', tau0=tau0, method=2)
 
 # Prove Heath-Browns's zero density estimate A(s) < 9/(7s - 1)
-def prove_zero_density_heathbrown_1979(verbose=True):
+def prove_zero_density_heathbrown_1979a(verbose=True):
     new_hyps = [
-        literature.find_hypothesis(
-            hypothesis_type="Large value estimate", 
-            keywords="Jutila, k = 3"
-            ),
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
         literature.find_hypothesis(
             hypothesis_type="Zeta large value estimate", 
             keywords="Heath-Brown"
@@ -308,17 +305,23 @@ def prove_zero_density_heathbrown_1979(verbose=True):
         ]
     return prove_zero_density(new_hyps, verbose, Interval(frac(11,14), 1), 'Heath-Brown')
 
-# Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
-def prove_zero_density_heathbrown_1979_2(verbose=True):
+def prove_zero_density_heathbrown_1979a_v2(verbose=True):
     new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
         literature.find_hypothesis(
-            hypothesis_type="Large value estimate", 
-            keywords="Jutila, k = 3"
-            ),
-        literature.find_hypothesis(
-            hypothesis_type="Large value estimate", 
+            hypothesis_type="Zeta large value estimate", 
             keywords="Heath-Brown"
-            ),
+            )
+        ]
+    sigma = Interval(frac(11,14), 1)
+    tau0 = Affine(frac(7,3), -frac(1,3), sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, 'Heath-Brown', tau0=tau0, method=2)
+
+# Prove Heath-Browns's second zero density estimate A(s) < max(3/(10s - 7), 4/(4s - 1))
+def prove_zero_density_heathbrown_1979b(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
+        literature.find_hypothesis(keywords="Heath-Brown large value estimate"),
         literature.find_hypothesis(
             hypothesis_type="Zeta large value estimate", 
             keywords="Heath-Brown"
@@ -329,6 +332,24 @@ def prove_zero_density_heathbrown_1979_2(verbose=True):
     zdts.append(prove_zero_density(new_hyps, verbose, Interval(frac(25,28), 1), 'part 2/2 of the second Heath-Brown'))
     return zdts
 
+def prove_zero_density_heathbrown_1979b_v2(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
+        literature.find_hypothesis(keywords="Heath-Brown large value estimate"),
+        literature.find_hypothesis(
+            hypothesis_type="Zeta large value estimate", 
+            keywords="Heath-Brown"
+            )
+        ]
+    zdts = []
+    sigma = Interval(frac(20,23), frac(25,28))
+    tau0 = Affine(10, -7, sigma)
+    zdts.append(prove_zero_density(new_hyps, verbose, sigma, 'part 1/2 of the second Heath-Brown', tau0=tau0, method=2))
+    
+    sigma = Interval(frac(25,28), 1)
+    tau0 = Affine(3, -frac(3,4), sigma)
+    zdts.append(prove_zero_density(new_hyps, verbose, sigma, 'part 2/2 of the second Heath-Brown', tau0=tau0, method=2))
+    return zdts
 # Prove Ivi\'{c}'s zero-density estimates 
 # A(s) < 3/(2s)  3831/4791 <= s <= 1 (actually, we could do slightly better with better 
 # choice of exponent pair)
@@ -363,18 +384,22 @@ def prove_zero_density_guth_maynard_2024(verbose=True):
         ]
     return prove_zero_density(new_hyps, verbose, Interval(frac(7,10), frac(9,10)), "Guth--Maynard")
 
-# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
-def prove_zero_density_heathbrown_extended(verbose=True):
-    
+def prove_zero_density_guth_maynard_2024_v2(verbose=True):
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
-            keywords="Jutila, k = 3"
-            ),
-        literature.find_hypothesis(
-            hypothesis_type="Large value estimate", 
-            keywords="Heath-Brown"
+            keywords="Guth, Maynard"
             )
+        ]
+    sigma = Interval(frac(7,10), frac(9,10))
+    tau0 = Affine(1, frac(3,5), sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, "Guth--Maynard", tau0=tau0, method=2)
+
+# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
+def prove_zero_density_heathbrown_extended(verbose=True):
+    new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
+        literature.find_hypothesis(keywords="Heath-Brown large value estimate")
         ]
     
     # Create a hypothesis representing the (3/40, 31/40) exponent pair
@@ -774,14 +799,17 @@ def prove_zero_density_estimates():
     prove_zero_density_ingham_1940_v2()
     prove_zero_density_huxley_1972_v2()
     prove_zero_density_jutila_1977_v2()
+    prove_zero_density_heathbrown_1979a_v2()
+    prove_zero_density_heathbrown_1979b_v2()
+    prove_zero_density_guth_maynard_2024_v2()
 
     print()
     print("Proofs using Corollary 11.7 -------------------------------------------------------")
     prove_zero_density_ingham_1940()
     prove_zero_density_huxley_1972()
     prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979()
-    prove_zero_density_heathbrown_1979_2()
+    prove_zero_density_heathbrown_1979a()
+    prove_zero_density_heathbrown_1979b()
     prove_zero_density_ivic_1984()
     prove_zero_density_guth_maynard_2024()
     prove_zero_density_heathbrown_extended()
