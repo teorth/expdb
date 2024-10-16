@@ -350,6 +350,7 @@ def prove_zero_density_heathbrown_1979b_v2(verbose=True):
     tau0 = Affine(3, -frac(3,4), sigma)
     zdts.append(prove_zero_density(new_hyps, verbose, sigma, 'part 2/2 of the second Heath-Brown', tau0=tau0, method=2))
     return zdts
+
 # Prove Ivi\'{c}'s zero-density estimates 
 # A(s) < 3/(2s)  3831/4791 <= s <= 1 (actually, we could do slightly better with better 
 # choice of exponent pair)

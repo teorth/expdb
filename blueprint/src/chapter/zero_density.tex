@@ -105,7 +105,7 @@ and the claim follows in this case from \eqref{lv-bound}.
 Recently, a partial converse to the above lemma was established:
 
 \begin{lemma}[Large values from zero density]\label{zero-dens_implies_large}\cite[Theorem 1.2]{matomaki_teravainen_2024}\uses{zero-def, lvz-def} If $\tau > 0$ and $1/2 \leq \sigma \leq 1$ are fixed, then
-    $$ \LV_\zeta(\sigma,\tau)/\tau \leq \max( \frac{1}{2}, \sup_{\sigma \leq \sigma' \leq 1} \A(\sigma')(1-\sigma') + \frac{\sigma'-\sigma}{2} ).$$
+    $$ \LV_\zeta(\sigma,\tau)/\tau \leq \max\left( \frac{1}{2}, \sup_{\sigma \leq \sigma' \leq 1} \A(\sigma')(1-\sigma') + \frac{\sigma'-\sigma}{2} \right).$$
 \end{lemma}
 
 \begin{proof}  Let $N \geq 1$ be unbounded, $T = N^{\tau+o(1)}$, and $I \subset [N,2N]$ be an interval, and $t_1,\dots,t_R \in [T,2T]$ be $1$-separated with
@@ -158,6 +158,9 @@ For machine assisted proofs, one can simply take $\tau_0$ to be a sufficiently l
 \begin{corollary}\label{zero-large-cor} Let $1/2 < \sigma < 1$ and $\tau_0 > 0$.  Then
 $$ \A(\sigma)(1-\sigma) \leq \max \left(\sup_{2 \leq \tau < 4\tau_0/3} \LV_\zeta(\sigma,\tau)/\tau, \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau\right).$$
 \end{corollary}
+
+\python{zero_density_estimate}
+\code{lv_zlv_to_zd(hypotheses, sigma_interval, tau0)}
 
 \begin{proof}\uses{zero-large-cor-0, power-lemma}  Applying Corollary \ref{zero-large-cor-0} with $\tau$ replaced by $4\tau_0/3$, it suffices to show that
 $$\sup_{4\tau_0/3 \leq \tau \leq 8\tau_0/3} \LV(\sigma,\tau)/\tau \leq \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau.$$
