@@ -131,8 +131,16 @@ def prove_guth_maynard_large_values_theorem():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
     
-    # Compute the feasible region of (\sigma, \tau, \rho) values 
-    region = ad.lver_to_lv(hypotheses)
+    # Compute the feasible region of (sigma, tau, rho, rho*, s) values 
+    # in the domain 1/2 <= sigma <= 1, tau >= 0
+    lver_region = ad.compute_best_lver(
+        hypotheses, 
+        Polytope.rect((frac(1,2), 1), (0, Constants.TAU_UPPER_LIMIT)),
+        zeta=False
+    )
+    
+    # Project into a feasible region of (sigma, tau, rho) values 
+    region = ad.lver_to_lv(lver_region)
     
     # Take \tau = 6/5 (TODO: replace this step with Huxley subdivision once it is implemented)
     region = region.substitute({1: frac(6,5)})

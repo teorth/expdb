@@ -2,14 +2,14 @@
 
 import copy 
 from constants import Constants
-import exponent_pair as ep
 from fractions import Fraction as frac
 from functions import *
 from hypotheses import Hypothesis, Hypothesis_Set
-from polytope import Polytope
+import large_values as lv
 from reference import Reference
 from region import Region, Region_Type
 from transform import Transform
+from zeta_large_values import zlv
 
 class Large_Value_Energy_Region:
     
@@ -64,13 +64,18 @@ class Large_Value_Energy_Region:
             raise ValueError("point must be 5-dimensional")
         return self.region.contains(point)
     
-    # Raise this region to the kth power
-    # (sigma, tau, rho, rho*, s) -> (sigma, k * tau, k * rho, k * rho*, k * s) 
-    # TODO implement 
-    def raise_to_power(self, k):
-        if not isinstance(k, int) or k < 2:
-            raise ValueError("Parameter k must be an integer and >= 2.")
-        raise NotImplementedError("TODO") # TODO
+
+class Additive_Energy_Region:
+
+    """
+    Represents a region in R^3 that contains all possible (σ, τ, ρ*) tuples, 
+    where ρ* is the exponent of the additive energy associated with a 1-spaced
+    set W belonging to a large value pattern with parameters V = N^σ and T = N^τ.
+    """
+    def __init__(self, region):
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type Region.")
+        self.region = region
 
 #############################################################################
 
@@ -193,14 +198,29 @@ def ep_to_lver(eph):
         f"Follows from {eph.data}",
         {eph})
 
+def lv_to_lver(hypotheses: Hypothesis_Set, zeta: bool = False) -> list[Hypothesis]:
 
-# Given a Hypothesis_Set, find Hypothesis of type "Large value estimate" or "Zeta large value estimate", 
-# convert them into large value energy regions and returns them as a list of Hypothesis
-#
-# If zeta is True, then "Zeta large value estimate" and "Zeta large value energy region" are
-# considered instead 
-def lv_to_lver(hypotheses, zeta=False):
-    
+    """
+    Converts all large value estimates to large value energy regions in a hypothesis
+    set. 
+
+    If zeta is True, then "Zeta large value estimate" and "Zeta large value energy 
+    region" are considered instead.
+
+    Parameters
+    ----------
+    hypotheses : Hypothesis_Set
+        The set of hypotheses from which large value estimates are drawn.
+    zeta : bool, optional
+        Indicates whether zeta large value estimates should be used instead (default
+        is False).
+
+    Returns
+    -------
+    list of Hypothesis
+        A list of hypotheses, each representing a large value energy region.
+    """
+
     if zeta:
         lvs = hypotheses.list_hypotheses(hypothesis_type="Zeta large value estimate")
         constructor = derived_zeta_large_value_energy_region
@@ -230,28 +250,6 @@ def lv_to_lver(hypotheses, zeta=False):
             )
         )
     return hyps
-
-# Given a Hypothesis_Set, find all Hypothesis of type "Large value energy region", computes 
-# their intersection as a (simplified) polytope, then projects onto the (sigma, tau, rho)
-# domain, returning the result as Region in R^3
-# TODO: when the large value estimates are converted to their Polytope representation, 
-# change the return type of this function to Hypothesis. 
-def lver_to_lv(hypotheses, zeta=False):
-
-    if zeta:
-        hyps = hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region")
-    else:
-        hyps = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
-    
-    # Take the energy region (sigma, tau, rho, rho*, s)
-    E = Region.intersect([h.data.region for h in hyps])
-    E1 = E.as_disjoint_union()
-
-    # Project onto the dimensions (sigma, tau, rho)
-    proj = E1.project({0, 1, 2})
-    proj.simplify()
-    return proj
-
 
 def compute_best_lver(
         hypotheses: Hypothesis_Set, 
@@ -326,6 +324,101 @@ def compute_best_lver(
         return derived_large_value_energy_region(
             Large_Value_Energy_Region(E1), proof, dependencies)
 
+def lver_to_lv(hypothesis: Hypothesis) -> Hypothesis:
+
+    """
+    Computes a large value region from a large value energy region by taking the 
+    projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ).
+
+    Parameters
+    ----------
+    hypothesis: Hypothesis
+        A hypothesis of type "Large value energy region" or "Zeta large value 
+        energy region".
+    
+    Returns
+    -------
+    Hypothesis
+        A hypothesis representing the computed large value region, of type "Large value 
+        estimate".
+    """
+
+    if not isinstance(hypothesis, Hypothesis):
+        raise ValueError("Parameter hypothesis must be of type Hypothesis")
+    
+    if hypothesis.hypothesis_type != "Large value energy region" and \
+        hypothesis.hypothesis_type != "Zeta large value energy region":
+        raise ValueError("Hypothesis must either be of type 'Large value energy region'" + \
+                         " or 'Zeta large value energy region'")
+    
+    # Ensure that the region is represented as a union or disjoint union
+    region = hypothesis.data.region.as_disjoint_union()
+
+    # Project onto the dimensions (sigma, tau, rho)
+    proj = region.project({0, 1, 2})
+    proj.simplify()
+
+    # Pack into Hypothesis object
+    if hypothesis.hypothesis_type == "Large value energy region":
+        return lv.derived_bound_LV(
+            proj, 
+            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ).", 
+            {hypothesis}
+        )
+    else:
+        return zlv.derived_bound_zeta_LV(
+            proj,
+            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ).", 
+            {hypothesis} 
+        )
+
+def lver_to_energy(hypothesis: Hypothesis) -> Hypothesis:
+
+    """
+    Computes a additive energy region from a large value energy region by taking the 
+    projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*). 
+
+    Parameters
+    ----------
+    hypothesis: Hypothesis
+        A hypothesis of type "Large value energy region" or "Zeta large value 
+        energy region".
+    
+    Returns
+    -------
+    Hypothesis
+        A hypothesis representing the computed additive energy region, of type "Large 
+        value estimate".
+    """
+
+    if not isinstance(hypothesis, Hypothesis):
+        raise ValueError("Parameter hypothesis must be of type Hypothesis")
+    
+    if hypothesis.hypothesis_type != "Large value energy region" and \
+        hypothesis.hypothesis_type != "Zeta large value energy region":
+        raise ValueError("Hypothesis must either be of type 'Large value energy region'" + \
+                         " or 'Zeta large value energy region'")
+    
+    # Ensure that the region is represented as a union or disjoint union
+    region = hypothesis.data.region.as_disjoint_union()
+
+    # Project onto the dimensions (sigma, tau, rho*)
+    proj = region.project({0, 1, 3})
+    proj.simplify()
+
+    # Pack into Hypothesis object
+    if hypothesis.hypothesis_type == "Large value energy region":
+        return lv.derived_bound_LV(
+            proj, 
+            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*).", 
+            {hypothesis}
+        )
+    else:
+        return zlv.derived_bound_zeta_LV(
+            proj,
+            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*).", 
+            {hypothesis} 
+        )
 
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
 # as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 
