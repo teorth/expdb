@@ -9,7 +9,22 @@ import large_values as lv
 from reference import Reference
 from region import Region, Region_Type
 from transform import Transform
-from zeta_large_values import zlv
+import zeta_large_values as zlv
+
+
+class Additive_Energy_Estimate:
+    
+    """
+    Class representing an additive energy estimate ρ* \\le LV*(σ, τ)
+    """
+    def __init__(self, region: Region):
+        if not isinstance(region, Region):
+            raise ValueError("Parameter region must be of type Region")
+        self.region = region
+        
+    def __repr__(self):
+        s = self.region.to_str(use_indentation=False, variables=["σ","τ","ρ*"])
+        return f"(σ,τ,ρ*) in {s}"
 
 class Large_Value_Energy_Region:
     
@@ -64,21 +79,7 @@ class Large_Value_Energy_Region:
             raise ValueError("point must be 5-dimensional")
         return self.region.contains(point)
     
-
-class Additive_Energy_Region:
-
-    """
-    Represents a region in R^3 that contains all possible (σ, τ, ρ*) tuples, 
-    where ρ* is the exponent of the additive energy associated with a 1-spaced
-    set W belonging to a large value pattern with parameters V = N^σ and T = N^τ.
-    """
-    def __init__(self, region):
-        if not isinstance(region, Region):
-            raise ValueError("Parameter region must be of type Region.")
-        self.region = region
-
 #############################################################################
-
 
 def literature_large_value_energy_region(region, ref, params=""):
     return Hypothesis(
@@ -121,6 +122,47 @@ def derived_zeta_large_value_energy_region(data, proof, deps):
     )
     bound.dependencies = deps
     return bound
+
+def derived_additive_energy_estimate(
+        region: Region, 
+        proof: str, 
+        deps: set[Hypothesis], 
+        zeta: bool = False
+    ) -> Hypothesis:
+
+    """
+    Construct a additive energy estimate Hypothesis object. 
+
+    Parameters 
+    ----------
+    region : Region
+        A subset of R^3 representing the set of feasible values 
+        of (σ, τ, ρ*).
+    proof : str
+        The proof of this additive energy estimate as a string.
+    deps : set of Hypothesis
+        The set of hypothesis on which this result depends.
+    zeta : bool, optional
+        If True, the additive energy estimate is with respect to
+        a zeta large value pattern. 
+    
+    Returns 
+    -------
+    Hypothesis
+        The additive energy estimate as a Hypothesis. 
+    """
+    year = Reference.max_year(tuple(d.reference for d in deps))
+    bound = Hypothesis(
+        "Derived additive energy estimate",
+        "Additive energy estimate",
+        Additive_Energy_Estimate(region),
+        proof,
+        Reference.derived(year),
+    )
+    bound.dependencies = deps
+    return bound
+
+#############################################################################
 
 # Returns a Hypothesis object representing raising the large value energy region 
 # to a integer power k. 
@@ -404,21 +446,19 @@ def lver_to_energy(hypothesis: Hypothesis) -> Hypothesis:
 
     # Project onto the dimensions (sigma, tau, rho*)
     proj = region.project({0, 1, 3})
+
+    # Handle empty projections 
+    if proj is None: return None
+    
     proj.simplify()
 
     # Pack into Hypothesis object
-    if hypothesis.hypothesis_type == "Large value energy region":
-        return lv.derived_bound_LV(
-            proj, 
-            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*).", 
-            {hypothesis}
-        )
-    else:
-        return zlv.derived_bound_zeta_LV(
-            proj,
-            f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*).", 
-            {hypothesis} 
-        )
+    zeta = hypothesis.hypothesis_type == "Zeta large value energy region"
+    return derived_additive_energy_estimate(
+        proj, 
+        f"Follows from {hypothesis} and taking the projection (σ, τ, ρ, ρ*, s) -> (σ, τ, ρ*).", 
+        {hypothesis}
+    )
 
 # Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
 # as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 

@@ -67,20 +67,6 @@ class Large_Value_Estimate_Transform:
     def __repr__(self):
         return "Raising to a power"
 
-
-class Large_Value_Energy_Estimate:
-    
-    """
-    Class representing a additive energy estimate ρ* \\le LV*(σ, τ)
-    """
-    def __init__(self, region):
-        if not isinstance(region, Region):
-            raise ValueError("Parameter region must be of type Region")
-        self.region = region
-        
-    def __repr__(self):
-        return f"(σ,τ,ρ*) in {self.region}"
-
 ###############################################################################
 
 def convert_bounds(bounds):

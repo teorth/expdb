@@ -7,9 +7,11 @@
 # satisfying with real part \in [\sigma, 1] and imaginary part \in 
 # [-T, T]. 
 
+import additive_energy as ad
 from fractions import Fraction as frac
-from functions import Interval, RationalFunction as RF
+from functions import Affine, Interval, RationalFunction as RF
 from hypotheses import Hypothesis, Hypothesis_Set
+from polytope import Polytope
 from reference import Reference
 from region import Region
 
@@ -169,73 +171,74 @@ def add_trivial_zero_density_energy_estimates(hypotheses: Hypothesis_Set):
     )
 
 def lver_to_energy_bound(
-        LVER: Hypothesis, 
-        LVER_zeta: Hypothesis, 
-        sigma_interval: Interval, 
+        hypotheses: Hypothesis_Set,
+        tau0: Affine,
         debug: bool = False
     ) -> list[Hypothesis]:
     
     """
-    Given an estimate of the large value energy region and zeta large value 
-    energy region respectively, computes the best bound on the additive 
-    energy A^*(\\sigma). 
+    Given a set of hypotheses, compute the best large value energy region
+    then computes the best bound on the additive energy A^*(\\sigma).
 
     Parameters
     ----------
-    LVER : Hypothesis
-        A regoin that contains the large value energy region, i.e. a region that 
-        contains the set of feasible tuples (sigma, tau, rho, rho*, s).
-    LVER_zeta : Hypothesis
-        A region that contains the zeta large value energy region. 
-    sigma_interval : Interval
-        The range of sigma values to for which to calculate A*(sigma)
+    hypotheses : Hypothesis_Set:
+        The set of hypothesis from which to construct the large value 
+        energy region.
     debug : bool, optional
         If True, additional debugging information will be logged to console
         (default is False).
     """
     
-    if LVER is not None and (not isinstance(LVER, Hypothesis) or \
-        LVER.hypothesis_type != "Large value energy region"):
-        raise ValueError("Parameter LVER must be a Hypothesis of type 'Large value energy region'.")
-    if LVER_zeta is not None and (not isinstance(LVER_zeta, Hypothesis) or \
-        LVER_zeta.hypothesis_type != "Zeta large value energy region"):
-        raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
-    if not isinstance(sigma_interval, Interval):
-        raise ValueError("Parameter sigma_interval must be of type Interval.")
+    if not isinstance(hypotheses, Hypothesis_Set):
+        raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
+    if not isinstance(tau0, Affine):
+        raise ValueError("Parameter tau0 must be of type Affine.")
     
     fns = []
     deps = set()
-    depcount = [0, 0] # The number of dependencies
 
-    if LVER is not None:
-        sup1 = compute_sup_LV_on_tau(LVER.data.region, sigma_interval)
-        if debug:
-            print("sup1")
-            for s in sup1: print(s[0], "for x\in", s[1])
+    # domain representing tau0 <= tau <= 2 tau0
+    sigma_interval = tau0.domain
+    LVER_domain = Region.from_polytope(
+        Polytope([
+            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+            [-tau0.c, -tau0.m, 1],       # tau >= tau0 = m sigma + c
+            [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
+        ])
+    )
+    lver = ad.compute_best_lver(hypotheses, LVER_domain, zeta=False, debug=debug)
+    energy = ad.lver_to_energy(lver)
+    if energy is not None:
+        sup1 = compute_sup_LV_on_tau(energy.data.region, sigma_interval)
         fns.extend(list(sup1))
-        deps.update(list(LVER.dependencies))
-        depcount[0] = len(LVER.dependencies)
+        deps.add(energy)
     
-    if LVER_zeta is not None:
-        sup2 = compute_sup_LV_on_tau(LVER_zeta.data.region, sigma_interval)
-        if debug:
-            print("sup2")
-            for s in sup2: print(s[0], "for x\in", s[1])
+    # domain representing 2 <= tau <= tau0
+    LVER_zeta_domain = Region.from_polytope(
+        Polytope([
+            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+            [-2, 0, 1],                  # tau0 >= 2
+            [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
+        ])
+    )
+    zlver = ad.compute_best_lver(hypotheses, LVER_zeta_domain, zeta=True, debug=debug)
+    energy_zeta = ad.lver_to_energy(zlver)
+    if energy_zeta is not None:
+        sup2 = compute_sup_LV_on_tau(energy_zeta.data.region, sigma_interval)
         fns.extend(list(sup2))
-        deps.update(list(LVER_zeta.dependencies))
-        depcount[1] = len(LVER_zeta.dependencies)
+        deps.add(energy_zeta)
     
     # Take maximum
     bounds = [(f[0], f[1]) for f in fns]
     sup = RF.max(bounds, sigma_interval)
-    print("A*(x)(1-x) \leq")
-    for s in sup: print(s[0], "for x \in", s[1])
-    
     return [
         derived_zero_density_energy_estimate(
             Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
-            f"Follows from combining {depcount[0]} large value energy regions " + \
-            "and {depcount[1]} zeta large value energy regions",
+            f"Follows from combining {len(lver.dependencies)} large value energy regions " + \
+            f"and {len(zlver.dependencies)} zeta large value energy regions",
             deps
         )
         for s in sup
