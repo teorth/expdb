@@ -408,7 +408,7 @@ def lver_to_zero_density_example():
             [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
         ])
     )
-    LVER_hyp = ad.compute_best_lver(hypotheses, LVER_domain, zeta=False)
+    LVER_hyp = ad.compute_best_lver(hypotheses, LVER_domain, zeta=False, debug=True)
     print(LVER_hyp.data)
 
     # domain representing 2 <= tau <= tau0
@@ -420,7 +420,7 @@ def lver_to_zero_density_example():
             [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
         ])
     )
-    LVER_zeta_hyp = ad.compute_best_lver(hypotheses, LVER_zeta_domain, zeta=True)
+    LVER_zeta_hyp = ad.compute_best_lver(hypotheses, LVER_zeta_domain, zeta=True, debug=True)
     print(LVER_zeta_hyp.data)
 
     zd.lver_to_zd(LVER_hyp, LVER_zeta_hyp, sigma_interval)

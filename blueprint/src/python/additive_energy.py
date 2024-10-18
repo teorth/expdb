@@ -252,34 +252,6 @@ def lver_to_lv(hypotheses, zeta=False):
     proj.simplify()
     return proj
 
-import random as rd
-rd.seed(1007)
-
-# Debugging method to check whether two regions agree
-def sample_check(region1, region2, N=1000, dim=5, info=None):
-    ntrues = 0
-    npassed = 0
-    for i in range(N):
-        # Supports 3 and 5-dimensional tests
-        if dim == 5:
-            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5), rd.uniform(0, 5))
-        elif dim == 3:
-            x = (rd.uniform(1/2, 1), rd.uniform(0, 5), rd.uniform(0, 5))
-        else:
-            raise NotImplementedError()
-
-        c1 = region1.contains(x)
-        c2 = region2.contains(x)
-
-        if c1 != c2:
-            print(i, x)
-            print(info)
-            raise ValueError()
-        else:
-            npassed += 1
-        if c1:
-            ntrues += 1
-    print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
 def compute_best_lver(
         hypotheses: Hypothesis_Set, 
@@ -343,10 +315,6 @@ def compute_best_lver(
 
     E1 = E.as_disjoint_union(verbose=debug)
 
-    # if debug: randomly sample some points, and test inclusion/exclusion 
-    if debug:
-        sample_check(E, E1, N=10000, dim=5, info=lvers)
-    
     # Pack into Hypothesis object
     proof = f"Follows from taking the intersection of {len(lvers)} large value energy regions"
     # TODO Keep track of which hypotheses are required to generate the final region. 
@@ -372,21 +340,9 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # Project onto the (sigma, tau, rho*) dimension
     Eproj = E.project({0, 1, 3})
     
-    if Eproj is None:
-        return None
-    
-    if debug:
-        cpy = copy.copy(Eproj)
-    
-    # Handle empty projection
-    if Eproj is None: 
-        return None
+    if Eproj is None: return None
     
     Eproj.simplify()
-
-    if debug:
-        print("Simplifying:", len(cpy.child), "->", len(Eproj.child), Eproj)
-        sample_check(Eproj, cpy, N=10000, dim=3, info=deps)
 
     if zeta:    
         return derived_zeta_large_value_energy_region(
