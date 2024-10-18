@@ -157,9 +157,10 @@ def prove_zero_density(
         verbose : bool, 
         sigma_interval : Interval, 
         name : str, 
-        tau0 : numbers.Number | Affine = frac(3), 
+        tau0 = frac(3), 
         plot : bool = False,
-        method : int = 1):
+        method : int = 1
+    ) -> list[Hypothesis]:
     
     """
     Prove a zero density estimate for zeta given a set of hypotheses, a range of
@@ -885,10 +886,10 @@ def prove_all():
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
     # prove_bourgain_large_values_theorem()
-    prove_zero_density_estimates()
+    prove_guth_maynard_large_values_theorem()
+    # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
     # prove_improved_heath_brown_energy_estimate()
-    # prove_guth_maynard_large_values_theorem()
     # prove_zero_density_energy_2()
     # prove_zero_density_energy_3()
     # prove_zero_density_energy_4()

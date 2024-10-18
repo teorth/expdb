@@ -382,15 +382,17 @@ def zero_density_estimates_examples3():
         "Best zero density estimate",
     )
 
-
 def zero_density_estimates_examples4():
     zdt = zd.bourgain_ep_to_zd()
     for h in zdt:
         print(h.data, h.proof)
 
-def large_value_energy_region_examples():
-    LVs = ad.compute_LV_star(literature, debug=False)
-    print(len(LVs.child), "regions")
+def lver_to_zero_density_example():
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 2"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
+    
 
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
@@ -469,7 +471,6 @@ def all_examples():
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
     zd.compute_pintz_density_estimate_subdiv()
-    # large_value_energy_region_examples()
     # zero_density_energy_examples()
 
 all_examples()

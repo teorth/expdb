@@ -139,6 +139,20 @@ def get_raise_to_power_hypothesis(k):
         Reference.classical(),
         )
 
+def expand_lver(hypotheses: Hypothesis_Set):
+    """
+    Add new hypothesis of type "Large value energy region" to a set of 
+    hypotheses by applying transformations to existing large value energy
+    regions. 
+
+    Note: these transformations only apply to large value energy regions
+    (and not zeta large value energy regions).
+    """
+    lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+    tfs = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
+    for tf in tfs:
+        hypotheses.add_hypotheses(tf.data.transform(lver) for lver in lvers)
+
 # Convert an exponent pair (k, l) to a large value energy region
 def ep_to_lver(eph):
 
@@ -293,14 +307,8 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # Therefore, the set of zeta large value energy regions can be obtained by 
     # first expanding the set of large value energy regions (by raising to a power)
     # then adding in the additional zeta large value energy regions later. 
+    expand_lver(hypotheses)
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
-    
-    # Use LVER transformations and use them to expand the set of LVERs
-    transforms = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
-    transformed_lvers = []
-    for tf in transforms:
-        transformed_lvers.extend(tf.data.transform(lver) for lver in lvers)
-    lvers.extend(transformed_lvers)
 
     if zeta:
         # A large value energy region is also a zeta large value energy region

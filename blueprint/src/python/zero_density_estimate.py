@@ -376,7 +376,6 @@ def lv_zlv_to_zd(
         ))
     return hyps
 
-
 def lv_zlv_to_zd2(
         hypotheses:Hypothesis_Set, 
         sigma_interval:Interval, 
@@ -454,6 +453,79 @@ def lv_zlv_to_zd2(
             deps
         ))
     return hyps
+
+def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
+    """
+    Compute the best zero density estimate implied by a large value energy
+    region and zeta large value energy region. 
+
+    Parameters
+    ----------
+    LVER : Hypothesis
+        A regoin that contains the large value energy region, i.e. a region that 
+        contains the set of feasible tuples (sigma, tau, rho, rho*, s).
+    LVER_zeta : Hypothesis
+        A region that contains the zeta large value energy region. 
+    sigma_interval : Interval
+        The range of sigma values to for which to calculate A(sigma)
+    debug : bool, optional
+        If True, additional debugging information will be logged to console
+        (default is False).
+    """
+    
+    if LVER is not None and (not isinstance(LVER, Hypothesis) or \
+        LVER.hypothesis_type != "Large value energy region"):
+        raise ValueError("Parameter LVER must be a Hypothesis of type 'Large value energy region'.")
+    if LVER_zeta is not None and (not isinstance(LVER_zeta, Hypothesis) or \
+        LVER_zeta.hypothesis_type != "Zeta large value energy region"):
+        raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
+    if not isinstance(sigma_interval, Interval):
+        raise ValueError("Parameter sigma_interval must be of type Interval.")
+    
+    fns = []
+    deps = set()
+    depcount = [0, 0] # The number of dependencies
+
+    if LVER is not None:
+        # Project (sigma, tau, rho, rho*, s) -> (sigma, tau, rho)
+        proj = LVER.data.region.project({0, 1, 2})
+        proj.simplify()
+        sup1 = compute_sup_rho_on_tau(proj, sigma_interval)
+        if debug:
+            print("sup1")
+            for s in sup1: print(s[0], "for x\in", s[1])
+        fns.extend(list(sup1))
+        deps.update(list(LVER.dependencies))
+        depcount[0] = len(LVER.dependencies)
+    
+    if LVER_zeta is not None:
+        # Project (sigma, tau, rho, rho*, s) -> (sigma, tau, rho)
+        proj = LVER_zeta.data.region.project({0, 1, 2})
+        proj.simplify()
+        sup2 = compute_sup_LV_on_tau(proj, sigma_interval)
+        if debug:
+            print("sup2")
+            for s in sup2: print(s[0], "for x\in", s[1])
+        fns.extend(list(sup2))
+        deps.update(list(LVER_zeta.dependencies))
+        depcount[1] = len(LVER_zeta.dependencies)
+    
+    # Take maximum
+    bounds = [(f[0], f[1]) for f in fns]
+    sup = RF.max(bounds, sigma_interval)
+    print("A(x)(1-x) \leq")
+    for s in sup: print(s[0], "for x \in", s[1])
+    
+    return [
+        derived_zero_density_energy_estimate(
+            Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
+            f"Follows from combining {depcount[0]} large value energy regions " + \
+            "and {depcount[1]} zeta large value energy regions",
+            deps
+        )
+        for s in sup
+        ]
+
 
 # Computes the zero-density estimate obtained from
 #
