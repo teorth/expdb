@@ -382,14 +382,13 @@ def prove_zero_density_heathbrown_1979b_v2(verbose=True):
     zdts.append(prove_zero_density(new_hyps, verbose, sigma, 'part 2/2 of the second Heath-Brown', tau0=tau0, method=2))
     return zdts
 
-
 def prove_zero_density_ivic_1984():
     """
-    Prove Ivi\'cs zero-density estimates e.g.
-    A(s) < 3/(2s)       3831/4791 <= s <= 1 (actually, we could do slightly better with better 
+    Prove Ivic's zero-density estimates e.g.
+    A(σ) < 3/(2σ)       3831/4791 <= σ <= 1 (actually, we could do slightly better with better 
     choice of exponent pair)
-    A(s) < 9/(7s -1),   41/53 <= s <= 1
-    A(s) < 6/(5s - 1),  13/17 <= s <= 1
+    A(σ) < 9/(7σ -1),   41/53 <= σ <= 1
+    A(σ) < 6/(5σ - 1),  13/17 <= σ <= 1
     """
     hs = Hypothesis_Set()
     hs.add_hypotheses(literature.list_hypotheses(hypothesis_type="Exponent pair"))
@@ -406,7 +405,6 @@ def prove_zero_density_ivic_1984():
     for k in range(2, 20):
         h = zd.ivic_ep_to_zd(ephs, k)
         print(h.data, h.proof)
-        # h.recursively_list_proofs()
 
 # Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
 def prove_zero_density_guth_maynard_2024(verbose=True):

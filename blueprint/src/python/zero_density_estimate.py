@@ -88,7 +88,7 @@ class Zero_Density_Estimate:
     # -------------------------------------------------------------------------
     # Static methods
 
-    def from_rational_func(rf, interval):
+    def from_rational_func(rf: RF, interval: Interval) -> 'Zero_Density_Estimate':
         if not isinstance(rf, RF):
             raise ValueError("Parameter rf must be of type RationalFunction")
 
