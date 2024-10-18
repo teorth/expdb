@@ -96,7 +96,6 @@ class Zero_Density_Estimate:
         zde.bound = rf
         return zde
 
-
 ###############################################################################
 
 def derived_zero_density_estimate(data, proof, deps):
@@ -111,10 +110,19 @@ def derived_zero_density_estimate(data, proof, deps):
     bound.dependencies = deps
     return bound
 
-# Adds a zero-density estimate to the hypothesis set
-# estimate - bound on A(\sigma)
-# interval - the domain of \sigma for which the estimate holds
+
 def add_zero_density(hypotheses, estimate, interval, ref, params=""):
+    """
+    Add a zero-density estimate to the hypothesis set
+
+    Parameters
+    ----------
+    hypotheses: Hypothesis
+        The hypothesis set to add to. 
+    estimate: str
+        A function of x representing a bound on A(x).
+    interval - the domain of \sigma for which the estimate holds
+    """
     hypotheses.add_hypotheses(
         Hypothesis(
             f"{ref.author()} ({ref.year()}) zero density estimate" + params,
@@ -124,7 +132,6 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
             ref,
         )
     )
-
 
 ###############################################################################
 
@@ -168,7 +175,7 @@ def compute_large_value_region(
     # Get a list of all large value estimates from the hypothesis set
     hyps = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
 
-    # Use LVER transformations and use them to expand the set of LVERs
+    # Use LVR transformations and use them to expand the set of LVRs
     tfs = hypotheses.list_hypotheses(hypothesis_type="Large value estimate transform")
     transformed_lvs = []
     for tf in tfs:
