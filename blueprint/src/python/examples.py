@@ -393,6 +393,37 @@ def lver_to_zero_density_example():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
     
+    #for k in range(2, 10):
+    #    hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    sigma_interval = Interval(frac(3,4), 1)
+    tau0 = Affine(0, 2, sigma_interval)
+
+    # domain representing tau0 <= tau <= 2 tau0
+    LVER_domain = Region.from_polytope(
+        Polytope([
+            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+            [-tau0.c, -tau0.m, 1],       # tau >= tau0 = m sigma + c
+            [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
+        ])
+    )
+    LVER_hyp = ad.compute_best_lver(hypotheses, LVER_domain, zeta=False)
+    print(LVER_hyp.data)
+
+    # domain representing 2 <= tau <= tau0
+    LVER_zeta_domain = Region.from_polytope(
+        Polytope([
+            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
+            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
+            [-2, 0, 1],                  # tau0 >= 2
+            [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
+        ])
+    )
+    LVER_zeta_hyp = ad.compute_best_lver(hypotheses, LVER_zeta_domain, zeta=True)
+    print(LVER_zeta_hyp.data)
+
+    zd.lver_to_zd(LVER_hyp, LVER_zeta_hyp, sigma_interval)
 
 def zero_density_energy_examples():
     hypotheses = Hypothesis_Set()
@@ -470,7 +501,8 @@ def all_examples():
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
-    zd.compute_pintz_density_estimate_subdiv()
+    # zd.compute_pintz_density_estimate_subdiv()
+    lver_to_zero_density_example()
     # zero_density_energy_examples()
 
 all_examples()

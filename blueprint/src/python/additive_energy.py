@@ -5,7 +5,7 @@ from constants import Constants
 import exponent_pair as ep
 from fractions import Fraction as frac
 from functions import *
-from hypotheses import Hypothesis
+from hypotheses import Hypothesis, Hypothesis_Set
 from polytope import Polytope
 from reference import Reference
 from region import Region, Region_Type
@@ -214,27 +214,14 @@ def lv_to_lver(hypotheses, zeta=False):
     # variables rho* and s.
     hyps = []
     for lvh in lvs:
-        polys = []
-        # Each piece is an affine function of (sigma, tau)
-        for piece in lvh.data.bound.pieces:
-            # Express this piece as a polytope 
-            # Lift (sigma, tau) -> (sigma, tau, rho, rho*, s)
-            P = piece.domain.lift([
-                0, 
-                1,
-                (0, Constants.LV_DEFAULT_UPPER_BOUND),
-                (0, Constants.LV_DEFAULT_UPPER_BOUND),
-                (0, Constants.LV_DEFAULT_UPPER_BOUND)
-            ]).intersect(
-                # rho <= f[0] + f[1] * sigma + f[2] * tau
-                Polytope([
-                    [piece.a[0], piece.a[1], piece.a[2], -1, 0, 0]
-                ])
-            )
-            polys.append(Region(Region_Type.POLYTOPE, P))
-
-        region = Region(Region_Type.DISJOINT_UNION, polys)
-        
+        # Lift (sigma, tau, rho) -> (sigma, tau, rho, rho*, s)
+        region = lvh.data.region.lift([
+            0, 
+            1, 
+            2, 
+            (0, Constants.LV_DEFAULT_UPPER_BOUND),
+            (0, Constants.LV_DEFAULT_UPPER_BOUND)
+        ])
         hyps.append(
             constructor(
                 Large_Value_Energy_Region(region),
@@ -294,11 +281,35 @@ def sample_check(region1, region2, N=1000, dim=5, info=None):
             ntrues += 1
     print(f"[Debug info] Checking regions equal. Passed: {npassed}/{N}", "Contained:", ntrues)
 
-# Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
-# as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 
-# (represented as a Polytope)
-# If zeta is true, the best available bound on LV*_\zeta(sigma, tau) is computed instead 
-def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
+def compute_best_lver(
+        hypotheses: Hypothesis_Set, 
+        sigma_tau_domain: Region, 
+        zeta: bool = False, 
+        debug: bool = False
+    ) -> Hypothesis:
+
+    """
+    Computes the best large value energy region (i.e. set of feasible tuples of 
+    (sigma, tau, rho, rho, s)) implied by the hypotheses of a given hypothesis set. 
+
+    Parameters
+    ----------
+    hypotheses: Hypothesis_Set
+        The set of hypotheses to consider, e.g. of type "Large value energy region" 
+        or "Large value energy region transform".
+    sigma_tau_domain: Region
+        The domain of (sigma, tau) to consider. 
+    zeta: bool, optional
+        If True, the zeta large value energy region will be computed instead (default
+        is False).
+    debug: bool, optional
+        If True, additional debugging info will be logged to console (default is False).
+    
+    Returns
+    -------
+    Hypothesis
+        A Hypothesis representing the computed large value energy region.
+    """
 
     # 1. A large value energy region is also a zeta large value energy region
     # 2. Large value energy regions have the raise to power hypothesis, which is 
@@ -307,8 +318,11 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     # Therefore, the set of zeta large value energy regions can be obtained by 
     # first expanding the set of large value energy regions (by raising to a power)
     # then adding in the additional zeta large value energy regions later. 
-    expand_lver(hypotheses)
     lvers = hypotheses.list_hypotheses(hypothesis_type="Large value energy region")
+    tfs = hypotheses.list_hypotheses(hypothesis_type="Large value energy region transform")
+    transformed = []
+    for tf in tfs: transformed.extend(tf.data.transform(lver) for lver in lvers)
+    lvers.extend(transformed)
 
     if zeta:
         # A large value energy region is also a zeta large value energy region
@@ -331,30 +345,32 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     # if debug: randomly sample some points, and test inclusion/exclusion 
     if debug:
-        sample_check(E, E1, N=100000, dim=5, info=lvers)
+        sample_check(E, E1, N=10000, dim=5, info=lvers)
     
-    # -------------------------------------------------------------------------
-    # TODO
-    # Keep track of which hypotheses are required to generate the final region. 
-    # 
-    # The ultimate goal is that whenever a {Polytope} -> Polytope operation 
-    # (e.g. union, intersection) takes place, we keep track of the minimal set 
-    # of polytopes that are necessary for determining the resulting polytope. 
-    # E.g. during the union of polytopes p1, p2, if p1 is a subset of p2 then 
-    # the set of minimal polytopes is {p2}. 
-    # 
-    # Unfortunately this is likely to be computationally expensive, so instead 
-    # we perform a crude match after E has already been computed. Those LVERs 
-    # which share a (non-trivial) facet with E are included in its minimal 
-    # dependency set.
-    # 
-    # For now, we are assuming that all LVERs are part of the dependency set 
-    # (this is very unlikely to be minimal)
-    deps = set(lvers)
-    # -------------------------------------------------------------------------
-    
+    # Pack into Hypothesis object
+    proof = f"Follows from taking the intersection of {len(lvers)} large value energy regions"
+    # TODO Keep track of which hypotheses are required to generate the final region. 
+    dependencies = set(lvers)
+    if zeta:
+        return derived_zeta_large_value_energy_region(
+            Large_Value_Energy_Region(E1), proof, dependencies)
+    else:
+        return derived_large_value_energy_region(
+            Large_Value_Energy_Region(E1), proof, dependencies)
+
+
+# Given a set of hypotheses, compute the best available bound on LV*(sigma, tau)
+# as a polytope in R^3 with dimensions (sigma, tau, rho*) for (sigma, tau) \in sigma_tau_domain 
+# (represented as a Polytope)
+# If zeta is true, the best available bound on LV*_\zeta(sigma, tau) is computed instead 
+def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
+
+    hyp = compute_best_lver(hypotheses, sigma_tau_domain, zeta=zeta, debug=debug)
+    E = hyp.data.region
+    deps = hyp.dependencies
+
     # Project onto the (sigma, tau, rho*) dimension
-    Eproj = E1.project({0, 1, 3})
+    Eproj = E.project({0, 1, 3})
     
     if Eproj is None:
         return None
@@ -370,7 +386,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
 
     if debug:
         print("Simplifying:", len(cpy.child), "->", len(Eproj.child), Eproj)
-        sample_check(Eproj, cpy, N=100000, dim=3, info=lvers)
+        sample_check(Eproj, cpy, N=10000, dim=3, info=deps)
 
     if zeta:    
         return derived_zeta_large_value_energy_region(

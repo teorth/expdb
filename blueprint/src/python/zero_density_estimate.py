@@ -454,7 +454,7 @@ def lv_zlv_to_zd2(
         ))
     return hyps
 
-def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
+def lver_to_zd(LVER, LVER_zeta, sigma_interval):
     """
     Compute the best zero density estimate implied by a large value energy
     region and zeta large value energy region. 
@@ -468,9 +468,6 @@ def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
         A region that contains the zeta large value energy region. 
     sigma_interval : Interval
         The range of sigma values to for which to calculate A(sigma)
-    debug : bool, optional
-        If True, additional debugging information will be logged to console
-        (default is False).
     """
     
     if LVER is not None and (not isinstance(LVER, Hypothesis) or \
@@ -490,10 +487,7 @@ def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
         # Project (sigma, tau, rho, rho*, s) -> (sigma, tau, rho)
         proj = LVER.data.region.project({0, 1, 2})
         proj.simplify()
-        sup1 = compute_sup_rho_on_tau(proj, sigma_interval)
-        if debug:
-            print("sup1")
-            for s in sup1: print(s[0], "for x\in", s[1])
+        sup1 = compute_sup_rho_on_tau([r.child for r in proj.child], sigma_interval)
         fns.extend(list(sup1))
         deps.update(list(LVER.dependencies))
         depcount[0] = len(LVER.dependencies)
@@ -502,10 +496,7 @@ def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
         # Project (sigma, tau, rho, rho*, s) -> (sigma, tau, rho)
         proj = LVER_zeta.data.region.project({0, 1, 2})
         proj.simplify()
-        sup2 = compute_sup_LV_on_tau(proj, sigma_interval)
-        if debug:
-            print("sup2")
-            for s in sup2: print(s[0], "for x\in", s[1])
+        sup2 = compute_sup_rho_on_tau([r.child for r in proj.child], sigma_interval)
         fns.extend(list(sup2))
         deps.update(list(LVER_zeta.dependencies))
         depcount[1] = len(LVER_zeta.dependencies)
@@ -517,8 +508,8 @@ def lver_to_zd(LVER, LVER_zeta, tau0, sigma_interval):
     for s in sup: print(s[0], "for x \in", s[1])
     
     return [
-        derived_zero_density_energy_estimate(
-            Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
+        derived_zero_density_estimate(
+            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
             f"Follows from combining {depcount[0]} large value energy regions " + \
             "and {depcount[1]} zeta large value energy regions",
             deps
