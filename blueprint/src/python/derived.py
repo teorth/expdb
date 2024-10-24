@@ -20,7 +20,6 @@ def van_der_corput_pair(k):
     print(f"The van der Corput pair for k = {k} is {exp_pair.desc()}")
     return exp_pair
 
-
 # Prove the Hardy-Littlewood bound mu(1/2) \leq 1/6 using the van der Corput pair (1/6, 2/3).
 def prove_hardy_littlewood_mu_bound():
     HL_bound = literature.find_hypothesis(data=Bound_mu(frac(1, 2), frac(1, 6)))
@@ -34,7 +33,6 @@ def prove_hardy_littlewood_mu_bound():
     mu_bound = obtain_mu_bound_from_exponent_pair(AB_exp_pair)
     print(f"This implies {mu_bound.desc_with_proof()}")
     return mu_bound
-
 
 def prove_exponent_pair(k, l):
 
@@ -731,6 +729,7 @@ def prove_exponent_pairs():
     # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
     # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
     prove_exponent_pair(frac(89,1282), frac(997,1282))
+    """
     prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
     prove_exponent_pair(frac(10769,351096), frac(609317,702192))
     prove_exponent_pair(frac(89,3478), frac(15327,17390))
@@ -743,6 +742,7 @@ def prove_exponent_pairs():
     best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
     best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
+    """
 
 def prove_zero_density_estimates():
     print("Proofs using Corollary 11.8 -------------------------------------------------------")
@@ -801,14 +801,14 @@ def prove_prime_gap2():
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
-    # prove_exponent_pairs()
+    prove_exponent_pairs()
     # prove_bourgain_large_values_theorem()
     # prove_guth_maynard_large_values_theorem()
     # prove_zero_density_estimates()
     # prove_heath_brown_energy_estimate()
     # prove_improved_heath_brown_energy_estimate()
-    prove_zero_density_energy_2()
-    prove_zero_density_energy_3()
+    # prove_zero_density_energy_2()
+    # prove_zero_density_energy_3()
     # prove_zero_density_energy_4()
     # prove_prime_gap2()
 
