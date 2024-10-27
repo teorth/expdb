@@ -1,4 +1,3 @@
-import parent
 from functions import *
 
 def get_unit_square():

@@ -1,4 +1,3 @@
-import parent
 
 from functions import *
 from hypotheses import *

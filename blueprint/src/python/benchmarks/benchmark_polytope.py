@@ -1,6 +1,5 @@
 
 # Some code for benchmarking frequently used Polytope functions
-import parent 
 
 import itertools
 from polytope import Polytope

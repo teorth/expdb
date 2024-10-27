@@ -1,5 +1,4 @@
 # Test cases for RationalFunction implementation
-import parent
 from fractions import Fraction as frac
 from functions import RationalFunction2 as RF, Interval
 
