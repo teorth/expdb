@@ -494,7 +494,7 @@ def zero_density_energy_examples():
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()
-    # beta_bound_examples()
+    beta_bound_examples()
     # large_values_examples()
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
@@ -502,7 +502,7 @@ def all_examples():
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
     # zd.compute_pintz_density_estimate_subdiv()
-    lver_to_zero_density_example()
+    # lver_to_zero_density_example()
     # zero_density_energy_examples()
 
 all_examples()
