@@ -1,5 +1,6 @@
 
 # Some code for benchmarking frequently used Polytope functions
+import parent
 
 import itertools
 from polytope import Polytope
@@ -15,11 +16,11 @@ def benchmark_empty(N, dim):
     polys = []
     for i in range(N):
         verts = [
-            [rd.randint(0, 100) for j in range(dim + 1)] 
+            [rd.randint(0, 100) for j in range(dim + 1)]
             for k in range(dim * 2)
         ]
         polys.append(Polytope.from_V_rep(verts))
-    
+
     start = time.perf_counter()
     for i in range(N):
         polys[i].is_empty(include_boundary=False)
@@ -30,13 +31,13 @@ def benchmark_empty(N, dim):
 
 def benchmark_union(N):
 
-    # 5 dimensional boxes 
+    # 5 dimensional boxes
     polys = []
     for combo in itertools.product(range(N), repeat=5):
         b = [(c, c + 1) for c in combo]
         polys.append(Polytope.rect(b[0], b[1], b[2], b[3], b[4]))
-    
-    # Shuffle the list 
+
+    # Shuffle the list
     rd.shuffle(polys)
 
     region = Region.disjoint_union(
