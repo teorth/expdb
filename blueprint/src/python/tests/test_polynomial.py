@@ -1,3 +1,4 @@
+import parent
 
 from polynomial import Polynomial as P
 

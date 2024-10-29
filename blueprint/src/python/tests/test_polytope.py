@@ -1,3 +1,5 @@
+import parent
+
 from functions import *
 
 def get_unit_square():
@@ -128,12 +130,12 @@ def run_emptiness_tests():
     assert p4.is_empty(include_boundary=True)
     assert p4.is_empty(include_boundary=False)
 
-    # Point 
+    # Point
     p5 = Polytope.rect((0, 0), (0, 0))
     assert not p5.is_empty(include_boundary=True)
     assert p5.is_empty(include_boundary=False)
 
-    # Half-infinite rectangle 
+    # Half-infinite rectangle
     p6 = Polytope([
         [0, 1, 0],  # x >= 0
         [0, 0, 1], [-1, 0, 1] # 0 <= y <= 1
@@ -178,7 +180,7 @@ def run_emptiness_tests():
 
 def run_intersection_test():
 
-    # Nonempty intersection example 
+    # Nonempty intersection example
     p1 = Polytope.rect((0, 2), (0, 2))
     p2 = Polytope.rect((1, 3), (1, 3))
     assert p1.intersect(p2) == Polytope.rect((1, 2), (1, 2))
@@ -198,7 +200,7 @@ def run_intersection_test():
     ])
     assert p1.intersect(p2).is_empty(include_boundary=True)
 
-    # Test with equality constraints 
+    # Test with equality constraints
     p1 = Polytope.rect((1, 1), (0, 1), (0, 1))
     p1.canonicalize()
     p2 = Polytope.rect((0, 1), (0, 0), (0, 3))
@@ -207,7 +209,7 @@ def run_intersection_test():
     p3.canonicalize()
     assert p1.intersect(p2) == p3
 
-    # Conflicting equality constraint example 
+    # Conflicting equality constraint example
     p1 = Polytope([
         [2, 0, 0, 1, -1, 0],
         [1, -2, 1, -1, 0, 0],
@@ -235,7 +237,7 @@ def run_union_test():
 
     union = Polytope.try_union([p1, p2])
     assert union is not None
-    
+
     p1 = Polytope([
         [-19, 24, 0],
         [12, -12, -1],
@@ -249,7 +251,7 @@ def run_union_test():
         [16, -24, 2],
         [-1, 0, 1]
         ])
-    
+
     union = Polytope([
         [12, -12, -1],
         [-frac(1,2), 1, 0],
@@ -258,7 +260,7 @@ def run_union_test():
         [-1, 0, 1]
         ])
     assert Polytope.try_union([p1, p2]) == union
-    
+
     # Another test case - with a vertex at infinity (this fails)
     p1 = Polytope([
         [18, -22, 0],
@@ -275,7 +277,7 @@ def run_union_test():
         [3, 0, -1]
         ])
     U = Polytope.try_union([p1, p2])
-    
+
     p1 = Polytope([
         [-3, 0, 2],
         [4, -4, -frac(1,2)],
@@ -298,7 +300,7 @@ def run_union_test():
         ])
     assert Polytope.try_union([p1, p2]) == p3
 
-    # Test edge cases - union between line and square 
+    # Test edge cases - union between line and square
     square = Polytope.rect((0, 1), (0, 1))
     line = Polytope.rect((frac(1,2), frac(1,2)), (0, 1))
     assert Polytope.try_union([square, line]) == square
@@ -311,7 +313,7 @@ def run_union_3d_test():
     # Higher dimensional polytope test
     # ['1 - x >= 0', '8 - 14x + 5/2y - z >= 0', '8 - 4x - z >= 0', '3 - y >= 0', '-34/3 + 32/3x + z >= 0']
     p1 = Polytope([
-        [1, -1, 0, 0], 
+        [1, -1, 0, 0],
         [8, -14, frac(5,2), -1],
         [8, -4, 0, -1],
         [3, 0, -1, 0],
@@ -332,9 +334,9 @@ def run_union_3d_test():
     # Another example
     # ['-1 + 2x >= 0', 'z >= 0', '1000000 - z >= 0', '-5 - x + y >= 0', '6 - y >= 0']
     p1 = Polytope([
-        [-1, 2, 0, 0], [0, 0, 0, 1], [100, 0, 0, -1], [-5, -1, 1, 0], [6, 0, -1, 0] 
+        [-1, 2, 0, 0], [0, 0, 0, 1], [100, 0, 0, -1], [-5, -1, 1, 0], [6, 0, -1, 0]
     ])
-    # ['15 - 18x - z >= 0', '21 - 36x + 3y - z >= 0', '-2 + y >= 0', '-5 + 4x + y + z >= 0', 
+    # ['15 - 18x - z >= 0', '21 - 36x + 3y - z >= 0', '-2 + y >= 0', '-5 + 4x + y + z >= 0',
     # '-1 + 2x >= 0', 'z >= 0', '48 - 72x + 3y - z >= 0', '3 - y >= 0']
     p2 = Polytope([
         [15, -18, 0, -1], [21, -36, 3, -1], [-2, 0, 1, 0], [-5, 4, 1, 1],
@@ -390,7 +392,7 @@ def run_n_way_union_test():
         Polytope.rect((0, 1), (1, 2), (0, 1)),
         Polytope.rect((1, 2), (1, 2), (0, 1)),
     ]) == Polytope.rect((0, 2), (0, 2), (0, 1))
-    
+
     # Another union test example
     p1 = Polytope([[frac(18,5), -4, -1], [-2, 2, 1], [-frac(156,5), 36, frac(15,2)]])
     p2 = Polytope([[-2, 2, 1], [-frac(26,5), 6, frac(4,3)], [-5, 6, 1], [frac(156,5), -36, -frac(15,2)]])
@@ -407,9 +409,9 @@ def run_n_way_union_test():
 def run_setminus_test():
     A = Polytope.rect((0, 5), (0, 5))
     B = Polytope.rect((1, 2), (1, 2))
-    
+
     A_minus_B = A.set_minus(B)
-    
+
     assert not any(p.contains((1.5, 1.5)) for p in A_minus_B)
     assert any(p.contains((3, 3)) for p in A_minus_B)
 
@@ -438,7 +440,7 @@ def run_containment_test():
     p1.canonicalize()
     assert not p1.is_subset_of(Polytope.rect((0, 2), (0, 2)))
 
-    # Point containment test 
+    # Point containment test
     p1 = Polytope.rect((1, 1), (2, 2))
     assert p1.is_subset_of(p1)
     assert p1.is_subset_of(Polytope.rect((1, 2), (1, 3)))
@@ -482,11 +484,11 @@ def run_lift_test():
     A = Polytope.rect((1, 2))
     assert A.lift([0, (3, 4)]) == Polytope.rect((1, 2), (3, 4))
     assert A.lift([(3, 4), 0]) == Polytope.rect((3, 4), (1, 2))
-    
+
     B = Polytope.rect((-1, 1), (4, 9))
     assert B.lift([(2, 3), 0, (3, 6), 1]) == Polytope.rect((2, 3), (-1, 1), (3, 6), (4, 9))
     assert B.lift([0, 1]) == B
-    
+
     C = Polytope([
             [0, 1, 0], # x >= 0
             [0, 0, 1], # y >= 0
