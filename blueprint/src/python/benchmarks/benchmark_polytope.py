@@ -1,10 +1,8 @@
 
 # Some code for benchmarking frequently used Polytope functions
-import parent
-
 import itertools
-from polytope import Polytope
-from region import Region
+from ..polytope import Polytope
+from ..region import Region
 import random as rd
 import time
 

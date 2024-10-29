@@ -1,8 +1,6 @@
-import parent
-
 # Test cases for RationalFunction implementation
 from fractions import Fraction as frac
-from functions import RationalFunction2 as RF, Interval
+from ..functions import RationalFunction2 as RF, Interval
 
 def test_repr():
     domain = Interval(0, 1)

@@ -1,7 +1,6 @@
 # Test cases for Affine2 implementation
-import parent
 from fractions import Fraction as frac
-import large_values as lv
+from ..large_values import large_values as lv
 from polytope import *
 
 

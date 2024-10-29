@@ -1,7 +1,5 @@
-import parent
-
-from polytope import Polytope
-from region import Region
+from ..polytope import Polytope
+from ..region import Region
 import random as rd
 
 
