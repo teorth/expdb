@@ -1,6 +1,5 @@
 # This class handles bounds on the function LV_{\zeta}(\sigma, \tau)
 
-import copy
 from hypotheses import *
 from polytope import *
 from functions import *

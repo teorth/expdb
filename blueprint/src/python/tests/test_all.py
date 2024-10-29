@@ -1,6 +1,3 @@
-
-import parent
-
 # Tests will run as part of these imports
 import test_affine2
 print("All Affine2 test cases passed.")
