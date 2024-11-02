@@ -14,7 +14,7 @@ def mu_bound_examples():
     print("mu bound examples --------------------------------------------------")
 
     hypotheses = Hypothesis_Set()
-    print(f"Assume only the trivial bound.")
+    print("Assume only the trivial bound.")
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
@@ -26,32 +26,32 @@ def mu_bound_examples():
     )
 
     print()
-    print(f"Now assume the result of Hardy and Littlewood.")
+    print("Now assume the result of Hardy and Littlewood.")
     hypotheses.add_hypothesis(HL)
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
-    print(f"Now assume all unconditional bounds known up to 1985")
+    print("Now assume all unconditional bounds known up to 1985")
     hypotheses.add_hypotheses(literature.list_hypotheses("Upper bound on mu", 1985))
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
-    print(f"Now assume all unconditional bounds.")
+    print("Now assume all unconditional bounds.")
     hypotheses.add_hypotheses(literature.list_hypotheses("Upper bound on mu"))
     start_time = time.time()
     prove_mu_bound(frac(3, 4), frac(13, 168), hypotheses)
     print(f"Computed in {time.time() - start_time} sec")
 
     print()
-    print(f"The computed convex hull is cached, so this second call should be faster.")
-    print(f"Once again assume all unconditional bounds.")
+    print("The computed convex hull is cached, so this second call should be faster.")
+    print("Once again assume all unconditional bounds.")
     start_time = time.time()
     prove_mu_bound(frac(4, 7), frac(8, 63), hypotheses)
     print(f"Computed in {time.time() - start_time} sec")
 
     print()
     print(
-        f"Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
+        "Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
     )
     add_exp_pairs_all(hypotheses)
     hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type="Exponent pair transform"))
@@ -68,7 +68,7 @@ def mu_bound_examples():
         print(f"\\mu(x) \\leq {b}")
 
     print()
-    print(f"Now assume the Lindelof hypothesis.")
+    print("Now assume the Lindelof hypothesis.")
     hypotheses.add_hypothesis(Lindelof_hypothesis)
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
@@ -87,7 +87,7 @@ def mu_bound_examples():
 def exp_pair_examples():
     hypotheses = Hypothesis_Set()
     print(
-        f"Assume all known exponent pairs as well as the van der Corput A/B transforms"
+        "Assume all known exponent pairs as well as the van der Corput A/B transforms"
     )
     hypotheses.add_hypothesis(ep.trivial_exp_pair)
     hypotheses.add_hypotheses(
@@ -112,7 +112,7 @@ def exp_pair_examples():
 
     print()
     print(
-        f"Proof that (3/40, 31/40) is an exponent pair, found by searching for the earliest proof"
+        "Proof that (3/40, 31/40) is an exponent pair, found by searching for the earliest proof"
     )
     eph = ep.find_best_proof(
         frac(3, 40), frac(31, 40), hypotheses, Proof_Optimization_Method.DATE
@@ -122,7 +122,7 @@ def exp_pair_examples():
 
     print()
     print(
-        f"Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest proof"
+        "Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest proof"
     )
     eph = ep.find_best_proof(
         frac(3, 40), frac(31, 40), hypotheses, Proof_Optimization_Method.COMPLEXITY
@@ -171,7 +171,7 @@ def beta_bound_examples():
     )  # Compute the hull a bit
     hypotheses.add_hypotheses(derived_pairs)
     print(
-        f"\tAlso assume derived exponent pairs with transform depth \\leq 1. Total pairs:",
+        "\tAlso assume derived exponent pairs with transform depth \\leq 1. Total pairs:",
         len(hypotheses.list_hypotheses(hypothesis_type="Exponent pair")),
     )
     print("\tComputing... (may take a few minutes)")

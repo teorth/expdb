@@ -1,10 +1,8 @@
-import parent
-
-from functions import *
-from hypotheses import *
-from literature import *
-from exponent_pair import *
-from reference import *
+from ..functions import *
+from ..hypotheses import *
+from ..literature import *
+from ..exponent_pair import *
+from ..reference import *
 
 
 def run_exp_pair_transform_tests():

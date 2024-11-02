@@ -39,7 +39,7 @@ def classical_bound_mu(sigma, mu):
         f"Classical bound on \\mu({sigma})",
         "Upper bound on mu",
         Bound_mu(sigma, mu),
-        f"Classical",
+        "Classical",
         Reference.classical(),
     )
 
@@ -61,7 +61,7 @@ def conjecture_bound_mu(sigma, mu, name):
         name,
         "Upper bound on mu",
         Bound_mu(sigma, mu),
-        f"Conjecture",
+        "Conjecture",
         Reference.conjectured(),
     )
 
@@ -105,7 +105,7 @@ def apply_trivial_mu_bound(sigma):
     return derived_bound_mu(
         sigma,
         trivial_mu_bound(sigma),
-        f"This is the convexity bound on the Riemann zeta function",
+        "This is the convexity bound on the Riemann zeta function",
         set(),
     )
 

@@ -50,19 +50,19 @@ def derived_exp_pair(k, l, proof, dependencies):
 
 # Trivial exponent pair
 trivial_exp_pair = Hypothesis(
-    f"Trivial exponent pair (0, 1)",
+    "Trivial exponent pair (0, 1)",
     "Exponent pair",
     Exp_pair(frac(0, 1), frac(1, 1)),
-    f"Triangle inequality",
+    "Triangle inequality",
     Reference.trivial(),
 )
 
 # The exponent pair conjecture
 exponent_pair_conjecture = Hypothesis(
-    f"Exponent pair conjecture",
+    "Exponent pair conjecture",
     "Exponent pair",
     Exp_pair(0, 0),
-    f"Conjecture",
+    "Conjecture",
     Reference.conjectured(),
 )
 
@@ -258,7 +258,7 @@ def in_triangle(a, b, c, p):
      d = ((b[1] - c[1])*(a[0] - c[0]) + (c[0] - b[0])*(a[1] - c[1]))
      x = ((b[1] - c[1])*(p[0] - c[0]) + (c[0] - b[0])*(p[1] - c[1]))
      y = ((c[1] - a[1])*(p[0] - c[0]) + (a[0] - c[0])*(p[1] - c[1]))
-     return 0 <= x and x <= d and 0 <= y and y <= d and x + y <= d;
+     return 0 <= x and x <= d and 0 <= y and y <= d and x + y <= d
 
 def construct_proof(
         k: frac, 

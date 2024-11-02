@@ -12,7 +12,7 @@ import large_values as lv
 import zeta_large_values as zlv
 import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
-from functions import RationalFunction as RF, Interval as Itvl
+from functions import Interval as Itvl
 import os.path
 from reference import *
 from region import Region, Region_Type
