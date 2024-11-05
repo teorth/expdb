@@ -392,7 +392,7 @@ def lver_to_zero_density_example():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
-    
+
     #for k in range(2, 10):
     #    hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
@@ -453,13 +453,13 @@ def zero_density_energy_examples():
     for eph in ephs:
         if frac(1,100) <= eph.data.k and eph.data.k <= frac(13,84):
             hypotheses.add_hypothesis(ad.ep_to_lver(eph))
-    
+
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     # Convert all zeta large value estimates -> zeta large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    # tau_0 as a piecewise affine function 
+    # tau_0 as a piecewise affine function
     tau0 = Affine(0, 5, Interval(frac(3,4), 1))
     sigma_interval = tau0.domain
 
@@ -472,8 +472,8 @@ def zero_density_energy_examples():
             [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
         ])
     )
-        
-    # Compute the feasible region for LV*(s, t) as a 3-dimensional 
+
+    # Compute the feasible region for LV*(s, t) as a 3-dimensional
     # polytope for a range of sigma
     LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
 
@@ -486,7 +486,7 @@ def zero_density_energy_examples():
             [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
         ])
     )
-        
+
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
     bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
@@ -494,7 +494,7 @@ def zero_density_energy_examples():
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()
-    beta_bound_examples()
+    # beta_bound_examples()
     # large_values_examples()
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
@@ -504,5 +504,10 @@ def all_examples():
     # zd.compute_pintz_density_estimate_subdiv()
     # lver_to_zero_density_example()
     # zero_density_energy_examples()
+
+    prove_exponent_pair(frac(89,1282), frac(997,1282))
+#    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
+#    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
+#    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 all_examples()

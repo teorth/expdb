@@ -19,6 +19,7 @@ from polytope import Polytope
 from reference import Reference
 from region import Region
 import scipy
+import numbers
 import zeta_large_values as zlv
 
 class Zero_Density_Estimate:
@@ -57,7 +58,7 @@ class Zero_Density_Estimate:
         ----------
         expr : str
             A function of x representing the zero-density bound A(sigma) <= f(sigma).
-        interval : Interval 
+        interval : Interval
             The range of validity of the zero-density estimate.
         """
         if not isinstance(expr, str):
@@ -71,7 +72,7 @@ class Zero_Density_Estimate:
         self.bound = None
 
     def __repr__(self):
-        return f"A(x) \leq {self.expr} on {self.interval}"
+        return f"A(x) \\leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         if self.bound is None:
@@ -118,7 +119,7 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
     Parameters
     ----------
     hypotheses: Hypothesis
-        The hypothesis set to add to. 
+        The hypothesis set to add to.
     estimate: str
         A function of x representing a bound on A(x).
     interval - the domain of \sigma for which the estimate holds
@@ -138,12 +139,12 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 def compute_large_value_region(
         hypotheses : Hypothesis_Set,
         domain : Region,
-        zeta = False, 
+        zeta = False,
         debug = False) -> Hypothesis:
 
     """
-    Computes the feasible region of large value tuples (\\sigma, \\tau, \\rho) 
-    implied by a hypothesis set, returning a Hypothesis object representing the 
+    Computes the feasible region of large value tuples (\\sigma, \\tau, \\rho)
+    implied by a hypothesis set, returning a Hypothesis object representing the
     computed region.
 
     Parameters
@@ -151,27 +152,27 @@ def compute_large_value_region(
     hypotheses : Hypothesis_Set
         The set of hypothesis to assume.
     domain : Region
-        A 3-dimensional region representing the range of (sigma, tau, rho) 
-        values to consider. 
+        A 3-dimensional region representing the range of (sigma, tau, rho)
+        values to consider.
     zeta : bool, optional
-        If True, a zeta large value region will be computed instead (default is 
+        If True, a zeta large value region will be computed instead (default is
         False).
-    debug : bool, optional 
-        If True, debugging information will be logged on the console (default 
+    debug : bool, optional
+        If True, debugging information will be logged on the console (default
         is False).
 
     Returns
     -------
     Hypothesis
         A hypothesis of type "Large value estimate" or "Zeta large value estimate"
-        representing the smallest large value region obtainable from the set of 
-        hypothesis. 
+        representing the smallest large value region obtainable from the set of
+        hypothesis.
     """
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
     if not isinstance(domain, Region):
         raise ValueError("Parameter domain must be of type Region.")
-    
+
     # Get a list of all large value estimates from the hypothesis set
     hyps = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
 
@@ -185,12 +186,12 @@ def compute_large_value_region(
     if zeta:
         hyps.extend(hypotheses.list_hypotheses("Zeta large value estimate"))
 
-    # Clip each hypothesis large value region to domain. Benefits of doing this 
-    # (as opposed to taking an intersection with the domain region in the main 
+    # Clip each hypothesis large value region to domain. Benefits of doing this
+    # (as opposed to taking an intersection with the domain region in the main
     # intersection step) are:
-    # 1) There tends to be many duplicate hypotheses after clipping - so we can 
+    # 1) There tends to be many duplicate hypotheses after clipping - so we can
     # identify them early (in a shallow fashion) and remove them
-    # 2) We may copy region objects so that any labelling does not affect the 
+    # 2) We may copy region objects so that any labelling does not affect the
     # Polytopes in the original hypotheses
     regions = []
     uniq_hash = set()
@@ -199,8 +200,8 @@ def compute_large_value_region(
         r = r.as_disjoint_union(verbose=False, track_dependencies=False)
         r.simplify()
         # Simple hash to quickly remove most duplicates
-        hsh = str(r) 
-        if hsh in uniq_hash: 
+        hsh = str(r)
+        if hsh in uniq_hash:
             continue
         uniq_hash.add(hsh)
         # Create a copy of the current region object, then set label
@@ -213,10 +214,10 @@ def compute_large_value_region(
     LV_region = Region.intersect(regions)
     LV_region = LV_region.as_disjoint_union(verbose=debug, track_dependencies=True)
 
-    # Calculate dependency set using labels 
+    # Calculate dependency set using labels
     deps = set()
     for r in LV_region.child:
-        deps = deps | r.child.dependencies 
+        deps = deps | r.child.dependencies
     deps = set(hyps[d] for d in deps if d >= 0)
 
     # Construct hypothesis object and return
@@ -232,28 +233,28 @@ def compute_large_value_region(
 def compute_sup_rho_on_tau(polys: list, sigma_interval: Interval) -> list:
 
     """
-    Given a set of feasible (sigma, tau, rho) tuples (represented as the union of 
-    a list of Polytope objects in R^3), compute the supremum of rho / tau as a 
-    function of sigma, as sigma varies in sigma_interval. 
+    Given a set of feasible (sigma, tau, rho) tuples (represented as the union of
+    a list of Polytope objects in R^3), compute the supremum of rho / tau as a
+    function of sigma, as sigma varies in sigma_interval.
 
     Parameters
     ----------
-    polys : list of Polytope 
-        The convex polytopes whose union represents the set of feasible 
-        (sigma, tau, rho) values. 
+    polys : list of Polytope
+        The convex polytopes whose union represents the set of feasible
+        (sigma, tau, rho) values.
     sigma_interval : Interval
-        The range of values of sigma to consider. 
+        The range of values of sigma to consider.
 
     Returns
     -------
-    list of (RationalFunction, Interval) tuples 
-        The supremum of rho / tau represented as a piecewise-defined function 
+    list of (RationalFunction, Interval) tuples
+        The supremum of rho / tau represented as a piecewise-defined function
         of sigma.
     """
 
-    # each polytope is 3-dimensional. Find all edges and project them onto the 
-    # sigma dimension. For those with a non-zero projection, compute rho / tau along 
-    # the edge as a function of sigma 
+    # each polytope is 3-dimensional. Find all edges and project them onto the
+    # sigma dimension. For those with a non-zero projection, compute rho / tau along
+    # the edge as a function of sigma
     fns = []
     visited = set() # Keep track of the edges we have already visited to prevent duplication
     for p in polys:
@@ -273,68 +274,68 @@ def compute_sup_rho_on_tau(polys: list, sigma_interval: Interval) -> list:
 
             # tau as a (linear) function of sigma along this edge
             tau = RF([
-                (tau1 - tau2) / (sigma1 - sigma2), 
+                (tau1 - tau2) / (sigma1 - sigma2),
                 (sigma1 * tau2 - sigma2 * tau1) / (sigma1 - sigma2)
             ])
             # rho as a linear function of sigma along this edge
             rho = RF([
-                (rho1 - rho2) / (sigma1 - sigma2), 
+                (rho1 - rho2) / (sigma1 - sigma2),
                 (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
             ])
 
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
-    
+
     # Take the maximum of the functions
     return RF.max(fns, sigma_interval)
 
 def lv_zlv_to_zd(
-        hypotheses : Hypothesis_Set, 
-        sigma_interval : Interval, 
+        hypotheses : Hypothesis_Set,
+        sigma_interval : Interval,
         tau0 : numbers.Number = frac(3)
     ) -> list[Hypothesis]:
 
     """
-    Compute the best zero density estimate implied by a set of hypotheses 
-    containing large value estimates and zeta large value estimates. This 
-    function implements Corollary 11.7 in the web blueprint. Specifically, 
-    this function computes the maximum of the two functions 
+    Compute the best zero density estimate implied by a set of hypotheses
+    containing large value estimates and zeta large value estimates. This
+    function implements Corollary 11.7 in the web blueprint. Specifically,
+    this function computes the maximum of the two functions
 
     \\sup_{tau \\in [\\tau_0, 2\\tau_0]} LV(sigma, tau) / tau
 
     \\sup_{tau \\in [2, \\tau_0]} LV_{\\zeta}(sigma, tau) / tau
 
     given a choice of \\tau_0, where LV(sigma, tau) and LV_{\\zeta}(sigma, tau)
-    represent respectively the best large value estimate and zeta large 
+    represent respectively the best large value estimate and zeta large
     value estimate obtainable from hypotheses present in the given hypothesis
     set.
 
-    Compared with the function lv_zlv_to_zd2(), there is less reliance on 
-    making a good choice of \\tau_0 since the method uses raise-to-power 
-    hypotheses to ensure that as long as \\tau_0 is taken to be sufficiently 
-    large, the zero density estimate can be obtained. However the use of 
-    raise-to-power hypotheses means this function is typically slower. 
+    Compared with the function lv_zlv_to_zd2(), there is less reliance on
+    making a good choice of \\tau_0 since the method uses raise-to-power
+    hypotheses to ensure that as long as \\tau_0 is taken to be sufficiently
+    large, the zero density estimate can be obtained. However the use of
+    raise-to-power hypotheses means this function is typically slower.
 
     Parameters
     ----------
     hypotheses : Hypothesis_Set
-        A set of hypothesis containing large value estimates and zeta 
+        A set of hypothesis containing large value estimates and zeta
         large value estimates.
     sigma_interval : Interval
         The range of sigma values to compute the maximum function on.
     tau0 : Number, optional
         The value of \\tau_0 to use in the supremum computation (default is 3).
 
-    Returns 
+    Returns
     -------
     list of Hypothesis
-        The derived zero density estimates. 
+        The derived zero density estimates.
     """
 
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
     if not isinstance(sigma_interval, Interval):
         raise ValueError("Parameter sigma_interval must be of type Interval.")
-    
+
     sigma_lim = (sigma_interval.x0, sigma_interval.x1)
     rho_lim = (0, Constants.LV_DEFAULT_UPPER_BOUND)
 
@@ -377,22 +378,22 @@ def lv_zlv_to_zd(
     return hyps
 
 def lv_zlv_to_zd2(
-        hypotheses:Hypothesis_Set, 
-        sigma_interval:Interval, 
+        hypotheses:Hypothesis_Set,
+        sigma_interval:Interval,
         tau0:Affine
     ) -> list[Hypothesis]:
 
     """
-    Tries to prove the zero-density estimate using Corollary 11.8 by specifying the 
-    value of tau0 to use and the range of sigma to consider. 
+    Tries to prove the zero-density estimate using Corollary 11.8 by specifying the
+    value of tau0 to use and the range of sigma to consider.
 
     Parameters
     ----------
     hypotheses : Hypothesis_Set
-        The set of hypotheses to assume. 
-    tau0 : RationalFunction 
-        The choice of tau0 as a function of sigma 
-    sigma_interval : Interval 
+        The set of hypotheses to assume.
+    tau0 : RationalFunction
+        The choice of tau0 as a function of sigma
+    sigma_interval : Interval
         The range of sigma values to consider
     """
 
@@ -402,7 +403,7 @@ def lv_zlv_to_zd2(
         raise ValueError("Parameter sigma_interval must be of type Interval.")
     if not isinstance(tau0, Affine):
         raise ValueError("Parameter tau0 must be of type Affine.")
-    
+
     sigma_rho_constraints = [
         [-sigma_interval.x0, 1, 0, 0],              # sigma >= x0
         [sigma_interval.x1, -1, 0, 0],              # sigma <= x1
@@ -457,19 +458,19 @@ def lv_zlv_to_zd2(
 def lver_to_zd(LVER, LVER_zeta, sigma_interval):
     """
     Compute the best zero density estimate implied by a large value energy
-    region and zeta large value energy region. 
+    region and zeta large value energy region.
 
     Parameters
     ----------
     LVER : Hypothesis
-        A regoin that contains the large value energy region, i.e. a region that 
+        A regoin that contains the large value energy region, i.e. a region that
         contains the set of feasible tuples (sigma, tau, rho, rho*, s).
     LVER_zeta : Hypothesis
-        A region that contains the zeta large value energy region. 
+        A region that contains the zeta large value energy region.
     sigma_interval : Interval
         The range of sigma values to for which to calculate A(sigma)
     """
-    
+
     if LVER is not None and (not isinstance(LVER, Hypothesis) or \
         LVER.hypothesis_type != "Large value energy region"):
         raise ValueError("Parameter LVER must be a Hypothesis of type 'Large value energy region'.")
@@ -478,7 +479,7 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
     if not isinstance(sigma_interval, Interval):
         raise ValueError("Parameter sigma_interval must be of type Interval.")
-    
+
     fns = []
     deps = set()
     depcount = [0, 0] # The number of dependencies
@@ -491,7 +492,7 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         fns.extend(list(sup1))
         deps.update(list(LVER.dependencies))
         depcount[0] = len(LVER.dependencies)
-    
+
     if LVER_zeta is not None:
         # Project (sigma, tau, rho, rho*, s) -> (sigma, tau, rho)
         proj = LVER_zeta.data.region.project({0, 1, 2})
@@ -500,13 +501,13 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         fns.extend(list(sup2))
         deps.update(list(LVER_zeta.dependencies))
         depcount[1] = len(LVER_zeta.dependencies)
-    
+
     # Take maximum
     bounds = [(f[0], f[1]) for f in fns]
     sup = RF.max(bounds, sigma_interval)
-    print("A(x)(1-x) \leq")
-    for s in sup: print(s[0], "for x \in", s[1])
-    
+    print("A(x)(1-x) \\leq")
+    for s in sup: print(s[0], "for x \\in", s[1])
+
     return [
         derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),
@@ -615,7 +616,7 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 #   - 11/85 < k < 1/5
 #   - s0 = (144k - 11l - 11)/(170k - 22)
 def bourgain_ep_to_zd():
-    
+
     # Temporary:
     # For now, manually enter the exponent pairs found from the above numerical optimisation
     eps = [
@@ -628,7 +629,7 @@ def bourgain_ep_to_zd():
         (frac(89, 3478), frac(15327, 17390)),
         (frac(1, 100), frac(14, 15))
         ]
-    
+
     bounds = []
     for (k, l) in eps:
         h = ep.derived_exp_pair(k, l, f"See proof of ({k}, {l})", set())
@@ -699,9 +700,9 @@ def bourgain_ep_to_zd():
     #     s[2].recursively_list_proofs()
     return [derived_zero_density_estimate(
                 Zero_Density_Estimate.from_rational_func(s[0], s[1]),
-                f"Follows from applying [Bourgain, 1995] and taking {s[2]}", 
+                f"Follows from applying [Bourgain, 1995] and taking {s[2]}",
                 {s[2]}
-                ) 
+                )
             for s in soln]
 
 
@@ -719,9 +720,9 @@ def ep_to_zd(hypotheses):
     return bourgain_ep_to_zd(ephs) + [ivic_ep_to_zd(ephs, m=2)]
 
 
-# Given a list of tuples (RationalFunction, interval), 
-# returns a simplified list of tuples representing the same piecewise defined 
-# function         
+# Given a list of tuples (RationalFunction, interval),
+# returns a simplified list of tuples representing the same piecewise defined
+# function
 def simplify(pieces):
     # Simplify
     simplified_pieces = []
@@ -743,13 +744,13 @@ def simplify(pieces):
         simplified_pieces.append((fi, Interval(left, right)))
         i = j
     return simplified_pieces
-    
+
 # Compute the set of density estimates implied by Pintz theorem using subdivision
 def compute_pintz_density_estimate_subdiv():
     N = 20
     bounds = []
     for k in range(4, N):
-        k_int = Interval(frac(1, k*(k+1)), frac(1,k*(k-1))) 
+        k_int = Interval(frac(1, k*(k+1)), frac(1,k*(k-1)))
         # Bound 1: 4/(((k - 1) k - 4) x + (2 - k) k + 4)
         b1 = RF([4], [(k - 1) * k - 4, (2 - k) * k + 4])
         #b1 = RF([4], [(k - 1) * k, (2 - k) * k])
@@ -757,29 +758,29 @@ def compute_pintz_density_estimate_subdiv():
             l_int = Interval(frac(1, 2*l*(l+1)), frac(1,2*l*(l-1)))
             # Bound 2: 3/((2 l - 2) l x + (3 - 2 l) l)
             b2 = RF([3], [(2 * l - 2) * l, (3 - 2 * l) * l])
-            
+
             interval = k_int.intersect(l_int)
-            sigma_interval = Interval(1 - interval.x1, 1 - interval.x0, 
+            sigma_interval = Interval(1 - interval.x1, 1 - interval.x0,
                                       interval.include_upper, interval.include_lower)
             if not interval.is_empty():
                 bounds.append((k, l, sigma_interval, [b1, b2]))
-    
-    # Compute the maximum 
+
+    # Compute the maximum
     zdes = []
     for b in bounds:
         interval = b[2]
         (b1, b2) = b[3]
         zdes.extend(
             RF.max(
-                [(b1, interval), (b2, interval)], 
-                interval, 
+                [(b1, interval), (b2, interval)],
+                interval,
                 track_dependencies=False
             )
         )
-    
+
     zdes = simplify(zdes)
     return zdes
-    
+
 # Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise
 # function that represents the best zero-density estimate in each subinterval of [1/2, 1]
 # Note that this function does not compute zero-density estimates from other
@@ -814,7 +815,7 @@ def best_zero_density_estimate(hypotheses, verbose=False):
             best_bound.append(
                 Hypothesis(h.name, h.hypothesis_type, zde, h.proof, h.reference)
             )
-    
+
     if verbose:
         for b in best_bound:
             if b.data.interval.x0 < Constants.ZERO_DENSITY_SIGMA_LIMIT:
