@@ -34,22 +34,30 @@ def prove_hardy_littlewood_mu_bound():
     print(f"This implies {mu_bound.desc_with_proof()}")
     return mu_bound
 
-def prove_exponent_pair(k, l):
+def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:frac, verbose:bool=False):
+    """
+    Tries to find a proof of the exponent pair (k, l) by assuming a specific
+    set of hypotheses. 
 
-    hypotheses = Hypothesis_Set()
-    hypotheses.add_hypotheses(
-        literature.list_hypotheses(hypothesis_type="Upper bound on beta")
-    )
+    Parameters 
+    ----------
+    hypotheses : Hypothesis_Set
+        The set of hypotheses to assume. 
+    k : Fraction 
+        The first element of the exponent pair (k, l).
+    l : Fraction 
+        The second element of the exponent pair (k, l).
+    
+    Returns
+    -------
+    Hypothesis or None
+        If a proof is found, then the exponent pair is returned as a Hypothesis. 
+        Otherwise, None is returned. 
+    """
 
-    # Include all literature exponent pairs and expand the hull using exponent
-    # pair transforms
-    hypotheses.add_hypothesis(trivial_exp_pair)
-    hypotheses.add_hypotheses(
-        literature.list_hypotheses(hypothesis_type="Exponent pair")
-    )
-    hypotheses.add_hypotheses(
-        literature.list_hypotheses(hypothesis_type="Exponent pair transform")
-    )
+    print(len(hypotheses), "hypotheses")
+
+    # Expand the set of exponent pairs using transforms
     hypotheses.add_hypotheses(compute_exp_pairs(hypotheses, search_depth=1))
 
     # Perform 1 iteration of exponent pair -> beta bounds -> exponent pair
@@ -58,12 +66,75 @@ def prove_exponent_pair(k, l):
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
     eph = next((h for h in new_exp_pairs if h.data.k == k and h.data.l == l), None)
-    if eph is not None:
-        print()
-        print(f"Proof of the exponent pair ({k}, {l}) exponent pair:")
-        eph.recursively_list_proofs()
-    else:
-        print('Failed to prove the exponent pair ({k}, {l}).')
+
+    if verbose:
+        if eph is None:
+            print(f"Failed to prove the exponent pair ({k}, {l}).")
+        else:
+            print(f"Proof of the ({k}, {l}) exponent pair:")
+            eph.recursively_list_proofs()
+
+    # Temp debug
+    def fmt(frac):
+        return "\\dfrac{" + str(frac.numerator) + "}{" + str(frac.denominator) + "}"
+    elements = []
+    for h in eph.dependencies:
+        s1 = "$" + fmt(h.data.bound.domain.x0) + "\\leq \\alpha < " + fmt(h.data.bound.domain.x1) + "$"
+        s2 = "$" + fmt(h.data.bound.c) + " + " + fmt(h.data.bound.m) + "\\alpha" + "$"
+        elements.append((h.data.bound.domain, s2 + " & " + s1 + " & \\\\\n\\hline", h.dependencies))
+    elements.sort(key=lambda x:x[0].x0)
+    for e in elements:
+        print(e[1])
+    
+    return eph
+
+def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
+    """
+    Tries to find a proof of the exponent pair (k, l) using results from the 
+    literature. For the analogous method given a specific set of hypotheses, 
+    see prove_exponent_pair_with_hypotheses().
+
+    Parameters 
+    ----------
+    k : Fraction 
+        The first element of the exponent pair (k, l).
+    l : Fraction 
+        The second element of the exponent pair (k, l).
+    simplify_deps : bool, optional
+        If True, then the proof will be simplified by removing redundant dependencies. 
+        This is similar to applying ep.find_best_proof() with 
+        method = Proof_Optimization_Method.COMPLEXITY.
+    
+    Returns
+    -------
+    Hypothesis or None
+        If a proof is found, then the exponent pair is returned as a Hypothesis. 
+        Otherwise, None is returned. 
+    """
+
+    hypotheses = Hypothesis_Set()
+    
+    hypotheses.add_hypothesis(trivial_exp_pair)
+
+    hyp_types = ["Upper bound on beta", "Exponent pair", "Exponent pair transform"]
+    for ht in hyp_types:
+        hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type=ht))
+
+    eph = prove_exponent_pair_with_hypotheses(Hypothesis_Set(hypotheses), k, l, verbose=False)
+
+    # If simplification required, greedily remove dependencies
+    if simplify_deps:
+        for i in range(100):
+            cpy = Hypothesis_Set(hypotheses)
+            # Randomly remove an element from the hypothesis set, if the reduced set of 
+            # hypotheses is still sufficient, then update the set of hypotheses
+            hyp = cpy.hypotheses.pop()
+            eph1 = prove_exponent_pair_with_hypotheses(Hypothesis_Set(cpy), k, l, verbose=False)
+            if eph1 is not None:
+                hypotheses = cpy
+                eph = eph1
+    return eph
+
 
 def prove_heathbrown_exponent_pairs():
 
@@ -728,7 +799,7 @@ def prove_exponent_pairs():
     # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
     # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
     # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
-    prove_exponent_pair(frac(89,1282), frac(997,1282))
+    prove_exponent_pair(frac(89,1282), frac(997,1282), simplify_deps=False)
     """
     prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
     prove_exponent_pair(frac(10769,351096), frac(609317,702192))
@@ -741,7 +812,7 @@ def prove_exponent_pairs():
     best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
     best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
     best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
-    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
+    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
     """
 
 def prove_zero_density_estimates():
