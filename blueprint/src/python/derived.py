@@ -123,7 +123,6 @@ def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
                 eph = eph1
     return eph
 
-
 def prove_heathbrown_exponent_pairs():
 
     hypotheses = Hypothesis_Set()
@@ -146,8 +145,39 @@ def prove_heathbrown_exponent_pairs():
     for ep in new_exp_pairs:
         print(ep)
 
-# Find the shortest proof of the exponent pair (k, l)
-def best_proof_of_exponent_pair(k, l, proof_method=Proof_Optimization_Method.DATE, verbose=True):
+def best_proof_of_exponent_pair(
+        k: frac, 
+        l: frac, 
+        proof_method: int=Proof_Optimization_Method.DATE, 
+        verbose: bool=True
+    ) -> Hypothesis | None:
+
+    """
+    Finds the best proof of the exponent pair (k, l) according to some measure 
+    of "goodness" of a proof. Examples of such measures include the date of the 
+    latest dependency of the proof, or the "complexity" of a proof measured by 
+    the total number of recursive dependencies. 
+
+    Parameters
+    ----------
+    k: frac
+        The first element of the exponent pair (k, l).
+    l: frac
+        The second element of the exponent pair (k, l).
+    proof_method: int, optional
+        The measure of the goodness of a proof. Possible values are given in the 
+        class Proof_Optimization_Method, e.g. Proof_Optimization_Method.DATE, 
+        Proof_Optimization_Method.COMPLEXITY. Default is Proof_Optimization_Method.DATE.
+    verbose: bool, optional
+        If True, additional debugging info will be logged to console. Default is True. 
+
+    Returns
+    -------
+    Hypothesis or None
+        A hypothesis object representing the exponent pair (k, l) if a proof 
+        is found. Otherwise, None is returned. 
+
+    """
     hypothesis = copy.copy(literature)
     hypothesis.add_hypothesis(ep.trivial_exp_pair)
 
