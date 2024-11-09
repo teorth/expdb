@@ -73,18 +73,6 @@ def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:fra
         else:
             print(f"Proof of the ({k}, {l}) exponent pair:")
             eph.recursively_list_proofs()
-
-    # Temp debug
-    def fmt(frac):
-        return "\\dfrac{" + str(frac.numerator) + "}{" + str(frac.denominator) + "}"
-    elements = []
-    for h in eph.dependencies:
-        s1 = "$" + fmt(h.data.bound.domain.x0) + "\\leq \\alpha < " + fmt(h.data.bound.domain.x1) + "$"
-        s2 = "$" + fmt(h.data.bound.c) + " + " + fmt(h.data.bound.m) + "\\alpha" + "$"
-        elements.append((h.data.bound.domain, s2 + " & " + s1 + " & \\\\\n\\hline", h.dependencies))
-    elements.sort(key=lambda x:x[0].x0)
-    for e in elements:
-        print(e[1])
     
     return eph
 
