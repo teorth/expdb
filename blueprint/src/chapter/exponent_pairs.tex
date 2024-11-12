@@ -39,7 +39,7 @@ Exponent pairs are closely related to the function $\beta$ from the previous cha
     \code{exponent_pairs_to_beta_bounds()}
     \code{beta_bounds_to_exponent_pairs()}
 
-Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\beta$ is not known to be convex, so one could have bounds on $\beta$ that do not directly correspond to exponent pairs.  We remark that in the case $\ell - k \geq 1/2$, one only needs to check the case $0 \leq \alpha \leq 1/2$ in (ii) above, since the remaining regime $1/2 \leq \alpha \leq 1$ then follows from Lemma \ref{beta-reflect} and some algebra.  Conversely, if $\ell - k \geq 1/2$, one only needs to check the region $1/2 \leq \alpha \leq 1$.
+Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\beta$ is not known to be convex, so one could have bounds on $\beta$ that do not directly correspond to exponent pairs.  We remark that in the case $\ell - k \geq 1/2$, one only needs to check the case $0 \leq \alpha \leq 1/2$ in (ii) above, since the remaining regime $1/2 \leq \alpha \leq 1$ then follows from Lemma \ref{beta-reflect} and some algebra.  Conversely, if $\ell - k \leq 1/2$, one only needs to check the region $1/2 \leq \alpha \leq 1$.
 
 \begin{proof}  If (i) holds, then for any $0 < \alpha < 1$, any unbounded $T \geq 1$, any $N = T^{\alpha+o(1)}$, interval $I \subset [N,2N]$, and model phase function $F$, we have from (i) that
 $$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)} = T^{k + (\ell-k)\alpha + o(1)}.$$
