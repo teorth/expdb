@@ -61,16 +61,16 @@ whenever $\sigma \geq 1/2$ and $\tau \geq 2$.
 
 \begin{proof}  We first show the lower bound, or equivalently that
 $$ A(\sigma-\sigma_0) + \LV_\zeta(\sigma,\tau) \leq \tau M(\sigma_0,A) - A(\sigma-\sigma_0)$$
-whenever $\tau \geq 2$ and $\sigma \geq 1/2$.  Accordingly, let $N$ be unbounded, $T = N^{\tau+o(1)}$, $I \subset [N,2N]$, and $t_1,\dots,t_R$ be a $1$-separated subset of $[T,2T]$ such that
-$$ |\sum_{n \in I} n^{-it_r}| \gg N^{\sigma+o(1)}.$$
-By standard Fourier analysis, this gives
-$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it)|\ \frac{dt}{1+|t-t_r|} \gg N^{\sigma - \sigma_0 + o(1)}$$
+whenever $\tau \geq 2$ and $\sigma \geq 1/2$.  Accordingly, let $N$ be unbounded, $T = N^{\tau+o(1)}$, $I \subset [N,2N]$, and $W$ be a $1$-separated subset of $[T,2T]$ such that
+$$ |\sum_{n \in I} n^{-it}| \gg N^{\sigma+o(1)}$$
+for $t \in W$. By standard Fourier analysis (or by Perron's formula and contour shifting), this gives
+$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it')|\ \frac{dt}{1+|t'-t|} \gg N^{\sigma - \sigma_0 + o(1)}$$
 and hence by H\"older
-$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it)|^A\ \frac{dt}{1+|t-t_r|} \gg N^{A(\sigma - \sigma_0) + o(1)}$$
+$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it')|^A\ \frac{dt'}{1+|t'-t|} \gg N^{A(\sigma - \sigma_0) + o(1)}$$
 so on summing in $r$
-$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it)|^A\ dt \gg R N^{A(\sigma - \sigma_0) + o(1)}.$$
+$$ \int_{T/2}^{3T} |\zeta(\sigma_0+it')|^A\ dt' \gg |W| N^{A(\sigma - \sigma_0) + o(1)}.$$
 By Definition \ref{zeta-moment-def}, the left-hand side is $\ll T^{M(\sigma_0,A)+o(1)}$.  Since $T = N^{\alpha+o(1)}$, we obtain
-$$ R \ll N^{\tau M(\sigma_0,A) - A(\sigma-\sigma_0)},$$
+$$ |W| \ll N^{\tau M(\sigma_0,A) - A(\sigma-\sigma_0)},$$
 giving the claim.
 
 For the converse bound, let $M$ be the right-hand side of \eqref{M-form}.  From Lemma \ref{lvz-2} we have $M \geq 1$. By \cite[\S 8.1]{ivic} it will suffice to show that for any $V>0$ and any $1$-separated $W \subset [T,2T]$ with
