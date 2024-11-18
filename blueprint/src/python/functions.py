@@ -1,5 +1,4 @@
 # Code for some commonly encountered functions
-import cdd
 import copy
 from fractions import Fraction as frac
 import itertools

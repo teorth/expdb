@@ -4,6 +4,7 @@ import large_values as lv
 import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
 import zeta_large_values as zlv
+from derived import *
 
 # Temporary debugging functionality
 import time
@@ -14,7 +15,7 @@ def mu_bound_examples():
     print("mu bound examples --------------------------------------------------")
 
     hypotheses = Hypothesis_Set()
-    print(f"Assume only the trivial bound.")
+    print("Assume only the trivial bound.")
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
@@ -26,32 +27,32 @@ def mu_bound_examples():
     )
 
     print()
-    print(f"Now assume the result of Hardy and Littlewood.")
+    print("Now assume the result of Hardy and Littlewood.")
     hypotheses.add_hypothesis(HL)
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
-    print(f"Now assume all unconditional bounds known up to 1985")
+    print("Now assume all unconditional bounds known up to 1985")
     hypotheses.add_hypotheses(literature.list_hypotheses("Upper bound on mu", 1985))
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
     print()
-    print(f"Now assume all unconditional bounds.")
+    print("Now assume all unconditional bounds.")
     hypotheses.add_hypotheses(literature.list_hypotheses("Upper bound on mu"))
     start_time = time.time()
     prove_mu_bound(frac(3, 4), frac(13, 168), hypotheses)
     print(f"Computed in {time.time() - start_time} sec")
 
     print()
-    print(f"The computed convex hull is cached, so this second call should be faster.")
-    print(f"Once again assume all unconditional bounds.")
+    print("The computed convex hull is cached, so this second call should be faster.")
+    print("Once again assume all unconditional bounds.")
     start_time = time.time()
     prove_mu_bound(frac(4, 7), frac(8, 63), hypotheses)
     print(f"Computed in {time.time() - start_time} sec")
 
     print()
     print(
-        f"Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
+        "Now assume all unconditional exponent pairs, and all unconditional exponent pair transforms."
     )
     add_exp_pairs_all(hypotheses)
     hypotheses.add_hypotheses(literature.find_hypothesis(hypothesis_type="Exponent pair transform"))
@@ -68,7 +69,7 @@ def mu_bound_examples():
         print(f"\\mu(x) \\leq {b}")
 
     print()
-    print(f"Now assume the Lindelof hypothesis.")
+    print("Now assume the Lindelof hypothesis.")
     hypotheses.add_hypothesis(Lindelof_hypothesis)
     print(best_mu_bound(frac(3, 4), hypotheses).desc_with_proof())
 
@@ -87,7 +88,7 @@ def mu_bound_examples():
 def exp_pair_examples():
     hypotheses = Hypothesis_Set()
     print(
-        f"Assume all known exponent pairs as well as the van der Corput A/B transforms"
+        "Assume all known exponent pairs as well as the van der Corput A/B transforms"
     )
     hypotheses.add_hypothesis(ep.trivial_exp_pair)
     hypotheses.add_hypotheses(
@@ -112,7 +113,7 @@ def exp_pair_examples():
 
     print()
     print(
-        f"Proof that (3/40, 31/40) is an exponent pair, found by searching for the earliest proof"
+        "Proof that (3/40, 31/40) is an exponent pair, found by searching for the earliest proof"
     )
     eph = ep.find_best_proof(
         frac(3, 40), frac(31, 40), hypotheses, Proof_Optimization_Method.DATE
@@ -122,7 +123,7 @@ def exp_pair_examples():
 
     print()
     print(
-        f"Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest proof"
+        "Another proof that (3/40, 31/40) is an exponent pair, this time found by searching for the shortest proof"
     )
     eph = ep.find_best_proof(
         frac(3, 40), frac(31, 40), hypotheses, Proof_Optimization_Method.COMPLEXITY
@@ -171,7 +172,7 @@ def beta_bound_examples():
     )  # Compute the hull a bit
     hypotheses.add_hypotheses(derived_pairs)
     print(
-        f"\tAlso assume derived exponent pairs with transform depth \\leq 1. Total pairs:",
+        "\tAlso assume derived exponent pairs with transform depth \\leq 1. Total pairs:",
         len(hypotheses.list_hypotheses(hypothesis_type="Exponent pair")),
     )
     print("\tComputing... (may take a few minutes)")
@@ -392,7 +393,7 @@ def lver_to_zero_density_example():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 3"))
-    
+
     #for k in range(2, 10):
     #    hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
@@ -453,13 +454,13 @@ def zero_density_energy_examples():
     for eph in ephs:
         if frac(1,100) <= eph.data.k and eph.data.k <= frac(13,84):
             hypotheses.add_hypothesis(ad.ep_to_lver(eph))
-    
+
     # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     # Convert all zeta large value estimates -> zeta large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    # tau_0 as a piecewise affine function 
+    # tau_0 as a piecewise affine function
     tau0 = Affine(0, 5, Interval(frac(3,4), 1))
     sigma_interval = tau0.domain
 
@@ -472,8 +473,8 @@ def zero_density_energy_examples():
             [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
         ])
     )
-        
-    # Compute the feasible region for LV*(s, t) as a 3-dimensional 
+
+    # Compute the feasible region for LV*(s, t) as a 3-dimensional
     # polytope for a range of sigma
     LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
 
@@ -486,7 +487,7 @@ def zero_density_energy_examples():
             [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
         ])
     )
-        
+
     # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
     bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
@@ -502,7 +503,12 @@ def all_examples():
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
     # zd.compute_pintz_density_estimate_subdiv()
-    lver_to_zero_density_example()
+    # lver_to_zero_density_example()
     # zero_density_energy_examples()
+
+    prove_exponent_pair(frac(89,1282), frac(997,1282))
+#    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
+#    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
+#    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 all_examples()

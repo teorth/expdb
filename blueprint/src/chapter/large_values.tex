@@ -1,4 +1,4 @@
-\chapter{Large value estimates}
+\chapter{Large value estimates}\label{largevalue-chapter}
 
 The theory of zero density estimates for the Riemann zeta function (and other $L$-functions) rests on the study of what will be called \emph{large value patterns} in this blueprint.
 
@@ -28,7 +28,7 @@ One can check that the set of possible candidates for $\LV(\sigma,\tau)$ is clos
     \begin{itemize}
     \item[(i)] $\LV(\sigma,\tau) \leq \rho$.
     \item[(ii)] For every (fixed)  $\eps>0$ there exists $C, \delta>0$ such that if $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ is a large value pattern with $N \geq C$ and $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$, then one has
-    $$ R \leq C N^{\rho+\eps}.$$
+    $$ |W| \leq C N^{\rho+\eps}.$$
     \end{itemize}
 \end{lemma}
 
@@ -124,7 +124,7 @@ In particular, the Montgomery conjecture \eqref{mont-conj} holds for $\tau \leq 
 \code{large_value_estimate_L2}
 
 \begin{proof}
-LEt $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
+Let $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ be a large value pattern with $T = N^{\tau + o(1)}$, $V = N^{\sigma + o(1)}$. Applying \cite[Theorem~9.4]{ik} (with $N$, $T$ replaced with $2N$, $2T$ respectively and taking $a_n = 0$ for $n < N$) one has
 \[
 |W|V^2 \le \sum_{t \in W} \left|\sum_{N \le n \le 2N} a_n n^{-it}\right|^2 \ll N^{1 + o(1)}(T + N)
 \]

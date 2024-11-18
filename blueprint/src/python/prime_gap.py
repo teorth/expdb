@@ -3,7 +3,6 @@
 from fractions import Fraction as frac
 from functions import Interval, RationalFunction as RF
 from hypotheses import *
-import numpy as np
 import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
 import sympy

@@ -7,8 +7,6 @@ from hypotheses import *
 
 # from mpmath import fraction as frac
 from fractions import Fraction as frac
-import numpy as np
-from scipy.spatial import ConvexHull
 from functions import *
 import matplotlib.pyplot as plt
 from reference import *
@@ -69,10 +67,10 @@ def derived_bound_beta(bound, proof, dependencies):
 # use this constructor to create an upper bound on beta that is so classical it does not require citation
 def classical_bound_beta(bound):
     return Hypothesis(
-        f"Classical bound on \\beta",
+        "Classical bound on \\beta",
         "Upper bound on beta",
         Bound_beta(bound),
-        f"Classical",
+        "Classical",
         Reference.classical(),
     )
 

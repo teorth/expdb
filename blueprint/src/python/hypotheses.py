@@ -1,4 +1,3 @@
-import numbers
 
 # Basic code for handling hypotheses in the exponent database.  The code here is
 # intended to be as flexible and general as possible, anticipating that different

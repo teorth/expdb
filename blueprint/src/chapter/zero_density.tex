@@ -1,4 +1,4 @@
-\chapter{Zero density theorems}
+\chapter{Zero density theorems}\label{zero-density-chapter}
 
 \begin{definition}[Zero density exponents]\label{zero-def}  For $\sigma \in \R$ and $T>0$, let $N(\sigma,T)$ denote the number of zeroes $\rho$ of the Riemann zeta function with $\mathrm{Re}(\rho) \geq \sigma$ and $|\mathrm{Im}(\rho)| \leq T$.
 
@@ -97,7 +97,7 @@ where $a_n$ is some sequence with $a_n \ll T^{o(1)}$.  By dyadic decomposition a
 $$ \bigg| \sum_{n \in I} \frac{a_n}{n^{\sigma_r+it_r}} \bigg| \gg T^{-o(1)}$$
 and hence by Fourier expansion of $\frac{1}{n^{\sigma_r}}$ in $\log n$
 $$ \bigg| \sum_{n \in I} \frac{a_n}{n^{it'_r}} \bigg| \gg N^{\sigma_r} T^{-o(1)}$$
-for some $t'_r = t_r + O(T^{o(1)})$; by refining the $t_r$ by a further factor of $T^{o(1)}$ we may assume that the $t'_r$ are also $O(1)$-separated; we can also pigeonhole so that $T = N^{\tau+o(1)}$ for some $\frac{1}{\delta_1+\delta_2/2} \leq \tau \leq \frac{1}{\delta_2/2}$.  Applying Lemma \ref{lv-asymp}, we conclude that
+for some $t'_r = t_r + O(T^{o(1)})$; by refining the $t_r$ by a further factor of $T^{o(1)}$ we may assume that the $t'_r$ are also $1$-separated; we can also pigeonhole so that $T = N^{\tau+o(1)}$ for some $\frac{1}{\delta_1+\delta_2/2} \leq \tau \leq \frac{1}{\delta_2/2}$.  Applying Lemma \ref{lv-asymp}, we conclude that
 $$ R \ll N^{\LV(\sigma,\tau)+o(1)} = T^{\LV(\sigma,\tau)/\tau+o(1)}$$
 and the claim follows in this case from \eqref{lv-bound}.
 \end{proof}
@@ -210,8 +210,8 @@ Let us see some examples of these corollaries in action.
 \begin{theorem}\label{lindelof_implies_density}\uses{density-hypothesis} The Lindelof hypothesis implies the density hypothesis, and also that $\A(\sigma) \leq 0$ for $3/4 < \sigma \leq 1$.
 \end{theorem}
 
-\begin{proof}\uses{zero-large-cor, lh-vanish, l2-mvt, power-lemma, htlv} The first result is proved in \cite{ingham_estimation_1940}, and the second result is due to \cite{halasz_distribution_1969}. We will apply Corollary \ref{zero-large-cor}.  From Corollary \ref{lh-vanish} we see that for any choice of $\tau_0$ we have
-$$ \sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau \leq 0.$$
+\begin{proof}\uses{zero-large-cor, lh-vanish, l2-mvt, power-lemma, htlv} The first result is proved in \cite{ingham_estimation_1940}, and the second result is due to \cite{halasz_distribution_1969}. We will apply Corollary \ref{zero-large-cor}.  From Corollary \ref{lh-vanish} we see that $\LV_\zeta(\sigma,\tau) = -\infty$ whenever $\sigma > 1/2$ and $\tau \geq 1$, so for any choice of $\tau_0$ we have
+$$ \sup_{2 \leq \tau < 4\tau_0/3} \LV_\zeta(\sigma,\tau)/\tau = -\infty.$$
 From Theorem \ref{l2-mvt} and Lemma \ref{power-lemma} we have
 \begin{equation}\label{ap}
      \LV(\sigma,\tau) \leq \max( (2-2\sigma)k, \tau + (1 - 2 \sigma)k )
@@ -219,7 +219,7 @@ From Theorem \ref{l2-mvt} and Lemma \ref{power-lemma} we have
 for any natural number $k$ and $\tau \geq 1$; setting $k$ to be the integer part of $\tau$ we conclude in particular that
 $$ \LV(\sigma,\tau) \leq (2-2\sigma)\tau + O(1),$$
 and hence by taking $\tau_0$ large enough, we can make
-$\sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau$ bounded by $2-2\sigma + \eps$ for any $\eps>0$.  This already gives the density hypothesis bound $\A(\sigma) \leq 2$.  For $\sigma > 3/4$, we may additionally apply Lemma \ref{htlv} to make
+$\sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau$ bounded by $2-2\sigma + \eps$ for any $\eps>0$.  This already gives the density hypothesis bound $\A(\sigma) \leq 2$.  For $\sigma > 3/4$, we may additionally apply Theorem \ref{htlv} to make
 $\sup_{2\tau_0/3 \leq \tau \leq \tau_0} \LV(\sigma,\tau)/\tau$ arbitrarily small, giving the bound $\A(\sigma) \leq 0$.
 \end{proof}
 
@@ -915,10 +915,10 @@ For completeness, we list in Table \ref{zero_density_historical} some historical
 Some additional estimates were established for $\sigma$ sufficiently close to $1/2$ or $1$.
 
 Tur\'an \cite{turan} introduced the power sum method to establish
-$$ A(1-\eta) \leq 2 + \eta^{0.14}$$
+$$ \A(1-\eta) \leq 2 + \eta^{0.14}$$
 for $\eta$ small enough. Hal\'asz and Tur\'an \cite{halasz_distribution_1969} combined this method with the large values approach of Hal\'asz \cite{halasz_1968} to improve the bound to
 \begin{equation}\label{a-eta}
-  A(1-\eta) \leq C \eta^{1/2}
+  \A(1-\eta) \leq C \eta^{1/2}
 \end{equation}
 with $C = 12,000$ for sufficiently small $\eta$.  See \cite{pintz_2022} for an alternate proof of these results.
 

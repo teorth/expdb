@@ -1,4 +1,4 @@
-\chapter{Exponent pairs}
+\chapter{Exponent pairs}\label{exponent-pairs-chapter}
 
 \begin{definition}[Exponent pair]\label{exp-pair-def}\uses{phase-def}  An exponent pair is a (fixed) element $(k,\ell)$ of the triangle
 \begin{equation}\label{exp-pair-triangle}
@@ -39,7 +39,7 @@ Exponent pairs are closely related to the function $\beta$ from the previous cha
     \code{exponent_pairs_to_beta_bounds()}
     \code{beta_bounds_to_exponent_pairs()}
 
-Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\beta$ is not known to be convex, so one could have bounds on $\beta$ that do not directly correspond to exponent pairs.  We remark that in the case $\ell - k \geq 1/2$, one only needs to check the case $0 \leq \alpha \leq 1/2$ in (ii) above, since the remaining regime $1/2 \leq \alpha \leq 1$ then follows from Lemma \ref{beta-reflect} and some algebra.  Conversely, if $\ell - k \geq 1/2$, one only needs to check the region $1/2 \leq \alpha \leq 1$.
+Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\beta$ is not known to be convex, so one could have bounds on $\beta$ that do not directly correspond to exponent pairs.  We remark that in the case $\ell - k \geq 1/2$, one only needs to check the case $0 \leq \alpha \leq 1/2$ in (ii) above, since the remaining regime $1/2 \leq \alpha \leq 1$ then follows from Lemma \ref{beta-reflect} and some algebra.  Conversely, if $\ell - k \leq 1/2$, one only needs to check the region $1/2 \leq \alpha \leq 1$.
 
 \begin{proof}  If (i) holds, then for any $0 < \alpha < 1$, any unbounded $T \geq 1$, any $N = T^{\alpha+o(1)}$, interval $I \subset [N,2N]$, and model phase function $F$, we have from (i) that
 $$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)} = T^{k + (\ell-k)\alpha + o(1)}.$$
@@ -271,7 +271,57 @@ The following new exponent pairs were derived using this database:
 \code{prove_exponent_pair(frac(10769,351096), frac(609317,702192))}
 \code{prove_exponent_pair(frac(89,3478), frac(15327,17390))}
 
-In summary, the current set of known exponent pairs is the convex hull with vertices $(0, 1)$, $(1/2, 1/2)$ and the points $(k_n, \ell_n)$ for $n \in \Z$ that are recorded in Table \ref{exp_pair_table}. 
+\begin{proof}\uses{beta-reflect, beta-duality}
+Using the bounds on $\beta(\alpha)$ collected in Table \ref{new-exp-pair-beta-bounds-table}, one may verify (after a tedious calculation) that for each of the claimed exponent pairs $(k, \ell)$ in the lemma statement, one has $\beta(\alpha) \le k + (\ell - k)\alpha$ for $0 \le \alpha \le 1/2$. The result then follows from Lemma \ref{beta-reflect} and Lemma \ref{beta-duality}.
+
+\begin{table}[h]
+\label{new-exp-pair-beta-bounds-table}
+\def\arraystretch{1.8}
+\centering
+\caption{Bounds on $\beta(\alpha)$}
+\begin{tabular}{|c|c|c|}
+\hline
+$\beta(\alpha)$ bound & $\alpha$ range & Reference\\
+\hline
+$\dfrac{1}{20} + \dfrac{3}{4}\alpha$ & $0\leq \alpha < \dfrac{1}{4}$ & Theorem \ref{beta-HB} with $k = 5$\\
+\hline
+$\dfrac{19}{20}\alpha$ & $\dfrac{1}{4}\leq \alpha < \dfrac{890}{3277}$ & Theorem \ref{beta-HB} with $k = 5$\\
+\hline
+$\dfrac{89}{2706} + \dfrac{2243}{2706}\alpha$ & $\dfrac{890}{3277}\leq \alpha < \dfrac{199}{716}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{1}{66} + \dfrac{235}{264}\alpha$ & $\dfrac{120}{419}\leq \alpha < \dfrac{754}{2579}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{9}{217} + \dfrac{1389}{1736}\alpha$ & $\dfrac{754}{2579}\leq \alpha < \dfrac{251324}{841245}$ & Exponent pair $(\dfrac{9}{217}, \dfrac{1461}{1736}) = AD(\dfrac{13}{84}, \dfrac{55}{84})$\\
+\hline
+$\dfrac{2371}{43205} + \dfrac{52209}{69128}\alpha$ & $\dfrac{251324}{841245}\leq \alpha < \dfrac{861996}{2811205}$ & \begin{tabular}{@{}c@{}}Exponent pair $(\dfrac{2371}{43205}, \dfrac{280013}{345640})$ \\
+$= A(\dfrac{4742}{38463}, \dfrac{35731}{51284})$ and Theorem \ref{trudgian_yang_eps}\end{tabular}\\
+\hline
+$\dfrac{13}{146} + \dfrac{47}{73}\alpha$ & $\dfrac{861996}{2811205}\leq \alpha < \dfrac{87}{275}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{11}{244} + \dfrac{191}{244}\alpha$ & $\dfrac{87}{275}\leq \alpha < \dfrac{423}{1295}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{89}{1282} + \dfrac{454}{641}\alpha$ & $\dfrac{423}{1295}\leq \alpha < \dfrac{227}{601}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{715}{10238} + \dfrac{3620}{5119}\alpha$ & $\dfrac{227}{601}\leq \alpha < \dfrac{227}{601}$ & \begin{tabular}{@{}c@{}}Exponent pair $(\dfrac{715}{10238}, \dfrac{7955}{10238})$  \\
+in Theorem \ref{trudgian_yang_eps}\end{tabular}\\
+\hline
+$\dfrac{29}{280} + \dfrac{173}{280}\alpha$ & $\dfrac{227}{601}\leq \alpha < \dfrac{12}{31}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{1}{32} + \dfrac{103}{128}\alpha$ & $\dfrac{12}{31}\leq \alpha < \dfrac{1508}{3825}$ & Table \ref{huxley-table-1}\\
+\hline
+$\dfrac{18}{199} + \dfrac{521}{796}\alpha$ & $\dfrac{1508}{3825}\leq \alpha < \dfrac{62831}{155153}$ & Exponent pair $(\dfrac{18}{199}, \dfrac{593}{796}) = D(\dfrac{13}{84}, \dfrac{55}{84})$\\
+\hline
+$\dfrac{569}{2800} + \dfrac{1053}{2800}\alpha$ & $\dfrac{62831}{155153}\leq \alpha < \dfrac{143}{349}$ & Table \ref{huxley-table-2}\\
+\hline
+$\dfrac{1}{12} + \dfrac{2}{3}\alpha$ & $\dfrac{5}{12}\leq \alpha < \dfrac{3}{7}$ & Theorem \ref{beta-Bourgain} \\
+\hline
+$\dfrac{13}{84} + \dfrac{1}{2}\alpha$ & $\dfrac{3}{7}\leq \alpha \leq \dfrac{1}{2}$ & Theorem \ref{beta-Bourgain} \\
+\hline
+\end{tabular}
+\end{table}
+\end{proof}
+
+In summary, the current set of known exponent pairs is the convex hull with vertices $(0, 1)$, $(1/2, 1/2)$ and the points $(k_n, \ell_n)$ for $n \in \Z$ that are recorded in Table \ref{exp_pair_table}.
 
 \begin{table}[ht]
 \label{exp_pair_table}
@@ -301,10 +351,10 @@ $n$ & $(k_n, \ell_n)$ & Reference \\
 8 & $\left(\dfrac{10769}{351096}, \dfrac{609317}{702192}\right)$ & Theorem \ref{new-exp-pair} \\
 \hline
 9 & $\left(\dfrac{89}{3478}, \dfrac{15327}{17390}\right)$ & Theorem \ref{new-exp-pair} \\
-\hline 
+\hline
 $n \ge 10$ & \begin{tabular}{@{}c@{}}$(p_{n + 4}, q_{n + 4})$, where \\
 $(p_m, q_m) = \left(\dfrac{2}{(m-1)^2(m+2)}, 1 - \dfrac{3m-2}{m(m-1)(m+2)}\right)$\end{tabular} & Theorem \ref{heath-brown_exp_pair_2017} \\
-\hline 
+\hline
 $n < 0$ & $B(k_{-n}, \ell_{-n})$ & Proposition \ref{vdc-b} \\
 \hline
 \end{tabular}

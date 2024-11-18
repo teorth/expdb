@@ -1,7 +1,6 @@
 # Test cases for Affine2 implementation
-import parent
 from fractions import Fraction as frac
-import large_values as lv
+from ..large_values import large_values as lv
 from polytope import *
 
 
@@ -16,5 +15,5 @@ def test_edge_case():
     region = Polytope.rect((frac(1,2), frac(1)), (frac(1), frac(3)))
     m = lv.max_of(fns, region)
     assert m.check((1/2, 1), (1,3))
-    
+
 test_edge_case()
