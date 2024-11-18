@@ -211,9 +211,12 @@ def lver_to_energy_bound(
     lver = ad.compute_best_lver(hypotheses, LVER_domain, zeta=False, debug=debug)
     energy = ad.lver_to_energy(lver)
     if energy is not None:
-        sup1 = compute_sup_LV_on_tau(energy.data.region, sigma_interval)
-        fns.extend(list(sup1))
+        sup = compute_sup_LV_on_tau(energy.data.region, sigma_interval)
+        fns.extend(list(sup))
         deps.add(energy)
+        if debug:
+            for s in sup:
+                print(s)
     
     # domain representing 2 <= tau <= tau0
     LVER_zeta_domain = Region.from_polytope(
@@ -227,16 +230,20 @@ def lver_to_energy_bound(
     zlver = ad.compute_best_lver(hypotheses, LVER_zeta_domain, zeta=True, debug=debug)
     energy_zeta = ad.lver_to_energy(zlver)
     if energy_zeta is not None:
-        sup2 = compute_sup_LV_on_tau(energy_zeta.data.region, sigma_interval)
-        fns.extend(list(sup2))
+        sup = compute_sup_LV_on_tau(energy_zeta.data.region, sigma_interval)
+        fns.extend(list(sup))
         deps.add(energy_zeta)
+        if debug:
+            for s in sup:
+                print(s)
     
     # Take maximum
     bounds = [(f[0], f[1]) for f in fns]
     sup = RF.max(bounds, sigma_interval)
     return [
         derived_zero_density_energy_estimate(
-            Zero_Density_Energy_Estimate.from_rational_func(s[0], s[1]),
+            # Remember to divide by (1 - \\sigma)
+            Zero_Density_Energy_Estimate.from_rational_func(s[0] / RF([-1, 1]), s[1]),
             f"Follows from combining {len(lver.dependencies)} large value energy regions " + \
             f"and {len(zlver.dependencies)} zeta large value energy regions",
             deps
