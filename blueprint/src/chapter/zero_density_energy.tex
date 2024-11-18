@@ -850,22 +850,13 @@ in this case too.
 Modest improvements are possible by incorporating more large value estimates; these are recorded in the next few theorems.
 
 \begin{theorem}\label{imp-energy-bound4}
-For $25/33 \le \sigma \le 254/335$, one has
+For $284/375 \le \sigma \le 31/40$, one has
 \[
-\A^*(\sigma)\le \max\left(\frac{110\sigma - 53}{16(85\sigma - 63)(1 - \sigma)}, \frac{570\sigma - 413}{10(85\sigma - 63)(1 - \sigma)}\right).
+\A^*(\sigma)\le \max\left(\frac{72 - 91\sigma}{7(11\sigma - 8)(1 - \sigma)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}\right).
 \]
 \end{theorem}
 \derived
 \code{prove_zero_density_energy_4()}
-
-\begin{theorem}\label{imp-energy-bound5}
-For $254/335 \le \sigma \le 42/55$, one has
-\[
-\A^*(\sigma) \le \max\left(\frac{66 - 83\sigma}{(69\sigma - 50)(1 - \sigma)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}\right).
-\]
-\end{theorem}
-\derived
-\code{prove_zero_density_energy_5()}
 
 \begin{theorem}\label{imp-energy-bound6}
 For $42/55 \le \sigma \le 79/103$, one has
@@ -913,15 +904,11 @@ Table \ref{zero-density-energy-estimates-table} records the sharpest known uncon
     \hline
     $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{3}{4} = 0.75$ & Theorem \ref{imp-energy-bound2}\\
     \hline
-    $\dfrac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{25}{33} = 0.7575\ldots$ & Theorem \ref{imp-energy-bound3}\\
+    $\dfrac{197 - 220\sigma}{8(5\sigma - 1)(1 - \sigma)}$ & $\dfrac{3}{4} \leq \sigma \le \dfrac{23881 - 3 \sqrt{1560329}}{26600} = 0.7569\ldots$ & Theorem \ref{imp-energy-bound3}\\
     \hline
-    $\dfrac{110\sigma - 53}{16(85\sigma - 63)(1 - \sigma)}$ & $\dfrac{25}{33} \leq \sigma \le \dfrac{3039}{4010} = 0.7578\ldots$ & Theorem \ref{imp-energy-bound4}\\
+    $\dfrac{72 - 91\sigma}{7(11\sigma - 8)(1 - \sigma)}$ & $\dfrac{23881 - 3 \sqrt{1560329}}{26600} \leq \sigma \le \dfrac{6038 - 2\sqrt{352321}}{6405} = 0.7573\ldots$ & Theorem \ref{imp-energy-bound4}\\
     \hline
-    $\dfrac{570\sigma - 413}{10(85\sigma - 63)(1 - \sigma)}$ & $\dfrac{3039}{4010} \leq \sigma \le \dfrac{254}{335} = 0.7582\ldots$ & Theorem \ref{imp-energy-bound4}\\
-    \hline
-    $\dfrac{66 - 83\sigma}{(69\sigma - 50)(1 - \sigma)}$ & $\dfrac{254}{335} \leq \sigma \le \dfrac{5399 - 7\sqrt{22849}}{5725} = 0.7582\ldots$ & Theorem \ref{imp-energy-bound5}\\
-    \hline
-    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{5399 - 7\sqrt{22849}}{5725} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{imp-energy-bound5}\\
+    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{6038 - 2\sqrt{352321}}{6405} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{imp-energy-bound5}\\
     \hline
     $\dfrac{18 - 19\sigma}{6(15\sigma - 11)(1- \sigma)}$ & $\dfrac{42}{55} \leq \sigma \le \dfrac{97}{127} = 0.7637\ldots$ & Theorem \ref{imp-energy-bound6}\\
     \hline

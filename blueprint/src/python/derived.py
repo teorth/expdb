@@ -865,13 +865,13 @@ def prove_zero_density_energy_4():
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
     
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    tau0 = Affine(0, 2, Interval(frac(25,33), frac(254,335)))
+    tau0 = Affine(0, 2, Interval(frac(284,375), frac(31,40)))
     hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
     for h in hs: print(h.data)
     return hs
