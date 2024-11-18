@@ -117,11 +117,21 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 
     Parameters
     ----------
-    hypotheses: Hypothesis
+    hypotheses : Hypothesis
         The hypothesis set to add to. 
-    estimate: str
+    estimate : str
         A function of x representing a bound on A(x).
-    interval - the domain of \sigma for which the estimate holds
+    interval : Interval
+        The domain of \\sigma for which the estimate holds.
+    ref : Reference
+        The literature reference for this zero density estimate.
+    params : str, optional
+        Additional parameters to include in the hypothesis name. 
+
+    Returns
+    -------
+    Hypothesis
+        A hypothesis representing this zero-density estimate. 
     """
     hypotheses.add_hypotheses(
         Hypothesis(
@@ -383,17 +393,22 @@ def lv_zlv_to_zd2(
     ) -> list[Hypothesis]:
 
     """
-    Tries to prove the zero-density estimate using Corollary 11.8 by specifying the 
-    value of tau0 to use and the range of sigma to consider. 
+    Converts large value estimates into zero density estimates using Corollary 11.8 
+    by specifying the value of tau0 to use and the range of sigma to consider. 
 
     Parameters
     ----------
     hypotheses : Hypothesis_Set
         The set of hypotheses to assume. 
-    tau0 : RationalFunction 
-        The choice of tau0 as a function of sigma 
     sigma_interval : Interval 
-        The range of sigma values to consider
+        The range of sigma values to consider.
+    tau0 : RationalFunction 
+        The choice of tau0 as a function of sigma.
+    
+    Returns
+    -------
+    list of Hypothesis
+        The list of zero density estimates implied by the hypothesis set. 
     """
 
     if not isinstance(hypotheses, Hypothesis_Set):
@@ -516,7 +531,6 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         )
         for s in sup
         ]
-
 
 # Computes the zero-density estimate obtained from
 #

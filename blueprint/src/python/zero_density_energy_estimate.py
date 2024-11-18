@@ -182,7 +182,7 @@ def lver_to_energy_bound(
 
     Parameters
     ----------
-    hypotheses : Hypothesis_Set:
+    hypotheses : Hypothesis_Set
         The set of hypothesis from which to construct the large value 
         energy region.
     debug : bool, optional

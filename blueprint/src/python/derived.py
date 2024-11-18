@@ -7,7 +7,6 @@ import prime_gap as pg
 
 import time
 
-
 # Establish the classical van der Corput exponent pair (\frac{1}{2^k-2}, 1 - \frac{k-1}{2^k-2})
 def van_der_corput_pair(k):
     if k < 2:
@@ -19,7 +18,6 @@ def van_der_corput_pair(k):
         exp_pair = A_transform.data.transform(exp_pair)
     print(f"The van der Corput pair for k = {k} is {exp_pair.desc()}")
     return exp_pair
-
 
 # Prove the Hardy-Littlewood bound mu(1/2) \leq 1/6 using the van der Corput pair (1/6, 2/3).
 def prove_hardy_littlewood_mu_bound():
@@ -34,7 +32,6 @@ def prove_hardy_littlewood_mu_bound():
     mu_bound = obtain_mu_bound_from_exponent_pair(AB_exp_pair)
     print(f"This implies {mu_bound.desc_with_proof()}")
     return mu_bound
-
 
 def prove_exponent_pair(k, l):
 
@@ -106,8 +103,27 @@ def best_proof_of_exponent_pair(k, l, proof_method=Proof_Optimization_Method.DAT
             print(f'Failed to prove the exponent pair ({k}, {l}).')
     return hyp
 
+def prove_exponent_pairs():
+    # prove_heathbrown_exponent_pairs()
+    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
+    # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
+    # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
+    prove_exponent_pair(frac(89,1282), frac(997,1282))
+    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
+    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
+    prove_exponent_pair(frac(89,3478), frac(15327,17390))
+
+    best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
+    best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
+    best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
+    best_proof_of_exponent_pair(frac(2, 7), frac(4, 7))
+    best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
+    best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
+    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
+    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 ######################################################################################
+# Derivations of large value estimates 
 
 def prove_bourgain_large_values_theorem():
     
@@ -123,9 +139,11 @@ def prove_bourgain_large_values_theorem():
     for lvh in lv_hyps:
         print(lvh.data, lvh.proof)
 
-# Prove the Guth--Maynard large values theorem (Theorem 10.26) using the Large Value Energy 
-# Region estimates due to Guth--Maynard
 def prove_guth_maynard_large_values_theorem():
+    """
+    Prove the Guth--Maynard large values theorem (Theorem 10.26) using the Large Value Energy 
+    Region estimates due to Guth--Maynard
+    """
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
@@ -135,7 +153,7 @@ def prove_guth_maynard_large_values_theorem():
     # in the domain 1/2 <= sigma <= 1, tau >= 0
     lver_region = ad.compute_best_lver(
         hypotheses, 
-        Polytope.rect((frac(1,2), 1), (0, Constants.TAU_UPPER_LIMIT)),
+        Region.from_polytope(Polytope.rect((frac(1,2), 1), (0, Constants.TAU_UPPER_LIMIT))),
         zeta=False
     )
     
@@ -143,7 +161,7 @@ def prove_guth_maynard_large_values_theorem():
     region = ad.lver_to_lv(lver_region)
     
     # Take \tau = 6/5 (TODO: replace this step with Huxley subdivision once it is implemented)
-    region = region.substitute({1: frac(6,5)})
+    region = region.data.region.substitute({1: frac(6,5)})
 
     # Constrain to the range 7/10 \leq \sigma \leq 8/10 (\rho unconstrained)
     domain = Polytope([
@@ -157,6 +175,10 @@ def prove_guth_maynard_large_values_theorem():
 
     print("Proved feasible region for (σ, τ, ρ):", poly.to_str("στρ"))
 
+def prove_all_large_value_estimates():
+    prove_bourgain_large_values_theorem()
+    prove_guth_maynard_large_values_theorem()
+    
 ######################################################################################
 # Derivations of zero-density estimates for the Riemann zeta-function
 
@@ -415,8 +437,10 @@ def prove_zero_density_ivic_1984():
         h = zd.ivic_ep_to_zd(ephs, k)
         print(h.data, h.proof)
 
-# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
 def prove_zero_density_guth_maynard_2024(verbose=True):
+    """
+    Prove Guth-Maynards's zero density estimate A(σ) < 15/(5σ + 3)
+    """
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
@@ -436,8 +460,11 @@ def prove_zero_density_guth_maynard_2024_v2(verbose=True):
     tau0 = Affine(1, frac(3,5), sigma)
     return prove_zero_density(new_hyps, verbose, sigma, "Guth--Maynard", tau0=tau0, method=2)
 
-# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
 def prove_zero_density_heathbrown_extended(verbose=True):
+    """
+    Prove the extended version of Heath-Browns zero density estimate A(σ) < 3/(10σ - 7)
+    using method 1
+    """
     new_hyps = [
         literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
         literature.find_hypothesis(keywords="Heath-Brown large value estimate")
@@ -455,7 +482,34 @@ def prove_zero_density_heathbrown_extended(verbose=True):
     # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
     # which will be used to calculate the best zeta large value estimate
     new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
-    return prove_zero_density(new_hyps, verbose, Interval(frac(20,23), 1), 'Heath-Brown', tau0=frac(4), plot=True)
+    return prove_zero_density(new_hyps, verbose, Interval(frac(20,23), 1), 'extended Heath-Brown', tau0=frac(4), plot=True)
+
+def prove_zero_density_heathbrown_extended_v2(verbose=True):
+    """
+    Prove the extended version of Heath-Browns zero density estimate A(σ) < 3/(10σ - 7)
+    using method 2
+    """
+    new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
+        literature.find_hypothesis(keywords="Heath-Brown large value estimate")
+        ]
+    
+    # Create a hypothesis representing the (3/40, 31/40) exponent pair
+    hs = Hypothesis_Set()
+    hs.add_hypothesis(
+        ep.derived_exp_pair(
+            frac(3,40), frac(31,40), 
+            'See best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))', 
+            {})
+        )
+    
+    # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
+    # which will be used to calculate the best zeta large value estimate
+    new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
+    
+    sigma = Interval(frac(20,23), 1)
+    tau0 = Affine(10, -7, sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, 'extended Heath-Brown', tau0=tau0, method=2)
 
 def prove_zero_density_bourgain_improved(verbose=True):
     new_hyps = [
@@ -489,6 +543,29 @@ def compute_best_zero_density():
     zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), Reference.make("Tao--Trudgian--Yang", 2024))
     
     zd.best_zero_density_estimate(hs, verbose=True)
+
+def prove_all_zero_density_estimates():
+    print("Proofs using Corollary 11.8 -------------------------------------------------------")
+    prove_zero_density_ingham_1940_v2()
+    prove_zero_density_huxley_1972_v2()
+    prove_zero_density_jutila_1977_v2()
+    prove_zero_density_heathbrown_1979a_v2()
+    prove_zero_density_heathbrown_1979b_v2()
+    prove_zero_density_guth_maynard_2024_v2()
+    prove_zero_density_heathbrown_extended_v2()
+
+    print()
+    print("Proofs using Corollary 11.7 -------------------------------------------------------")
+    prove_zero_density_ingham_1940()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979a()
+    prove_zero_density_heathbrown_1979b()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+    prove_zero_density_heathbrown_extended()
+    prove_zero_density_bourgain_improved()
+    compute_best_zero_density()
 
 #################################################################################################
 # Derivations for zero-density energy estimates for the Riemann zeta-function
@@ -723,48 +800,12 @@ def prove_zero_density_energy_4():
     for h in hs: print(h.data)
     return hs
 
-#################################################################################################
-
-def prove_exponent_pairs():
-    # prove_heathbrown_exponent_pairs()
-    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
-    # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
-    # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
-    prove_exponent_pair(frac(89,1282), frac(997,1282))
-    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
-    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
-    prove_exponent_pair(frac(89,3478), frac(15327,17390))
-
-    best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
-    best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
-    best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
-    best_proof_of_exponent_pair(frac(2, 7), frac(4, 7))
-    best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
-    best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
-    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
-
-def prove_zero_density_estimates():
-    print("Proofs using Corollary 11.8 -------------------------------------------------------")
-    prove_zero_density_ingham_1940_v2()
-    prove_zero_density_huxley_1972_v2()
-    prove_zero_density_jutila_1977_v2()
-    prove_zero_density_heathbrown_1979a_v2()
-    prove_zero_density_heathbrown_1979b_v2()
-    prove_zero_density_guth_maynard_2024_v2()
-
-    print()
-    print("Proofs using Corollary 11.7 -------------------------------------------------------")
-    prove_zero_density_ingham_1940()
-    prove_zero_density_huxley_1972()
-    prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979a()
-    prove_zero_density_heathbrown_1979b()
-    prove_zero_density_ivic_1984()
-    prove_zero_density_guth_maynard_2024()
-    prove_zero_density_heathbrown_extended()
-    prove_zero_density_bourgain_improved()
-    compute_best_zero_density()
+def prove_all_zero_density_energy_estimates():
+    prove_heath_brown_energy_estimate()
+    prove_improved_heath_brown_energy_estimate()
+    prove_zero_density_energy_2()
+    prove_zero_density_energy_3()
+    prove_zero_density_energy_4()
 
 #################################################################################################
 # Derivations for prime gap theorems 
@@ -797,19 +838,16 @@ def prove_prime_gap2():
     # Compute \theta_{gap, 2}
     pg.compute_gap2(hs, debug=False)
 
+#################################################################################################
 
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
     # prove_exponent_pairs()
-    # prove_bourgain_large_values_theorem()
-    # prove_guth_maynard_large_values_theorem()
-    # prove_zero_density_estimates()
-    # prove_heath_brown_energy_estimate()
-    # prove_improved_heath_brown_energy_estimate()
-    prove_zero_density_energy_2()
-    prove_zero_density_energy_3()
-    # prove_zero_density_energy_4()
+    # prove_all_large_value_estimates()
+    prove_all_zero_density_estimates()
+    # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_all()
+#prove_all()
+prove_zero_density_heathbrown_extended_v2()
