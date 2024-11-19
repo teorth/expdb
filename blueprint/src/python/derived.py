@@ -871,8 +871,8 @@ def prove_zero_density_energy_4():
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    tau0 = Affine(0, 2, Interval(frac(284,375), frac(31,40)))
-    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    tau0 = Affine(0, 2, Interval(frac(103,136), frac(31,40)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=True)
     for h in hs: print(h.data)
     return hs
 
@@ -897,6 +897,10 @@ def prove_zero_density_energy_5():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 7"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 8"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 11"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 12"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
 
     # Add Heath-Brown estimates 
