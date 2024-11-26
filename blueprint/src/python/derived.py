@@ -882,7 +882,7 @@ def prove_zero_density_energy_5():
     for k in range(2, 4):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
-    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 6"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
     

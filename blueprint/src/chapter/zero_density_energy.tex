@@ -967,6 +967,62 @@ For $42/55 \le \sigma \le 79/103$, one has
 \derived
 \code{prove_zero_density_energy_5()}
 
+\begin{proof}
+Fix $42/55 \le \sigma \le 79/103$ and take $\tau_0 = 2$. It suffices to show that 
+\[
+\rho^* \le \max\left(\frac{18 - 19\sigma}{6(15\sigma - 11)}, \frac{3(18-19\sigma)}{4(4\sigma-1)}\right)\tau
+\]
+for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ for which $2 \le \tau \le 4$. As before let 
+\[
+k := \begin{cases}
+2,& 2 \le \tau < 3,\\
+3,& 3 \le \tau \le 4,
+\end{cases}\qquad \tau' := \tau/k, 
+\]
+so that in particular $1 \le \tau' \le (k + 1)/k$. 
+
+By Lemma \ref{power-energy}, for $k = 2, 3$,
+\[
+(\sigma, \tau', \rho', \rho^*/k, s'),\quad (\sigma, \tau/(k + 1), \rho'', \rho^*/(k + 1), s'') \in \Energy
+\]
+for some $\rho' \le \rho/k$, $s' \le s/k$, $\rho'' \le \rho/(k + 1)$ and $s'' \le s/(k + 1)$.
+Applying Theorem \ref{jutila-lvt} with $k = 6$ to each tuple, one has 
+\[
+\rho/k \le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau', 36 - 48\sigma + \tau'),
+\]
+\[
+\rho/(k + 1) \le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau/(k + 1), 36 - 48\sigma + \tau/(k + 1)).
+\]
+First suppose $\sigma \ge 97/127$, in which case the above simplifies to 
+\[
+\rho/k \le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau'),
+\]
+\[
+\rho/(k + 1)\le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau/(k + 1)).
+\]
+This combines to give 
+\[
+\rho/k \le \begin{cases}
+2 - 2\sigma,&1 \le \tau' < (11\sigma - 5)/3,\\
+11/3 - 17\sigma/3 + \tau',& (11\sigma - 5)/3 \le \tau' < (11\sigma - 5)/3 + 2(1 - \sigma)/k,\\
+(2 - 2\sigma)(k + 1)/k,& (11\sigma - 5)/3 + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k.
+\end{cases}
+\]
+
+ Applying Theorem \ref{hbt}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$, 
+\[
+\frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
+\]
+Rearranging the inequality and solving for $\rho^*/k$, one must either have 
+\begin{equation}\label{ze-bound6-rhostar1}
+\frac{\rho^*}{k} \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})).
+\end{equation}
+or 
+\begin{equation}\label{ze-bound6-rhostar2}
+\frac{\rho^*}{k} \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
+\end{equation}
+\end{proof}
+
 \begin{theorem}\label{imp-energy-bound7}
 For $79/103 \le \sigma \le 84/109$, one has
 \[
