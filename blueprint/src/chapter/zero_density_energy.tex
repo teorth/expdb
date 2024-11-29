@@ -1089,6 +1089,87 @@ For $79/103 \le \sigma \le 84/109$, one has
 \derived
 \code{prove_zero_density_energy_6()}
 
+\begin{proof}
+Fix $79/103 \le \sigma \le 84/109$ and take 
+\[
+\tau_0 = \begin{cases}
+(36\sigma - 16)/5,& 79/103 \le \sigma < 33/43,\\
+38\sigma - 28,& 33/43 \le \sigma \le 84/109.
+\end{cases}
+\]
+Let 
+\[
+k := \begin{cases}
+2,& \tau_0 \le \tau < 3\tau_0/2\\
+3,& 3\tau_0/2 \le \tau \le 2\tau_0
+\end{cases},\qquad \tau' := \tau/k.
+\]
+Suppose that $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$. We will first show 
+\begin{equation}\label{ze-bound7-rhostar-bound}
+\rho^* \le \max\left(\frac{18 - 19\sigma}{2(37\sigma - 27)}, \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\right)\tau,\qquad (\tau_0 \le \tau \le 2\tau_0).
+\end{equation}
+By Lemma \ref{power-energy}, one has that 
+\begin{equation}\label{ze-bound7-tuples}
+(\sigma, \tau', \rho', \rho^*/k, s'),\quad (\sigma, \tau/(k + 1), \rho'', \rho^*/(k + 1), s'') \in \Energy
+\end{equation}
+for some $\rho' \le \rho/k$, $s' \le s/k$, $\rho'' \le \rho/(k + 1)$ and $s'' \le s/(k + 1)$. 
+First suppose that $\sigma \ge 33/43$. In this range, Theorem \ref{jutila-lvt} with $k = 5$ gives 
+\[
+\rho/k \le \max(2 - 2\sigma, 18/5 - 28\sigma/5 + \tau'),
+\]
+\[
+\rho/(k + 1) \le \max(2 - 2\sigma, 18/5 - 28\sigma/5 + \tau/(k + 1)).
+\]
+For $\tau \ge \tau_0$, the first inequality reduces to $\rho/k \le 18/5 - 28\sigma/5 + \tau'$, while for $\tau \le 2\tau_0$ the second inequality reduces to 
+\[
+\rho/k = \frac{k + 1}{k}\frac{\rho}{k + 1} \le \frac{k + 1}{k}(2 - 2\sigma) \le 3 - 3\sigma. 
+\]
+Combining these two inequalities gives 
+\[
+\rho/k \le \min\left(18/5 - 28\sigma/5 + \tau', 3 - 3\sigma\right),\qquad (\tau_0 \le \tau \le 2\tau_0).
+\]
+In particular this implies $\rho/k \le 1$. Applying Theorem \ref{hbt} to the first tuple of \eqref{ze-bound7-tuples},
+\[
+\frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
+\]
+By considering each case of the first maximum and solving for $\rho^*/k$, one must either have 
+\begin{equation}\label{ze-bound7-rhostar-bound-case01}
+\frac{\rho^*}{k} \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k}))
+\end{equation}
+or 
+\begin{equation}\label{ze-bound7-rhostar-bound-case02}
+\frac{\rho^*}{k} \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
+\end{equation}
+However one may verify in both cases that 
+\begin{equation}\label{ze-bound7-rhostar-final1}
+\frac{\rho^*}{k} \le \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\tau'
+\end{equation}
+for $33/43\le \sigma \le 84/109$ and $\tau_0 \le \tau \le 2\tau_0$ (with equality at $\tau = 2(13\sigma - 3)/5$).
+
+Now consider $\sigma \le 33/43$. In this range of $\sigma$, Theorem \ref{jutila-lvt} with $k = 5$ gives 
+\[
+\rho/k \le \max(2 - 2\sigma, 30 - 40\sigma + \tau'),
+\]
+\[
+\rho/(k + 1) \le \max(2 - 2\sigma, 30 - 40\sigma + \tau/(k + 1))
+\]
+which gives
+\[
+\rho/k \le \min(30 - 40\sigma + \tau', 3 - 3\sigma),\qquad (\tau_0 \le \tau \le 2\tau_0).
+\]
+Substituting this bound into \eqref{ze-bound7-rhostar-bound-case01} and \eqref{ze-bound7-rhostar-bound-case02}, one obtains
+\[
+\frac{\rho^*}{k} \le \frac{18 - 19\sigma}{2(37\sigma - 27)}\tau'
+\]
+for $79/103 \le \sigma \le 33/43$ and $\tau_0 \le \tau \le 2\tau_0$ (with equality at $\tau = 74\sigma - 54$). Combined with \eqref{ze-bound7-rhostar-final1}, one obtains \eqref{ze-bound7-rhostar-bound}.
+
+It remains to show that 
+\begin{equation}\label{ze-bound7-rhostar-zeta-bound}
+\rho^* \le \max\left(\frac{18 - 19\sigma}{2(37\sigma - 27)}, \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\right)\tau
+\end{equation}
+for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta$ for which $79/103 \le \sigma \le 84/109$ and $2 \le \tau \le \tau_0$. This follows from substituting $\rho/k \le 6 - 12\sigma + 2\tau'$ (Theorem \ref{hb-12}) into \eqref{ze-bound7-rhostar-bound-case01} and \eqref{ze-bound7-rhostar-bound-case02}.
+\end{proof}
+
 \begin{theorem}\label{imp-energy-bound8}
 For $84/109 \le \sigma \le 5/6$, one has
 \[
@@ -1096,7 +1177,7 @@ For $84/109 \le \sigma \le 5/6$, one has
 \]
 \end{theorem}
 \derived
-\code{prove_zero_density_energy_6()}
+\code{prove_zero_density_energy_7()}
 
 
 
