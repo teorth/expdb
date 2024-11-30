@@ -3,6 +3,7 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from literature import *
+from functions import RationalFunction as RF
 
 
 def van_der_corput(k, alpha):
@@ -212,9 +213,6 @@ def zero_density_plot():
     zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
     hs.add_hypotheses(zd.bourgain_ep_to_zd())
-    # New Pintz-type estimates 
-    zd.add_zero_density(hs, "3/(40 * x - 35)", Interval("[39/40, 40/41)"), Reference.make("Tao--Trudgian--Yang", 2024))
-    zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), Reference.make("Tao--Trudgian--Yang", 2024))
     
     def best_zd_at(hypotheses, sigma):
         min_ = 1000000

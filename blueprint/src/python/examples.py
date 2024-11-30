@@ -502,7 +502,6 @@ def all_examples():
     # zero_density_estimates_examples2()
     # zero_density_estimates_examples3()
     # zero_density_estimates_examples4()
-    # zd.compute_pintz_density_estimate_subdiv()
     # lver_to_zero_density_example()
     # zero_density_energy_examples()
 

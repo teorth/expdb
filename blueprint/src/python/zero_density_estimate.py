@@ -111,7 +111,6 @@ def derived_zero_density_estimate(data, proof, deps):
     bound.dependencies = deps
     return bound
 
-
 def add_zero_density(hypotheses, estimate, interval, ref, params=""):
     """
     Add a zero-density estimate to the hypothesis set
@@ -728,7 +727,6 @@ def ep_to_zd(hypotheses):
 
     return bourgain_ep_to_zd(ephs) + [ivic_ep_to_zd(ephs, m=2)]
 
-
 # Given a list of tuples (RationalFunction, interval),
 # returns a simplified list of tuples representing the same piecewise defined
 # function
@@ -753,42 +751,6 @@ def simplify(pieces):
         simplified_pieces.append((fi, Interval(left, right)))
         i = j
     return simplified_pieces
-
-# Compute the set of density estimates implied by Pintz theorem using subdivision
-def compute_pintz_density_estimate_subdiv():
-    N = 20
-    bounds = []
-    for k in range(4, N):
-        k_int = Interval(frac(1, k*(k+1)), frac(1,k*(k-1)))
-        # Bound 1: 4/(((k - 1) k - 4) x + (2 - k) k + 4)
-        b1 = RF([4], [(k - 1) * k - 4, (2 - k) * k + 4])
-        #b1 = RF([4], [(k - 1) * k, (2 - k) * k])
-        for l in range(3, N):
-            l_int = Interval(frac(1, 2*l*(l+1)), frac(1,2*l*(l-1)))
-            # Bound 2: 3/((2 l - 2) l x + (3 - 2 l) l)
-            b2 = RF([3], [(2 * l - 2) * l, (3 - 2 * l) * l])
-
-            interval = k_int.intersect(l_int)
-            sigma_interval = Interval(1 - interval.x1, 1 - interval.x0,
-                                      interval.include_upper, interval.include_lower)
-            if not interval.is_empty():
-                bounds.append((k, l, sigma_interval, [b1, b2]))
-
-    # Compute the maximum
-    zdes = []
-    for b in bounds:
-        interval = b[2]
-        (b1, b2) = b[3]
-        zdes.extend(
-            RF.max(
-                [(b1, interval), (b2, interval)],
-                interval,
-                track_dependencies=False
-            )
-        )
-
-    zdes = simplify(zdes)
-    return zdes
 
 # Aggregate the zero-density estimates in the Hypothesis_Set and returns a piecewise
 # function that represents the best zero-density estimate in each subinterval of [1/2, 1]
