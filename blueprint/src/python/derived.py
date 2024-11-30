@@ -630,7 +630,7 @@ def compute_best_zero_density():
     zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
     hs.add_hypotheses(zd.bourgain_ep_to_zd())
-    
+
     zd.best_zero_density_estimate(hs, verbose=True)
 
 def prove_all_zero_density_estimates():
@@ -1069,4 +1069,5 @@ def prove_all():
     # prove_prime_gap2()
 
 # prove_all()
-prove_zero_density_energy_9()
+# prove_zero_density_energy_9()
+compute_best_zero_density()
