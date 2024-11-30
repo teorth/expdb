@@ -717,43 +717,6 @@ $$ \tau \beta(1/\tau) \leq \frac{\tau}{2} \leq 9 \eta$$
 from Corollary \ref{vdc-opt}, which suffices since $\eta \leq \frac{1}{k(k-1)} \leq \frac{1}{12}$.
 \end{proof}
 
-One can improve this bound in the $k$ aspect using subdivision:
-
-\begin{theorem}[Pintz zero density theorem with subdivision]\label{pintz-density-subdiv}\uses{zero-def} Let $k \geq 4$, $\ell \geq 3$ and $\sigma = 1-\eta$ satisfy the same conditions of Theorem \ref{pintz-density}. Then
-$$ \A(\sigma) \leq \max\left( \frac{3}{\ell(1-2(\ell-1)\eta)}, \frac{4}{k(1 - (k - 1)\eta) + 4\eta}\right).$$
-\end{theorem}
-
-\python{zero_density_estimate}
-\code{compute_pintz_density_estimate_subdiv()}
-
-\begin{proof}\uses{zero-large-cor2, beta-zeta-vanish, montgomery-lv, vdc-opt}
-We apply Corollary \ref{zero-large-cor2} with
-\begin{equation}\label{tau0-def1}
-\tau_0 := \min( \ell (1 - 2(\ell-1) \eta), \frac{3}{4} k(1 - (k - 1)\eta) + 3\eta) - \varepsilon
-\end{equation}
-for an arbitrarily small $\varepsilon$.
-As before, it suffices to show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$ and \eqref{lvoz} holds for $2 \leq \tau < 4\tau_0/3$.
-
-We proceed as in the proof of the previous theorem, where it was shown that
-\[
-\tau \beta(1/\tau) < \sigma,\qquad (2 \le \tau < \tau_1 := k(1 - (k - 1)\eta)).
-\]
-By Lemma \ref{beta-zeta-vanish}, one has
-\[
-\LV_\zeta(\sigma, \tau) \leq 0,\qquad (\tau \le \tau_1).
-\]
-Hence by subdivision, one has, for any $\tau_1 \le \tau \le 4\tau_0/3$,
-\[
-\LV_\zeta(\sigma, \tau) \le \tau - \tau_1 \le 3\eta\frac{\tau}{\tau_0}
-\]
-where the second inequality follows from $\tau_0 \le \frac{3}{4}\tau_1 + 3\eta$ and hence
-\[
-\tau - 3\eta\frac{\tau}{\tau_0} = \frac{\tau_0 - 3\eta}{\tau_0}\tau \le \frac{3}{4}\frac{\tau}{\tau_0}\tau_1 \le \tau_1.
-\]
-To show that \eqref{lvo} holds for $2\tau_0/3 \leq \tau \leq \tau_0$, we proceed as before.
-\end{proof}
-
-
 The range of the second bound in Lemma \ref{ivic-zero-density} was recently extended:
 
 \begin{theorem}[Chen-Debruyne-Vidas density theorem]\label{cdv-density}\cite{chen_debruyne_vindas_density_2024}\uses{zero-def}  For any $279/314 \leq \sigma \leq 17/18$, one has $\A(\sigma) \leq \frac{24}{30\sigma-11}$.
