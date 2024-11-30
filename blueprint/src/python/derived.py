@@ -932,6 +932,60 @@ def prove_zero_density_energy_7():
 def prove_zero_density_energy_8():
     hypotheses = Hypothesis_Set()
 
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(37,49), frac(241,319)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_9():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Bourgain optimized large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 1"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 2"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 3"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 4"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 5"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 6"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 7"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 8"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 11"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 12"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
+
+    # Add Heath-Brown estimates 
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(241,319), frac(409,541)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_10():
+    hypotheses = Hypothesis_Set()
+
     for k in range(2, 8):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
@@ -956,7 +1010,7 @@ def prove_zero_density_energy_8():
 
     # Add Heath-Brown estimates 
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
-    
+
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
@@ -1018,4 +1072,4 @@ def prove_all():
     # prove_prime_gap2()
 
 # prove_all()
-prove_zero_density_energy_8()
+prove_zero_density_energy_9()
