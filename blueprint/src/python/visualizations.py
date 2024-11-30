@@ -320,7 +320,7 @@ def zero_density_energy_plot():
 
 # van_der_corput_plot2()
 # beta_bound_plot()
-exp_pair_plot()
-# zero_density_plot()
-#zero_density_energy_plot()
+# exp_pair_plot()
+zero_density_plot()
+# zero_density_energy_plot()
 
