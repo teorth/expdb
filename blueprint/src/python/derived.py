@@ -7,7 +7,6 @@ import prime_gap as pg
 
 import time
 
-
 # Establish the classical van der Corput exponent pair (\frac{1}{2^k-2}, 1 - \frac{k-1}{2^k-2})
 def van_der_corput_pair(k):
     if k < 2:
@@ -34,7 +33,7 @@ def prove_hardy_littlewood_mu_bound():
     print(f"This implies {mu_bound.desc_with_proof()}")
     return mu_bound
 
-def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:frac, verbose:bool=False):
+def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:frac):
     """
     Tries to find a proof of the exponent pair (k, l) by assuming a specific
     set of hypotheses. 
@@ -55,8 +54,6 @@ def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:fra
         Otherwise, None is returned. 
     """
 
-    print(len(hypotheses), "hypotheses")
-
     # Expand the set of exponent pairs using transforms
     hypotheses.add_hypotheses(compute_exp_pairs(hypotheses, search_depth=1))
 
@@ -65,18 +62,15 @@ def prove_exponent_pair_with_hypotheses(hypotheses:Hypothesis_Set, k:frac, l:fra
     hypotheses.add_hypotheses(compute_best_beta_bounds(hypotheses))
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
-    eph = next((h for h in new_exp_pairs if h.data.k == k and h.data.l == l), None)
+    return next((h for h in new_exp_pairs if h.data.k == k and h.data.l == l), None)
 
-    if verbose:
-        if eph is None:
-            print(f"Failed to prove the exponent pair ({k}, {l}).")
-        else:
-            print(f"Proof of the ({k}, {l}) exponent pair:")
-            eph.recursively_list_proofs()
-    
-    return eph
+def prove_exponent_pair(
+        k:frac, 
+        l:frac, 
+        simplify_deps:bool = False, 
+        verbose:bool = False
+    ) -> Hypothesis:
 
-def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
     """
     Tries to find a proof of the exponent pair (k, l) using results from the 
     literature. For the analogous method given a specific set of hypotheses, 
@@ -92,6 +86,8 @@ def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
         If True, then the proof will be simplified by removing redundant dependencies. 
         This is similar to applying ep.find_best_proof() with 
         method = Proof_Optimization_Method.COMPLEXITY.
+    verbose : bool, optional
+        If True, then additional info will be logged to console. Default is False.
     
     Returns
     -------
@@ -108,7 +104,7 @@ def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
     for ht in hyp_types:
         hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type=ht))
 
-    eph = prove_exponent_pair_with_hypotheses(Hypothesis_Set(hypotheses), k, l, verbose=False)
+    eph = prove_exponent_pair_with_hypotheses(Hypothesis_Set(hypotheses), k, l)
 
     # If simplification required, greedily remove dependencies
     if simplify_deps:
@@ -117,10 +113,19 @@ def prove_exponent_pair(k:frac, l:frac, simplify_deps:bool = False):
             # Randomly remove an element from the hypothesis set, if the reduced set of 
             # hypotheses is still sufficient, then update the set of hypotheses
             hyp = cpy.hypotheses.pop()
-            eph1 = prove_exponent_pair_with_hypotheses(Hypothesis_Set(cpy), k, l, verbose=False)
+            eph1 = prove_exponent_pair_with_hypotheses(Hypothesis_Set(cpy), k, l)
             if eph1 is not None:
                 hypotheses = cpy
                 eph = eph1
+    
+    # Log to console
+    if verbose:
+        if eph is None:
+            print(f"Failed to prove the exponent pair ({k}, {l}).")
+        else:
+            print(f"Proof of the ({k}, {l}) exponent pair:")
+            eph.recursively_list_proofs()
+    
     return eph
 
 def prove_heathbrown_exponent_pairs():
@@ -193,8 +198,24 @@ def best_proof_of_exponent_pair(
             print(f'Failed to prove the exponent pair ({k}, {l}).')
     return hyp
 
+def prove_exponent_pairs():
+    # prove_heathbrown_exponent_pairs()
+    prove_exponent_pair(frac(89,1282), frac(997,1282), simplify_deps=False, verbose=True)
+    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986), simplify_deps=False, verbose=True)
+    prove_exponent_pair(frac(10769,351096), frac(609317,702192), simplify_deps=False, verbose=True)
+    prove_exponent_pair(frac(89,3478), frac(15327,17390), simplify_deps=False, verbose=True)
+
+    best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
+    best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
+    best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
+    best_proof_of_exponent_pair(frac(2, 7), frac(4, 7))
+    best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
+    best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
+    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
+    #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 ######################################################################################
+# Derivations of large value estimates 
 
 def prove_bourgain_large_values_theorem():
     
@@ -210,9 +231,11 @@ def prove_bourgain_large_values_theorem():
     for lvh in lv_hyps:
         print(lvh.data, lvh.proof)
 
-# Prove the Guth--Maynard large values theorem (Theorem 10.26) using the Large Value Energy 
-# Region estimates due to Guth--Maynard
 def prove_guth_maynard_large_values_theorem():
+    """
+    Prove the Guth--Maynard large values theorem (Theorem 10.26) using the Large Value Energy 
+    Region estimates due to Guth--Maynard
+    """
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 1 with k = 2"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value energy region 2"))
@@ -222,7 +245,7 @@ def prove_guth_maynard_large_values_theorem():
     # in the domain 1/2 <= sigma <= 1, tau >= 0
     lver_region = ad.compute_best_lver(
         hypotheses, 
-        Polytope.rect((frac(1,2), 1), (0, Constants.TAU_UPPER_LIMIT)),
+        Region.from_polytope(Polytope.rect((frac(1,2), 1), (0, Constants.TAU_UPPER_LIMIT))),
         zeta=False
     )
     
@@ -230,7 +253,7 @@ def prove_guth_maynard_large_values_theorem():
     region = ad.lver_to_lv(lver_region)
     
     # Take \tau = 6/5 (TODO: replace this step with Huxley subdivision once it is implemented)
-    region = region.substitute({1: frac(6,5)})
+    region = region.data.region.substitute({1: frac(6,5)})
 
     # Constrain to the range 7/10 \leq \sigma \leq 8/10 (\rho unconstrained)
     domain = Polytope([
@@ -244,6 +267,10 @@ def prove_guth_maynard_large_values_theorem():
 
     print("Proved feasible region for (σ, τ, ρ):", poly.to_str("στρ"))
 
+def prove_all_large_value_estimates():
+    prove_bourgain_large_values_theorem()
+    prove_guth_maynard_large_values_theorem()
+    
 ######################################################################################
 # Derivations of zero-density estimates for the Riemann zeta-function
 
@@ -502,8 +529,10 @@ def prove_zero_density_ivic_1984():
         h = zd.ivic_ep_to_zd(ephs, k)
         print(h.data, h.proof)
 
-# Prove Guth-Maynards's zero density estimate A(s) < 15/(5 + 3s)
 def prove_zero_density_guth_maynard_2024(verbose=True):
+    """
+    Prove Guth-Maynards's zero density estimate A(σ) < 15/(5σ + 3)
+    """
     new_hyps = [
         literature.find_hypothesis(
             hypothesis_type="Large value estimate", 
@@ -523,8 +552,11 @@ def prove_zero_density_guth_maynard_2024_v2(verbose=True):
     tau0 = Affine(1, frac(3,5), sigma)
     return prove_zero_density(new_hyps, verbose, sigma, "Guth--Maynard", tau0=tau0, method=2)
 
-# Prove the extended version of Heath-Browns zero density estimate A(s) < 3/(10s - 7)
 def prove_zero_density_heathbrown_extended(verbose=True):
+    """
+    Prove the extended version of Heath-Browns zero density estimate A(σ) < 3/(10σ - 7)
+    using method 1
+    """
     new_hyps = [
         literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
         literature.find_hypothesis(keywords="Heath-Brown large value estimate")
@@ -542,7 +574,34 @@ def prove_zero_density_heathbrown_extended(verbose=True):
     # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
     # which will be used to calculate the best zeta large value estimate
     new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
-    return prove_zero_density(new_hyps, verbose, Interval(frac(20,23), 1), 'Heath-Brown', tau0=frac(4), plot=True)
+    return prove_zero_density(new_hyps, verbose, Interval(frac(20,23), 1), 'extended Heath-Brown', tau0=frac(4), plot=True)
+
+def prove_zero_density_heathbrown_extended_v2(verbose=True):
+    """
+    Prove the extended version of Heath-Browns zero density estimate A(σ) < 3/(10σ - 7)
+    using method 2
+    """
+    new_hyps = [
+        literature.find_hypothesis(keywords="Jutila large value estimate, k = 3"),
+        literature.find_hypothesis(keywords="Heath-Brown large value estimate")
+        ]
+    
+    # Create a hypothesis representing the (3/40, 31/40) exponent pair
+    hs = Hypothesis_Set()
+    hs.add_hypothesis(
+        ep.derived_exp_pair(
+            frac(3,40), frac(31,40), 
+            'See best_proof_of_exponent_pair(frac(3, 40), frac(31, 40))', 
+            {})
+        )
+    
+    # Convert the exponent pair to beta bounds, add the other ZLV assumptions, 
+    # which will be used to calculate the best zeta large value estimate
+    new_hyps.extend(bbeta.exponent_pairs_to_beta_bounds(hs))
+    
+    sigma = Interval(frac(20,23), 1)
+    tau0 = Affine(10, -7, sigma)
+    return prove_zero_density(new_hyps, verbose, sigma, 'extended Heath-Brown', tau0=tau0, method=2)
 
 def prove_zero_density_bourgain_improved(verbose=True):
     new_hyps = [
@@ -576,6 +635,29 @@ def compute_best_zero_density():
     zd.add_zero_density(hs, "2/(13 * x - 10)", Interval("[40/41, 41/42)"), Reference.make("Tao--Trudgian--Yang", 2024))
     
     zd.best_zero_density_estimate(hs, verbose=True)
+
+def prove_all_zero_density_estimates():
+    print("Proofs using Corollary 11.8 -------------------------------------------------------")
+    prove_zero_density_ingham_1940_v2()
+    prove_zero_density_huxley_1972_v2()
+    prove_zero_density_jutila_1977_v2()
+    prove_zero_density_heathbrown_1979a_v2()
+    prove_zero_density_heathbrown_1979b_v2()
+    prove_zero_density_guth_maynard_2024_v2()
+    prove_zero_density_heathbrown_extended_v2()
+
+    print()
+    print("Proofs using Corollary 11.7 -------------------------------------------------------")
+    prove_zero_density_ingham_1940()
+    prove_zero_density_huxley_1972()
+    prove_zero_density_jutila_1977()
+    prove_zero_density_heathbrown_1979a()
+    prove_zero_density_heathbrown_1979b()
+    prove_zero_density_ivic_1984()
+    prove_zero_density_guth_maynard_2024()
+    prove_zero_density_heathbrown_extended()
+    prove_zero_density_bourgain_improved()
+    compute_best_zero_density()
 
 #################################################################################################
 # Derivations for zero-density energy estimates for the Riemann zeta-function
@@ -779,11 +861,134 @@ def prove_zero_density_energy_3():
 def prove_zero_density_energy_4():
     hypotheses = Hypothesis_Set()
 
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(664,877), frac(31,40)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=True)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_5():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 6"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(42,55), frac(79,103)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_6():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 5"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(79,103), frac(84,109)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_7():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 6):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Bourgain optimized large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 5"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(8, -4, Interval(frac(84,109), frac(5,6)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_8():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+    
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(37,49), frac(241,319)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_9():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value estimate"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Bourgain optimized large value estimate"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 1"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 2"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 3"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 4"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 5"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 6"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 7"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 8"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 11"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 12"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
+    #hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
+
+    # Add Heath-Brown estimates 
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(241,319), frac(409,541)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_10():
+    hypotheses = Hypothesis_Set()
+
     for k in range(2, 8):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
-    # Add classical and literature Large value estimates
-    # hypotheses.add_hypothesis(lv.large_value_estimate_L2)
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Huxley large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value estimate"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
@@ -797,11 +1002,15 @@ def prove_zero_density_energy_4():
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 7"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 8"))
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 9"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 10"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 11"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 12"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Jutila large value estimate with k = 13"))
     hypotheses.add_hypothesis(literature.find_hypothesis(hypothesis_type="Zeta large value estimate"))
 
     # Add Heath-Brown estimates 
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
-    
+
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
@@ -810,51 +1019,16 @@ def prove_zero_density_energy_4():
     for h in hs: print(h.data)
     return hs
 
-#################################################################################################
-
-def prove_exponent_pairs():
-    # prove_heathbrown_exponent_pairs()
-    # prove_exponent_pair(frac(1101653,15854002), frac(12327829,15854002))
-    # prove_exponent_pair(frac(1959,47230), frac(3975,4723))
-    # prove_exponent_pair(frac(1175779,38456886), frac(16690288,19228443))
-    prove_exponent_pair(frac(89,1282), frac(997,1282), simplify_deps=False)
-    """
-    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
-    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
-    prove_exponent_pair(frac(89,3478), frac(15327,17390))
-
-    best_proof_of_exponent_pair(frac(1, 6), frac(2, 3))
-    best_proof_of_exponent_pair(frac(13, 31), frac(16, 31))
-    best_proof_of_exponent_pair(frac(4, 11), frac(6, 11))
-    best_proof_of_exponent_pair(frac(2, 7), frac(4, 7))
-    best_proof_of_exponent_pair(frac(5, 24), frac(15, 24))
-    best_proof_of_exponent_pair(frac(4, 18), frac(11, 18))
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.DATE)
-    best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
-    """
-
-def prove_zero_density_estimates():
-    print("Proofs using Corollary 11.8 -------------------------------------------------------")
-    prove_zero_density_ingham_1940_v2()
-    prove_zero_density_huxley_1972_v2()
-    prove_zero_density_jutila_1977_v2()
-    prove_zero_density_heathbrown_1979a_v2()
-    prove_zero_density_heathbrown_1979b_v2()
-    prove_zero_density_guth_maynard_2024_v2()
-
-    print()
-    print("Proofs using Corollary 11.7 -------------------------------------------------------")
-    prove_zero_density_ingham_1940()
-    prove_zero_density_huxley_1972()
-    prove_zero_density_jutila_1977()
-    prove_zero_density_heathbrown_1979a()
-    prove_zero_density_heathbrown_1979b()
-    prove_zero_density_ivic_1984()
-    prove_zero_density_guth_maynard_2024()
-    prove_zero_density_heathbrown_extended()
-    prove_zero_density_bourgain_improved()
-    compute_best_zero_density()
-
+def prove_all_zero_density_energy_estimates():
+    prove_heath_brown_energy_estimate()
+    prove_improved_heath_brown_energy_estimate()
+    prove_zero_density_energy_2()
+    prove_zero_density_energy_3()
+    prove_zero_density_energy_4()
+    prove_zero_density_energy_5()
+    prove_zero_density_energy_6()
+    prove_zero_density_energy_7()
+    
 #################################################################################################
 # Derivations for prime gap theorems 
 
@@ -886,19 +1060,16 @@ def prove_prime_gap2():
     # Compute \theta_{gap, 2}
     pg.compute_gap2(hs, debug=False)
 
+#################################################################################################
 
 def prove_all():
     # van_der_corput_pair(10)
     # prove_hardy_littlewood_mu_bound()
     prove_exponent_pairs()
-    # prove_bourgain_large_values_theorem()
-    # prove_guth_maynard_large_values_theorem()
-    # prove_zero_density_estimates()
-    # prove_heath_brown_energy_estimate()
-    # prove_improved_heath_brown_energy_estimate()
-    # prove_zero_density_energy_2()
-    # prove_zero_density_energy_3()
-    # prove_zero_density_energy_4()
+    # prove_all_large_value_estimates()
+    # prove_all_zero_density_estimates()
+    # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_all()
+# prove_all()
+prove_zero_density_energy_9()

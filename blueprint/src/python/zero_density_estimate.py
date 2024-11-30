@@ -118,11 +118,21 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
 
     Parameters
     ----------
-    hypotheses: Hypothesis
-        The hypothesis set to add to.
-    estimate: str
+    hypotheses : Hypothesis
+        The hypothesis set to add to. 
+    estimate : str
         A function of x representing a bound on A(x).
-    interval - the domain of \sigma for which the estimate holds
+    interval : Interval
+        The domain of \\sigma for which the estimate holds.
+    ref : Reference
+        The literature reference for this zero density estimate.
+    params : str, optional
+        Additional parameters to include in the hypothesis name. 
+
+    Returns
+    -------
+    Hypothesis
+        A hypothesis representing this zero-density estimate. 
     """
     hypotheses.add_hypotheses(
         Hypothesis(
@@ -517,7 +527,6 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         )
         for s in sup
         ]
-
 
 # Computes the zero-density estimate obtained from
 #
