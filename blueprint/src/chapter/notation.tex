@@ -26,7 +26,7 @@ We isolate some special types of variable numerical quantities $X = X_{\ii}$ (wh
 \item $X$ is \emph{infinitesimal} if $|X_{\ii}| \to 0$ as $\ii \to \infty$; equivalently, for every fixed $\eps>0$, one has $|X| \leq \eps$ for $\ii$ sufficiently large. In this case we also write $X = o(1)$.
 \end{itemize}
 
-Note that any quantity $X$ will be either bounded or unbounded, after passing to a subsequence if necessary; similarly, by the Bolzano--Weierstrass theorem, any bounded (variable) quantity $X$ will be of the form $X_0+o(1)$ for some fixed $X_0$, after passing to a subsequence if necessary.  Thus, for instance, if $T, N > 1$ are (variable) quantities with $N = T^{O(1)}$ (or equivalently, $T^{-C} \leq N \leq T^C$ for some fixed $C$), then, after passing to a subsequence if necessary, we may write $N = T^{\alpha+o(1)}$ for some fixed real number $\alpha$.  Note that any further passage to subsequences do not these concepts; quantities that are bounded, unbounded, or infinitesimal remain so under any additional restriction to subsequences.
+Note that any quantity $X$ will be either bounded or unbounded, after passing to a subsequence if necessary; similarly, by the Bolzano--Weierstrass theorem, any bounded (variable) quantity $X$ will be of the form $X_0+o(1)$ for some fixed $X_0$, after passing to a subsequence if necessary.  Thus, for instance, if $T, N > 1$ are (variable) quantities with $N = T^{O(1)}$ (or equivalently, $T^{-C} \leq N \leq T^C$ for some fixed $C$), then, after passing to a subsequence if necessary, we may write $N = T^{\alpha+o(1)}$ for some fixed real number $\alpha$.  Note that any further passage to subsequences do not alter these concepts; quantities that are bounded, unbounded, or infinitesimal remain so under any additional restriction to subsequences.
 
 We observe the \emph{underspill principle}: if $X,Y$ are (variable) real numbers, then the relation
 $$ X \leq Y + o(1)$$
@@ -49,7 +49,7 @@ A convenient property of this asymptotic formalism, analogous to the property of
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ in the ambient sequence such that $|f_{\ii}(x_{\ii})| \leq 1/n$ for all $\ii \geq \ii_n$ and $x_{\ii} \in E_{\ii}$, since if this were not the case one can construct an $x = x_{\ii} \in E$ such that $|f_{\ii}(x_{\ii})| \geq 1/n$ for $\ii$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\ii_n$ to be increasing.  Restricting to this sequence, and writing $c_{\ii_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
 
-\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely the \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii := \ii$ is a counterexample).
+\begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely all \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii := \ii$ is a counterexample).
 \end{remark}
 
 
