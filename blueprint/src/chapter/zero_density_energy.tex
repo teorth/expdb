@@ -850,39 +850,33 @@ in this case too.
 Modest improvements are possible by incorporating more large value estimates; these are recorded in the next few theorems.
 
 \begin{theorem}\label{imp-energy-bound9}
-For $37/49 \le \sigma \le 241/319$, one has
+For $37/49 \le \sigma \le 443/586$, one has
 \[
-\A^*(\sigma)\le \max\left(\frac{173 - 270\sigma}{16(93 - 125\sigma)(1-\sigma)}, \frac{653 - 890\sigma}{10(93 - 125\sigma)(1-\sigma)}\right).
+\A^*(\sigma)\le \max\left(\frac{173 - 270\sigma}{16(93 - 125\sigma)(1-\sigma)}, \frac{653 - 890\sigma}{10(93 - 125\sigma)(1-\sigma)}, \frac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}\right).
 \]
 \end{theorem}
 \code{prove_zero_density_energy_8()}
 
+\begin{proof}
+Fix $37/49 \le \sigma \le 443/586$ and take $\tau_0 = 2$. 
+\end{proof}
 
 \begin{theorem}\label{imp-energy-bound10}
-For $241/319 \le \sigma \le 409/541$, one has
+For $443/586 \le \sigma \le 373/493$, one has
 \[
-\A^*(\sigma)\le \max\left(\frac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}, \frac{593 - 810\sigma}{5(171 - 230\sigma)(1-\sigma)}\right).
+\A^*(\sigma)\le \max\left(\frac{593 - 810\sigma}{5(171 - 230\sigma)(1-\sigma)}, \frac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}\right).
 \]
 \end{theorem}
 \code{prove_zero_density_energy_9()}
 
 
 \begin{theorem}\label{imp-energy-bound11}
-For $409/541 \le \sigma \le 314/415$, one has
+For $373/493 \le \sigma \le 103/136$, one has
 \[
-\A^*(\sigma)\le \max\left(\frac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}, \frac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}\right).
+\A^*(\sigma)\le \max\left(\frac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}, \frac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}, \frac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}\right).
 \]
 \end{theorem}
 \code{prove_zero_density_energy_10()}
-
-
-\begin{theorem}\label{imp-energy-bound12}
-For $314/415 \le \sigma \le 103/136$, one has
-\[
-\A^*(\sigma)\le \max\left(\frac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}, \frac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}\right).
-\]
-\end{theorem}
-\code{prove_zero_density_energy_11()}
 
 
 \begin{theorem}\label{imp-energy-bound4}
@@ -1241,19 +1235,19 @@ Table \ref{zero-density-energy-estimates-table} records the sharpest known uncon
     $\dfrac{653 - 890\sigma}{10(93 - 125\sigma)(1-\sigma)}$ & $\dfrac{4359}{5770} \le \sigma \le \dfrac{241}{319} = 0.75548\ldots$ & Theorem \ref{imp-energy-bound9}\\
     \hline
     
-    $\dfrac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}$ & $\dfrac{241}{319} \le \sigma \le \dfrac{443}{586} = 0.7559\ldots$ & Theorem \ref{imp-energy-bound10}\\
+    $\dfrac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}$ & $\dfrac{241}{319} \le \sigma \le \dfrac{443}{586} = 0.7559\ldots$ & Theorem \ref{imp-energy-bound9}\\
     \hline
     $\dfrac{593 - 810\sigma}{5(171 - 230\sigma)(1-\sigma)}$ & $\dfrac{443}{586} \le \sigma \le \dfrac{409}{541} = 0.7560\ldots$ & Theorem \ref{imp-energy-bound10}\\
     \hline
     
-    $\dfrac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}$ & $\dfrac{409}{541} \le \sigma \le \dfrac{373}{493} = 0.7565\ldots$ & Theorem \ref{imp-energy-bound11}\\
+    $\dfrac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}$ & $\dfrac{409}{541} \le \sigma \le \dfrac{373}{493} = 0.7565\ldots$ & Theorem \ref{imp-energy-bound10}\\
     \hline
     $\dfrac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}$ & $\dfrac{373}{493} \le \sigma \le \dfrac{314}{415} = 0.75662\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
     
-    $\dfrac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}$ & $\dfrac{314}{415} \le \sigma \le \dfrac{171}{226} = 0.75663\ldots$ & Theorem \ref{imp-energy-bound12}\\
+    $\dfrac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}$ & $\dfrac{314}{415} \le \sigma \le \dfrac{171}{226} = 0.75663\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
-    $\dfrac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}$ & $\dfrac{171}{226} \le \sigma \le \dfrac{103}{136} = 0.757352\ldots$ & Theorem \ref{imp-energy-bound12}\\
+    $\dfrac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}$ & $\dfrac{171}{226} \le \sigma \le \dfrac{103}{136} = 0.757352\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
     
     $\dfrac{72 - 91\sigma}{7(11\sigma - 8)(1 - \sigma)}$ & $\dfrac{103}{136} \leq \sigma \le \dfrac{6038 - 2\sqrt{352321}}{6405} = 0.757356\ldots$ & Theorem \ref{imp-energy-bound4}\\
