@@ -11,7 +11,7 @@ The exponent $\A^*(\sigma)$ is also essentially referred to as $B(\sigma)$ in \c
 \python{zero_density_energy_estimate}
 \code{Zero_Density_Energy_Estimate}
 
-\begin{lemma}[Basic properties of $\A^*$]\label{zeroe-basic}\uses{zeroe-def}\
+\begin{lemma}[Basic properties of $\A^*$]\label{zeroe-basic}\uses{zeroe-def}
 \begin{itemize}
 \item[(i)] We have the trivial bounds
 $$ 2\A(\sigma), 4\A(\sigma)-\frac{1}{1-\sigma} \leq \A^*(\sigma) \leq 3 \A(\sigma)$$
@@ -41,9 +41,9 @@ for all $\tau \geq 1$, and
 \begin{equation}\label{lve-bound}
     \LV^*(\sigma,\tau) \leq (B+\eps) \tau
 \end{equation}
-whenever $\eps>0$ and $\tau$ is sufficiently large depending on $\eps$ (and $\sigma$).  It would suffice to show, for any $\eps>0$, that $N^*(\sigma,T) \ll T^{B+O(\eps)+o(1)}$ as $T \to \infty$.
+whenever $\eps>0$ and $\tau$ is sufficiently large depending on $\eps$ (and $\sigma$).  It would suffice to show, for any $\eps>0$, that $N^*(\sigma,T) \ll T^{B+O(\eps)+o(1)}$ for unbounded $T$.
 
-By dyadic decomposition, it suffices to show for large $T$ that the additive energy of imaginary parts of zeroes in $[T,2T]$ is $\ll T^{B+O(\eps)+o(1)}$.  As in the proof of Lemma \ref{zero-from-large}, we can assume the imaginary parts are $1$-separated (here we take advantage of the triangle inequality in Lemma \ref{add-energy}(iii)).
+By dyadic decomposition, it suffices to show for unbounded $T$ that the additive energy of imaginary parts of zeroes in $[T,2T]$ is $\ll T^{B+O(\eps)+o(1)}$.  As in the proof of Lemma \ref{zero-from-large}, we can assume the imaginary parts are $1$-separated (here we take advantage of the triangle inequality in Lemma \ref{add-energy}(iii)).
 
 Suppose that one has a zero $\sigma'+i t$ of this form.  Then by standard approximations to the zeta function, one has
 $$ \sum_{n \leq T} \frac{1}{n^{\sigma'+it}} \ll T^{-1}.$$
@@ -60,7 +60,7 @@ for some $t' = t + O(T^{o(1)})$; refining the $t$ by a factor of $T^{o(1)}$ if n
 $$ \bigg| \sum_{n \in I} \frac{1}{n^{it'}} \bigg| \gg N^{\sigma-\delta_2/\delta_1+o(1)}$$
 for all $t'$.  If we let $\Sigma'$ denote the set of such $t'$, then by Definition \ref{lvze-def} we then have (for $\delta_2$ small enough) we have
 $$ E_1(\Sigma') \ll N^{\LV^*_\zeta(\sigma,\tau) + \eps + o(1)} \ll T^{\LV^*_\zeta(\sigma,\tau)/\tau + \eps + o(1)}.$$
-By Lemma \ref{add-energy}(i) this implies that the set $\Sigma$ of real parts of zeroes under consideration also obeys the bound
+By Lemma \ref{add-energy}(i) this implies that the set $\Sigma$ of imaginary parts of zeroes under consideration also obeys the bound
 $$ E_1(\Sigma) \ll T^{\LV^*_\zeta(\sigma,\tau)/\tau + \eps + o(1)}.$$
 and the claim follows in this case from \eqref{lvze-bound}.
 
@@ -850,7 +850,6 @@ in this case too.
 
 Modest improvements are possible by incorporating more large value estimates; these are recorded in the next few theorems.
 
-
 \begin{theorem}\label{imp-energy-bound4}
 For $664/877 \le \sigma \le 31/40$, one has
 \[
@@ -867,31 +866,31 @@ Fix $664/877 \le \sigma \le 31/40$ and take $\tau_0 = 2$. It suffices to show th
 \]
 for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ satisfying $2 \le \tau \le 4$.
 
-Let $k = 2$ if $2 \le \tau < 3$ and $k = 3$ otherwise, and as usual let $\tau' = \tau/k$. By Lemma \ref{power-energy}, $(\sigma, \tau', \rho', \rho^*/k, s') \in \Energy$ for some $\rho' \le \rho/k$ and $s' \le s/k$. Applying Theorem \ref{hbt}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$ by \eqref{ze-bound3-rhok}, 
+Let $k = 2$ if $2 \le \tau < 3$ and $k = 3$ otherwise, and as usual let $\tau' = \tau/k$. By Lemma \ref{power-energy}, $(\sigma, \tau', \rho', \rho^*/k, s') \in \Energy$ for some $\rho' \le \rho/k$ and $s' \le s/k$. Applying Theorem \ref{hbt}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$ by \eqref{ze-bound3-rhok},
 \[
 \frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
 \]
-Rearranging the inequality and solving for $\rho^*/k$, one must either have 
+Rearranging the inequality and solving for $\rho^*/k$, one must either have
 \begin{equation}\label{ze-bound5-rhostar1}
 \frac{\rho^*}{k} \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k})).
 \end{equation}
-or 
+or
 \begin{equation}\label{ze-bound5-rhostar2}
 \frac{\rho^*}{k} \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
 \end{equation}
-Here we will divide our argument into several cases. Suppose first that 
+Here we will divide our argument into several cases. Suppose first that
 \[
-\tau' \ge \frac{9\sigma - 1}{5}. 
+\tau' \ge \frac{9\sigma - 1}{5}.
 \]
-By Theorem \ref{guth-maynard-lvt}, one has 
+By Theorem \ref{guth-maynard-lvt}, one has
 \[
 \rho/k \le \max(18/5 - 4\sigma, 12/5 - 4\sigma + \tau')
 \]
-and by Theorem \ref{l2-mvt}, one has 
+and by Theorem \ref{l2-mvt}, one has
 \[
 \rho/(k + 1) \le \max(2 - 2\sigma, 1 - 2\sigma + \tau/(k + 1)).
 \]
-Combining the two inequalities, we have 
+Combining the two inequalities, we have
 \begin{equation}\label{ze-bound5-rho-bound}
 \rho/k \le \begin{cases}
 18/5 - 4\sigma,& (9\sigma - 1)/5 \le \tau' < 6/5,\\
@@ -899,35 +898,35 @@ Combining the two inequalities, we have
 (2 - 2\sigma)(k + 1)/k,& 2\sigma - 2/5 + 2(1 - \sigma)/k \le \tau' \le (k + 1)/k.
 \end{cases}
 \end{equation}
-Substituting \eqref{ze-bound5-rho-bound} into \eqref{ze-bound5-rhostar1} and \eqref{ze-bound5-rhostar2}, one may verify that 
+Substituting \eqref{ze-bound5-rho-bound} into \eqref{ze-bound5-rhostar1} and \eqref{ze-bound5-rhostar2}, one may verify that
 \[
 \frac{\rho^*}{k} \le \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
 \]
-for all $(9\sigma - 1)/5 \le \tau' \le 1 + 1/k$ (with equality occurring at $\tau' = 2\sigma - 2/5 + 2(1 - \sigma)/k$ and $k = 2$). 
+for all $(9\sigma - 1)/5 \le \tau' \le 1 + 1/k$ (with equality occurring at $\tau' = 2\sigma - 2/5 + 2(1 - \sigma)/k$ and $k = 2$).
 
-Now consider the case where 
+Now consider the case where
 \[
-1 \le \tau' \le \frac{9\sigma - 1}{5}. 
+1 \le \tau' \le \frac{9\sigma - 1}{5}.
 \]
-Taking $k = 10$ in Theorem \ref{jutila-lvt}, one has 
+Taking $k = 10$ in Theorem \ref{jutila-lvt}, one has
 \begin{equation}\label{ze-bound5-julita-lvt}
 \rho/k \le \max(2 - 2\sigma,  19/5 - 29\sigma/5 + \tau', 60 - 80\sigma + \tau').
 \end{equation}
-Suppose first that $\sigma \ge 281/371$. Then, this reduces to 
+Suppose first that $\sigma \ge 281/371$. Then, this reduces to
 \begin{equation}
 \label{ze-bound5-julita-lvt1}
 \begin{split}
 \rho/k &\le \max(2 - 2\sigma, 19/5 - 29\sigma/5 + \tau').
 \end{split}
 \end{equation}
-By Lemma \ref{power-energy}, for any integer $k \ge 2$ one has $(\sigma, \tau/(k - 1), \rho', \rho^*/(k - 1), s') \in \Energy$ for some $\rho' \le \rho/(k - 1)$ and $s' \le s/(k - 1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho' \le \rho/(k - 1)$ and rearranging, one obtains 
+By Lemma \ref{power-energy}, for any integer $k \ge 2$ one has $(\sigma, \tau/(k - 1), \rho', \rho^*/(k - 1), s') \in \Energy$ for some $\rho' \le \rho/(k - 1)$ and $s' \le s/(k - 1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho' \le \rho/(k - 1)$ and rearranging, one obtains
 \begin{equation}\label{ze-bound5-rhostar-bound}
 \begin{split}
 \rho^* \le (1-2\sigma)(k - 1) &+ \frac{1}{2}\max(\rho+k - 1, 2\rho, \frac{5\rho}{4} + \frac{\tau}{2}) \\
 &+ \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
 \end{split}
 \end{equation}
-By considering each case of the two maximums individually, and solving for $\rho^*/k$, one obtains 
+By considering each case of the two maximums individually, and solving for $\rho^*/k$, one obtains
 \begin{equation}\label{ze-bound5-rhostar-bound3}
 \begin{split}
 \frac{\rho^*}{k} \le \max\bigg(&(4 - 4\sigma)\frac{k - 1}{k} + \frac{\rho}{k}, \frac{(3 - 4\sigma)(k - 1)/k + 5\rho/k}{2}, \\
@@ -941,23 +940,23 @@ Bounding each term on the RHS using \eqref{ze-bound5-julita-lvt1}, one may verif
 \[
 \frac{\rho^*}{k} < \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\tau'
 \]
-for $1 \le \tau' \le (9\sigma - 1)/5$ and $k = 2,3$. 
+for $1 \le \tau' \le (9\sigma - 1)/5$ and $k = 2,3$.
 
 Suppose now that $\sigma < 281/371$ so that \eqref{ze-bound5-julita-lvt} reduces to
 \begin{equation}\label{ze-bound5-julita-lvt-2}
 \frac{\rho}{k} \le \max(2 - 2\sigma, 60 - 80\sigma + \tau').
 \end{equation}
-If $1 \le \tau' < 77\sigma/2 - 28$ then substituting $\rho/k \le \max(2 - 2\sigma, 60 - 80\sigma + \tau')$ into \eqref{ze-bound5-rhostar-bound3}, one may ultimately verify in each case that  
+If $1 \le \tau' < 77\sigma/2 - 28$ then substituting $\rho/k \le \max(2 - 2\sigma, 60 - 80\sigma + \tau')$ into \eqref{ze-bound5-rhostar-bound3}, one may ultimately verify in each case that
 \[
 \frac{\rho^*}{k} \le \max\left(\frac{72 - 91\sigma}{7(11\sigma - 8)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\right)\tau'
 \]
-for $k = 2,3$, with equality when $\tau' = 77\sigma/2 - 28$ and $k = 2$ (here we make use of the assumption $\sigma \ge 664/877 = 0.7571\ldots$). 
+for $k = 2,3$, with equality when $\tau' = 77\sigma/2 - 28$ and $k = 2$ (here we make use of the assumption $\sigma \ge 664/877 = 0.7571\ldots$).
 
 Lastly, if $77\sigma/2 - 28 \le \tau' \le (9\sigma - 1)/5$ then \eqref{ze-bound5-julita-lvt-2} simplifies to $\rho/k \le 60-80\sigma+\tau'$. Substituting this into \eqref{ze-bound5-rhostar1} and \eqref{ze-bound5-rhostar2}, one obtains in either case that
 \[
 \frac{\rho^*}{k} \le \max\left(\frac{72 - 91\sigma}{7(11\sigma - 8)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\right)\tau'
 \]
-with equality when $\tau' = 77\sigma/2 - 28$ and $k = 2$. 
+with equality when $\tau' = 77\sigma/2 - 28$ and $k = 2$.
 \end{proof}
 
 \begin{theorem}\label{imp-energy-bound6}
@@ -970,37 +969,37 @@ For $42/55 \le \sigma \le 79/103$, one has
 \code{prove_zero_density_energy_5()}
 
 \begin{proof}
-Fix $42/55 \le \sigma \le 79/103$ and take $\tau_0 = 2$. It suffices to show that 
+Fix $42/55 \le \sigma \le 79/103$ and take $\tau_0 = 2$. It suffices to show that
 \[
 \rho^* \le \max\left(\frac{18 - 19\sigma}{6(15\sigma - 11)}, \frac{3(18-19\sigma)}{4(4\sigma-1)}\right)\tau
 \]
-for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ for which $2 \le \tau \le 4$. As before let 
+for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ for which $2 \le \tau \le 4$. As before let
 \[
 k := \begin{cases}
 2,& 2 \le \tau < 3,\\
 3,& 3 \le \tau \le 4,
-\end{cases}\qquad \tau' := \tau/k, 
+\end{cases}\qquad \tau' := \tau/k,
 \]
-so that in particular $1 \le \tau' \le (k + 1)/k$. 
+so that in particular $1 \le \tau' \le (k + 1)/k$.
 
 By Lemma \ref{power-energy}, for $k = 2, 3$,
 \begin{equation}\label{ze-bound6-tuples}
 (\sigma, \tau', \rho', \rho^*/k, s'),\quad (\sigma, \tau/(k + 1), \rho'', \rho^*/(k + 1), s'') \in \Energy
 \end{equation}
 for some $\rho' \le \rho/k$, $s' \le s/k$, $\rho'' \le \rho/(k + 1)$ and $s'' \le s/(k + 1)$.
-Applying Theorem \ref{jutila-lvt} with $k = 6$ to each tuple, one has 
+Applying Theorem \ref{jutila-lvt} with $k = 6$ to each tuple, one has
 \begin{equation}\label{ze-bound6-rho-bound}
 \begin{split}
 \rho/k &\le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau', 36 - 48\sigma + \tau'),\\
 \rho/(k + 1) &\le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau/(k + 1), 36 - 48\sigma + \tau/(k + 1)).
 \end{split}
 \end{equation}
-First suppose $\sigma \ge 97/127$, in which case the above simplifies to 
+First suppose $\sigma \ge 97/127$, in which case the above simplifies to
 \begin{align*}
 \rho/k &\le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau'),\\
 \rho/(k + 1) &\le \max(2 - 2\sigma, 11/3 - 17\sigma/3 + \tau/(k + 1)).
 \end{align*}
-This combines to give 
+This combines to give
 \begin{equation}\label{ze-bound6-rho}
 \rho/k \le \begin{cases}
 2 - 2\sigma,&1 \le \tau' < (11\sigma - 5)/3,\\
@@ -1009,34 +1008,34 @@ This combines to give
 \end{cases}
 \end{equation}
 
-First suppose that $\tau' \ge (11\sigma - 5)/3$. Applying Theorem \ref{hbt} to the first tuple of \eqref{ze-bound6-tuples}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$, 
+First suppose that $\tau' \ge (11\sigma - 5)/3$. Applying Theorem \ref{hbt} to the first tuple of \eqref{ze-bound6-tuples}, and noting that $\rho/k + 1 \ge 2\rho/k$ since $\rho/k \le 1$,
 \[
 \frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
 \]
-Rearranging the inequality and solving for $\rho^*/k$, one must either have 
+Rearranging the inequality and solving for $\rho^*/k$, one must either have
 \begin{equation}\label{ze-bound6-rhostar-bound-case01}
 \frac{\rho^*}{k} \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k}))
 \end{equation}
-or 
+or
 \begin{equation}\label{ze-bound6-rhostar-bound-case02}
 \frac{\rho^*}{k} \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
 \end{equation}
-In either case, upon substituting the last two cases of \eqref{ze-bound6-rho} one obtains 
+In either case, upon substituting the last two cases of \eqref{ze-bound6-rho} one obtains
 \begin{equation}\label{ze-bound6-rhostar-bound-case1}
 \rho^*/k \le \frac{3(18-19\sigma)}{4(4\sigma-1)}\tau',\qquad (\frac{11\sigma - 5}{3} \le \tau'\le 1 + \frac{1}{k}).
 \end{equation}
-Now suppose that $\tau' < (11\sigma - 5)/3$. Then, note that for $k = 2, 3$ one has 
+Now suppose that $\tau' < (11\sigma - 5)/3$. Then, note that for $k = 2, 3$ one has
 \[
 (\sigma, \tau/(k-1), \rho''', \rho^*/(k-1), s''') \in \Energy
 \]
-for some $\rho''' \le \rho /(k-1)$ and $s''' \le s/(k-1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho''' \le \rho/(k - 1)$ and rearranging, one obtains 
+for some $\rho''' \le \rho /(k-1)$ and $s''' \le s/(k-1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho''' \le \rho/(k - 1)$ and rearranging, one obtains
 \begin{equation}\label{ze-bound6-rhostar-bound}
 \begin{split}
 \rho^* \le (1-2\sigma)(k - 1) &+ \frac{1}{2}\max(\rho+k - 1, 2\rho, \frac{5\rho}{4} + \frac{\tau}{2}) \\
 &+ \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
 \end{split}
 \end{equation}
-By considering each case of the two maximums individually, and solving for $\rho^*/k$, one obtains 
+By considering each case of the two maximums individually, and solving for $\rho^*/k$, one obtains
 \begin{equation}\label{ze-bound6-rhostar-bound3}
 \begin{split}
 \frac{\rho^*}{k} \le \max\bigg(&(4 - 4\sigma)\frac{k - 1}{k} + \frac{\rho}{k}, \frac{(3 - 4\sigma)(k - 1)/k + 5\rho/k}{2}, \\
@@ -1050,18 +1049,18 @@ Note that for all $1 \le \tau' < (11\sigma - 5)/3$, one has by \eqref{ze-bound6-
 \[
 \rho^*/k \le \frac{3(18-19\sigma)}{4(4\sigma-1)}\tau'
 \]
-in this case too. Combined with \eqref{ze-bound6-rhostar-bound-case1}, we have shown that 
+in this case too. Combined with \eqref{ze-bound6-rhostar-bound-case1}, we have shown that
 \[
 \rho^* \le \frac{3(18-19\sigma)}{4(4\sigma-1)}\tau
 \]
-for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ for $97/127 \le \sigma\le 79/103$ and $2 \le \tau \le 4$, as required. 
+for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ for $97/127 \le \sigma\le 79/103$ and $2 \le \tau \le 4$, as required.
 
-The proof in the range $42/55 \le \sigma \le 97/127$ is similar. Here \eqref{ze-bound6-rho-bound} reduces to 
+The proof in the range $42/55 \le \sigma \le 97/127$ is similar. Here \eqref{ze-bound6-rho-bound} reduces to
 \begin{align*}
 \rho/k &\le \max(2 - 2\sigma, 36 - 48\sigma + \tau'),\\
 \rho/(k + 1) &\le \max(2 - 2\sigma, 36 - 48\sigma + \tau/(k + 1))
 \end{align*}
-so that 
+so that
 \begin{equation}\label{ze-bound6-rho-case2}
 \rho/k \le \begin{cases}
 2 - 2\sigma,&1 \le \tau' < 46\sigma - 34,\\
@@ -1069,11 +1068,11 @@ so that
 (2 - 2\sigma)(k + 1)/k,& 46\sigma - 34 + 2(1 - \sigma)/k \le \tau' \le 1 + 1/k.
 \end{cases}
 \end{equation}
-If $\tau' \ge 46\sigma - 34$, we substitute the last two cases of this bound into \eqref{ze-bound6-rhostar-bound-case01} and \eqref{ze-bound6-rhostar-bound-case02}, one may verify that 
+If $\tau' \ge 46\sigma - 34$, we substitute the last two cases of this bound into \eqref{ze-bound6-rhostar-bound-case01} and \eqref{ze-bound6-rhostar-bound-case02}, one may verify that
 \begin{equation}\label{ze-bound6-rho-final}
 \frac{\rho^*}{k} \le \frac{18 - 19\sigma}{6(15\sigma - 11)}\tau'
 \end{equation}
-with equality when $\tau' = 46\sigma - 34 + 2(1 - \sigma)/k$ and $k = 2$. 
+with equality when $\tau' = 46\sigma - 34 + 2(1 - \sigma)/k$ and $k = 2$.
 
 On the other hand if $1 \le \tau' < 46\sigma - 34$ then substituting $\rho/k \le 2 - 2\sigma$ into \eqref{ze-bound6-rhostar-bound3} gives
 \[
@@ -1092,41 +1091,41 @@ For $79/103 \le \sigma \le 84/109$, one has
 \code{prove_zero_density_energy_6()}
 
 \begin{proof}
-Fix $79/103 \le \sigma \le 84/109$ and take 
+Fix $79/103 \le \sigma \le 84/109$ and take
 \[
 \tau_0 = \begin{cases}
 (36\sigma - 16)/5,& 79/103 \le \sigma < 33/43,\\
 38\sigma - 28,& 33/43 \le \sigma \le 84/109.
 \end{cases}
 \]
-Let 
+Let
 \[
 k := \begin{cases}
 2,& \tau_0 \le \tau < 3\tau_0/2\\
 3,& 3\tau_0/2 \le \tau \le 2\tau_0
 \end{cases},\qquad \tau' := \tau/k.
 \]
-Suppose that $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$. We will first show 
+Suppose that $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$. We will first show
 \begin{equation}\label{ze-bound7-rhostar-bound}
 \rho^* \le \max\left(\frac{18 - 19\sigma}{2(37\sigma - 27)}, \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\right)\tau,\qquad (\tau_0 \le \tau \le 2\tau_0).
 \end{equation}
-By Lemma \ref{power-energy}, one has that 
+By Lemma \ref{power-energy}, one has that
 \begin{equation}\label{ze-bound7-tuples}
 (\sigma, \tau', \rho', \rho^*/k, s'),\quad (\sigma, \tau/(k + 1), \rho'', \rho^*/(k + 1), s'') \in \Energy
 \end{equation}
-for some $\rho' \le \rho/k$, $s' \le s/k$, $\rho'' \le \rho/(k + 1)$ and $s'' \le s/(k + 1)$. 
-First suppose that $\sigma \ge 33/43$. In this range, Theorem \ref{jutila-lvt} with $k = 5$ gives 
+for some $\rho' \le \rho/k$, $s' \le s/k$, $\rho'' \le \rho/(k + 1)$ and $s'' \le s/(k + 1)$.
+First suppose that $\sigma \ge 33/43$. In this range, Theorem \ref{jutila-lvt} with $k = 5$ gives
 \[
 \rho/k \le \max(2 - 2\sigma, 18/5 - 28\sigma/5 + \tau'),
 \]
 \[
 \rho/(k + 1) \le \max(2 - 2\sigma, 18/5 - 28\sigma/5 + \tau/(k + 1)).
 \]
-For $\tau \ge \tau_0$, the first inequality reduces to $\rho/k \le 18/5 - 28\sigma/5 + \tau'$, while for $\tau \le 2\tau_0$ the second inequality reduces to 
+For $\tau \ge \tau_0$, the first inequality reduces to $\rho/k \le 18/5 - 28\sigma/5 + \tau'$, while for $\tau \le 2\tau_0$ the second inequality reduces to
 \[
-\rho/k = \frac{k + 1}{k}\frac{\rho}{k + 1} \le \frac{k + 1}{k}(2 - 2\sigma) \le 3 - 3\sigma. 
+\rho/k = \frac{k + 1}{k}\frac{\rho}{k + 1} \le \frac{k + 1}{k}(2 - 2\sigma) \le 3 - 3\sigma.
 \]
-Combining these two inequalities gives 
+Combining these two inequalities gives
 \[
 \rho/k \le \min\left(18/5 - 28\sigma/5 + \tau', 3 - 3\sigma\right),\qquad (\tau_0 \le \tau \le 2\tau_0).
 \]
@@ -1134,21 +1133,21 @@ In particular this implies $\rho/k \le 1$. Applying Theorem \ref{hbt} to the fir
 \[
 \frac{\rho^*}{k} \le 1-2\sigma + \frac{1}{2}\max(\frac{\rho}{k}+1, \frac{5\rho}{4k} + \frac{\tau'}{2}) + \frac{1}{2}\max(\frac{\rho^*}{k}+1, \frac{4\rho}{k}, \frac{3\rho^*}{4k} +\frac{\rho}{k}+\frac{\tau'}{2}).
 \]
-By considering each case of the first maximum and solving for $\rho^*/k$, one must either have 
+By considering each case of the first maximum and solving for $\rho^*/k$, one must either have
 \begin{equation}\label{ze-bound7-rhostar-bound-case01}
 \frac{\rho^*}{k} \le \max(4 - 4\sigma + \frac{\rho}{k}, \frac{3 - 4\sigma + 5\rho/k}{2}, \frac{2}{5}(6 - 8\sigma + \tau' + \frac{4\rho}{k}))
 \end{equation}
-or 
+or
 \begin{equation}\label{ze-bound7-rhostar-bound-case02}
 \frac{\rho^*}{k} \le \max(3 - 4\sigma + \frac{\tau'}{2} + \frac{5}{4}\frac{\rho}{k}, 1 - 2\sigma + \frac{\tau'}{4} + \frac{21}{8}\frac{\rho}{k}, \frac{1}{5}(8 - 16\sigma + 4\tau' + 9\frac{\rho}{k})).
 \end{equation}
-However one may verify in both cases that 
+However one may verify in both cases that
 \begin{equation}\label{ze-bound7-rhostar-final1}
 \frac{\rho^*}{k} \le \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\tau'
 \end{equation}
 for $33/43\le \sigma \le 84/109$ and $\tau_0 \le \tau \le 2\tau_0$ (with equality at $\tau = 2(13\sigma - 3)/5$).
 
-Now consider $\sigma \le 33/43$. In this range of $\sigma$, Theorem \ref{jutila-lvt} with $k = 5$ gives 
+Now consider $\sigma \le 33/43$. In this range of $\sigma$, Theorem \ref{jutila-lvt} with $k = 5$ gives
 \[
 \rho/k \le \max(2 - 2\sigma, 30 - 40\sigma + \tau'),
 \]
@@ -1165,7 +1164,7 @@ Substituting this bound into \eqref{ze-bound7-rhostar-bound-case01} and \eqref{z
 \]
 for $79/103 \le \sigma \le 33/43$ and $\tau_0 \le \tau \le 2\tau_0$ (with equality at $\tau = 74\sigma - 54$). Combined with \eqref{ze-bound7-rhostar-final1}, one obtains \eqref{ze-bound7-rhostar-bound}.
 
-It remains to show that 
+It remains to show that
 \begin{equation}\label{ze-bound7-rhostar-zeta-bound}
 \rho^* \le \max\left(\frac{18 - 19\sigma}{2(37\sigma - 27)}, \frac{5(18 - 19\sigma)}{2(13\sigma - 3)}\right)\tau
 \end{equation}
@@ -1339,22 +1338,28 @@ Table \ref{zero-density-energy-estimates-table} records the sharpest known uncon
     \hline
     $\dfrac{653 - 890\sigma}{10(93 - 125\sigma)(1-\sigma)}$ & $\dfrac{4359}{5770} \le \sigma \le \dfrac{241}{319} = 0.75548\ldots$ & Theorem \ref{imp-energy-bound9}\\
     \hline
-    
+
+    $\dfrac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}$ & $\dfrac{241}{319} \le \sigma \le \dfrac{443}{586} = 0.7559\ldots$ & Theorem \ref{imp-energy-bound10}\\
+
     $\dfrac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}$ & $\dfrac{241}{319} \le \sigma \le \dfrac{443}{586} = 0.7559\ldots$ & Theorem \ref{imp-energy-bound9}\\
     \hline
     $\dfrac{593 - 810\sigma}{5(171 - 230\sigma)(1-\sigma)}$ & $\dfrac{443}{586} \le \sigma \le \dfrac{409}{541} = 0.7560\ldots$ & Theorem \ref{imp-energy-bound10}\\
     \hline
-    
+
+    $\dfrac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}$ & $\dfrac{409}{541} \le \sigma \le \dfrac{373}{493} = 0.7565\ldots$ & Theorem \ref{imp-energy-bound11}\\
+
     $\dfrac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}$ & $\dfrac{409}{541} \le \sigma \le \dfrac{373}{493} = 0.7565\ldots$ & Theorem \ref{imp-energy-bound10}\\
     \hline
     $\dfrac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}$ & $\dfrac{373}{493} \le \sigma \le \dfrac{314}{415} = 0.75662\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
-    
+
+    $\dfrac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}$ & $\dfrac{314}{415} \le \sigma \le \dfrac{171}{226} = 0.75663\ldots$ & Theorem \ref{imp-energy-bound12}\\
+
     $\dfrac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}$ & $\dfrac{314}{415} \le \sigma \le \dfrac{171}{226} = 0.75663\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
     $\dfrac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}$ & $\dfrac{171}{226} \le \sigma \le \dfrac{103}{136} = 0.757352\ldots$ & Theorem \ref{imp-energy-bound11}\\
     \hline
-    
+
     $\dfrac{72 - 91\sigma}{7(11\sigma - 8)(1 - \sigma)}$ & $\dfrac{103}{136} \leq \sigma \le \dfrac{6038 - 2\sqrt{352321}}{6405} = 0.757356\ldots$ & Theorem \ref{imp-energy-bound4}\\
     \hline
     $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{6038 - 2\sqrt{352321}}{6405} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{imp-energy-bound4}\\

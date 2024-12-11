@@ -79,14 +79,16 @@ for all remaining $r$.  By Definition \ref{lvz-def} we then have (for $\delta_2$
 $$ R \ll N^{\LV_\zeta(\sigma,\tau) + \eps + o(1)} \ll T^{\LV_\zeta(\sigma,\tau)/\tau + \eps + o(1)}$$
 and the claim follows in this case from \eqref{lvz-bound}.
 
-In the case $N \asymp T$, a standard summation by parts argument {\bf cite} gives
+In the case $N \asymp T$, a standard application of the Euler--Maclaurin formula (see e.g., \cite[(2.1.2)]{titchmarsh_theory_1986}) yields
 $$ \sum_{T^{\delta_1} \leq n \leq T} \frac{\psi(n/N)}{n^{\sigma_r+it_r}} \ll T^{-\sigma_r}$$
-which leads to a contradiction.  So the only remaining case is when $T^{1/2} \ll N \ll o(T)$.  Here we can ignore the cutoffs on $n$ and write
-$$ \sum_{n} \psi(n/N) (n/N)^{\sigma_r} n^{-it_r} \gg N^{\sigma} T^{-\delta_2-o(1)}.$$
-Applying the van der Corput $B$-process {\bf give cite}, we have
-$$ \sum_{m} \psi(2\pi t_r/mN) (2\pi t_r/Nm)^{\sigma_r} m^{-it_r} \gg M^{1/2} N^{\sigma-1/2} T^{-\delta_2-o(1)};$$
+which leads to a contradiction.  So the only remaining case is when $T^{1/2} \ll N \ll o(T)$.  Here we can ignore the cutoffs on $n$ and obtain
+$$ \left| \sum_{n} \psi(n/N) (n/N)^{-\sigma_r} n^{-it_r}\right| \gg N^{\sigma} T^{-\delta_2-o(1)}.$$
+Applying the van der Corput $B$-process (see, e.g., \cite[\S 8.3]{ik}) or the approximate functional equation we have
+$$ \sum_{n} \psi(n/N) (n/N)^{-\sigma_r} n^{-it_r} = e(\frac{t_r}{2\pi} \log \frac{t_r}{2\pi} - \frac{t_r}{2\pi} + \frac{1}{8}) \sum_{m} \psi(2\pi t_r/mN) (2\pi t_r/mN)^{-\sigma_r} m^{it_r} (2\pi m^2/t_r)^{-1/2} + O(T^{o(1)})$$
+and thus
+$$ \left| \sum_{m} \psi(2\pi t_r/mN) (2\pi t_r/mN)^{1-\sigma_r} m^{-it_r} \right| \gg M^{1/2} N^{\sigma-1/2} T^{-\delta_2-o(1)};$$
 where $M := 2\pi T/N \ll N^{1/2}$.  In particular
-$$ \sum_{m \in [M/10, 10 M]} \psi(2\pi t_r/mN) (2\pi t_r/Nm)^{\sigma_r} m^{-it_r} \gg M^{\sigma} T^{-\delta_2-o(1)};$$
+$$ \sum_{m \in [M/10, 10 M]} \psi(2\pi t_r/mN) (2\pi t_r/mN)^{1-\sigma_r} m^{-it_r} \gg M^{\sigma} T^{-\delta_2-o(1)};$$
 since $N \gg T^{1/2}$ and $\sigma \geq 1/2$.  Performing a Fourier expansion as before, we conclude that
 $$ \sum_{m \in [M/10, 10 M]} m^{-it'_r} \ll M^{\sigma} T^{-\delta_2-o(1)}$$
 for some $t'_r = t_r + O(T^{o(1)})$, and one can argue as in the $N \ll T^{1/2}$ case (partitioning $[M/10, 10M]$ into $O(1)$ intervals each contained in some $[M',2M']$ with $M' \ll T^{1/2}$).
