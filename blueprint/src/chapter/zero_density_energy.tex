@@ -1171,6 +1171,7 @@ It remains to show that
 for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta$ for which $79/103 \le \sigma \le 84/109$ and $2 \le \tau \le \tau_0$. This follows from substituting $\rho/k \le 6 - 12\sigma + 2\tau'$ (Theorem \ref{hb-12}) into \eqref{ze-bound7-rhostar-bound-case01} and \eqref{ze-bound7-rhostar-bound-case02}.
 \end{proof}
 
+
 \begin{theorem}\label{imp-energy-bound8}
 For $84/109 \le \sigma \le 5/6$, one has
 \[
@@ -1219,7 +1220,7 @@ We first record some useful large value estimates. Applying Theorem \ref{jutila-
 \begin{equation}\label{ze-13-rho2}
 \rho/(k + 1) \le \max(2 - 2\sigma, 50/13 - 76\sigma/13 + \tau/(k + 1)),
 \end{equation}
-and since $\sigma \le 4/5$, by Theorem \ref{} one has 
+and since $\sigma \le 4/5$, by Theorem \ref{guth-maynard-lvt} one has 
 \begin{equation}\label{ze-13-rho3}
 \rho/k \le \max(18/5 - 4\sigma, 12/5 - 4\sigma + \tau').
 \end{equation}
@@ -1241,19 +1242,19 @@ However, for $\tau' \ge 6/5$, by \eqref{ze-13-rho3} one has $\rho/k \le 12/5 - 4
 \]
 Therefore, one has $\rho/k \le \min(12/5 - 4\sigma + \tau', 3 - 3\sigma)$ for $6/5 \le \tau' \le \tau_1(k + 1)/k$. Substituting this into each term of \eqref{ze-13-rhostar-1} and \eqref{ze-13-rhostar-2} allows one to verify that 
 \begin{equation}\label{ze-13-res1}
-\rho^*/k \le \frac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}\tau',\qquad (6/5 \le \tau' \le \tau_1(k + 1)/k).
+\rho^*/k \le \frac{1151 - 1190\sigma}{20(15\sigma - 2)}\tau',\qquad (6/5 \le \tau' \le \tau_1(k + 1)/k).
 \end{equation}
 On the other hand, if $\tau' < 6/5$, then note that for $k = 2, 3$ one has 
 \[
 (\sigma, \tau/(k-1), \rho''', \rho^*/(k-1), s''') \in \Energy
 \]
 for some $\rho''' \le \rho /(k-1)$ and $s''' \le s/(k-1)$. Applying Theorem \ref{hbt} to this tuple, followed by $\rho''' \le \rho/(k - 1)$ and rearranging, one obtains 
-\begin{equation}\label{ze-bound6-rhostar-bound}
+\begin{equation*}
 \begin{split}
 \rho^* \le (1-2\sigma)(k - 1) &+ \frac{1}{2}\max(\rho+k - 1, 2\rho, \frac{5\rho}{4} + \frac{\tau}{2}) \\
 &+ \frac{1}{2}\max(\rho^*+k - 1, 4\rho, \frac{3\rho^*}{4} + \rho+\frac{\tau}{2}).
 \end{split}
-\end{equation}
+\end{equation*}
 By considering each case of the two maximums individually, and solving for $\rho^*/k$, one obtains 
 \begin{equation}\label{ze-13-rhostar-3}
 \begin{split}
@@ -1264,13 +1265,48 @@ By considering each case of the two maximums individually, and solving for $\rho
 &\frac{(8 - 16\sigma)(k - 1)/k + 4\tau' + 9\rho/k}{5}\bigg).
 \end{split}
 \end{equation}
-For $\tau' \le 6/5$ by \eqref{ze-13-rho3} one has $\rho/k \le 18/5 - 4\sigma$, while for $\tau' \ge \tau_1$ by \eqref{ze-13-rho1} one has $\rho/k \le 50/13 - 76\sigma/13 + \tau'$. Therefore, for $\tau_1 \le \tau' \le 6/5$ one has $\rho/k \le \min(50/13 - 76\sigma/13 + \tau', 18/5-4\sigma)$. Substituting this bound into each case of \eqref{ze-13-rhostar-3}, one may verify that 
+For $\tau' < 6/5$ by \eqref{ze-13-rho3} one has $\rho/k \le 18/5 - 4\sigma$, while for $\tau' \ge \tau_1$ by \eqref{ze-13-rho1} one has $\rho/k \le 50/13 - 76\sigma/13 + \tau'$. Therefore, for $\tau_1 \le \tau' < 6/5$ one has $\rho/k \le \min(50/13 - 76\sigma/13 + \tau', 18/5-4\sigma)$. Substituting this bound into each case of \eqref{ze-13-rhostar-3}, one may verify that 
 \[
-\frac{\rho^*}{k} \le \frac{1151 - 1190\sigma}{20(15\sigma - 2)}\tau',\qquad (\tau_1 \le \tau' \le 6/5),
+\frac{\rho^*}{k} \le \frac{1151 - 1190\sigma}{20(15\sigma - 2)}\tau',\qquad (\tau_1 \le \tau' < 6/5),
 \]
 with equality at $\tau = 16(15\sigma - 2)/65$. Combined with \eqref{ze-13-res1}, one obtains \eqref{ze-13-res0}.
 
+Now suppose that $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta$ such that $2\le\tau \le \tau_0$. Applying Theorem \ref{} to this tuple, one either has 
+\[
+\rho^* \le 1-2\sigma + \frac{1}{2}\max(\rho+1, \frac{5\rho}{4} + \frac{\tau}{2}) + \frac{1}{2}\max(\rho^*+1, 4\rho, \frac{3\rho^*}{4} +\rho+\frac{\tau}{2})
+\]
+By considering each case of the first maximum and solving for $\rho^*$, one must either have 
+\[
+\rho^* \le \max(4 - 4\sigma + \rho, \frac{3 - 4\sigma + 5\rho}{2}, \frac{2}{5}(6 - 8\sigma + \tau + 4\rho))
+\]
+or 
+\[
+\rho^* \le \max(3 - 4\sigma + \frac{\tau}{2} + \frac{5}{4}\rho, 1 - 2\sigma + \frac{\tau}{4} + \frac{21}{8}\rho, \frac{1}{5}(8 - 16\sigma + 4\tau + 9\rho)).
+\]
+From Theorem \ref{}, one has $\rho \le 6 - 12\sigma + 2\tau$. Substituting this bound into each case, one ultimately obtains 
+\[
+\rho^* \le \frac{1151 - 1190\sigma}{20(15\sigma - 2)}\tau,\qquad (2 \le \tau \le \tau_0)
+\]
+with some room to spare, which is \eqref{ze-13-res0b}.
+
+Now suppose that $4359/5770 \le \sigma \le 241/319$. Here we choose $\tau_0 = 2\tau_1$ where 
+\[
+\tau_1 = 100\sigma - 372/5.
+\]
+We will show that 
+\[
+\rho^* \le \frac{653 - 890\sigma}{10(93 - 125\sigma)}\tau
+\]
+for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy$ such that $\tau_0 \le \tau \le 2\tau_0$, and for all $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_\zeta$ such that $2 \le \tau \le \tau_0$. In this range of $\sigma$, Theorem \ref{} with $k = 13$ implies 
+\[
+\rho/k \le \max(2 - 2\sigma, 78 - 104\sigma + \tau')
+\]
+\[
+\rho/(k + 1) \le \max(2 - 2\sigma, 78 - 104\sigma + \tau/(k + 1))
+\]
+Combining these bounds with \eqref{ze-13-rho3}, if $6/5 \le \tau' \le \tau_1(k + 1)/k$ then $\rho/k \le \min(78 - 104\sigma + \tau', 3 - 3\sigma)$.  
 \end{proof}
+
 
 \begin{theorem}\label{imp-energy-bound10}
 For $443/586 \le \sigma \le 373/493$, one has
