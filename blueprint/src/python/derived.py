@@ -1065,4 +1065,5 @@ def prove_all():
     # prove_prime_gap2()
 
 # prove_all()
-prove_zero_density_energy_11()
+# prove_zero_density_energy_11()
+compute_best_zero_density()

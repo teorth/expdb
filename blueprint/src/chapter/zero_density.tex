@@ -529,11 +529,11 @@ A(\sigma) \leq \begin{cases}
 \dfrac{11}{12 \left(4 \sigma - 3\right)} & \dfrac{3}{4} < \sigma \le \dfrac{14}{15},\\
 \dfrac{391}{2493 \sigma - 2014} & \dfrac{14}{15} < \sigma \le \dfrac{2841}{3016},\\
 \dfrac{22232}{163248 \sigma - 134765} & \dfrac{2841}{3016} < \sigma \le \dfrac{859}{908},\\
-\dfrac{4406612}{33911310 \sigma - 28181831} & \dfrac{859}{908} < \sigma \le \dfrac{635113}{655952},\\
-\dfrac{3918}{49189 \sigma - 43490} & \dfrac{635113}{655952} < \sigma \le \dfrac{637457}{656512},\\
-\dfrac{2351558}{39632665 \sigma - 35918731} & \dfrac{637457}{656512} < \sigma \le \dfrac{39}{40},\\
-\dfrac{1780}{35670 \sigma - 32717} & \dfrac{39}{40} < \sigma \le \dfrac{59}{60},\\
-\dfrac{6}{303 \sigma - 290} & \dfrac{59}{60} < \sigma < 1.
+\dfrac{356}{2742 \sigma - 2279} & \dfrac{859}{908} < \sigma \le \dfrac{1625}{1692},\\
+\dfrac{2609588}{20732766\sigma - 17313767} & \dfrac{1625}{1692} < \sigma \le \dfrac{3334585}{3447984},\\
+\dfrac{75872}{9 (81024 \sigma - 69517)} & \dfrac{3334585}{3447984} < \sigma \le \dfrac{974605}{1005296},\\
+\dfrac{288}{3616 \sigma - 3197} & \dfrac{974605}{1005296} < \sigma \le \dfrac{5857}{6032},\\
+\dfrac{86152}{1447460 \sigma - 1311509} & \dfrac{5857}{6032} < \sigma < 1.
 \end{cases}
 \]
 \end{corollary}
@@ -556,15 +556,20 @@ We take the following choices of $(k, \ell)$ (found with the aid of computer ass
 \left(\frac{11}{85} - \varepsilon, \frac{59}{85} + 2\varepsilon\right),
 \left(\frac{391}{4595} + \varepsilon, \frac{3461}{4595}\right),
 \left(\frac{2779}{38033} + \varepsilon, \frac{58699}{76066}\right),
-\left(\frac{1101653}{15854002} + \varepsilon, \frac{12327829}{15854002}\right),
+\left(\frac{89}{1282} + \varepsilon, \frac{997}{1282}\right),
 \]
 \[
-\left(\frac{1959}{47230} + \varepsilon, \frac{3975}{4723}\right),
-\left(\frac{1175779}{38456886} + \varepsilon, \frac{16690288}{19228443}\right),
-\left(\frac{89}{3478} + \varepsilon, \frac{15327}{17390}\right),
-\left(\frac{1}{100} + \varepsilon, \frac{14}{15}\right).
+\left(\frac{652397}{9713986} + \varepsilon, \frac{7599781}{9713986}\right),
+\left(\frac{2371}{43205} + \varepsilon, \frac{280013}{345640}\right),
+\left(\frac{9}{217} + \varepsilon, \frac{1461}{1736}\right), \left(\frac{10769}{351096} + \varepsilon, \frac{609317}{702192}\right).
 \]
-The desired result follows from taking a minimum over the implied bounds.
+Of these exponent pairs:
+\begin{itemize}
+    \item $(\frac{11}{85}, \frac{59}{85})$ is the intersection of the lines $k = 1/5$ and $15\ell + 20k = 13$;
+    \item $(\frac{391}{4595}, \frac{3461}{4595})$ is an intersection of the line $15\ell + 20k = 13$ and the boundary of $H$;
+    \item all other exponent pairs are vertices of $H$.  
+\end{itemize}
+The desired result follows from taking a minimum over the implied bounds. Sharper bounds are possible close to $\sigma = 1$ by choosing other exponent pairs, however it turns out such results are superseded by other zero density estimates. 
 \end{proof}
 
 
@@ -780,11 +785,11 @@ The current best known zero density estimates (excepting the unpublished result 
     \hline
     $\dfrac{22232}{163248\sigma - 134765}$ & $\dfrac{2841}{3016} \le \sigma < \dfrac{859}{908} = 0.9460\ldots$ & Corollary \ref{bourgain-zero-density-optimized} \\
     \hline
-    $\dfrac{4406612}{33911310\sigma - 28181831}$ & $\dfrac{859}{908} \le \sigma < \dfrac{23}{24} = 0.9583\ldots$ & Corollary \ref{bourgain-zero-density-optimized} \\
+    $\dfrac{356}{2742\sigma - 2279}$ & $\dfrac{859}{908} \le \sigma < \dfrac{23}{24} = 0.9583\ldots$ & Corollary \ref{bourgain-zero-density-optimized} \\
     \hline
-    $\dfrac{3}{24\sigma - 20}$ & $\dfrac{23}{24} \leq \sigma < \dfrac{60725033}{62460603} = 0.9722\ldots$ & Theorem \ref{pintz-density} \\
+    $\dfrac{3}{24\sigma - 20}$ & $\dfrac{23}{24} \leq \sigma < \dfrac{2211487}{2274732} = 0.9722\ldots$ & Theorem \ref{pintz-density} \\
     \hline
-    $\dfrac{2351558}{39632665\sigma - 35918731}$ & $\dfrac{60725033}{62460603} \le \sigma < \dfrac{39}{40} = 0.975$ & Corollary \ref{bourgain-zero-density-optimized} \\
+    $\dfrac{86152}{1447460\sigma - 1311509}$ & $\dfrac{2211487}{2274732} \le \sigma < \dfrac{39}{40} = 0.975$ & Corollary \ref{bourgain-zero-density-optimized} \\
     \hline
     $\dfrac{2}{15\sigma - 12}$ & $\dfrac{39}{40} \leq \sigma < \dfrac{41}{42} = 0.9761\ldots$ & Theorem \ref{pintz-density} \\
     \hline
