@@ -11,6 +11,7 @@ import additive_energy as ad
 from fractions import Fraction as frac
 from functions import Affine, Interval, RationalFunction as RF
 from hypotheses import Hypothesis, Hypothesis_Set
+from numbers import Number
 from polytope import Polytope
 from reference import Reference
 from region import Region
@@ -46,14 +47,33 @@ class Zero_Density_Energy_Estimate:
         self.bound = None
 
     def __repr__(self):
+        """
+        Returns a string representation of the zero density energy estimate.
+        """
         return f"A*(x) \leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
+        """
+        Internal method to ensure that the self.bound object is computed 
+        (by default, this bound is not computed at instantiation time).
+        """
         if self.bound is None:
             self.bound = RF.parse(self.expr)
 
-    # Computes the zero-density estimate at a particular value of sigma
-    def at(self, sigma):
+    def at(self, sigma: Number) -> Number:
+        """
+        Computes the zero-density energy estimate at a particular value of sigma.
+
+        Parameters
+        ----------
+        sigma : Number 
+            The value of sigma to evaluate the bound on A^*(\\sigma).
+
+        Returns
+        -------
+        Number 
+            The value of the bound on A^*(\\sigma).
+        """
         if not self.interval.contains(sigma):
             raise ValueError(f'Sigma value {sigma} is out of bounds {self.interval}')
 
@@ -63,7 +83,26 @@ class Zero_Density_Energy_Estimate:
     # -------------------------------------------------------------------------
     # Static methods
 
-    def from_rational_func(rf, interval):
+    def from_rational_func(
+            rf: RF, 
+            interval: Interval
+        ) -> 'Zero_Density_Energy_Estimate':
+        """
+        Constructs an instance of Zero_Density_Energy_Estimate from a bound on 
+        A^*(\\sigma) represented as a RationalFunction and a domain for \\sigma.
+
+        Parameters
+        ----------
+        rf : RationalFunction
+            A univariate function of sigma representing the bound on A^*(\\sigma).
+        interval : Interval
+            The interval of \\sigma on which the bound holds. 
+        
+        Returns
+        -------
+        Zero_Density_Energy_Estimate
+            A object representing a bound on A^*(\\sigma) on a range of \\sigma.
+        """
         if not isinstance(rf, RF):
             raise ValueError("Parameter rf must be of type RationalFunction")
 
@@ -72,8 +111,6 @@ class Zero_Density_Energy_Estimate:
         return zde
 
 #############################################################################
-# Useful methods to construct Hypothesis instances of type "Zero density 
-# energy estimate"
 
 def literature_zero_density_energy_estimate(
         estimate: str, 
@@ -118,7 +155,24 @@ def derived_zero_density_energy_estimate(
         proof: str, 
         deps: set[Hypothesis]
     ) -> Hypothesis:
+    """
+    Constructs a Hypothesis object representing a zero density energy estimate 
+    that is derived from other hypotheses. 
 
+    Parameters
+    ----------
+    data : Zero_Density_Energy_Estimate
+        An object representing the bound on A^*(\\sigma).
+    proof : str
+        A string describing the proof of this bound on A^*(\\sigma).
+    deps : set of Hypothesis
+        The hypotheses on which this derived estimate of A^*(\\sigma) depends. 
+    
+    Returns
+    -------
+    Hypothesis
+        An object representing a derived zero density energy estimate. 
+    """
     year = Reference.max_year(tuple(d.reference for d in deps))
     bound = Hypothesis(
         "Derived zero density energy estimate",
@@ -131,7 +185,22 @@ def derived_zero_density_energy_estimate(
     return bound
 
 def trivial_zero_density_energy_estimate(
-        data: Zero_Density_Energy_Estimate) -> Hypothesis:
+        data: Zero_Density_Energy_Estimate
+    ) -> Hypothesis:
+    """
+    Constructs a Hypothesis object representing a trivial zero density energy 
+    estimate that does not contain any dependencies. 
+
+    Parameters
+    ----------
+    data : Zero_Density_Energy_Estimate
+        An object representing the bound on A^*(\\sigma).
+    
+    Returns
+    -------
+    Hypothesis
+        An object representing a trivial zero density energy estimate.
+    """
     bound = Hypothesis(
         "Trivial zero density energy estimate",
         "Zero density energy estimate",
@@ -150,6 +219,16 @@ def add_trivial_zero_density_energy_estimates(hypotheses: Hypothesis_Set):
     """
     Computes the "trivial" additive energy estimates implied by zero density 
     estimates from a set of hypothesis, and add them to the hypothesis set.
+
+    For example, one has the trivial zero density energy estimate 
+    A^*(\\sigma) \leq 3A(\\sigma)
+    where A(\\sigma) is a zero density estimate. 
+
+    Parameters
+    ----------
+    hypotheses : Hypothesis_Set
+        The set of hypotheses used to compute the trivial zero density
+        energy estimates.
     """
 
     # add zero density energy estimates arising from A(sigma)
@@ -326,10 +405,22 @@ def compute_best_energy_bound(hypotheses: Hypothesis_Set) -> list:
 
     """
     Given a Hypothesis_Set, compute a piecewise function representing the best bound 
-    on A*(\\sigma)
+    on A*(\\sigma).
 
-    TODO: this function is quite similar to compute_best_density_estimate in zero_density_estimate.py
-    Combine/merge them?
+    TODO: this function is quite similar to compute_best_density_estimate in 
+    zero_density_estimate.py Combine/merge them?
+
+    Parameters
+    ----------
+    hypotheses : Hypothesis_Set 
+        The set of hypotheses to assume in computing the best estimate on A^*(\\sigma).
+    
+    Returns
+    -------
+    list of Hypothesis
+        A list of Hypothesis of type 'Zero density energy estimate', each representing 
+        a bound on A^*(\\sigma). The domains of each A^*(\\sigma) bound will be 
+        guaranteed to be non-overlapping. 
     """
 
     if not isinstance(hypotheses, Hypothesis_Set):
