@@ -188,6 +188,12 @@ def lver_to_energy_bound(
     debug : bool, optional
         If True, additional debugging information will be logged to console
         (default is False).
+
+    Returns
+    -------
+    list of Hypothesis
+        A list of bounds on A^*(\\sigma), each represented as a Hypothesis 
+        of type 'Zero density energy estimate'.
     """
     
     if not isinstance(hypotheses, Hypothesis_Set):

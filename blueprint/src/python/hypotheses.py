@@ -18,6 +18,7 @@
 #    - 'Large value estimate'
 #    - 'Zeta large value estimate'
 #    - 'Zero density estimate'
+#    - 'Zero density energy estimate'
 #    - 'Large value energy region'
 #    - 'Large value energy region transform'
 # - description : a longer description of the hypothesis, e.g., 'The bound
