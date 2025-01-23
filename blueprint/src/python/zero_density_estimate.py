@@ -614,7 +614,6 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 
         print(s, argmin, Abound)
 
-
 # Computes the zero-density estimate
 #
 # A(s) \leq 4k/(2(1 + k)s - 1 - l)   (s > s0)
@@ -631,9 +630,11 @@ def bourgain_ep_to_zd():
         (frac(11,85), frac(59,85)),
         (frac(391, 4595), frac(3461, 4595)),
         (frac(2779, 38033), frac(58699, 76066)),
-        (frac(1101653, 15854002), frac(12327829, 15854002)),
-        (frac(1959, 47230), frac(3975, 4723)),
-        (frac(1175779, 38456886), frac(16690288, 19228443)),
+        (frac(89, 1282), frac(997, 1282)),
+        (frac(652397, 9713986), frac(7599781, 9713986)),
+        (frac(2371, 43205), frac(280013, 345640)),
+        (frac(9, 217), frac(1461, 1736)),
+        (frac(10769, 351096), frac(609317, 702192)),
         (frac(89, 3478), frac(15327, 17390)),
         (frac(1, 100), frac(14, 15))
         ]
@@ -704,7 +705,7 @@ def bourgain_ep_to_zd():
             soln.pop(i)
 
     # for s in soln:
-    #     print(s[0], "for x \\in", s[1], s[1].contains(frac(15, 16)), s[2])
+    #     print(s[0], "for x \\in", s[1], s[2])
     #     s[2].recursively_list_proofs()
     return [derived_zero_density_estimate(
                 Zero_Density_Estimate.from_rational_func(s[0], s[1]),

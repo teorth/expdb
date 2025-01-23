@@ -337,7 +337,10 @@ def compute_best_lver(
     lvers.extend(transformed)
 
     if zeta:
-        # A large value energy region is also a zeta large value energy region
+        # If a tuple belongs to a zeta large value energy region, then it also 
+        # belongs to a large value energy region. Therefore, a constraint on a 
+        # large value energy region is also a constraint on a zeta large value 
+        # energy region. 
         # A zeta large value energy region has no raise to power hypothesis
         lvers.extend(hypotheses.list_hypotheses(hypothesis_type="Zeta large value energy region"))
     
@@ -477,7 +480,7 @@ def compute_LV_star(hypotheses, sigma_tau_domain, debug=True, zeta=False):
     
     Eproj.simplify()
 
-    if zeta:    
+    if zeta:
         return derived_zeta_large_value_energy_region(
             Large_Value_Energy_Region(Eproj), 
             f"Follows from taking the intersection of {len(deps)} zeta large value energy regions" + \
