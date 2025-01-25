@@ -12,6 +12,8 @@ The references are stored at https://github.com/teorth/expdb/blob/main/blueprint
 
 The chapters are stored at https://github.com/teorth/expdb/tree/main/blueprint/src/chapter .  One can use standard LaTeX commands in these chapters.  One can also use the \uses{} macro to indicate which results depend on which other ones, for the purpose of filling out the dependency graph, though at the current stage of the project we are not making heavy use of this feature.
 
+It is fine to suggest incomplete contributions, for instance stating a result with only a very sketchy proof or reference.  For an extremely incomplete contribution (e.g., a vague statement of a result without a reference, or proposing a new direction for the ANTEDB without contributing significant content), consider opening up a Github issue instead of a pull request.
+
 If you propose to add a new chapter, or rearrange existing ones, one will also have to modify https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex .  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.
 
 ## Contributing to Python code
