@@ -8,6 +8,6 @@ This is the repository for the Analytic Number Theory Exponent Database (ANTEDB)
 
 - [Main web page](https://teorth.github.io/expdb/)
 - [Web blueprint](https://teorth.github.io/expdb/blueprint/)
-    - [Introduction](https://teorth.github.io/expdb/blueprint/sect0001.html)
+    - [Introduction](https://teorth.github.io/expdb/blueprint/intro-chapter.html)
 - [Dependency graph](https://teorth.github.io/expdb/blueprint/dep_graph_document.html)
 - [PDF form of blueprint](https://teorth.github.io/expdb/blueprint.pdf)
