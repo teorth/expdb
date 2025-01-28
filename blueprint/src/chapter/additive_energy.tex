@@ -254,7 +254,7 @@ for some monotonically increasing functions $f_1, f_2, f_3$ (that possibly also 
 Suppose amongst all tuples $(\sigma, \tau, \rho', (\rho^*)', s') \in \Energy_1$ with $\rho' \le \rho$, $(\rho^*)' \le \rho^*$ and $s' \le s$, there exists a tuple with $\rho' = \rho$, a tuple with $(\rho^*)' = \rho^*$ and a tuple with $s' = s$ (not necessarily the same tuple each time). Then, $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$.
 \end{lemma}
 \begin{proof}
-Suppose that $(\sigma, \tau, \rho, (\rho^*)', s') \in \Energy_1$ for some $(\rho^*)'\le \rho^*$ and $s \le s'$ so that also $(\sigma, \tau, \rho, (\rho^*)', s') \in E_i$. Then by definition $\rho \le f_1((\rho^*)', s')$. Since $f_1$ is monotonically increasing (with respect to both $\rho^*$ and $s$), one has $\rho \le f_1(\rho^*, s)$. Similarly, $(\sigma, \tau, \rho', \rho^*, s') \in \Energy_1$ implies $\rho^* \le f_2(\rho, s)$ and $(\sigma, \tau, \rho', (\rho^*)', s) \in \Energy_1$ implies $s \le f_3(\rho, \rho^*)$, which together imply $(\sigma, \tau, \rho, \rho^*, s) \in E_i$ by definition. Hence $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$ since $\Energy_1$ is the intersection of sets $E_i$. 
+Suppose that $(\sigma, \tau, \rho, (\rho^*)', s') \in \Energy_1$ for some $(\rho^*)'\le \rho^*$ and $s \le s'$ so that also $(\sigma, \tau, \rho, (\rho^*)', s') \in E_i$. Then by definition $\rho \le f_1((\rho^*)', s')$. Since $f_1$ is monotonically increasing (with respect to both $\rho^*$ and $s$), one has $\rho \le f_1(\rho^*, s)$. Similarly, $(\sigma, \tau, \rho', \rho^*, s') \in \Energy_1$ implies $\rho^* \le f_2(\rho, s)$ and $(\sigma, \tau, \rho', (\rho^*)', s) \in \Energy_1$ implies $s \le f_3(\rho, \rho^*)$, which together imply $(\sigma, \tau, \rho, \rho^*, s) \in E_i$ by definition. Hence $(\sigma, \tau, \rho, \rho^*, s) \in \Energy_1$ since $\Energy_1$ is the intersection of sets $E_i$.
 \end{proof}
 
 \begin{lemma}[Raising to a power, alternative formulation]
@@ -384,10 +384,10 @@ $$ \rho^* \leq \max( 4-4\sigma + \rho, (3-4\sigma)/2 + 5\rho/2, 1-2\sigma + 3\rh
 which gives the claim.
 \end{proof}
 
-Similarly, using Lemma \ref{double-zeta-from-exp-pair} and Lemma \ref{wtu-alt}, one has 
+Similarly, using Lemma \ref{double-zeta-from-exp-pair} and Lemma \ref{wtu-alt}, one has
 
 \begin{theorem}
-If $(k, \ell)$ be an exponent pair with $k > 0$ and $(\sigma, \tau, \rho, \rho^*, s)\in \Energy$, then 
+If $(k, \ell)$ be an exponent pair with $k > 0$ and $(\sigma, \tau, \rho, \rho^*, s)\in \Energy$, then
 \begin{align*}
 \rho^* \le 1 - 2\sigma &+ \frac{1}{2}\max\left(\rho+1, \frac{5}{3}\rho + \frac{\tau}{3}, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right)\\
 &+ \frac{1}{2}\max\left(\rho^*+1, 4\rho, \frac{3}{4}\rho^*+\rho+\frac{\tau}{2}\right).
@@ -407,7 +407,7 @@ and
 \rho^* + 2\sigma \le \kappa &+ \frac{1}{2}\max\left( \rho+1, 5\rho/3 + \tau/3, \frac{2+3k+4\ell}{1+2k+2\ell} \rho + \frac{k+\ell}{1+2k+2\ell} \tau\right)\\
 &+ \frac{1}{2}\max\left(\rho' + 1, 2\rho', \frac{5}{4}\rho' + \frac{\tau}{2}\right) + 1.
 \end{align*}
-The result follows by moving the $\kappa$ term into the second maximum and applying \eqref{kappa-bounds}. 
+The result follows by moving the $\kappa$ term into the second maximum and applying \eqref{kappa-bounds}.
 \end{proof}
 
 
@@ -486,7 +486,7 @@ We can put this all together to prove the Guth--Maynard large values theorem.
 
 \literature
 \code{add_guth_maynard_large_values_estimate()}
-\derived 
+\derived
 \code{prove_guth_maynard_large_values_theorem()}
 
 \begin{proof}\uses{l2-mvt,huxley-lv, gm-1, gm-3, montgomery-subdivide} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{montgomery-subdivide}) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
@@ -505,6 +505,26 @@ From the latter bound and Lemma \ref{gm-3}, one has
 $$ S_3 \leq \max( 2\tau+3\rho/2, \tau+\rho+3-2\sigma, \tau+2\rho+3/2-\sigma, 9\tau/8+29\rho/16 + 3/2-\sigma).$$
 Inserting this and the $S_2$ bound (with $k=4$) into the bound for $\rho$ and simplifying (using $\tau=6/5$), we eventually obtain
 the desired bound $\rho \leq 18/5-4\sigma$.
+\end{proof}
+
+We also record a variant of that theorem from the same paper:
+
+\begin{theorem}[Additional Guth--Maynard large values estimate]\label{guth-maynard-extra} For any $1/2 < \sigma < 1$, $\tau \geq 1$, and natural number $k$ one has
+    \begin{equation}\label{general-tau}
+        \LV(\sigma,\tau) \leq \max(2-2\sigma, 5-6\sigma, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau, 2-4\sigma + \frac{4}{3} \tau, 3-4\sigma+\frac{1}{2} \tau, \frac{9}{2}-7\sigma+\tau, \frac{72-112\sigma}{19} + \frac{18}{19} \tau).
+    \end{equation}
+If one specializes to the case $\sigma \geq 7/10$ and $1 \leq \tau \leq 6/5$, one then has
+    \begin{equation}\label{second-bound} \LV(\sigma,\tau) \leq \max(2-2\sigma, 3-4\sigma+\tau/2, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau).
+    \end{equation}
+and also
+\begin{equation}\label{third-bound}
+     \LV(\sigma,\tau) \leq \max(2-2\sigma, 3-4\sigma+\tau/2, \frac{46-60\sigma}{5} + \frac{30\sigma-21}{5} \tau).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+(Sketch) The first bound \eqref{general-tau} is \cite[(12.1)]{guth-maynard}, and is proven by the same methods used to prove Theorem \ref{guth-maynard-lvt}.  The second and third bounds \eqref{second-bound}, \eqref{third-bound} are in \cite[Proposition 12.1]{guth-maynard}.  The second bound \eqref{second-bound} follows from the $k=3$ case of Theorem \ref{jutila-lvt} when $\sigma \geq 39/50$, and from \eqref{general-tau} together with Theorems \ref{l2-mvt}, \ref{huxley-lv} for $\sigma < 39/50$.  The third bound \eqref{third-bound} follows from Theorems \ref{l2-mvt}, \ref{huxley-lv} when $\tau \leq 4-4\sigma$, and for $\tau > 4-4\sigma$
+the bound follows from \eqref{second-bound} after optimizing in $k$ (see the proof of \cite[Proposition 12.1]{guth-maynard} for details).
 \end{proof}
 
 Now we turn to another application of double zeta sums to large value theorems.
