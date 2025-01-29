@@ -22,4 +22,4 @@ Python code is stored at https://github.com/teorth/expdb/tree/main/blueprint/src
 
 ## Contributing to Lean code
 
-At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.
+At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.  If you have some ideas for such an expansion, please do not hesitate to discuss them with the maintainers of the ANTEDB; if there is sufficient interest, we may start a broader discussion to take more steps in this direction.

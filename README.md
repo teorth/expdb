@@ -13,3 +13,4 @@ This is intended to be a living database; additional corrections, updates, and c
     - [Introduction](https://teorth.github.io/expdb/blueprint/intro-chapter.html)
 - [Dependency graph](https://teorth.github.io/expdb/blueprint/dep_graph_document.html)
 - [PDF form of blueprint](https://teorth.github.io/expdb/blueprint.pdf)
+- T. Tao, T. Trudgian, A. Yang, "[New exponent pairs, zero density estimates, and zero additive energy estimates: a systematic approach](https://arxiv.org/abs/2501.16779)": A paper describing the project, and several of the new results that already arose from it
