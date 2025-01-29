@@ -1,6 +1,6 @@
 # Contributing to Analytic Number Theory Exponent Database
 
-Contributions to the ANTEDB are very welcome!  For short contributions (such as correcting a typo, or adding a reference or citation), one can simply email the correction to one of the maintainers of the ANTEDB ([Terence Tao](mailto:tao@math.ucla.edu), [Timothy Trudgian](mailto:timothy.trudgian@unsw.edu.au), or [Andrew Yang](mailto:andrew.yang1@unsw.edu.au)).  Alternatively, if one has familiarity with Github, one can submit a Github Pull Request (PR) to the [Github repository](https://github.com/teorth/expdb) with the suggested changes.
+Contributions to the ANTEDB are very welcome!  For short contributions (such as correcting a typo, or adding a reference or citation), one can simply email the correction to one of the maintainers of the ANTEDB ([Terence Tao](mailto:tao@math.ucla.edu), [Timothy Trudgian](mailto:timothy.trudgian@unsw.edu.au), or [Andrew Yang](mailto:andrew.yang1@unsw.edu.au)).  Alternatively, if one has familiarity with Github, one can submit a [Github Pull Request](https://github.com/teorth/expdb/pulls) (PR) to the [Github repository](https://github.com/teorth/expdb) with the suggested changes, or raise a [Github issue](https://github.com/teorth/expdb/issues).
 
 Some specific information about types of contributions:
 
@@ -22,4 +22,4 @@ Python code is stored at https://github.com/teorth/expdb/tree/main/blueprint/src
 
 ## Contributing to Lean code
 
-At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.  If you have some ideas for such an expansion, please do not hesitate to discuss them with the maintainers of the ANTEDB; if there is sufficient interest, we may start a broader discussion to take more steps in this direction.
+At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.  If you have some ideas for such an expansion, please do not hesitate to discuss them with the maintainers of the ANTEDB, or raise a suitable [issue on the Github repository](https://github.com/teorth/expdb/issues); if there is sufficient interest, we may start a broader discussion to take more steps in this direction.
