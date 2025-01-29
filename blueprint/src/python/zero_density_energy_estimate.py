@@ -16,7 +16,6 @@ from polytope import Polytope
 from reference import Reference
 from region import Region
 
-
 class Zero_Density_Energy_Estimate:
 
     """
