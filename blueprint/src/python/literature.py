@@ -828,7 +828,7 @@ def add_bourgain_large_values_estimate():
         )
     )
 
-# Guth-Maynard (2024) large values theorem: LV(s, t) \leq max(2 - 2s, 18/5 - 4s, t + 12/5 - 4s)
+# Guth-Maynard (2024) large values theorem: LV(s, t) \\leq max(2 - 2s, 18/5 - 4s, t + 12/5 - 4s)
 def add_guth_maynard_large_values_estimate():
     literature.add_hypothesis(
         lv.literature_bound_LV_max(
@@ -836,11 +836,32 @@ def add_guth_maynard_large_values_estimate():
         )
     )
 
+# Additional Guth--Maynard (2024) large value estimate
+def add_guth_maynard_large_values_estimate2(K):
+    for k in range(1, K):
+        literature.add_hypothesis(
+            lv.literature_bound_LV_max(
+                [
+                    [2, -2, 0],
+                    [5, -6, 0],
+                    [frac(4*k, k+1), -frac(6*k, k+1), frac(k, k+1)],
+                    [frac(20*k, 4*k+3), -frac(24*k, 4*k+3), frac(2, 4*k+3)],
+                    [2, -4, frac(4,3)],
+                    [3, -4, frac(1,2)],
+                    [frac(9,2), -7, 1],
+                    [frac(72,19), -frac(112,19), frac(18,19)]
+                ],
+                rm.get("guth-maynard"),
+                params=f" with k = {k}"
+            )
+        )
+
 add_huxley_large_values_estimate()
 add_heath_brown_large_values_estimate()
 add_jutila_large_values_estimate(Constants.LARGE_VALUES_TRUNCATION)
 add_bourgain_large_values_estimate()
 add_guth_maynard_large_values_estimate()
+add_guth_maynard_large_values_estimate2(Constants.LARGE_VALUES_TRUNCATION)
 
 ########################################################################################
 # Chapter 8: List of zeta large value estimates in the literature
@@ -1092,7 +1113,6 @@ def add_lver_guth_maynard_2024c():
         )
     )
 add_lver_guth_maynard_2024c()
-
 
 ########################################################################################
 # Chapter 11: List of zero-density estimates in the literature, in chronological order
