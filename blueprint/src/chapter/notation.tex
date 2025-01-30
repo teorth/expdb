@@ -55,3 +55,30 @@ Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ i
 
 \begin{remark} There are two caveats to keep in mind when using this asymptotic formalism.  Firstly, the law of the excluded middle is only valid after passing to subsequences.  For instance, it is possible for a nonstandard natural number to neither be even or odd, since it could be even for some $\ii$ and odd for others.  However, one can pass to a subsequence in which it becomes either even or odd.  Secondly, one cannot combine the ``external'' concepts of asymptotic notation with the ``internal'' framework of (variable) set theory.  For instance, one cannot view the collection of all bounded (variable) real numbers as a variable set, since the notion of boundedness is not ``pointwise'' to each index $\ii$, but instead describes the ``global'' behavior of this index set.  Thus, for instance, set builder notation such as $\{ x: x = O(1) \}$ should be avoided.
 \end{remark}
+
+
+
+%%The remark below was added by Jesse Elliott on 1/30/25....I'm not sure where exactly in the pdf this remark is appropriate, but I think it would be appropriate to add it somewhere.
+
+\begin{remark}  
+Let $f$ be any complex-valued function whose domain is a subset of $\R$ that is not bounded above.   One may define the \emph{degree of $f$} to be the extended real number
+$$\deg f = \inf\{t \in \R: |f(x)| = O(x^t) \ (x \to \infty)\} \in [-\infty,\infty],$$ 
+which, equivalently, can be defined by
+$$\deg f = \limsup_{x \to \infty} \frac{\log |f(x)|}{\log x}.$$
+Given any real number $d$, the statements
+ $$|f(x)| = O(x^{d + \varepsilon}), \quad \forall \varepsilon > 0,$$ 
+$$|f(x)| = o(x^{d + \varepsilon}), \quad \forall \varepsilon > 0,$$ 
+and  $$\deg f \leq d$$
+are equivalent.   This notion of degree,  along with a generalization called ``logexponential degree,'' is defined in \cite{ell},  where some of their  uses in analytic number theory and asymptotic analysis are catalogued.  
+
+The quintessential example in analytic number theory is  the degree of $\pi(x)-\operatorname{li}(x)$, where $\pi(x)$ is the prime counting function and $\operatorname{li}(x) = \int_0^x \frac{dt}{\log t}$ is the logarithmic integral function: it is well known that the degree of $\pi(x)-\operatorname{li}(x)$ is equal to the supremum $\Theta$ of the real parts of the zeros of the Riemman zeta function $\zeta(s)$.   Note that $\Theta \in [1/2, 1]$, and the Riemann hypothesis is equivalent to $\Theta = 1/2$.    The degrees of many functions in analytic number theory can be expressed in terms of $\Theta$, and vice versa.   For example, one has $\deg M(x) = \Theta$, where $M(x) = \sum_{n \leq x} \mu(n)$ is the Mertens function.   Similarly, one has $$\deg \left(\sum_{p \leq x} \frac{1}{p}  -  \log \log x-M\right) =  \deg \left(e^{\gamma} \prod_{p \leq x}\left(1-\frac{1}{p}\right) - \frac{1 }{\log x}\right) =  \Theta-1,$$ where $\gamma$ is the Euler--Mascheroni constant and $M$ is the Meissel--Mertens constant.  Any future bounds on $\Theta$, then, will lead simultaneously to bounds the degrees all such functions. However, it is not expected that bounds tighter bounds than  $\Theta \in [1/2, 1]$ will be found in the near future. Nevertheless, it is useful to observe that many known equivalents of the Riemann hypothesis can be generalized to unconditional statements about the constant $\Theta$.  
+
+Another example of degree concerns the \emph{irrationality measure $\mu(\alpha)$} of an irrational number $\alpha$, which is the infimum of all $t >0$ such that  there are only finitely many pairs $(a,b)$ of integers $a$ and $b$  with $b> 0$ and
+$$\left|\alpha -\frac{a}{b} \right| < \frac{1}{b^t}.$$    For any irrational number $\alpha$,  one has
+$$\mu(\alpha) = \deg \frac{1}{\Vert n\alpha \Vert/n} = \deg \frac{1}{ \min\left\{ \left| \alpha-\frac{a}{b}\right|: \text{$a,b \in\Z$ and $1 \leq b \leq x$} \right\}},$$
+where $\Vert x \Vert$ for any $x \in \R$ is the distance from $x$ to the nearest integer \cite[Chapter 13]{ell}.     Thus, the widely studied notion of irrationality measure falls under the rubric of  exponents addressed in this project.
+%%%The reference \cite{ell} is \bibitem{ell} J.\ Elliott, \emph{Analytic Number Theory and Algebraic Asymptotic Analysis}, Monographs in Number Theory, World Scientific, https://doi.org/10.1142/13521.
+%%% with arXiv reference https://arxiv.org/abs/2407.17820.
+\end{remark}
+
+
