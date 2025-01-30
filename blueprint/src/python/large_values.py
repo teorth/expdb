@@ -69,7 +69,7 @@ class Large_Value_Estimate_Transform:
 
 ###############################################################################
 
-def convert_bounds(bounds):
+def convert_bounds(bounds: list) -> Large_Value_Estimate:
     """
     Given a list of upper bounds for rho, generate the associated 
     Large_Value_Estimate object.

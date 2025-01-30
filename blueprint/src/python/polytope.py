@@ -314,9 +314,20 @@ class Polytope:
         # Otherwise, envelop is the union
         return Polytope(env, canonicalize=True)
 
-    # Constructs a d-dimensional box as a polytope
-    # lims is a ordered list of limits for each variable
-    def rect(*lims):
+    def rect(*lims: tuple) -> 'Polytope':
+        """
+        Constructs a d-dimensional box as a polytope
+
+        Parameters
+        ----------
+        lims : tuple of tuples 
+            An length-d tuple of limits along each dimension of the box
+        
+        Returns
+        -------
+        Polytope 
+            The d-dimensional Polytope representing the box. 
+        """
         bounds = []
         dim = len(lims)
         for i in range(dim):
