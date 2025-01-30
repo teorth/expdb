@@ -194,20 +194,44 @@ class Hypothesis_Set:
             if hypothesis.is_match(hypothesis_type, year)
         ]
 
-    # find a hypothesis in the set that matches the specified requirements
+    
     def find_hypothesis(
-        self, hypothesis_type="Any", data="Any", keywords="Any", year="Any"
-    ):
-        for hypothesis in self:
-            if (
-                hypothesis_type == "Any"
-                or hypothesis.hypothesis_type == hypothesis_type
-            ):
-                if data == "Any" or hypothesis.data == data:
-                    if keywords == "Any" or all(
-                        k.strip() in hypothesis.name for k in keywords.split(",")
-                    ):
-                        if year == "Any" or hypothesis.reference.year() == year:
-                            return hypothesis
+        self, hypothesis_type="Any", data="Any", name="Any", keywords="Any", year="Any"
+    ) -> Hypothesis | None:
+        """
+        Returns the first instance of a Hypothesis in the set that matches the 
+        specified requirements.
+
+        Parameters
+        ----------
+        hypothesis_type : str, optional
+            The type of the hypothesis, e.g. "Exponent pair" (default is "Any").
+        data : str or object, optional
+            The data that the hypothesis contains, e.g. an object of type Exp_pair
+            (default is "Any").
+        name : str, optional
+            The full name of the hypothesis, e.g. "Jutila large value theorem with k = 3"
+            (default is "Any").
+        keywords : str, optional
+            A comma-separated list of keywords to search for in the name of the 
+            hypothesis (default is "Any").
+        year : str or int, optional
+            The year of the hypothesis (default is "Any").
+        
+        Returns
+        -------
+        Hypothesis or None
+            The first hypothesis that matches all conditions, or None if no such 
+            hypothesis exists. 
+        """
+        for h in self:
+            if hypothesis_type == "Any" or h.hypothesis_type == hypothesis_type:
+                if data == "Any" or h.data == data:
+                    if name == "Any" or h.name == name:
+                        if keywords == "Any" or all(
+                            k.strip() in h.name for k in keywords.split(",")
+                        ):
+                            if year == "Any" or h.reference.year() == year:
+                                return h
         print("ERROR: No matching hypothesis found")
         return None

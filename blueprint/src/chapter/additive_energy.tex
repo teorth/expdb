@@ -511,16 +511,24 @@ We also record a variant of that theorem from the same paper:
 
 \begin{theorem}[Additional Guth--Maynard large values estimate]\label{guth-maynard-extra} For any $1/2 < \sigma < 1$, $\tau \geq 1$, and natural number $k$ one has
     \begin{equation}\label{general-tau}
-        \LV(\sigma,\tau) \leq \max(2-2\sigma, 5-6\sigma, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau, 2-4\sigma + \frac{4}{3} \tau, 3-4\sigma+\frac{1}{2} \tau, \frac{9}{2}-7\sigma+\tau, \frac{72-112\sigma}{19} + \frac{18}{19} \tau).
+    \begin{split}
+        \LV(\sigma,\tau) \leq \max\Big(&2-2\sigma, 5-6\sigma, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau, \\
+        &2-4\sigma + \frac{4}{3} \tau, 3-4\sigma+ \frac{\tau}{2}, \frac{9}{2}-7\sigma+\tau, \frac{72-112\sigma}{19} + \frac{18}{19} \tau\Big).
+    \end{split}
     \end{equation}
 If one specializes to the case $\sigma \geq 7/10$ and $1 \leq \tau \leq 6/5$, one then has
-    \begin{equation}\label{second-bound} \LV(\sigma,\tau) \leq \max(2-2\sigma, 3-4\sigma+\tau/2, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau).
+    \begin{equation}\label{second-bound} \LV(\sigma,\tau) \leq \max\Big(2-2\sigma, 3-4\sigma+\frac{\tau}{2}, (4-6\sigma)\frac{k}{k+1} + \frac{k}{k+1} \tau, (5-6\sigma) \frac{4k}{4k+3} + \frac{2}{4k+3} \tau\Big).
     \end{equation}
 and also
 \begin{equation}\label{third-bound}
-     \LV(\sigma,\tau) \leq \max(2-2\sigma, 3-4\sigma+\tau/2, \frac{46-60\sigma}{5} + \frac{30\sigma-21}{5} \tau).
+     \LV(\sigma,\tau) \leq \max\Big(2-2\sigma, 3-4\sigma+\frac{\tau}{2}, \frac{46-60\sigma}{5} + \frac{30\sigma-21}{5} \tau\Big).
 \end{equation}
 \end{theorem}
+
+\literature
+\code{add_guth_maynard_large_values_estimate2(Constants.LARGE_VALUES_TRUNCATION)}
+\derived
+\code{prove_guth_maynard_large_values_theorem2()}
 
 \begin{proof}
 (Sketch) The first bound \eqref{general-tau} is \cite[(12.1)]{guth-maynard}, and is proven by the same methods used to prove Theorem \ref{guth-maynard-lvt}.  The second and third bounds \eqref{second-bound}, \eqref{third-bound} are in \cite[Proposition 12.1]{guth-maynard}.  The second bound \eqref{second-bound} follows from the $k=3$ case of Theorem \ref{jutila-lvt} when $\sigma \geq 39/50$, and from \eqref{general-tau} together with Theorems \ref{l2-mvt}, \ref{huxley-lv} for $\sigma < 39/50$.  The third bound \eqref{third-bound} follows from Theorems \ref{l2-mvt}, \ref{huxley-lv} when $\tau \leq 4-4\sigma$, and for $\tau > 4-4\sigma$

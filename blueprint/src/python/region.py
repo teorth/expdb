@@ -181,7 +181,13 @@ class Region:
             if region.region_type == Region_Type.POLYTOPE:
                 return self.child.is_subset_of(region.child)
             elif region.region_type == Region_Type.UNION or region.region_type == Region_Type.DISJOINT_UNION:
-                return self.child.is_covered_by(region.child)
+                # This assumes that the children of region are regions of type Region_Type.POLYTOPE
+                if not all(
+                        isinstance(r, Region) and r.region_type == Region_Type.POLYTOPE 
+                        for r in region.child
+                    ):
+                    raise NotImplementedError("Parameter region is of a currently unsupported type.")
+                return self.child.is_covered_by([r.child for r in region.child])
             elif region.region_type == Region_Type.INTERSECT:
                 return all(self.is_subset_of(p) for p in region.child)
         
