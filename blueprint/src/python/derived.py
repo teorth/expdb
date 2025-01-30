@@ -272,10 +272,10 @@ def prove_guth_maynard_large_values_theorem2():
     # Separate optimization for each value of k
     for k in range(1, Constants.LARGE_VALUES_TRUNCATION):
         hs = Hypothesis_Set()
-        hs.add_hypothesis(literature.find_hypothesis(keywords=f"Guth--Maynard large value estimate 2 with k = {k}"))
-        hs.add_hypothesis(literature.find_hypothesis(keywords=f"Jutila large value estimate with k = 3"))
+        hs.add_hypothesis(literature.find_hypothesis(name=f"Guth--Maynard large value estimate 2 with k = {k}"))
+        hs.add_hypothesis(literature.find_hypothesis(name=f"Jutila large value estimate with k = 3"))
         hs.add_hypothesis(lv.large_value_estimate_L2)
-        hs.add_hypothesis(literature.find_hypothesis(keywords=f"Huxley large value estimate"))
+        hs.add_hypothesis(literature.find_hypothesis(name=f"Huxley large value estimate"))
 
         # Proof of first theorem: in the region σ >= 7/10, 1 <= τ <= 6/5
         rect = Region.from_polytope(
@@ -304,7 +304,7 @@ def prove_guth_maynard_large_values_theorem2():
             ).region
         
         # Check that region is contained in region2
-        print(region.is_subset_of(region2))
+        print(f"Checking hypothesis holds for k = {k}:", region.is_subset_of(region2))
 
 def prove_all_large_value_estimates():
     prove_bourgain_large_values_theorem()
@@ -1104,4 +1104,4 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-# prove_guth_maynard_large_values_theorem2()
+prove_guth_maynard_large_values_theorem2()
