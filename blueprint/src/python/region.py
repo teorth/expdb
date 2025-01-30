@@ -261,8 +261,6 @@ class Region:
         
         return Region(self.region_type, [c.lift(var) for c in self.child])
 
-    # Returns a representation of this region as a disjoint union of convex polytopes.
-    # Returns the result as a Region object of type DISJOINT_UNION
     def as_disjoint_union(self, verbose=False, track_dependencies=False) -> 'Region':
         """
         Computes a representation of this region as a union of convex polytopes. 
@@ -398,7 +396,7 @@ class Region:
                 
                 # [[Ad-hoc performance optimisation]]
                 # Every few rounds, simplify if the number of polytopes is too large
-                if (i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100):
+                if ((i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100) or len(new_A) >= 500):
                     prevlen = len(new_A)
                     new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union, track_dependencies)
                     if verbose:

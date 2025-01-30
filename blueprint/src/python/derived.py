@@ -1049,6 +1049,21 @@ def prove_zero_density_energy_11():
     for h in hs: print(h.data)
     return hs
 
+def prove_zero_density_energy_12():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 4):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Large value estimate"))
+
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(3,4), frac(5,6)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=True)
+    for h in hs: print(h.data)
+    return hs
 def prove_all_zero_density_energy_estimates():
     prove_heath_brown_energy_estimate()
     prove_improved_heath_brown_energy_estimate()
@@ -1104,4 +1119,4 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_guth_maynard_large_values_theorem2()
+prove_zero_density_energy_12()
