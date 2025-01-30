@@ -1,0 +1,71 @@
+\chapter{The de Bruijn--Newman constant}\label{debruijn-newman-chapter}
+
+A survey on this topic may be found at \cite{newman-wu-survey}.
+
+Let $H_0 \colon \C \to \C$ denote the function
+\begin{equation}\label{hoz}
+ H_0(z) := \frac{1}{8} \xi\left(\frac{1}{2} + \frac{iz}{2}\right),
+\end{equation}
+where $\xi$ denotes the Riemann xi function
+\begin{equation}\label{sas}
+ \xi(s) := \frac{s(s-1)}{2} \pi^{-s/2} \Gamma\left(\frac{s}{2}\right) \zeta(s)
+\end{equation}
+and $\zeta$ is the Riemann zeta function.
+Then $H_0$ is an entire even function with functional equation $H_0(\overline{z}) = \overline{H_0(z)}$, and the Riemann hypothesis is equivalent to the assertion that all the zeroes of $H_0$ are real.
+
+It is a classical fact (see \cite[p. 255]{titch}) that $H_0$ has the Fourier representation
+$$ H_0(z) = \int_0^\infty \Phi(u) \cos(zu)\ du$$
+where $\Phi$ is the super-exponentially decaying function
+\begin{equation}\label{phidef}
+ \Phi(u) := \sum_{n=1}^\infty (2\pi^2  n^4 e^{9u} - 3\pi n^2 e^{5u} ) \exp(-\pi n^2 e^{4u} ).
+\end{equation}
+The sum defining $\Phi(u)$ converges absolutely for negative $u$ also.  From Poisson summation one can verify that $\Phi$ satisfies the functional equation $\Phi(u) = \Phi(-u)$ (i.e., $\Phi$ is even).
+
+De Bruijn \cite{debr} introduced the more general family of functions $H_t \colon \C \to \C$ for $t \in \R$ by the formula
+\begin{equation}\label{htdef}
+ H_t(z) := \int_0^\infty e^{tu^2} \Phi(u) \cos(zu)\ du.
+\end{equation}
+As noted in \cite[p.114]{csv}, one can view $H_t$ as the evolution of $H_0$ under the backwards heat equation $\partial_t H_t(z)= -\partial_{zz} H_t(z)$.
+As with $H_0$, each of the $H_t$ are entire even functions with functional equation $H_t(\overline{z}) = \overline{H_t(z)}$.  From results of P\'olya \cite{polya} it is known that $H_t$ has purely real zeroes for some $t$ then $H_{t'}$ has purely real zeroes for all $t'>t$.
+De Bruijn showed that the zeroes of $H_t$ are purely real for $t \geq 1/2$.  Strengthening these results, Newman \cite{newman} showed that there is an absolute constant $-\infty < \Lambda \leq 1/2$, now known as the \emph{De Bruijn-Newman constant}, with the property that $H_t$ has purely real zeroes if and only if $t \geq \Lambda$.  The Riemann hypothesis is then clearly equivalent to the upper bound $\Lambda \leq 0$.  Newman conjectured the complementary lower bound $\Lambda \geq 0$, and noted that this conjecture asserts that if the Riemann hypothesis is true, it is only ``barely so''.
+
+Known lower bounds on $\Lambda$ are listed in the tables below.
+
+\begin{table}[ht]
+  \caption{Lower bounds on $\Lambda$.}
+  \begin{tabular}{|l|l|}
+  \hline
+  Lower bound on $\Lambda$ & Reference \\
+  \hline
+  $-\infty$ & Newman 1976 \cite{newman} \\
+  $-50$ & Csordas--Norfolk--Varga 1988 \cite{cnv} \\
+  $-5$ & te Riele 1991 \cite{tr} \\
+  $-0.385$ & Norfolk--Ruttan--Varga 1992 \cite{nrv} \\
+  $-0.0991$ & Csordas--Ruttan--Varga 1991 \cite{crv} \\
+  \hline
+  $-4.379 \times 10^{-6}$ & Csordas--Smith--Varga 1994 \cite{csv} \\
+  $-5.895 \times 10^{-9}$ & Csordas--Odlyzko--Smith--Varga 1993 \cite{cosv} \\
+  $-2.63 \times 10^{-9}$ & Odlyzko 2000 \cite{odlyzko} \\
+  $-1.15 \times 10^{-11}$ & Saouter--Gourdon--Demichel 2011 \cite{saouter} \\
+  \hline
+  $0$ & Rodgers--Tao 2020 \cite{rodgers-tao} \\
+  $0$ & Dobner 2021 \cite{dobner}
+  \end{tabular}
+  \end{table}
+
+  The argument of Dobner applies more generally to the Selberg class.
+
+  For upper bounds, we have
+  \begin{table}[ht]
+    \caption{Upper bounds on $\Lambda$.}
+    \begin{tabular}{|l|l|}
+    \hline
+    Upper bound on $\Lambda$ & Reference \\
+    \hline
+    $\leq 1/2$ & Newman 1976 \cite{newman} \\
+    $< 1/2$ & Ki--Kim--Lee 2009 \cite{kkl} \\
+    $\leq 0.22$ & Polymath 2019 \cite{polymath15} \\
+    $\leq 0.2$ & Platt--Trudgian 2021 \cite{platt-trudgian} \\
+    \hline
+  \end{tabular}
+\end{table}
