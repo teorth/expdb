@@ -23,3 +23,9 @@ Python code is stored at https://github.com/teorth/expdb/tree/main/blueprint/src
 ## Contributing to Lean code
 
 At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.  If you have some ideas for such an expansion, please do not hesitate to discuss them with the maintainers of the ANTEDB, or raise a suitable [issue on the Github repository](https://github.com/teorth/expdb/issues); if there is sufficient interest, we may start a broader discussion to take more steps in this direction.
+
+## A note on notational conventions
+
+The ANTEDB is intended to collect results on analytic number theory exponents in the literature in such a way that they can be combined as readily as possible.  Because of this, we have made efforts to select standardized notations for the ANTEDB, and to express results from the literature in this standardized notation even if they are expressed in a somewhat different notation in the original source.
+
+The focus on the ANTEDB is thus on the exponent bounds in the literature, rather than the notational choices from that literature, and so the addition of notational conventions to the ANTEDB that duplicate ones that are already present in the database are discouraged in order to maximize interoperability of results.  However, it is conceivable that there is a case for globally refactoring the ANTEDB to switch from a current notation convention to new one; if so, one should set up a [Github issue](https://github.com/teorth/expdb/issues) to discuss the pros and cons of such a global switch.
