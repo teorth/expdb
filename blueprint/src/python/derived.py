@@ -267,6 +267,14 @@ def prove_guth_maynard_large_values_theorem():
 
     print("Proved feasible region for (σ, τ, ρ):", poly.to_str("στρ"))
 
+def prove_guth_maynard_large_values_theorem2():
+    hypotheses = Hypothesis_Set()
+    for k in range(1, Constants.LARGE_VALUES_TRUNCATION):
+        hypotheses.add_hypotheses(literature.find_hypothesis(keywords=f"Guth--Maynard large value estimate 2 with k = {k}"))
+    print(hypotheses)
+
+prove_guth_maynard_large_values_theorem2()
+
 def prove_all_large_value_estimates():
     prove_bourgain_large_values_theorem()
     prove_guth_maynard_large_values_theorem()
@@ -1066,4 +1074,4 @@ def prove_all():
 
 # prove_all()
 # prove_zero_density_energy_11()
-compute_best_zero_density()
+# compute_best_zero_density()

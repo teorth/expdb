@@ -524,7 +524,9 @@ and also
      \LV(\sigma,\tau) \leq \max\Big(2-2\sigma, 3-4\sigma+\frac{\tau}{2}, \frac{46-60\sigma}{5} + \frac{30\sigma-21}{5} \tau\Big).
 \end{equation}
 \end{theorem}
-\literature{add_guth_maynard_large_values_estimate2(Constants.LARGE_VALUES_TRUNCATION)}
+
+\literature
+\code{add_guth_maynard_large_values_estimate2(Constants.LARGE_VALUES_TRUNCATION)}
 
 \begin{proof}
 (Sketch) The first bound \eqref{general-tau} is \cite[(12.1)]{guth-maynard}, and is proven by the same methods used to prove Theorem \ref{guth-maynard-lvt}.  The second and third bounds \eqref{second-bound}, \eqref{third-bound} are in \cite[Proposition 12.1]{guth-maynard}.  The second bound \eqref{second-bound} follows from the $k=3$ case of Theorem \ref{jutila-lvt} when $\sigma \geq 39/50$, and from \eqref{general-tau} together with Theorems \ref{l2-mvt}, \ref{huxley-lv} for $\sigma < 39/50$.  The third bound \eqref{third-bound} follows from Theorems \ref{l2-mvt}, \ref{huxley-lv} when $\tau \leq 4-4\sigma$, and for $\tau > 4-4\sigma$

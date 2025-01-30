@@ -852,7 +852,7 @@ def add_guth_maynard_large_values_estimate2(K):
                     [frac(72,19), -frac(112,19), frac(18,19)]
                 ],
                 rm.get("guth-maynard"),
-                params=f" with k = {k}"
+                params=f" 2 with k = {k}"
             )
         )
 
