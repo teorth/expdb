@@ -14,7 +14,7 @@ The chapters are stored at https://github.com/teorth/expdb/tree/main/blueprint/s
 
 It is fine to suggest incomplete contributions, for instance stating a result with only a very sketchy proof or reference.  For an extremely incomplete contribution (e.g., a vague statement of a result without a reference, or proposing a new direction for the ANTEDB without contributing significant content), consider opening up a Github issue instead of a pull request.
 
-If you propose to add a new chapter, or rearrange existing ones, one will also have to modify https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex .  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.
+If you propose to add a new chapter, or rearrange existing ones, one will also have to modify [content.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex).  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.  It is recommended to see if [print.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/print.tex) compiles before submitting the pull request. [Note: some LaTeX compilers may have difficulty with some of the packages.  `xelatex` generally works well though.]
 
 ## Contributing to Python code
 
