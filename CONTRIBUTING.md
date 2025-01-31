@@ -6,11 +6,11 @@ Some specific information about types of contributions:
 
 ## Contributing a new reference to the blueprint
 
-The references are stored at https://github.com/teorth/expdb/blob/main/blueprint/src/references.bib in BibTeX format.  If possible, please try to maintain the alphabetical ordering of the references by first order.
+The references are stored at [references.bib](https://github.com/teorth/expdb/blob/main/blueprint/src/references.bib) in BibTeX format.  If possible, please try to maintain the alphabetical ordering of the references by first order.
 
 ## Contributing to a chapter of the blueprint
 
-The chapters are stored at https://github.com/teorth/expdb/tree/main/blueprint/src/chapter .  One can use standard LaTeX commands in these chapters.  One can also use the \uses{} macro to indicate which results depend on which other ones, for the purpose of filling out the dependency graph, though at the current stage of the project we are not making heavy use of this feature.
+The chapters are stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/chapter).  One can use standard LaTeX commands in these chapters.  One can also use the \uses{} macro to indicate which results depend on which other ones, for the purpose of filling out the dependency graph, though at the current stage of the project we are not making heavy use of this feature.
 
 It is fine to suggest incomplete contributions, for instance stating a result with only a very sketchy proof or reference.  For an extremely incomplete contribution (e.g., a vague statement of a result without a reference, or proposing a new direction for the ANTEDB without contributing significant content), consider opening up a Github issue instead of a pull request.
 
@@ -18,7 +18,7 @@ If you propose to add a new chapter, or rearrange existing ones, one will also h
 
 ## Contributing to Python code
 
-Python code is stored at https://github.com/teorth/expdb/tree/main/blueprint/src/python .  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex .
+Python code is stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/python).  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in [common.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex).
 
 ## Contributing to Lean code
 
