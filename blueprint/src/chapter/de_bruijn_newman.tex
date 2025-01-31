@@ -26,7 +26,7 @@ De Bruijn \cite{debr} introduced the more general family of functions $H_t \colo
  H_t(z) := \int_0^\infty e^{tu^2} \Phi(u) \cos(zu)\ du.
 \end{equation}
 As noted in \cite[p.114]{csv}, one can view $H_t$ as the evolution of $H_0$ under the backwards heat equation $\partial_t H_t(z)= -\partial_{zz} H_t(z)$.
-As with $H_0$, each of the $H_t$ are entire even functions with functional equation $H_t(\overline{z}) = \overline{H_t(z)}$.  From results of P\'olya \cite{polya} it is known that $H_t$ has purely real zeroes for some $t$ then $H_{t'}$ has purely real zeroes for all $t'>t$.
+As with $H_0$, each of the $H_t$ are entire even functions with functional equation $H_t(\overline{z}) = \overline{H_t(z)}$.  From results of P\'olya \cite{polya} it is known that if $H_t$ has purely real zeroes for some $t$ then $H_{t'}$ has purely real zeroes for all $t'>t$.
 De Bruijn showed that the zeroes of $H_t$ are purely real for $t \geq 1/2$.  Strengthening these results, Newman \cite{newman} showed that there is an absolute constant $-\infty < \Lambda \leq 1/2$, now known as the \emph{De Bruijn-Newman constant}, with the property that $H_t$ has purely real zeroes if and only if $t \geq \Lambda$.  The Riemann hypothesis is then clearly equivalent to the upper bound $\Lambda \leq 0$.  Newman conjectured the complementary lower bound $\Lambda \geq 0$, and noted that this conjecture asserts that if the Riemann hypothesis is true, it is only ``barely so''.
 
 Known lower bounds on $\Lambda$ are listed in the tables below.
@@ -37,19 +37,19 @@ Known lower bounds on $\Lambda$ are listed in the tables below.
   \hline
   Lower bound on $\Lambda$ & Reference \\
   \hline
-  $-\infty$ & Newman 1976 \cite{newman} \\
-  $-50$ & Csordas--Norfolk--Varga 1988 \cite{cnv} \\
-  $-5$ & te Riele 1991 \cite{tr} \\
-  $-0.385$ & Norfolk--Ruttan--Varga 1992 \cite{nrv} \\
-  $-0.0991$ & Csordas--Ruttan--Varga 1991 \cite{csordas_laguerre_1991} \\
+  $>-\infty$ & Newman 1976 \cite{newman} \\
+  $>-50$ & Csordas--Norfolk--Varga 1988 \cite{cnv} \\
+  $>-5$ & te Riele 1991 \cite{tr} \\
+  $>-0.385$ & Norfolk--Ruttan--Varga 1992 \cite{nrv} \\
+  $>-0.0991$ & Csordas--Ruttan--Varga 1991 \cite{csordas_laguerre_1991} \\
   \hline
-  $-4.379 \times 10^{-6}$ & Csordas--Smith--Varga 1994 \cite{csv} \\
-  $-5.895 \times 10^{-9}$ & Csordas--Odlyzko--Smith--Varga 1993 \cite{cosv} \\
-  $-2.63 \times 10^{-9}$ & Odlyzko 2000 \cite{odlyzko} \\
-  $-1.15 \times 10^{-11}$ & Saouter--Gourdon--Demichel 2011 \cite{saouter} \\
+  $>-4.379 \times 10^{-6}$ & Csordas--Smith--Varga 1994 \cite{csv} \\
+  $>-5.895 \times 10^{-9}$ & Csordas--Odlyzko--Smith--Varga 1993 \cite{cosv} \\
+  $>-2.63 \times 10^{-9}$ & Odlyzko 2000 \cite{odlyzko} \\
+  $>-1.15 \times 10^{-11}$ & Saouter--Gourdon--Demichel 2011 \cite{saouter} \\
   \hline
-  $0$ & Rodgers--Tao 2020 \cite{rodgers-tao} \\
-  $0$ & Dobner 2021 \cite{dobner} \\
+  $\geq 0$ & Rodgers--Tao 2020 \cite{rodgers-tao} \\
+  $\geq 0$ & Dobner 2021 \cite{dobner} \\
   \hline
   \end{tabular}
   \end{table}
