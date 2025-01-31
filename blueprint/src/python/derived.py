@@ -312,6 +312,12 @@ def prove_guth_maynard_intermediate_lvt2():
     Prove another intermediate large value theorem from in Guth--Maynard 
     using other intermediate large values estimates also due to Guth--Maynard
     (see also prove_guth_maynard_intermediate_lvt())
+
+    Note: one needs to take k sufficiently large for this verification to 
+    succeed. The current maximum k value of 99 is sufficient for the current
+    sample of sigma, however may be insufficient for other choices of sigma. 
+    If the verification fails for a specific value of sigma, one could try
+    increasing the maximum value of k. 
     """
     # Second lvt estimate check (using numerical sampling of sigma)
     sigma_interval = (frac(7,10), frac(1))
@@ -320,7 +326,7 @@ def prove_guth_maynard_intermediate_lvt2():
         sigma = sigma_interval[0] + (sigma_interval[1] - sigma_interval[0]) / sigma_N * i
 
         regions = []
-        for k in range(1, 30): # Need to take k sufficiently high
+        for k in range(1, 100): # Need to take k sufficiently high
             region = lv.convert_bounds(
                 [
                     [2, -2, 0],
@@ -328,28 +334,27 @@ def prove_guth_maynard_intermediate_lvt2():
                     [frac(4*k, k+1), -frac(6*k, k+1), frac(k, k+1)],
                     [frac(20*k, 4*k+3), -frac(24*k, 4*k+3), frac(2, 4*k+3)]
                 ]
-            ).region
+            ).region.substitute({0: sigma})
 
-            # L2 mean-value theorem
-            L2 = lv.large_value_estimate_L2.data.region
-
-            # Huxley large value estimate
-            huxley = literature.find_hypothesis(name="Huxley large value estimate").data.region
-
-            # Take the intersection of bounds and take a slice (for specified sigma value)
-            region = Region.intersect([region, L2, huxley])
-            region = region.substitute({0: sigma})
             regions.append(region)
         
-        # Compute their intersection
+        # L2 mean-value theorem
+        L2 = lv.large_value_estimate_L2.data.region.substitute({0: sigma})
+
+        # Huxley large value estimate
+        huxley = literature.find_hypothesis(name="Huxley large value estimate")\
+                        .data.region.substitute({0: sigma})
+
+        # tau-rho domain 
         domain = Region.from_polytope(
             Polytope.rect(
                 (1, frac(6,5)), # 1 <= τ <= 6/5
                 (0, Constants.LV_DEFAULT_UPPER_BOUND) # 0 <= ρ
             )
         )
-        region1 = Region.intersect(regions + [domain])
-        region1 = region1.as_disjoint_union()
+
+        # Compute their intersection
+        region1 = Region.intersect([domain, L2, huxley] + regions).as_disjoint_union()
 
         # Hypothesis that we want to test (a 2-d polytope in (τ, ρ))
         region2 = Region.from_union_of_halfplanes(
@@ -367,9 +372,7 @@ def prove_guth_maynard_intermediate_lvt2():
                 (Constants.LV_DEFAULT_UPPER_BOUND, 0, -1), # ρ <= some large number
             ]
         )
-
-        print(float(sigma), sigma, region1.is_subset_of(region2))
-        #return
+        print(f"Verifying Guth--Maynard large value estimate for σ = {sigma} ~ {float(sigma)}:", region1.is_subset_of(region2))
 
 def prove_guth_maynard_lvt_from_intermediate_lemmas():
     """
