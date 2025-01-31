@@ -35,3 +35,5 @@ The focus on the ANTEDB is on the exponent bounds in the literature, rather than
 ## Creating a similar database
 
 If you wish to create a database similar to the ANTEDB, but with a different scope, you may wish to set up a Lean Project with a Blueprint by following [these instructions](https://github.com/pitmonticone/LeanProject).  (The ANTEDB currently contains no actual Lean code; nevertheless, the Blueprint-based structure of a Lean project is quite convenient for such a database even without such code.)
+
+If you do create a new mathematical database, consider registering it at [Mathbases](https://github.com/MathBases/MathBases).
