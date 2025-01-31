@@ -488,6 +488,7 @@ We can put this all together to prove the Guth--Maynard large values theorem.
 \code{add_guth_maynard_large_values_estimate()}
 \derived
 \code{prove_guth_maynard_large_values_theorem()}
+\code{prove_guth_maynard_lvt_from_intermediate_lemmas()}
 
 \begin{proof}\uses{l2-mvt,huxley-lv, gm-1, gm-3, montgomery-subdivide} For $\sigma \leq 7/10$ this follows from Lemma \ref{l2-mvt}, and for $\sigma \geq 8/10$ it follows from Lemma \ref{huxley-lv}.  Thus we may assume that $7/10 \leq \sigma \leq 8/10$.  By subdivision (Lemma \ref{montgomery-subdivide}) it then suffices to treat the case $\tau = 6/5$, that is to say to show that
     $$ \rho \leq 18/5-4\sigma$$
@@ -528,7 +529,8 @@ and also
 \literature
 \code{add_guth_maynard_large_values_estimate2(Constants.LARGE_VALUES_TRUNCATION)}
 \derived
-\code{prove_guth_maynard_large_values_theorem2()}
+\code{prove_guth_maynard_intermediate_lvt()}
+\code{prove_guth_maynard_intermediate_lvt2()}
 
 \begin{proof}
 (Sketch) The first bound \eqref{general-tau} is \cite[(12.1)]{guth-maynard}, and is proven by the same methods used to prove Theorem \ref{guth-maynard-lvt}.  The second and third bounds \eqref{second-bound}, \eqref{third-bound} are in \cite[Proposition 12.1]{guth-maynard}.  The second bound \eqref{second-bound} follows from the $k=3$ case of Theorem \ref{jutila-lvt} when $\sigma \geq 39/50$, and from \eqref{general-tau} together with Theorems \ref{l2-mvt}, \ref{huxley-lv} for $\sigma < 39/50$.  The third bound \eqref{third-bound} follows from Theorems \ref{l2-mvt}, \ref{huxley-lv} when $\tau \leq 4-4\sigma$, and for $\tau > 4-4\sigma$

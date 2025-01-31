@@ -223,22 +223,22 @@ Unconditionally, one has $\GAPSQUARE \le 19/15 = 1.2666\ldots$.
 \code{prove_prime_gap2()}
 
 \begin{proof}
-Using the bounds in Table \ref{} and \ref{}, in the range $1/2 \le \sigma \le 3/4$ we may take 
+Using the bounds in \Cref{zero_density_estimates_table} and \Cref{zero-density-energy-estimates-table}, in the range $1/2 \le \sigma \le 3/4$ we may take 
 \[
 A(\sigma) = \frac{30}{13}, \qquad B(\sigma) = \frac{1931 - 2020\sigma}{286(1 - \sigma)}
 \]
-Applying \eqref{} and after a routine computation, one gets $\alpha(\sigma)$, $\beta(\sigma) \le 19/15$ (with room to spare). Next, for $3/4 \le \sigma \le 5/6$ we use 
+Applying the definitions in \Cref{gapsquare-from-a} and after a routine computation, one gets $\alpha(\sigma)$, $\beta(\sigma) \le 19/15$ (with room to spare). Next, for $3/4 \le \sigma \le 5/6$ we use 
 \[
 A(\sigma) = \frac{3}{3\sigma - 1},\qquad B(\sigma) = \frac{526 - 552\sigma}{77(1 - \sigma)}.
 \]
-For $\sigma \ge 5/6$ we use $B(\sigma) = 12/(4\sigma - 1)$ from Theorem \ref{hb-energy-bound}, along with 
+For $\sigma \ge 5/6$ we use $B(\sigma) = 12/(4\sigma - 1)$ from \Cref{hb-energy-bound}, along with 
 \[
 A(\sigma) = \begin{cases}
 \dfrac{3}{2\sigma},&5/6 \le \sigma \le 7/8,\\
 \max\left(\dfrac{3}{10\sigma - 7}, \dfrac{4}{4\sigma - 1}\right),& 7/8 \le \sigma \le 1.
 \end{cases}
 \]
-The first case comes from Theorem \ref{} and the second case comes from Theorem \ref{hb-density}, to once again obtain the required bounds (with equality at $\sigma = 7/8$). 
+The first case comes from \Cref{further_ivic_zero} and the second case comes from \Cref{hb-density}, to once again obtain the required bounds (with equality at $\sigma = 7/8$). 
 \end{proof}
 A variant of $\GAPSQUARE$ is $\GAPLARGE$, defined as the least exponent for which
 $$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2+\eps}} (p_{n+1}-p_n) \ll x^{\GAPLARGE+o(1)}$$
@@ -259,7 +259,7 @@ The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are re
     \hline
     Reference & Upper bound \\
     \hline
-    Selberg (1943) \cite{selberg_1943} & $\frac{1}{2}=0.5\dots$ (on RH)\\
+    Selberg (1943) \cite{selberg_1943} & $\frac{1}{2}=0.5$ (on RH)\\
     \hline
     Wolke (1975) \cite{wolke_1975} & $\frac{29}{30} = 0.966\dots$ \\
     \hline
@@ -276,4 +276,4 @@ The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are re
     Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{5}{8} = 0.625$ \\
     \hline
     \end{tabular}
-    \end{table}\label{gaplarge-table}
+\end{table}\label{gaplarge-table}
