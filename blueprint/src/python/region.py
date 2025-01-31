@@ -95,17 +95,25 @@ class Region:
     def from_polytope(polytope):
         return Region(Region_Type.POLYTOPE, polytope)
     
-    # Computes a Region object representing the union of a list of polytopes, 
-    # where each polytope is defined as the intersection of 
-    # - a box, represented as a list of lists (a list of constraints)
-    # - a halfplane, represented as a single list (a constraint)
-    # The resulting Region object is represented as a DISJOINT_UNION, which 
-    # greatly improves performance over a UNION representation
-    # 
-    # This method is useful for quickly initializing many commonly encountered 
-    # regions in the study of large value energy regions, since they correspond to 
-    # a region implied by a single max() function. 
-    def from_union_of_halfplanes(halfplanes, box):
+    def from_union_of_halfplanes(halfplanes: list, box: list[list]) -> 'Region':
+        """
+        Computes a Region object representing the union of a list of polytopes, 
+        where each polytope is defined as the intersection of 
+        - a box, represented as a list of lists (a list of constraints)
+        - a halfplane, represented as a single list (a constraint)
+        The resulting Region object is represented as a DISJOINT_UNION, which 
+        greatly improves performance over a UNION representation
+    
+        This method is useful for quickly initializing many commonly encountered 
+        regions in the study of large value energy regions, since they correspond to 
+        a region implied by a maximum of multiple affine functions. 
+        """
+
+        if not isinstance(halfplanes, list) and not isinstance(halfplanes, tuple):
+            raise ValueError("Parameter 'halfplanes' must be a list or tuple of numbers.")
+        if not isinstance(box, list) and not isinstance(box, tuple):
+            raise ValueError("Parameter 'box' must be a list or tuple of lists.")
+        
         # Once a halfplane has been added, include its complement in the list of 
         # neg_ineq, to add as a constraint to all remaining polytopes to be 
         # constructed. 
@@ -197,8 +205,24 @@ class Region:
         # Everything else is not implemented yet
         raise NotImplementedError()
 
-    # Returns a new region object where the substitute function is called on each polytope
-    def substitute(self, values):
+    def substitute(self, values: dict) -> 'Region':
+        """
+        Computes a new Region formed by substituting certain values along the specified 
+        dimensions. The existing Region object is unmodified. 
+
+        Parameters
+        ----------
+        values : dict of (int, Number)
+            A dictionary containing key-value pairs (k, v), where k is a non-negative 
+            integer and v is a number, representing that the variable along the k-th 
+            dimension should take the value v in the new Region. 
+
+        Returns
+        -------
+        Region 
+            The new Region formed by taking the specified values along the specified 
+            dimensions. 
+        """
         if self.region_type == Region_Type.POLYTOPE:
             return Region(Region_Type.POLYTOPE, self.child.substitute(values))
         # Handle regions with single child

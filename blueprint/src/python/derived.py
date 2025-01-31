@@ -267,10 +267,10 @@ def prove_guth_maynard_large_values_theorem():
 
     print("Proved feasible region for (σ, τ, ρ):", poly.to_str("στρ"))
 
-def prove_guth_maynard_large_values_theorem2():
+def prove_guth_maynard_intermediate_lvt():
     """
-    Prove Guth--Maynard large values theorem using intermediate large values 
-    estimates also due to Guth--Maynard
+    Prove an intermediate large value theorem from in Guth--Maynard 
+    using other intermediate large values estimates also due to Guth--Maynard
     """
     # Separate optimization for each value of k
     for k in range(1, Constants.LARGE_VALUES_TRUNCATION):
@@ -307,7 +307,71 @@ def prove_guth_maynard_large_values_theorem2():
         # Check that region is contained in region2
         print(f"Checking hypothesis holds for k = {k}:", region.is_subset_of(region2))
 
-def prove_guth_maynard_large_values_theorem3():
+def prove_guth_maynard_intermediate_lvt2():
+    """
+    Prove another intermediate large value theorem from in Guth--Maynard 
+    using other intermediate large values estimates also due to Guth--Maynard
+    (see also prove_guth_maynard_intermediate_lvt())
+    """
+    # Second lvt estimate check (using numerical sampling of sigma)
+    sigma_interval = (frac(7,10), frac(1))
+    sigma_N = 100
+    for i in range(sigma_N + 1):
+        sigma = sigma_interval[0] + (sigma_interval[1] - sigma_interval[0]) / sigma_N * i
+
+        regions = []
+        for k in range(1, 30): # Need to take k sufficiently high
+            region = lv.convert_bounds(
+                [
+                    [2, -2, 0],
+                    [3, -4, frac(1,2)],
+                    [frac(4*k, k+1), -frac(6*k, k+1), frac(k, k+1)],
+                    [frac(20*k, 4*k+3), -frac(24*k, 4*k+3), frac(2, 4*k+3)]
+                ]
+            ).region
+
+            # L2 mean-value theorem
+            L2 = lv.large_value_estimate_L2.data.region
+
+            # Huxley large value estimate
+            huxley = literature.find_hypothesis(name="Huxley large value estimate").data.region
+
+            # Take the intersection of bounds and take a slice (for specified sigma value)
+            region = Region.intersect([region, L2, huxley])
+            region = region.substitute({0: sigma})
+            regions.append(region)
+        
+        # Compute their intersection
+        domain = Region.from_polytope(
+            Polytope.rect(
+                (1, frac(6,5)), # 1 <= τ <= 6/5
+                (0, Constants.LV_DEFAULT_UPPER_BOUND) # 0 <= ρ
+            )
+        )
+        region1 = Region.intersect(regions + [domain])
+        region1 = region1.as_disjoint_union()
+
+        # Hypothesis that we want to test (a 2-d polytope in (τ, ρ))
+        region2 = Region.from_union_of_halfplanes(
+            # Halfplanes
+            [
+                [2 - 2 * sigma, 0, -1], # ρ <= 2 - 2σ
+                [3 - 4 * sigma, frac(1,2), -1], # ρ <= 3 - 4σ + τ/2
+                [(46 - 60 * sigma) / 5, (30 * sigma - 21) / 5, -1] # ρ <= (46 - 60σ)/5 + (30σ - 21)τ/5
+            ],
+            # Bounding box constraints
+            [
+                (-1, 1, 0), # τ >= 1
+                (frac(6,5), -1, 0), # τ <= 6/5
+                (0, 0, 1), # ρ >= 0
+                (Constants.LV_DEFAULT_UPPER_BOUND, 0, -1), # ρ <= some large number
+            ]
+        )
+
+        print(float(sigma), sigma, region1.is_subset_of(region2))
+        #return
+
+def prove_guth_maynard_lvt_from_intermediate_lemmas():
     """
     Prove Theorem 1.1 of Guth--Maynard using intermediate large value estimates found in 
     Guth--Maynard 
@@ -335,8 +399,8 @@ def prove_guth_maynard_large_values_theorem3():
 def prove_all_large_value_estimates():
     prove_bourgain_large_values_theorem()
     prove_guth_maynard_large_values_theorem()
-    prove_guth_maynard_large_values_theorem2()
-    prove_guth_maynard_large_values_theorem3()
+    prove_guth_maynard_intermediate_lvt()
+    prove_guth_maynard_lvt_from_intermediate_lemmas()
     
 ######################################################################################
 # Derivations of zero-density estimates for the Riemann zeta-function
@@ -1147,6 +1211,5 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-#prove_guth_maynard_large_values_theorem2()
-# prove_guth_maynard_large_values_theorem3()
+prove_guth_maynard_intermediate_lvt2()
 #prove_zero_density_energy_12()
