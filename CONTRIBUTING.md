@@ -31,3 +31,7 @@ The ANTEDB is intended to collect results on analytic number theory exponents in
 For instance, we have chosen to use a "cheap nonstandard analysis" convention for asymptotic notation, as it efficiently hides the "epsilons and deltas" in the exponents, which has some technical advantages for the numerical side of the project as it often allows exponents to be represented by rational numbers which can be easily manipulated by exact arithmetic rather than floating point arithmetic.
 
 The focus on the ANTEDB is on the exponent bounds in the literature, rather than the notational choices from that literature, and the addition of notational conventions to the ANTEDB that duplicate ones that are already present in the database is therefore discouraged in order to maximize interoperability of results.  However, it is conceivable that there is a case for globally refactoring the ANTEDB to switch from a current notational convention to new one; if so, one should set up a [Github issue](https://github.com/teorth/expdb/issues) to discuss the pros and cons of such a global switch.
+
+## Creating a similar database
+
+If you wish to create a database similar to the ANTEDB, but with a different scope, you may wish to set up a Lean Project with a Blueprint by following [these instructions](https://github.com/pitmonticone/LeanProject).  (The ANTEDB currently contains no actual Lean code; nevertheless, the Blueprint-based structure of a Lean project is quite convenient for such a database even without such code.)
