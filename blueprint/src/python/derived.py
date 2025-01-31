@@ -335,7 +335,6 @@ def prove_guth_maynard_intermediate_lvt2():
                     [frac(20*k, 4*k+3), -frac(24*k, 4*k+3), frac(2, 4*k+3)]
                 ]
             ).region.substitute({0: sigma})
-
             regions.append(region)
         
         # L2 mean-value theorem
