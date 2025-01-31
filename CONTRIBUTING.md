@@ -16,6 +16,8 @@ It is fine to suggest incomplete contributions, for instance stating a result wi
 
 If you propose to add a new chapter, or rearrange existing ones, one will also have to modify [content.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex).  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.  It is recommended to see if [print.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/print.tex) compiles before submitting the pull request. [Note: some LaTeX compilers may have difficulty with some of the packages.  `xelatex` generally works well though.]
 
+Some examples of possible chapter topics to contribute can be found in the [introduction to the ANTEDB blueprint](https://teorth.github.io/expdb/blueprint/intro-chapter.html).  Please feel free to contact [Terence Tao](https://www.math.ucla.edu/~tao/) if you are interested in fleshing out one of these chapters, in order to coordinate with any other contributors.
+
 ## Contributing to Python code
 
 Python code is stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/python).  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in [common.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex).
