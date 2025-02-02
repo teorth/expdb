@@ -6,19 +6,21 @@ Some specific information about types of contributions:
 
 ## Contributing a new reference to the blueprint
 
-The references are stored at https://github.com/teorth/expdb/blob/main/blueprint/src/references.bib in BibTeX format.  If possible, please try to maintain the alphabetical ordering of the references by first order.
+The references are stored at [references.bib](https://github.com/teorth/expdb/blob/main/blueprint/src/references.bib) in BibTeX format.  If possible, please try to maintain the alphabetical ordering of the references by first order.
 
 ## Contributing to a chapter of the blueprint
 
-The chapters are stored at https://github.com/teorth/expdb/tree/main/blueprint/src/chapter .  One can use standard LaTeX commands in these chapters.  One can also use the \uses{} macro to indicate which results depend on which other ones, for the purpose of filling out the dependency graph, though at the current stage of the project we are not making heavy use of this feature.
+The chapters are stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/chapter).  One can use standard LaTeX commands in these chapters.  One can also use the \uses{} macro to indicate which results depend on which other ones, for the purpose of filling out the dependency graph, though at the current stage of the project we are not making heavy use of this feature.
 
 It is fine to suggest incomplete contributions, for instance stating a result with only a very sketchy proof or reference.  For an extremely incomplete contribution (e.g., a vague statement of a result without a reference, or proposing a new direction for the ANTEDB without contributing significant content), consider opening up a Github issue instead of a pull request.
 
-If you propose to add a new chapter, or rearrange existing ones, one will also have to modify https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex .  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.
+If you propose to add a new chapter, or rearrange existing ones, one will also have to modify [content.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/content.tex).  It is also recommended that each chapter be labeled, in order for the blueprint to be able to assign a stable name to the web page for that chapter.  It is recommended to see if [print.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/print.tex) compiles before submitting the pull request. [Note: some LaTeX compilers may have difficulty with some of the packages.  `xelatex` generally works well though.]
+
+Some examples of possible chapter topics to contribute can be found in the [introduction to the ANTEDB blueprint](https://teorth.github.io/expdb/blueprint/intro-chapter.html).  Please feel free to contact [Terence Tao](https://www.math.ucla.edu/~tao/) if you are interested in fleshing out one of these chapters, in order to coordinate with any other contributors.
 
 ## Contributing to Python code
 
-Python code is stored at https://github.com/teorth/expdb/tree/main/blueprint/src/python .  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex .
+Python code is stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/python).  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in [common.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex).
 
 ## Contributing to Lean code
 
@@ -31,3 +33,9 @@ The ANTEDB is intended to collect results on analytic number theory exponents in
 For instance, we have chosen to use a "cheap nonstandard analysis" convention for asymptotic notation, as it efficiently hides the "epsilons and deltas" in the exponents, which has some technical advantages for the numerical side of the project as it often allows exponents to be represented by rational numbers which can be easily manipulated by exact arithmetic rather than floating point arithmetic.
 
 The focus on the ANTEDB is on the exponent bounds in the literature, rather than the notational choices from that literature, and the addition of notational conventions to the ANTEDB that duplicate ones that are already present in the database is therefore discouraged in order to maximize interoperability of results.  However, it is conceivable that there is a case for globally refactoring the ANTEDB to switch from a current notational convention to new one; if so, one should set up a [Github issue](https://github.com/teorth/expdb/issues) to discuss the pros and cons of such a global switch.
+
+## Creating a similar database
+
+If you wish to create a database similar to the ANTEDB, but with a different scope, you may wish to set up a Lean Project with a Blueprint by following [these instructions](https://github.com/pitmonticone/LeanProject).  (The ANTEDB currently contains no actual Lean code; nevertheless, the Blueprint-based structure of a Lean project is quite convenient for such a database even without such code.)
+
+If you do create a new mathematical database, consider registering it at [Mathbases](https://github.com/MathBases/MathBases).
