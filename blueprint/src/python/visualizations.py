@@ -259,12 +259,9 @@ def zero_density_energy_plot():
     energy_estimates = [
             (RF.parse("1000000"), Interval(frac(1,2), 1)), # default
             (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(frac(7,10), 0.7255)),
-            (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, frac(3,4))),
-            (RF.parse("(197 - 220 * x) / (8 * (5 * x - 1) * (1 - x))"), Interval(frac(3,4), frac(25,33))),
-            (RF.parse("(110 * x - 53) / (16 * (85 * x - 63) * (1 - x))"), Interval(frac(25,33), frac(3039,4010))),
-            (RF.parse("(570 * x - 413) / (10 * (85 * x - 63) * (1 - x))"), Interval(frac(3039,4010), frac(254,335))),
-            (RF.parse("(66 - 83 * x) / ((69 * x - 50) * (1 - x))"), Interval(frac(254,335), 0.758233)),
-            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(0.758233, frac(42,55))),
+            (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, 0.73)),
+            (RF.parse("(457 - 546 * x) / (2 * (61 - 58 * x) * (1 - x))"), Interval(0.73, 0.7373)),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(0.7373, frac(42,55))),
             (RF.parse("(18 - 19 * x) / (6 * (15 * x - 11) * (1 - x))"), Interval(frac(42,55), frac(97,127))),
             (RF.parse("3 * (18 - 19 * x) / (4 * (4 * x - 1) * (1 - x))"), Interval(frac(97,127), frac(79,103))),
             (RF.parse("(18 - 19 * x) / (2 * (37 * x - 27) * (1 - x))"), Interval(frac(79,103), frac(33,43))),
@@ -312,7 +309,7 @@ def zero_density_energy_plot():
     plt.plot(sigmas, trivial_bound, linewidth=1, label="\"Trivial\" additive energy estimate")
     plt.plot(sigmas, best_bound, linewidth=1, label="Best additive energy estimate")
     plt.plot(sigmas, lindelof_bound, linewidth=1, label="Additive energy estimate on the Lindelof hypothesis")
-    plt.title("Additive energy estimates")
+    plt.title("Zero density energy estimates")
     plt.legend()
     plt.grid(True)
     plt.show()
@@ -321,6 +318,6 @@ def zero_density_energy_plot():
 # van_der_corput_plot2()
 # beta_bound_plot()
 # exp_pair_plot()
-zero_density_plot()
-# zero_density_energy_plot()
+# zero_density_plot()
+zero_density_energy_plot()
 
