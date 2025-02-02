@@ -1145,15 +1145,78 @@ def prove_zero_density_energy_11():
 def prove_zero_density_energy_12():
     hypotheses = Hypothesis_Set()
 
-    for k in range(2, 4):
+    for k in range(2, 5):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
-    hypotheses.add_hypotheses(literature.list_hypotheses(hypothesis_type="Large value estimate"))
+    sigma_interval = Interval(frac(7,10), frac(42,55))
+    tau_0 = 2
+
+    # To speed things up, we will combine LV regions separately first instead of 
+    # converting them into LVER 
+    lv_hyps = Hypothesis_Set()
+    lv_hyps.add_hypothesis(lv.large_value_estimate_L2)
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 1"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 2"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 3"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 4"))
+    #lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 5"))
+
+    # Add the combined large value estimates as a single Hypothesis
+    combined_lv = lv.combine_large_value_estimates(
+        lv_hyps, 
+        domain = Region.from_polytope(
+            Polytope.rect(
+                (sigma_interval.x0, sigma_interval.x1), 
+                (0, 2 * tau_0), # even with raise-to-power hypotheses, we will only ever need estimates up to 2tau_0
+                (0, Constants.LV_DEFAULT_UPPER_BOUND)
+            )
+        ),
+        simplify = True, 
+        verbose = True
+    )
+    print(combined_lv.data.region)
+    """
+    """
+    hypotheses.add_hypothesis(combined_lv)
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
 
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    tau0 = Affine(0, 2, Interval(frac(3,4), frac(5,6)))
+    tau0 = Affine(0, tau_0, sigma_interval)
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=True)
+    for h in hs: print(h.data)
+    return hs
+
+def prove_zero_density_energy_13():
+    hypotheses = Hypothesis_Set()
+
+    for k in range(2, 5):
+        hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
+
+    # To speed things up, we will combine LV regions separately first instead of 
+    # converting them into LVER 
+    lv_hyps = Hypothesis_Set()
+    lv_hyps.add_hypothesis(lv.large_value_estimate_L2)
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 1"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 2"))
+    lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 3"))
+    #lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 4"))
+    #lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 5"))
+    #lv_hyps.add_hypothesis(literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 6"))
+
+    # Add the combined large value estimates as a single Hypothesis
+    combined_lv = lv.combine_large_value_estimates(lv_hyps, simplify=True, verbose=True)
+    print(combined_lv.data)
+    hypotheses.add_hypothesis(combined_lv)
+    hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
+
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
+    hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
+
+    tau0 = Affine(0, 2, Interval(frac(7,10), frac(3,4)))
     hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=True)
     for h in hs: print(h.data)
     return hs
@@ -1170,6 +1233,8 @@ def prove_all_zero_density_energy_estimates():
     prove_zero_density_energy_8()
     prove_zero_density_energy_9()
     prove_zero_density_energy_10()
+
+    prove_zero_density_energy_12()
     
 #################################################################################################
 # Derivations for prime gap theorems 
@@ -1213,5 +1278,5 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_guth_maynard_intermediate_lvt2()
-#prove_zero_density_energy_12()
+#prove_guth_maynard_intermediate_lvt2()
+prove_zero_density_energy_12()

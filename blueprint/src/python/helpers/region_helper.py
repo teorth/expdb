@@ -14,6 +14,11 @@ class Region_Helper:
         # in this set 
         index = set(i for i in range(len(polys)))
 
+        # Remove all empty polytopes 
+        for i in range(len(polys)):
+            if polys[i].is_empty(include_boundary=False):
+                index.remove(i)
+        
         # Keep track of the tuples (int, int) of indexes which do not form a pairwise 
         # union
         non_unions = set()

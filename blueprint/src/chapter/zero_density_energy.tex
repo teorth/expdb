@@ -1352,6 +1352,7 @@ For $373/493 \le \sigma \le 103/136$, one has
 \A^*(\sigma)\le \max\left(\frac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}, \frac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}, \frac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}\right).
 \]
 \end{theorem}
+\derived
 \code{prove_zero_density_energy_10()}
 
 
@@ -1455,6 +1456,16 @@ If $\tau' \ge 6/5$ then $\rho/k \le \min(12/5 - 4\sigma + \tau', 3 - 3\sigma)$. 
 \end{proof}
 
 
+\begin{theorem}\label{ze-guthmaynard-thm2}
+For $165/226 \le \sigma \le 42/55$ one has
+\[
+\A^*(\sigma)(1 - \sigma) \le \max\left(\frac{457 - 546\sigma}{2(58\sigma - 61)}, \frac{5(18 - 19\sigma)}{2(5\sigma + 3)}\right).
+\]
+\end{theorem}
+\derived
+\code{prove_zero_density_energy_12()}
+
+
 Table \ref{zero-density-energy-estimates-table} records the sharpest known unconditional upper bounds on $\A^*(\sigma)$ for $1/2 \le \sigma \le 1$ (except when close to $\sigma = 1$, when sharper estimates are available by applying Lemma \ref{zeroe-basic} with known zero-density bounds).
 \begin{table}[ht]
     \def\arraystretch{2}
@@ -1470,36 +1481,11 @@ Table \ref{zero-density-energy-estimates-table} records the sharpest known uncon
     \hline
     $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{7}{10} \leq \sigma \le \dfrac{539 - \sqrt{42121}}{460} = 0.7255\ldots$ & Theorem \ref{imp-energy-bound2}\\
     \hline
-    $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{3}{4} = 0.75$ & Theorem \ref{imp-energy-bound2}\\
+    $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{165}{226} = 0.7300\ldots$ & Theorem \ref{imp-energy-bound2}\\
     \hline
-    $\dfrac{(197 - 220\sigma)\ell - 10\sigma + 10}{8((5\sigma - 1)\ell - 5\sigma + 5)(1-\sigma)}$ & $\dfrac{3\ell^2 + \ell - 1}{4\ell^2 + \ell - 2} \leq \sigma \le \dfrac{3\ell^2 - 2\ell + 1}{4\ell^2 - 3\ell + 1},\quad \ell \ge 14$ & Theorem \ref{ze-jutila-thm}\\
+    $\dfrac{457 - 546\sigma}{2(58\sigma - 61)(1-\sigma)},$ & $\dfrac{165}{226} \leq \sigma \le \dfrac{5831 + \sqrt{60001}}{8240} = 0.7373\ldots$ & Theorem \ref{ze-guthmaynard-thm2}\\
     \hline
-    $\dfrac{(40\sigma - 30)\ell - 250\sigma + 217}{8((20\sigma - 15)\ell - 10\sigma + 9)(1-\sigma)}$ & $\dfrac{3\ell^2 - 2\ell + 1}{4\ell^2 - 3\ell + 1} \leq \sigma \le \dfrac{3\ell^2 -5\ell + 1}{4\ell^2 -7\ell + 1},\quad \ell \ge 14$ & Theorem \ref{ze-jutila-thm}\\
-    \hline
-    
-    $\dfrac{173 - 270\sigma}{16(93 - 125\sigma)(1-\sigma)}$ & $\dfrac{173}{229} \le \sigma \le \dfrac{4359}{5770} = 0.75545\ldots$ & Theorem \ref{imp-energy-bound9}\\
-    \hline
-    $\dfrac{653 - 890\sigma}{10(93 - 125\sigma)(1-\sigma)}$ & $\dfrac{4359}{5770} \le \sigma \le \dfrac{241}{319} = 0.75548\ldots$ & Theorem \ref{imp-energy-bound9}\\
-    \hline
-
-    $\dfrac{1151 - 1190\sigma}{20(15\sigma - 2)(1-\sigma)}$ & $\dfrac{241}{319} \le \sigma \le \dfrac{443}{586} = 0.7559\ldots$ & Theorem \ref{imp-energy-bound9}\\
-    \hline
-    $\dfrac{593 - 810\sigma}{5(171 - 230\sigma)(1-\sigma)}$ & $\dfrac{443}{586} \le \sigma \le \dfrac{409}{541} = 0.7560\ldots$ & Theorem \ref{imp-energy-bound10}\\
-    \hline
-
-    $\dfrac{4(266 - 275\sigma)}{5(55\sigma - 7)(1-\sigma)}$ & $\dfrac{409}{541} \le \sigma \le \dfrac{373}{493} = 0.7565\ldots$ & Theorem \ref{imp-energy-bound10}\\
-    \hline
-    $\dfrac{533 - 730\sigma}{30(26 - 35\sigma)(1-\sigma)}$ & $\dfrac{373}{493} \le \sigma \le \dfrac{314}{415} = 0.75662\ldots$ & Theorem \ref{imp-energy-bound11}\\
-    \hline
-
-    $\dfrac{3(26 - 33\sigma)}{(85\sigma - 62)(1-\sigma)}$ & $\dfrac{314}{415} \le \sigma \le \dfrac{171}{226} = 0.75663\ldots$ & Theorem \ref{imp-energy-bound11}\\
-    \hline
-    $\dfrac{174 - 185\sigma}{(31\sigma + 2)(1-\sigma)}$ & $\dfrac{171}{226} \le \sigma \le \dfrac{103}{136} = 0.757352\ldots$ & Theorem \ref{imp-energy-bound11}\\
-    \hline
-
-    $\dfrac{72 - 91\sigma}{7(11\sigma - 8)(1 - \sigma)}$ & $\dfrac{103}{136} \leq \sigma \le \dfrac{6038 - 2\sqrt{352321}}{6405} = 0.757356\ldots$ & Theorem \ref{imp-energy-bound4}\\
-    \hline
-    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{6038 - 2\sqrt{352321}}{6405} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{imp-energy-bound4}\\
+    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{5831 + \sqrt{60001}}{8240} \leq \sigma \le \dfrac{42}{55} = 0.7636\ldots$ & Theorem \ref{ze-guthmaynard-thm2}, \ref{imp-energy-bound4}\\
     \hline
     $\dfrac{18 - 19\sigma}{6(15\sigma - 11)(1- \sigma)}$ & $\dfrac{42}{55} \leq \sigma \le \dfrac{97}{127} = 0.7637\ldots$ & Theorem \ref{imp-energy-bound6}\\
     \hline
