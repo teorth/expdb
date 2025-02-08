@@ -163,6 +163,53 @@ montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjec
 
 ###############################################################################
 
+def combine_large_value_estimates(
+        hypotheses: Hypothesis_Set, 
+        domain: Region = None,
+        simplify: bool = False, 
+        verbose: bool = False) -> Hypothesis:
+    """
+    Given a hypothesis set, find all Hypothesis of type 'Large value estimate'
+    and combines them into a single Hypothesis of type 'Large value estimate'.
+    The hypothesis set is unchanged and the new Hypothesis is returned.
+
+    Parameters
+    ----------
+    hypotheses : Hypothesis_Set
+        The set of hypotheses containing large value estimates.
+    domain : Region, optional
+        A 3-dimensional polytope with dimensions (σ, τ, ρ) to which the resulting 
+        large value region will be restricted to. If None, then the large value 
+        region will not be restricted to any domain. This parameter is helpful if 
+        we are only interested in large value estimates for certain σ and τ, and will
+        speed up computations by avoiding unnecessary calculations. The default 
+        value is None. 
+    simplify : bool, optional
+        If True, the large value estimate will be simplified (default is False).
+
+    Returns
+    -------
+    Hypothesis
+        The combined large value estimate represented as a derived Hypothesis
+    """
+    hyps = hypotheses.list_hypotheses(hypothesis_type="Large value estimate")
+
+    regions = []
+    if domain is not None:
+        regions.append(domain)
+    lv_region = Region.intersect(regions + [h.data.region for h in hyps])
+
+    if simplify: # Put into canonical form
+        lv_region = lv_region.as_disjoint_union(verbose=verbose)
+        lv_region.simplify()
+
+    return derived_bound_LV(
+        lv_region, 
+        f"Follows from combining {len(hyps)} large value estimates.",
+        set(hyps)
+    )
+
+
 # Raising to a power (large value estimate transform theorem)
 def raise_to_power_hypothesis(k):
 

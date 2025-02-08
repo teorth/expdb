@@ -420,7 +420,7 @@ class Region:
                 
                 # [[Ad-hoc performance optimisation]]
                 # Every few rounds, simplify if the number of polytopes is too large
-                if ((i % SIMPLIFY_EVERY == 0 and len(new_A) >= 100) or len(new_A) >= 500):
+                if ((i % SIMPLIFY_EVERY == 0 and len(new_A) >= 200)):
                     prevlen = len(new_A)
                     new_A = Region_Helper.simplify_union_of_polys(new_A, Polytope.try_union, track_dependencies)
                     if verbose:
@@ -437,7 +437,7 @@ class Region:
             result = []
             for r in self.child:
                 result.extend(r._as_disjoint_union_poly(
-                    verbose=verbose, 
+                    verbose=verbose,
                     track_dependencies=track_dependencies
                 ))
             return result
