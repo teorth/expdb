@@ -76,7 +76,7 @@ These are currently the best known upper bounds on $\PNTALL$ and $\PNTAA$.
 
 The current unconditional best bound on $\GAPMAX$ is
 
-\begin{theorem}[Baker-Harman-Pintz theorem]\label{bhp-thm}\cite{baker-harman-pintz}\uses{pnt-ap} We have $\GAPMAX \leq 21/40= 0.525$.
+\begin{theorem}\cite{li_number_2025}\label{bhp-thm}\uses{pnt-ap} We have $\GAPMAX \leq 13/25 = 0.52$.
 \end{theorem}
 
 Historical bounds on $\GAPMAX$ are summarized in the following table:
@@ -101,7 +101,7 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Iwaniec--Jutila (1979)\cite{iwaniec-jutila} & $\frac{13}{23} = 0.5652\dots$ \\
     \hline
-    Heath-Brown--Iwaniec (1979) \cite{heathbrown_iwaniec_1979} & $\frac{11}{20} = 0.55$ \\
+    Heath-Brown--Iwaniec (1979) \cite{heathbrown_iwaniec_1979}, Lou--Yao (1993) \cite{lou_yao_number_1993}& $\frac{11}{20} = 0.55$ \\
     \hline
     Pintz (1981) \cite{pintz_1981} & $\frac{17}{31} = 0.5483\dots$ \\
     \hline
@@ -109,13 +109,15 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Mozzochi (1986) \cite{mozzochi-consecutive} & $\frac{1051}{1920} = 0.5473\dots$ \\
     \hline
-    Lou--Yau (1992) \cite{lou-yao-chebychev} & $\frac{6}{11} = 0.5454\dots$\\
+    Lou--Yao (1992) \cite{lou-yao-chebychev} & $\frac{6}{11} = 0.5454\dots$\\
     \hline
+    %Lou--Yao (1993) \cite{lou_yao_number_1993} & $\frac{11}{20} = 0.55$\\
+    %\hline
     Baker-Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
     \hline
     Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40} = 0.525$ \\
     \hline
-    Li (2025) \cite{li_number_2025} & $0.52$\\
+    R. Li (2025) \cite{li_number_2025} & $\frac{13}{25} = 0.52$\\
     \hline
     \end{tabular}
     \end{table}\label{gapmax-table}
@@ -179,7 +181,11 @@ Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
         \hline
         Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{1413}{1067} = 1.3242\dots$ \\
         \hline
-        Iv\'ic (2003) \cite[Theorem 12.14]{ivic} & $\frac{23}{18} = 1.2777\dots$ \\
+        Yu (1996) \cite{yu_differences_1996} & $1$ (on LH) \\
+        \hline
+        Heath-Brown (1979) \cite{heath_brown_consecutive_III} & $\frac{23}{18} = 1.2777\dots$ \\
+        \hline
+        Peck (1996) \cite{peck_on_1996}, Maynard (2012) \cite{maynard_difference_2012} & $\frac{5}{4} = 1.25$ \\
         \hline
         \end{tabular}
         \end{table}\label{gapsquare-table}
@@ -199,13 +205,13 @@ The following general bound on $\GAPSQUARE$ is known:
 \begin{proof} See \cite[Lemma 2]{heath_brown_consecutive_II}. We remark that this lemma allows $\sigma$ to range over $0 \leq \sigma \leq 1$ rather than $1/2 \leq \sigma \leq 1$, but it is easy to see that the contributions of the $0 \leq \sigma < 1/2$ cases are dominated by the $\sigma=1/2$ case.
 \end{proof}
 
-This proposition recovers the known bounds (both conditional and unconditional) on $\GAPSQUARE$:
+This proposition can be used to recover the following bounds on $\GAPSQUARE$:
 
 \begin{corollary}\
     \begin{itemize}
     \item[(i)] Assuming the Riemann hypothesis, $\GAPSQUARE = 1$. (Selberg, 1943 \cite{selberg_1943})
-    \item[(ii)] Assuming the Lindelof hypothesis, $\GAPSQUARE \leq 7/6$. (Heath-Brown, 1979 \cite{heath_brown_consecutive_II})
-    \item[(iii)] Unconditionally, $\GAPSQUARE \leq 23/18$. (Ivic, 2003 \cite[Theorem 12.14]{ivic}).
+    \item[(ii)] Assuming the Lindelof hypothesis, $\GAPSQUARE = 7/6$. (Heath-Brown, 1979 \cite{heath_brown_consecutive_II})
+    \item[(iii)] Unconditionally, $\GAPSQUARE \leq 23/18$. (Heath-Brown, 1979 \cite{heath_brown_consecutive_III}).
 \end{itemize}
 \end{corollary}
 
@@ -216,37 +222,13 @@ For (ii), from Theorem \ref{lindelof_implies_density} we may take $A(\sigma)=2$ 
 Part (iii) follows from applying Proposition \ref{gapsquare-from-a} using the bounds from Theorem \ref{hb-energy-bound}, together and various bounds on $\A(\sigma)$; see \cite[Theorem 12.14]{ivic} for details. 
 \end{proof}
 
-Incorporating modern zero density bounds and additive energy estimates, one can obtain an improved bound on $\GAPSQUARE$. 
-\begin{theorem}
-Unconditionally, one has $\GAPSQUARE \le 19/15 = 1.2666\ldots$. 
-\end{theorem}
-
-\derived 
-\code{prove_prime_gap2()}
-
-\begin{proof}
-Using the bounds in \Cref{zero_density_estimates_table} and \Cref{zero-density-energy-estimates-table}, in the range $1/2 \le \sigma \le 3/4$ we may take 
-\[
-A(\sigma) = \frac{30}{13}, \qquad B(\sigma) = \frac{1931 - 2020\sigma}{286(1 - \sigma)}
-\]
-Applying the definitions in \Cref{gapsquare-from-a} and after a routine computation, one gets $\alpha(\sigma)$, $\beta(\sigma) \le 19/15$ (with room to spare). Next, for $3/4 \le \sigma \le 5/6$ we use 
-\[
-A(\sigma) = \frac{3}{3\sigma - 1},\qquad B(\sigma) = \frac{526 - 552\sigma}{77(1 - \sigma)}.
-\]
-For $\sigma \ge 5/6$ we use $B(\sigma) = 12/(4\sigma - 1)$ from \Cref{hb-energy-bound}, along with 
-\[
-A(\sigma) = \begin{cases}
-\dfrac{3}{2\sigma},&5/6 \le \sigma \le 7/8,\\
-\max\left(\dfrac{3}{10\sigma - 7}, \dfrac{4}{4\sigma - 1}\right),& 7/8 \le \sigma \le 1.
-\end{cases}
-\]
-The first case comes from \Cref{further_ivic_zero} and the second case comes from \Cref{hb-density}, to once again obtain the required bounds (with equality at $\sigma = 7/8$). 
-\end{proof}
-A variant of $\GAPSQUARE$ is $\GAPLARGE$, defined as the least exponent for which
+Two variants of $\GAPSQUARE$ are $\GAPLARGE$ and $\GAPLARGEEQ$, defined respectively as the least exponent for which
 $$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2+\eps}} (p_{n+1}-p_n) \ll x^{\GAPLARGE+o(1)}$$
-for any fixed $\eps>0$ and unbounded $x \geq 1$.  The trivial bounds are
+(for any fixed $\eps>0$ for unbounded $x \geq 1$) and
+$$ \sum_{p_n \leq x: p_{n+1}-p_n \geq x^{1/2}} (p_{n+1}-p_n) \ll x^{\GAPLARGEEQ+o(1)}$$
+(for unbounded $x \geq 1$).  The trivial bounds are
 
-\begin{proposition}[Trivial bounds on large gaps]\label{trivial-large-gap}  If $\GAPMAX < 1/2$, then $\GAPLARGE = -\infty$.  In general, we have
+\begin{proposition}[Trivial bounds on large gaps]\label{trivial-large-gap}  One has $\GAPLARGE \le \GAPLARGEEQ$. If $\GAPMAX < 1/2$, then $\GAPLARGE = -\infty$.  In general, we have
     $$ \max(1/2,\GAPMAX) \leq \max(1/2, \GAPLARGE)$$
     and $\GAPLARGE \leq 1$.  Also $\GAPLARGE \leq \GAPSQUARE - 1/2$.
 \end{proposition}
@@ -254,28 +236,36 @@ for any fixed $\eps>0$ and unbounded $x \geq 1$.  The trivial bounds are
 The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are recorded in Table \ref{gaplarge-table}.
 
 \begin{table}[ht]
-    \caption{Historical upper bounds on $\GAPLARGE$.}
+    \caption{Historical upper bounds on $\GAPLARGE$ and $\GAPLARGEEQ$.}
     \centering
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{|c|c|}
+    \begin{tabular}{|c|c|c|}
     \hline
-    Reference & Upper bound \\
+    Reference & Upper bound on $\GAPLARGE$ & Upper bound on $\GAPLARGEEQ$\\
     \hline
-    Selberg (1943) \cite{selberg_1943} & $\frac{1}{2}=0.5$ (on RH)\\
+    Selberg (1943) \cite{selberg_1943} & $\frac{1}{2}=0.5$ (on RH) & \\
     \hline
-    Wolke (1975) \cite{wolke_1975} & $\frac{29}{30} = 0.966\dots$ \\
+    Wolke (1975) \cite{wolke_1975} & & $\frac{29}{30} = 0.966\dots$ \\
     \hline
-    Cook (1979) \cite{cook_1979} & $\frac{85}{98} = 0.8673\dots$ \\
+    Cook (1979) \cite{cook_1979} & $\frac{85}{98} = 0.8673\dots$ & \\
     \hline
-    Huxley (1980) \cite{huxley_large_1980} & $\frac{1759}{2134} = 0.8242\dots$ \\
+    Huxley (1980) \cite{huxley_large_1980} & $\frac{1759}{2134} = 0.8242\dots$ & \\
     \hline
-    Huxley (1980) \cite{huxley_large_1980} & $\frac{3}{4} = 0.75$ (on LH) \\
+    Huxley (1980) \cite{huxley_large_1980} & $\frac{3}{4} = 0.75$ (on LH) & \\
     \hline
-    Iv\'ic (1979) \cite{ivic_sums_1979} & $\frac{215}{266} = 0.8082\dots$ \\
+    Iv\'ic (1979) \cite{ivic_sums_1979} & $\frac{215}{266} = 0.8082\dots$ & \\
     \hline
-    Heath-Brown (1979) \cite{heath_brown_consecutive_III} & $\frac{3}{4} = 0.75$ \\
+    Heath-Brown (1979) \cite{heath_brown_consecutive_III} & & $\frac{3}{4} = 0.75$ \\
     \hline
-    Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{5}{8} = 0.625$ \\
+    Heath-Brown (1979) \cite{heath_brown_consecutive_II} & $\frac{5}{8} = 0.625$ & \\
+    \hline
+    Peck (1998) \cite{peck_differences_1998} & & $\frac{25}{36} = 0.6944\ldots$ \\
+    \hline
+    Matom\"{a}ki (2007) \cite{matomaki_large_2007} & & $\frac{2}{3} = 0.6666\ldots$ \\
+    \hline
+    Heath-Brown (2020) \cite{heath-brown_differences_2021} & & $\frac{3}{5} = 0.6$\\
+    \hline 
+    J\"{a}rviniemi (2022) \cite{jarviniemi_large_2022} & & $\frac{57}{100} = 0.57$\\
     \hline
     \end{tabular}
 \end{table}\label{gaplarge-table}
