@@ -768,12 +768,17 @@ def prove_zero_density_guth_maynard_improved(verbose=True):
     Proposition 12.1
     """
     new_hyps = [
-        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 1"),
-        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 2"),
-        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 3"),
-        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 4")
+        literature.find_hypothesis(name="Guth--Maynard large value estimate"),
+        literature.find_hypothesis(name="Huxley large value estimate"),
+        lv.large_value_estimate_L2
     ]
-    return prove_zero_density(new_hyps, verbose, Interval(frac(7,10), frac(9,10)), "Guth--Maynard")
+    for k in range(1, 10):
+        new_hyps.append(literature.find_hypothesis(keywords=f"Guth--Maynard large value estimate 2 with k = {k}"))
+
+    zdes = prove_zero_density(new_hyps, verbose, Interval(frac(71,100), frac(8,10)), "Guth--Maynard")
+    for zde in zdes:
+        print(zde.data)
+    return zdes
 
 def compute_best_zero_density():
 
@@ -1304,4 +1309,4 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_zero_density_guth_maynard_improved(True)
+prove_zero_density_guth_maynard_improved(False)

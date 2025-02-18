@@ -314,6 +314,13 @@ def zero_density_energy_plot():
     plt.grid(True)
     plt.show()
 
+def dep_graph_plot(hypothesis: Hypothesis):
+    """
+    Plots the dependency graph of a hypothesis
+    """
+    depth = hypothesis.proof_depth()
+
+
 
 # van_der_corput_plot2()
 # beta_bound_plot()

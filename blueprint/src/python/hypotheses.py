@@ -112,6 +112,13 @@ class Hypothesis:
     def proof_complexity(self):
         return sum(h.proof_complexity() for h in self.dependencies) + 1
 
+    def proof_depth(self):
+        """
+        Returns the height of the dependency-tree representation of this 
+        hypothesis (including root and leaves).
+        """
+        return 1 + max(d.proof_depth() for d in self.dependencies)
+
     # Returns the date of the latest dependency
     def proof_date(self):
         year = self.reference.year()
