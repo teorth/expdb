@@ -7,8 +7,14 @@ import prime_gap as pg
 
 import time
 
-# Establish the classical van der Corput exponent pair (\frac{1}{2^k-2}, 1 - \frac{k-1}{2^k-2})
-def van_der_corput_pair(k):
+######################################################################################
+# Derivations of exponent pairs
+
+def van_der_corput_pair(k: int) -> Hypothesis:
+    """
+    Prove the classical van der Corput exponent pair (1/(2^k-2), 1 - (k-1)/(2^k-2)),
+    returning the proof as a Hypothesis object.
+    """
     if k < 2:
         raise ValueError("k must be at least 2.")
     A_transform = literature.find_hypothesis(keywords="van der Corput A transform")
@@ -19,8 +25,11 @@ def van_der_corput_pair(k):
     print(f"The van der Corput pair for k = {k} is {exp_pair.desc()}")
     return exp_pair
 
-# Prove the Hardy-Littlewood bound mu(1/2) \leq 1/6 using the van der Corput pair (1/6, 2/3).
-def prove_hardy_littlewood_mu_bound():
+def prove_hardy_littlewood_mu_bound() -> Hypothesis:
+    """
+    Prove the Hardy-Littlewood bound \\mu(1/2) \\leq 1/6 using the van der Corput 
+    exponent pair (1/6, 2/3), returning the proof as a Hypothesis object.
+    """
     HL_bound = literature.find_hypothesis(data=Bound_mu(frac(1, 2), frac(1, 6)))
     A_transform = literature.find_hypothesis(keywords="van der Corput A transform")
     B_transform = literature.find_hypothesis(keywords="van der Corput B transform")
@@ -753,8 +762,25 @@ def prove_zero_density_bourgain_improved(verbose=True):
         prove_zero_density(new_hyps, verbose, Interval(frac(4,5), 1), "part 2/2 of optimized Bourgain", tau0=frac(3))
     ]
 
-# Compute the best zero-density estimates from the literature
+def prove_zero_density_guth_maynard_improved(verbose=True):
+    """
+    Prove a improved zero-density estimate using Guth--Maynard 
+    Proposition 12.1
+    """
+    new_hyps = [
+        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 1"),
+        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 2"),
+        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 3"),
+        literature.find_hypothesis(keywords="Guth--Maynard large value estimate 2 with k = 4")
+    ]
+    return prove_zero_density(new_hyps, verbose, Interval(frac(7,10), frac(9,10)), "Guth--Maynard")
+
 def compute_best_zero_density():
+
+    """
+    Compute the best zero-density estimates from the literature
+    """
+
     hs = Hypothesis_Set()
     hs.add_hypotheses(literature)
 
@@ -1278,5 +1304,4 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-#prove_guth_maynard_intermediate_lvt2()
-prove_zero_density_energy_12()
+prove_zero_density_guth_maynard_improved(True)
