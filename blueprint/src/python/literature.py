@@ -644,7 +644,8 @@ def add_literature_bounds_mu():
             literature_bound_mu(
                 frac(1, 2), frac(13, 84), rm.get("bourgain_decoupling_2017")
             ),
-            # bounds off the critical line
+            
+            # Bounds off the critical line
             literature_bound_mu(
                 frac(1934, 3655), frac(6299, 43860), rm.get("huxley_area_1996")
             ),
@@ -663,6 +664,32 @@ def add_literature_bounds_mu():
             literature_bound_mu(
                 frac(11, 15), frac(1, 15), rm.get("demeter_small_2020")
             ),
+
+            # Additional bounds listed in Trudgian--Yang (2024) - including vertexes only
+            literature_bound_mu(
+                frac(88225, 153852), frac(4742, 38463), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(521, 796), frac(18, 199), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(53141, 76066), frac(2779, 38033), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(3620, 5119), frac(715, 10238), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(52209, 69128), frac(2371, 43205), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(1389, 1736), frac(9, 217), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(134765, 163248), frac(2779, 81624), rm.get("trudgian-yang")
+            ),
+            literature_bound_mu(
+                frac(18193, 21906), frac(715, 21906), rm.get("trudgian-yang")
+            )
         ]
     )
 

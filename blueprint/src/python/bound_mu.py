@@ -174,7 +174,6 @@ def get_bounds(hypothesis_set):
             bounds.append(apply_functional_equation(bound))
     return bounds
 
-
 # Compute the 2-d convex hull containing all points (sigma, mu) implied
 # by mu bounds in 'bounds' list and saves it in the 'hypothesis_set' object.
 def compute_convex_hull(bounds, hypothesis_set):
