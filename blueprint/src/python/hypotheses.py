@@ -108,19 +108,43 @@ class Hypothesis:
                 return True
         return False
 
-    # Returns the complexity of the proof of this hypothesis
     def proof_complexity(self):
+        """
+        Returns the complexity of the proof of this hypothesis. The proof 
+        complexity is measured as the total number of Hypothesis objects 
+        in the dependency tree of a Hypothesis (including itself). 
+
+        Returns
+        -------
+        int 
+            The proof complexity of this hypothesis.
+        """
         return sum(h.proof_complexity() for h in self.dependencies) + 1
 
     def proof_depth(self):
         """
         Returns the height of the dependency-tree representation of this 
-        hypothesis (including root and leaves).
+        hypothesis (including the root and leaves).
+
+        Returns
+        -------
+        int 
+            The maximum depth of the tree that represents the dependency 
+            structure of this hypothesis. 
         """
         return 1 + max(d.proof_depth() for d in self.dependencies)
 
-    # Returns the date of the latest dependency
     def proof_date(self):
+        """
+        Returns the date of the last dependency, or -1 if unknown. This is the 
+        date as of which the result is "effectively proved", even if 
+        it does not appear anywhere in the literature as a claimed result.
+
+        Returns 
+        -------
+        int 
+            The year of the latest dependency of this hypothesis, or -1 if unknown.
+        """
         year = self.reference.year()
         if year == "Unknown date":
             year = -1

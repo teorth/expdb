@@ -319,7 +319,7 @@ def dep_graph_plot(hypothesis: Hypothesis):
     Plots the dependency graph of a hypothesis
     """
     depth = hypothesis.proof_depth()
-
+    
 
 
 # van_der_corput_plot2()
