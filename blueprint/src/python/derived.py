@@ -37,7 +37,7 @@ def prove_hardy_littlewood_mu_bound() -> Hypothesis:
     print(f"We have {B_exp_pair.desc_with_proof()}")
     AB_exp_pair = A_transform.data.transform(B_exp_pair)
     print(f"This implies {AB_exp_pair.desc_with_proof()}")
-    mu_bound = obtain_mu_bound_from_exponent_pair(AB_exp_pair)
+    mu_bound = exponent_pair_to_mu_bound(AB_exp_pair)
     print(f"This implies {mu_bound.desc_with_proof()}")
     return mu_bound
 

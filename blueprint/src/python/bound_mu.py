@@ -109,7 +109,6 @@ def apply_trivial_mu_bound(sigma):
         set(),
     )
 
-
 # Apply the functional equation to a bound on mu to obtain another bound on mu
 def apply_functional_equation(bound):
     new_sigma = 1 - bound.data.sigma
@@ -120,7 +119,6 @@ def apply_functional_equation(bound):
         f'Follows from "{bound.name}" and the functional equation',
         {bound},
     )
-
 
 # Apply the convexity of mu to two bounds on mu to obtain another bound on mu
 def apply_mu_convexity(b1, b2, theta):
@@ -135,16 +133,27 @@ def apply_mu_convexity(b1, b2, theta):
         {b1, b2},
     )
 
+def exponent_pair_to_mu_bound(exp_pair: Hypothesis) -> Hypothesis:
+    """
+    Convert an exponent pair hypothesis to a bound on \\mu
 
-# convert an exponent pair hypothesis to a bound on mu
-def obtain_mu_bound_from_exponent_pair(bound):
+    Parameters
+    ----------
+    exp_pair: Hypothesis
+        The assumed exponent pair (a Hypothesis object of type "Exponent pair")
+    
+    Returns
+    -------
+    Hypothesis
+        A Hypothesis object representing the derived bound on mu.
+    """
+
     return derived_bound_mu(
-        bound.data.l - bound.data.k,
-        bound.data.k,
-        f"This bound follows from the exponent pair ({bound.data.k}, {bound.data.l})",
-        {bound},
+        exp_pair.data.l - exp_pair.data.k,
+        exp_pair.data.k,
+        f"This bound follows from the exponent pair ({exp_pair.data.k}, {exp_pair.data.l})",
+        {exp_pair},
     )
-
 
 # Calculate the set of bounds on mu(sigma) implied by a hypothesis set
 def get_bounds(hypothesis_set):
@@ -155,7 +164,7 @@ def get_bounds(hypothesis_set):
     # add bounds derived from exponent pairs. If (k, l) is an exponent pair,
     # then \mu(l - k) \leq k (see e.g. Ivic 1980)
     exp_pairs = compute_exp_pairs(hypothesis_set)
-    bounds.extend(obtain_mu_bound_from_exponent_pair(p) for p in exp_pairs)
+    bounds.extend(exponent_pair_to_mu_bound(p) for p in exp_pairs)
 
     # add bounds coming from the functional equation
     for bound in bounds:
