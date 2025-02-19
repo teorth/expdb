@@ -111,7 +111,7 @@ class Hypothesis:
     def proof_complexity(self):
         """
         Returns the complexity of the proof of this hypothesis. The proof 
-        complexity is measured as the total number of Hypothesis objects 
+        complexity is the total number of Hypothesis objects 
         in the dependency tree of a Hypothesis (including itself). 
 
         Returns

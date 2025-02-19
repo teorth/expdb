@@ -318,13 +318,46 @@ def dep_graph_plot(hypothesis: Hypothesis):
     """
     Plots the dependency graph of a hypothesis
     """
-    depth = hypothesis.proof_depth()
+    def _extract_dep_graph(hypothesis, vertices, edges, xoffset, yoffset):
+
+        if len(vertices) == 0:
+            has_child = len(hypothesis.dependencies) > 0
+            vertices.append((hypothesis, xoffset, yoffset, has_child))
+            xoffset += 1
+            yoffset += 1
+        
+        root_id = len(vertices) - 1
+        for h in hypothesis.dependencies:
+            has_child = len(h.dependencies) > 0
+            vertices.append((h, xoffset, yoffset, has_child))
+            child_id = len(vertices) - 1
+            edges.append((root_id, child_id))
+            yoffset += 1
+            _extract_dep_graph(h, vertices, edges, xoffset+1, yoffset)
     
+    edges = []
+    vertices = []
+    _extract_dep_graph(hypothesis, vertices, edges, 0, 0)
+
+    for e in edges:
+        x1, y1 = vertices[e[0]][1:3]
+        x2, y2 = vertices[e[1]][1:3]
+        plt.plot([x1, x2], [y1, y2], color="grey")
+
+    for v in vertices:
+        color = "grey" if v[3] else "black" 
+        plt.scatter(v[1], v[2], color=color)
+        print(v)
+
+    plt.xlabel("Depth")
+    plt.ylabel("Hypothesis index")
+    plt.title(f"Proof dependency tree of [{hypothesis.name}]")
+    plt.show()
+
 
 
 # van_der_corput_plot2()
 # beta_bound_plot()
 # exp_pair_plot()
 # zero_density_plot()
-zero_density_energy_plot()
-
+# zero_density_energy_plot()
