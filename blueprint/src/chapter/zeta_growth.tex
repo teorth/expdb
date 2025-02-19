@@ -223,6 +223,18 @@ and
 \literature
 \code{add_literature_bounds_mu()}
 
+Additionally, the series of exponent pairs in \Cref{heath-brown_exp_pair_2017} imply the following bounds on $\mu(\sigma)$ close to $\sigma = 1$. 
+\begin{theorem}[Heath-Brown \cite{heathbrown_new_2017} $\mu$ bounds]\label{hb_mu_bounds}\uses{exp-pair-def, exp-pair-mu, heath-brown_exp_pair_2017}
+For any integer $k \ge 3$, one has
+\[
+\mu\left(1 - \frac{3 k^2 - 3 k + 2}{k(k - 1)^2(k + 2)}\right)\le \frac{2}{(k - 1)^2(k + 2)}.
+\]
+\end{theorem}
+\begin{proof}
+Follows from substituting \Cref{heath-brown_exp_pair_2017} into \eqref{exp-pair-mu}.
+\end{proof}
+
+
 The new exponent pairs in \Cref{new-exp-pair} may be used to obtain sharper bounds on $\mu(\sigma)$ in certain ranges. Currently, the sharpest bounds on $\mu(\sigma)$ are recorded in \Cref{best-mu-table}.
 
 \begin{table}[ht]
@@ -233,31 +245,28 @@ The new exponent pairs in \Cref{new-exp-pair} may be used to obtain sharper boun
 \hline
 Upper bound on $\mu(\sigma)$ & Range of $\sigma$ & Reference \\
 \hline
-$\mu(\sigma) \leq \dfrac{31}{84} - \dfrac{3}{7}\sigma$ & $\dfrac{1}{2}\leq \sigma \leq \dfrac{88225}{153852}$ & \Cref{mu_est_thm}\\
+$\mu(\sigma) \leq \dfrac{31}{84} - \dfrac{3}{7}\sigma$ & $\dfrac{1}{2}\leq \sigma \leq \dfrac{88225}{153852} = 0.5734\ldots$ & \Cref{mu_est_thm}\\
 \hline
-$\mu(\sigma) \leq \dfrac{220633}{620612} - \dfrac{62831}{155153}\sigma$ & $\dfrac{88225}{153852}\leq \sigma \leq \dfrac{521}{796}$ & \Cref{mu_est_thm}\\
+$\mu(\sigma) \leq \dfrac{220633}{620612} - \dfrac{62831}{155153}\sigma$ & $\dfrac{88225}{153852}\leq \sigma \leq \dfrac{521}{796} = 0.6545\ldots$ & \Cref{mu_est_thm}\\
 \hline
-$\mu(\sigma) \leq \dfrac{1333}{3825} - \dfrac{1508}{3825}\sigma$ & $\dfrac{521}{796}\leq \sigma \leq \dfrac{53141}{76066}$ & \Cref{mu_est_thm}\\
+$\mu(\sigma) \leq \dfrac{1333}{3825} - \dfrac{1508}{3825}\sigma$ & $\dfrac{521}{796}\leq \sigma \leq \dfrac{53141}{76066} = 0.6986\ldots$ & \Cref{mu_est_thm}\\
 \hline
-$\mu(\sigma) \leq \dfrac{405}{1202} - \dfrac{227}{601}\sigma$ & $\dfrac{53141}{76066}\leq \sigma \leq \dfrac{454}{641}$ & \Cref{mu_est_thm}\\
+$\mu(\sigma) \leq \dfrac{405}{1202} - \dfrac{227}{601}\sigma$ & $\dfrac{53141}{76066}\leq \sigma \leq \dfrac{454}{641} = 0.7082\ldots$ & \Cref{mu_est_thm}\\
 \hline
-$\mu(\sigma) \leq \dfrac{779}{2590} - \dfrac{423}{1295}\sigma$ & $\dfrac{454}{641}\leq \sigma \leq \dfrac{3473692}{4856993}$ & \\
+$\mu(\sigma) \leq \dfrac{779}{2590} - \dfrac{423}{1295}\sigma$ & $\dfrac{454}{641}\leq \sigma \leq \dfrac{3473692}{4856993} = 0.7151\ldots$ & \Cref{new-exp-pair}, \Cref{exp-pair-mu}\\
 \hline
-$\mu(\sigma) \leq \dfrac{1610593}{5622410} - \dfrac{861996}{2811205}\sigma$ & $\dfrac{3473692}{4856993}\leq \sigma \leq \dfrac{52209}{69128}$ & \\
+$\mu(\sigma) \leq \dfrac{1610593}{5622410} - \dfrac{861996}{2811205}\sigma$ & $\dfrac{3473692}{4856993}\leq \sigma \leq \dfrac{52209}{69128} = 0.7552\ldots$ & \Cref{new-exp-pair}, \Cref{exp-pair-mu}\\
 \hline
-$\mu(\sigma) \leq \dfrac{157319}{560830} - \dfrac{251324}{841245}\sigma$ & $\dfrac{52209}{69128}\leq \sigma \leq \dfrac{1389}{1736}$ & \\
+$\mu(\sigma) \leq \dfrac{157319}{560830} - \dfrac{251324}{841245}\sigma$ & $\dfrac{52209}{69128}\leq \sigma \leq \dfrac{1389}{1736} = 0.8001\ldots$ & \Cref{new-exp-pair}, \Cref{exp-pair-mu}\\
 \hline
-$\mu(\sigma) \leq \dfrac{2841}{10316} - \dfrac{754}{2579}\sigma$ & $\dfrac{1389}{1736}\leq \sigma \leq \dfrac{587779}{702192}$ & \Cref{mu_est_thm}\\
+$\mu(\sigma) \leq \dfrac{2841}{10316} - \dfrac{754}{2579}\sigma$ & $\dfrac{1389}{1736}\leq \sigma \leq \dfrac{587779}{702192} = 0.8370\ldots$ & \Cref{mu_est_thm}\\
 \hline
-$\mu(\sigma) \leq \dfrac{1691}{6554} - \dfrac{890}{3277}\sigma$ & $\dfrac{587779}{702192}\leq \sigma \leq \dfrac{7441}{8695}$ & \\
+$\mu(\sigma) \leq \dfrac{1691}{6554} - \dfrac{890}{3277}\sigma$ & $\dfrac{587779}{702192}\leq \sigma \leq \dfrac{7441}{8695} = 0.8557\ldots$ & \Cref{new-exp-pair}, \Cref{exp-pair-mu}\\
 \hline
-$\mu(\sigma) \leq \dfrac{29}{130} - \dfrac{3}{13}\sigma$ & $\dfrac{7441}{8695}\leq \sigma \leq \dfrac{277}{300}$ & \\
+$\mu(\sigma) \leq \dfrac{29}{130} - \dfrac{3}{13}\sigma$ & $\dfrac{7441}{8695}\leq \sigma \leq \dfrac{277}{300} = 0.9233\ldots$ & \Cref{new-exp-pair}, \Cref{hb_mu_bounds}\\
 \hline
-$\mu(\sigma) \leq \dfrac{41}{222} - \dfrac{7}{37}\sigma$ & $\dfrac{277}{300}\leq \sigma \leq \dfrac{535}{567}$ & \\
-\hline
-$\mu(\sigma) \leq \dfrac{11}{70} - \dfrac{4}{25}\sigma$ & $\dfrac{535}{567}\leq \sigma \leq \dfrac{375}{392}$ & \\
-\hline
-$\mu(\sigma) \leq \dfrac{71}{520} - \dfrac{9}{65}\sigma$ & $\dfrac{375}{392}\leq \sigma \leq \dfrac{3059}{3168}$ & \\
+\begin{tabular}{@{}c@{}}
+$\mu(\sigma) \leq \lambda\mu_n + (1 - \lambda)\mu_{n + 1}$ \\ $\mu_n = \dfrac{2}{(n - 1)^2(n + 2)}$ \\ $\lambda = (\sigma_{n + 1} - \sigma)/(\sigma_{n + 1} - \sigma_n)$ \end{tabular} & \begin{tabular}{@{}c@{}}$\sigma_n \leq \sigma \leq \sigma_{n + 1}$\\ $\sigma_n = 1 - \dfrac{3 n^2 - 3 n + 2}{n(n - 1)^2(n + 2)},\quad (n \ge 7)$\end{tabular} & \Cref{hb_mu_bounds} \\
 \hline
 \end{tabular}\label{best-mu-table}
 \end{table}

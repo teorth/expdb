@@ -262,7 +262,7 @@ def compute_best_mu_bound(
     print("The following bounds on mu were obtained in the range [1/2, 99/100]")
     mbs = best_mu_bound_piecewise(sigma_interval, hypotheses)
     for b in mbs:
-        print(f"\\mu(x) \\leq {b}")
+        print(f"\\mu(x) \\leq {b}. {b.domain.x1} = {float(b.domain.x1)}")
 
 
 ######################################################################################
