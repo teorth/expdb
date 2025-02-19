@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from literature import *
 from functions import RationalFunction as RF
+import derived
 
 
 def van_der_corput(k, alpha):
@@ -354,10 +355,27 @@ def dep_graph_plot(hypothesis: Hypothesis):
     plt.title(f"Proof dependency tree of [{hypothesis.name}]")
     plt.show()
 
+def mu_bounds_plot():
+    """
+    Plot the best-known bounds on the growth rate of zeta inside the critical strip
+    mu(sigma)
+    """
+    best_mu_bounds = derived.compute_best_mu_bound()
+    for mu_bound in best_mu_bounds:
+        xs = [mu_bound.domain.x0, mu_bound.domain.x1]
+        ys = [mu_bound.at(x, extend_domain=True) for x in xs]
+        print(xs, ys)
+        plt.plot(xs, ys, color="black")
 
+    plt.xlabel(r"$\sigma$")
+    plt.ylabel(r"$\mu(\sigma)$")
+    plt.title(r"Known bounds on $\mu(\sigma)$")
+    plt.grid(True)
+    plt.show()
 
 # van_der_corput_plot2()
 # beta_bound_plot()
 # exp_pair_plot()
 # zero_density_plot()
 # zero_density_energy_plot()
+mu_bounds_plot()

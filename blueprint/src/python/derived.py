@@ -227,7 +227,7 @@ def prove_exponent_pairs():
 
 def compute_best_mu_bound(
         sigma_interval: Interval = Interval(frac(1,2), frac(99,100))
-    ):
+    ) -> list[Affine]:
     """
     Compute the best-known mu bounds from known exponent pairs and bounds on the 
     beta function.
@@ -263,6 +263,7 @@ def compute_best_mu_bound(
     mbs = best_mu_bound_piecewise(sigma_interval, hypotheses)
     for b in mbs:
         print(f"\\mu(x) \\leq {b}. {b.domain.x1} = {float(b.domain.x1)}")
+    return mbs
 
 
 ######################################################################################
@@ -1353,4 +1354,3 @@ def prove_all():
     # prove_prime_gap2()
 
 #prove_zero_density_guth_maynard_improved(False)
-compute_best_mu_bound()

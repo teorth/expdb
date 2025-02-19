@@ -235,7 +235,8 @@ Follows from substituting \Cref{heath-brown_exp_pair_2017} into \eqref{exp-pair-
 \end{proof}
 
 
-The new exponent pairs in \Cref{new-exp-pair} may be used to obtain sharper bounds on $\mu(\sigma)$ in certain ranges. Currently, the sharpest bounds on $\mu(\sigma)$ are recorded in \Cref{best-mu-table}.
+The new exponent pairs in \Cref{new-exp-pair} may be used to obtain sharper bounds on $\mu(\sigma)$ in certain ranges. The current sharpest bounds on $\mu(\sigma)$ are recorded in \Cref{best-mu-table} and graphed in \Cref{fig:best_mu_bound}.
+
 
 \begin{table}[ht]
 \caption{Current sharpest known bound on $\mu(\sigma)$ for $1/2 \le \sigma \le 1$}
@@ -272,6 +273,13 @@ $\mu(\sigma) \leq \lambda\mu_n + (1 - \lambda)\mu_{n + 1}$ \\ $\mu_n = \dfrac{2}
 \end{table}
 \derived 
 \code{compute_best_mu_bound()}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{chapter/mu_bound_plot.png}
+    \caption{Current sharpest known bound on $\mu(\sigma)$ for $1/2 \le \sigma \le 1$.}
+    \label{fig:best_mu_bound}
+\end{figure}
 
 \section{Connection to the Riemann hypothesis}
 
