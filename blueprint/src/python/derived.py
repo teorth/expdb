@@ -223,6 +223,49 @@ def prove_exponent_pairs():
     #best_proof_of_exponent_pair(frac(3, 40), frac(31, 40), Proof_Optimization_Method.COMPLEXITY)
 
 ######################################################################################
+# Derivations of bounds on zeta growth rates in the critical strip (mu bounds)
+
+def compute_best_mu_bound(
+        sigma_interval: Interval = Interval(frac(1,2), frac(99,100))
+    ):
+    """
+    Compute the best-known mu bounds from known exponent pairs and bounds on the 
+    beta function.
+
+    Parameters 
+    ----------
+    sigma_interval: Interval
+        The values of sigma on which the bound on mu(sigma) is computed.
+    """
+    
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(trivial_exp_pair)
+
+    assume = [
+        "Upper bound on beta",
+        "Exponent pair",
+        "Exponent pair transform",
+        "Exponent pair to beta bound transform"
+    ]
+    for hyp_type in assume:
+        hyps = literature.list_hypotheses(hypothesis_type=hyp_type)
+        print(f"Assuming {len(hyps)} hypotheses of type {hyp_type}.")
+        hypotheses.add_hypotheses(hyps)
+
+    # Expand the hypothesis set using a few iterations of 
+    # exp pairs <-> beta bounds
+    hypotheses.add_hypotheses(compute_exp_pairs(hypotheses, search_depth=1))
+    hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
+    hypotheses.add_hypotheses(compute_best_beta_bounds(hypotheses))
+    hypotheses.add_hypotheses(beta_bounds_to_exponent_pairs(hypotheses))
+    
+    print("The following bounds on mu were obtained in the range [1/2, 99/100]")
+    mbs = best_mu_bound_piecewise(sigma_interval, hypotheses)
+    for b in mbs:
+        print(f"\\mu(x) \\leq {b}")
+
+
+######################################################################################
 # Derivations of large value estimates 
 
 def prove_bourgain_large_values_theorem():
@@ -1310,3 +1353,4 @@ def prove_all():
     # prove_prime_gap2()
 
 #prove_zero_density_guth_maynard_improved(False)
+compute_best_mu_bound()

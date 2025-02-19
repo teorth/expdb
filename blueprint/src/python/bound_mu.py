@@ -226,10 +226,14 @@ def best_mu_bound(sigma, hypothesis_set):
 
 # TODO: supply not just a human-readable proof in the above method, but also a Lean-compilable proof.
 
-
-# Computes the best bound on mu(sigma) in the range [sigma0, sigma1), as a piecewise
-# linear function that the given hypotheses imply.
-def best_mu_bound_piecewise(sigma_interval, hypothesis_set):
+def best_mu_bound_piecewise(
+        sigma_interval: Interval, 
+        hypothesis_set: Hypothesis_Set
+    ) -> list[Affine]:
+    """
+    Computes the best bound on mu(sigma) in a certain range of sigma, as a piecewise
+    linear function that the given hypotheses imply.
+    """
     sigma0, sigma1 = sigma_interval.x0, sigma_interval.x1
 
     if sigma0 > sigma1:
@@ -270,7 +274,6 @@ def best_mu_bound_piecewise(sigma_interval, hypothesis_set):
                 )
             )
     return mu_bounds
-
 
 # This method attempts to prove the bound mu(sigma) <= mu (or better) from the set of hypotheses.
 # If successful, it adds the bound to the set; otherwise, it returns an error.

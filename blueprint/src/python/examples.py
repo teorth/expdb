@@ -190,15 +190,9 @@ def beta_bound_examples():
     for h in new_exp_pairs:
         print(f"\t{h.data} {h.proof}")
 
-    print(
-        "5. Recursive list of hypotheses used to derive the (1101653/15854002, 12327829/15854002) exponent pair"
-    )
-    eph = next(h for h in new_exp_pairs if h.data.k == frac(1101653, 15854002))
-    eph.recursively_list_proofs()
-
     # we could continue iterating, however let's check the implications for mu for now
     print()
-    print("6. This implies the following bounds on mu in the range [1/3, 9/10)")
+    print("5. This implies the following bounds on mu in the range [1/3, 9/10)")
     hypotheses.add_hypotheses(new_exp_pairs)
     mbs = best_mu_bound_piecewise(Interval(frac(1, 3), frac(9, 10)), hypotheses)
     for b in mbs:
@@ -510,4 +504,5 @@ def all_examples():
 #    prove_exponent_pair(frac(10769,351096), frac(609317,702192))
 #    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
-all_examples()
+# all_examples()
+beta_bound_examples()
