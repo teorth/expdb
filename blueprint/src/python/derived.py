@@ -1,11 +1,10 @@
-# This file contains all bounds that can be derived from other bounds, including those from literature.py
+# This file contains examples of bounds that can be derived from other bounds, 
+# including those from literature.py
 
 from literature import *
 import exponent_pair as ep
 import zero_density_estimate as zd
 import prime_gap as pg
-
-import time
 
 ######################################################################################
 # Derivations of exponent pairs
@@ -227,10 +226,11 @@ def prove_exponent_pairs():
 # Derivations of large value estimates 
 
 def prove_bourgain_large_values_theorem():
-    
-    start_time = time.time()
+    """
+    Proves the optimized form of Bourgain (2000) large values theorem by optimizing the 
+    choice of alpha_1, alpha_2 as functions of sigma and tau.
+    """
     lv_hyps = lv.optimize_bourgain_large_value_estimate()
-    print("Computed in", time.time() - start_time, "s")
     pieces = []
     for lvh in lv_hyps:
         pieces.extend(lvh.data.bound.pieces)
@@ -1309,4 +1309,4 @@ def prove_all():
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
 
-prove_zero_density_guth_maynard_improved(False)
+#prove_zero_density_guth_maynard_improved(False)
