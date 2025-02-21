@@ -38,7 +38,7 @@ For all $k \geq 1$, one has
 
 The remainder of this chapter focuses on upper bounds on $\alpha_k$. 
 
-\section{Known bounds on $\alpha_2$}
+\section{Known bounds on divisor sum exponents}
 
 Currently the sharpest known upper bound on $\alpha_2$ is:
 
@@ -59,7 +59,7 @@ on the interval $\alpha \in [0.3, 0.35]$.
     \hline
     Reference & Upper bound on $\alpha_2$\\
     \hline
-    Piltz & $1/2 = 0.5$\\
+    Dirichlet (1849) \cite{}, Piltz \cite{} & $1/2 = 0.5$\\
     \hline
     Voronoi (1903) \cite{voronoi_sur_1903} & $1/3 = 0.3333\ldots$\\
     \hline
@@ -75,6 +75,12 @@ on the interval $\alpha \in [0.3, 0.35]$.
     \hline 
     Kolesnik (1982) \cite{kolesnik_order_1982} & $35/108 = 0.3240\ldots$\\
     \hline 
+    Kolesnik (1985) \cite[p. 118]{kolesnik_1985} & $139/429 = 0.3240\ldots$\\
+    \hline
+    Iwaniec--Mozzochi (1988) \cite{iwaniec_divisor_1988} & $7/22 = 0.3181\ldots$\\
+    \hline
+    Huxley (1993) \cite{huxley_exponential_1993} & $23/73 = 0.3150\ldots$\\
+    \hline
     Huxley (2003) \cite{huxley_exponential_2003} & $131/416 = 0.3149\ldots$\\
     \hline 
     Li--Yang (2024) \cite{li_yang_gauss_2024} & $0.314483\ldots$\\
@@ -82,9 +88,6 @@ on the interval $\alpha \in [0.3, 0.35]$.
     \end{tabular}
 \label{div-alpha2-table}
 \end{table}
-
-
-\section{Known bounds on $\alpha_3$}
 
 Currently, the sharpest known bound on $\alpha_3$ is:
 
@@ -128,11 +131,6 @@ Currently, the sharpest known bound on $\alpha_3$ is:
 \end{table}
 
 
-
-
-
-
-\section{Known bounds on $\alpha_k$ for large $k$}
 For larger $k$, estimates typically make use of the following relationship with zeta-moments. 
 
 \begin{lemma}\label{mas}\uses{divisor-def,zeta-moment-def}  Let $k \geq 2$ be an integer. If $M(\sigma,k) = 1$ then $\alpha_k \leq \sigma$.
@@ -142,7 +140,8 @@ For larger $k$, estimates typically make use of the following relationship with 
 \end{proof}
 
 For completeness we record the historical progression in bounds for $\alpha_k$.  
-\begin{lemma}[Piltz bound]For $k \ge 2$, one has
+\begin{lemma}[Piltz bound]\label{piltz-alpha}\uses{divisor-def}
+For $k \ge 2$, one has
 \[
 \alpha_k \le 1 - \frac{1}{k}.
 \]
