@@ -1,24 +1,19 @@
-\chapter{The generalized Dirichlet divisor problem}\label{divisor-chapter}
+\chapter{The generalized Dirichlet divisor problem}
 
-\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be a fixed integer. Then, $\alpha_k$ is the best (fixed) exponent for which one has the asymptotic
+\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be an integer. Then, $\alpha_k$ is the best exponent for which one has the asymptotic
 $$ \sum_{n \leq x} d_k(n) = x P_{k-1}(\log x) + O(x^{\alpha_k+o(1)})$$
-for unbounded $x > 0$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) := \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function. The implied constant may depend on $k$.
+as $x \to \infty$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) := \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function. The implied constant may depend on $k$. 
 \end{definition}
-
-
-Of course, one can also give a non-asymptotic definition: $\alpha_k$ is the least exponent such that for all $\eps > 0$ there exists $C > 0$ such that
-$$ |\sum_{n \leq x} d_k(n) - x P_{k-1}(\log x)| \leq C x^{\alpha_k + \eps}$$
-for all $x \geq C$.
 
 In the case $k = 1$, the problem is trivial. In particular:
 
 \begin{lemma}[$d_1$ exponent]\label{divisor-1}\uses{divisor-def} One has $\alpha_1=0$.
 \end{lemma}
 \begin{proof}
-Follows from $\sum_{n \le x}1 = x + O(1)$.
+Follows from $\sum_{n \le x}1 = x + O(1)$. 
 \end{proof}
 
-On the other hand, the value of $\alpha_k$ is an open problem for all $k \ge 2$. Unconditionally, the following lower-bound on $\alpha_k$ is known to hold.
+On the other hand, the value of $\alpha_k$ is an open problem for all $k \ge 2$. Unconditionally, the following lower-bound on $\alpha_k$ is known to hold. 
 
 \begin{lemma}[Lower bound on $\alpha_k$]\label{divisor-lower}\uses{divisor-def}
 For all $k \geq 1$, one has
@@ -29,7 +24,7 @@ For all $k \geq 1$, one has
 \begin{proof} See Hardy \cite{hardy_divisor_1916}.
 \end{proof}
 
-Multiple authors {\bf [give cite]} have refined Hardy's result but only in the $o(1)$ term in the exponent. It is conjectured that this lower bound on $\alpha_k$ is in fact an equality \cite[p.\ 320]{titchmarsh_theory_1986}. Amongst other consequences, this conjecture implies the Lindel\"of hypothesis \cite[Chapter XII]{titchmarsh_theory_1986}.
+Multiple authors {\bf [give cite]} have refined Hardy's result but only in the $o(1)$ term in the exponent. It is conjectured that this lower bound on $\alpha_k$ is in fact an equality \cite[p.\ 320]{titchmarsh_theory_1986}. Amongst other consequences, this conjecture implies the Lindel\"of hypothesis \cite[Chapter XII]{titchmarsh_theory_1986}.  
 \begin{conjecture}[Generalised Dirichlet divisor problem conjecture]
 For all $k \geq 1$, one has
 \[
@@ -37,7 +32,12 @@ For all $k \geq 1$, one has
 \]
 \end{conjecture}
 
-The remainder of this chapter focuses on upper bounds on $\alpha_k$. The following series of lemmas record the sharpest known estimates.
+The remainder of this chapter focuses on upper bounds on $\alpha_k$. 
+
+\section{Known bounds on $\alpha_2$}
+
+Currently the sharpest known upper bound on $\alpha_2$ is:
+
 \begin{theorem}\label{divisor-2-bound}\cite[Theorem 1.2]{li_yang_gauss_2024}\uses{divisor-def} One has $\alpha_2 \leq \alpha^* = 0.314483\ldots$, where $\alpha^*$ is the solution to the equation
 \[
 \frac{8}{25}\alpha - \frac{(\sqrt{2(1+14\alpha)} - 5\sqrt{-1+8\alpha})^2}{200} + \frac{51}{200} = \alpha
@@ -45,10 +45,91 @@ The remainder of this chapter focuses on upper bounds on $\alpha_k$. The followi
 on the interval $\alpha \in [0.3, 0.35]$.
 \end{theorem}
 
+\Cref{div-alpha2-table} records the historical progression of upper bounds on $\alpha_2$.
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $\alpha_2$}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound on $\alpha_2$\\
+    \hline
+    Piltz & $1/2 = 0.5$\\
+    \hline
+    Voronoi (1903) \cite{voronoi_sur_1903} & $1/3 = 0.3333\ldots$\\
+    \hline
+    van der Corput (1922) \cite{van_der_corput_verscharfung_1922} & $33/100 = 0.33$\\
+    \hline
+    van der Corput (1928) \cite{van_der_corput_zum_1928} & $27/82 = 0.3292\ldots$\\
+    \hline 
+    Chih (1950) \cite{chih_on_1950}, Richert (1953) \cite{richert_verschrfung_1953} & $15/46 = 0.3260\ldots$\\
+    \hline 
+    Kolesnik (1969) \cite{kolesnik_improvement_1969} & $12/37 = 0.3243\ldots$\\
+    \hline 
+    Kolesnik (1973) \cite{kolesnik_1973} & $346/1067 = 0.3242\ldots$\\
+    \hline 
+    Kolesnik (1982) \cite{kolesnik_order_1982} & $35/108 = 0.3240\ldots$\\
+    \hline 
+    Huxley (2003) \cite{huxley_exponential_2003} & $131/416 = 0.3149\ldots$\\
+    \hline 
+    Li--Yang (2024) \cite{li_yang_gauss_2024} & $0.314483\ldots$\\
+    \hline 
+    \end{tabular}
+\label{div-alpha2-table}
+\end{table}
+
+
+\section{Known bounds on $\alpha_3$}
+
+Currently, the sharpest known bound on $\alpha_3$ is:
+
 \begin{theorem}\label{divisor-kolesnik}\cite{kolesnik}\uses{divisor-def} One has $\alpha_3 \leq 43/96$.
 \end{theorem}
 
-For larger $k$, estimates typically make use of the following relationship with zeta-moments.
+\Cref{div-alpha3-table} records the historical progression of upper bounds on $\alpha_3$.
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $\alpha_3$}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound on $\alpha_3$\\
+    \hline
+    Walfisz (1926) \cite{walfisz_uber_1926} & $43/87 = 0.4942\ldots$\\
+    \hline
+    Atkinson (1941) \cite{atkinson_divisor_1941} & $37/75 = 0.4933\ldots$\\
+    \hline
+    Rankin (1955) \cite{rankin_van_1955} & $0.4931466\ldots$\\
+    \hline
+    Y\"{u}h (1958) \cite{yuh_divisor_1958} & $14/29 = 0.4827\ldots$\\
+    \hline 
+    Yin (1959) \cite{} & $25/52 = 0.4807\ldots$\\
+    \hline 
+    Yin (1959) \cite{} & $10/21 = 0.4761\ldots$\\
+    \hline
+    Y\"{u}h--Wu (1962) \cite{yuh_wu_divisor_1962} & $8/17 = 0.4705\ldots$\\
+    \hline 
+    Yin (1964) \cite{} & $34/75 = 0.4533\ldots$\\
+    \hline
+    Chen (1965) \cite{chen_divisor_1965} & $5/11 = 0.4545\ldots$\\
+    \hline
+    Yin--Li (1981) \cite{}, Zheng (1988) \cite{} & $127/282 = 0.4503\ldots$\\
+    \hline
+    Kolesnik (1981) \cite{kolesnik} & $43/96 = 0.4479\ldots$\\
+    \hline
+    \end{tabular}
+\label{div-alpha3-table}
+\end{table}
+
+
+
+
+
+
+\section{Known bounds on $\alpha_k$ for large $k$}
+For larger $k$, estimates typically make use of the following relationship with zeta-moments. 
 
 \begin{lemma}\label{mas}\uses{divisor-def,zeta-moment-def}  Let $k \geq 2$ be an integer. If $M(\sigma,k) = 1$ then $\alpha_k \leq \sigma$.
 \end{lemma}
@@ -56,23 +137,57 @@ For larger $k$, estimates typically make use of the following relationship with 
 \begin{proof}  See \cite[\S 13.3]{ivic}.
 \end{proof}
 
-Using Lemma \ref{mas}, the following bounds were obtained:
+For completeness we record the historical progression in bounds for $\alpha_k$.  
+\begin{lemma}[Piltz bound]For $k \ge 2$, one has
+\[
+\alpha_k \le 1 - \frac{1}{k}.
+\]
+\end{lemma}
+\begin{lemma}[Voronoi, Landau bound]
+For $k \ge 2$, one has
+\[
+\alpha_k \leq 1 - \frac{2}{k + 1}.
+\]
+\end{lemma}
+\begin{proof}
+See Voronoi \cite{voronoi_sur_1903} for $k = 2$ and Landau \cite{landau_uber_1912} for $k \ge 3$. 
+\end{proof}
 
-\begin{theorem}\label{heathbrown-alpha-1981}\uses{divisor-def,mas}\cite{heathbrown_mean_1981} For $4 \le k \le 8$, one has
+\begin{lemma}[Hardy--Littlewood bound for $k \ge 4$]
+For $k \ge 4$, one has
+\[
+\alpha_k \leq 1 - \frac{3}{k + 2}.
+\]
+\end{lemma}
+\begin{proof}
+See \cite{hardy_littlewood_approximate_1923}. The original proof relied on the assumption that $\mu(1/2) \le 1/6$ which was published later. 
+\end{proof}
+
+\begin{lemma}[Tong bound for $4 \le k \le 11$]
+One has
+\begin{alignat*}{4}
+\alpha_4 &\le 1/2,\qquad &&\alpha_5 \le 4/7,\qquad &&\alpha_6 \le 5/8,\qquad &&\alpha_7 \le 71/107\\
+\alpha_8 &\le 41/59,\qquad &&\alpha_9 \le 31/43,\qquad &&\alpha_{10} \le 26/35,\qquad &&\alpha_{11}\le 19/25
+\end{alignat*}
+\end{lemma}
+\begin{proof}
+See Tong \cite{}.
+\end{proof}
+
+\begin{theorem}\cite{heathbrown_mean_1981} For $4 \le k \le 8$, one has 
 \[
 \alpha_k \leq \frac{3k-4}{4k}.
 \]
 \end{theorem}
 
-\begin{theorem}\label{ivic-alpha-1989}\cite{ivic_ouellet_1989}\uses{divisor-def} One has
+\begin{theorem}[Ivi\'c--Ouellet bound for large $k$]\cite{ivic_ouellet_1989} One has
 \begin{align*}
 \alpha_{10} \le 27/40,\qquad \alpha_{11} &\le 0.6957,\qquad \alpha_{12} \le 0.7130,\qquad \alpha_{13} \le 0.7306,\\
 \alpha_{14} \le 0.7461,\qquad \alpha_{15} &\le 0.75851,\qquad \alpha_{16} \le 0.7691,\qquad \alpha_{17} \le 0.7785,\\
 \alpha_{18} \le 0.7868,\qquad \alpha_{19} &\le 0.7942,\qquad \alpha_{20} \le 0.8009.
 \end{align*}
 \end{theorem}
-
-\begin{theorem}\label{ivic-alpha}\cite[Theorem 13.12]{ivic}\uses{mas,divisor-def}  One can bound $\alpha_k$ by
+\begin{theorem}\cite[Theorem 13.12]{ivic}\uses{mas}  One can bound $\alpha_k$ by
     \begin{align*}
         (3k-4)/4k & \hbox{ for } 4 \leq k \leq 8 \\
         35/54 & \hbox{ for } k = 9 \\
@@ -85,139 +200,8 @@ Using Lemma \ref{mas}, the following bounds were obtained:
     \end{align*}
 \end{theorem}
 
-\begin{theorem}\label{bellotti}\uses{divisor-def}  \cite{bellotti_generalised_2023} For integer $k \ge 30$, one has
-\[
-\alpha_k \leq 1 - 1.421(k - 1.18)^{-2/3}.
-\]
-Moreover, $\alpha_k \leq 1 - 1.889k^{-2/3}$ for sufficiently large $k$.
-\end{theorem}
-
-For completeness we record the historical progression in bounds for $\alpha_k$.
-
-\begin{lemma}[Piltz bound]\label{piltz-alpha}\uses{divisor-def}
-    For $k \ge 1$, one has
-\[
-\alpha_k \le 1 - \frac{1}{k}.
-\]
-\end{lemma}
-\begin{lemma}[Voronoi, Landau bound]\label{voronoi-alpha}\uses{divisor-def}
-For $k \ge 2$, one has
-\[
-\alpha_k \leq 1 - \frac{2}{k + 1}.
-\]
-\end{lemma}
-\begin{proof}
-See Voronoi \cite{voronoi_sur_1903} for $k = 2$ and Landau \cite{landau_uber_1912} for $k \ge 3$.
-\end{proof}
-
-\begin{lemma}[Hardy--Littlewood bound]\label{hl-alpha}\uses{divisor-def}
-For $k \ge 4$, one has
-\[
-\alpha_k \leq 1 - \frac{3}{k + 2}.
-\]
-\end{lemma}
-\begin{proof}
-See \cite{hardy_littlewood_approximate_1923}. The original proof relied on the assumption that $\mu(1/2) \le 1/6$ which was published later.
-\end{proof}
-
-\begin{lemma}[van der Corput first bound on $\alpha_2$]\label{vdc-alpha-1}\uses{divisor-def}
-One has $\alpha_2 \le 33/100$.
-\end{lemma}
-\begin{proof}
-See van der Corput \cite{van_der_corput_verscharfung_1922}.
-\end{proof}
-
-
-\begin{lemma}[van der Corput second bound on $\alpha_2$]\label{vdc-alpha-2}\uses{divisor-def}
-One has $\alpha_2 \le 27/82$.
-\end{lemma}
-\begin{proof}
-See van der Corput \cite{van_der_corput_zum_1928}.
-\end{proof}
-
-\begin{lemma}[Walfisz bound on $\alpha_3$]\label{walfisz-alpha-3}\uses{divisor-def}
-One has $\alpha_3 \le 43/87$.
-\end{lemma}
-\begin{proof}
-See Walfisz \cite{walfisz_uber_1926}.
-\end{proof}
-
-\begin{lemma}[Atkinson bound on $\alpha_3$]\label{atkinson-alpha-3}\uses{divisor-def}
-One has $\alpha_3 \le 37/75$.
-\end{lemma}
-\begin{proof}
-See Atkinson \cite{atkinson_divisor_1941}.
-\end{proof}
-
-
-\begin{lemma}[Richert, Tsung bound]\label{richert-alpha-2}\uses{divisor-def}
-One has $\alpha_2 \le 15/46$.
-\end{lemma}
-\begin{proof}
-Proved independently by Chih \cite{chih_on_1950} and Richert \cite{richert_verschrfung_1953}.
-\end{proof}
-
-\begin{lemma}[Y\"{u}h bound on $\alpha_3$]\label{yuh-alpha-3}\uses{divisor-def}
-One has $\alpha_3 \le 14/29$.
-\end{lemma}
-\begin{proof}
-See Y\"{u}h \cite{yuh_divisor_1958}.
-\end{proof}
-
-\begin{lemma}[Y\"{u}h--Wu bound on $\alpha_3$]\label{yuh-wu-alpha-3}\uses{divisor-def}
-One has $\alpha_3 \le 8/17$.
-\end{lemma}
-\begin{proof}
-See Y\"{u}h--Wu \cite{yuh_wu_divisor_1962}.
-\end{proof}
-
-\begin{lemma}[Chen bound on $\alpha_3$]\label{chen-alpha-3}\uses{divisor-def}
-One has $\alpha_3 \le 5/11$.
-\end{lemma}
-\begin{proof}
-See Chen \cite{chen_divisor_1965}.
-\end{proof}
-
-\begin{lemma}[Kolesnik first bound on $\alpha_2$]\label{kolesnik-alpha-2-first}\uses{divisor-def}
-One has $\alpha_2 \le 12/37$.
-\end{lemma}
-\begin{proof}
-See Kolesnik \cite{kolesnik_improvement_1969}.
-\end{proof}
-
-\begin{lemma}[Kolesnik second bound on $\alpha_2$]\label{kolesnik-alpha-2-second}\uses{divisor-def}
-One has $\alpha_2 \le 346/1067$.
-\end{lemma}
-\begin{proof}
-See Kolesnik \cite{kolesnik_1973}.
-\end{proof}
-
-\begin{lemma}[Kolesnik first bound on $\alpha_3$]\label{kolesnik-alpha-3-first}\uses{divisor-def}
-One has $\alpha_3 \le 43/96$.
-\end{lemma}
-\begin{proof}
-See Kolesnik \cite{kolesnik}.
-\end{proof}
-
-
-\begin{lemma}[Kolesnik third bound on $\alpha_2$]\label{kolesnik-alpha-2-third}\uses{divisor-def}
-One has $\alpha_2 \le 35/108$.
-\end{lemma}
-\begin{proof}
-See Kolesnik \cite{kolesnik_order_1982}.
-\end{proof}
-
-
-\begin{lemma}[Huxley bound]\label{huxley-alpha}\uses{divisor-def}
-One has $\alpha_2 \le 131/416$.
-\end{lemma}
-\begin{proof}
-See Huxley \cite{huxley_exponential_2003}
-{\bf TODO: link this up with exponential sum bounds?}
-\end{proof}
-
-\begin{lemma}[Heath-Brown bound for large $k$]\label{hb-alpha-large}\uses{divisor-def}
-For any $k \ge 1$, one has
+\begin{lemma}[Heath-Brown bound for large $k$]
+For any $k \ge 2$, one has
 \[
 \alpha_k \le 1 - 0.849k^{-2/3}.
 \]
@@ -225,3 +209,10 @@ For any $k \ge 1$, one has
 \begin{proof}
 See Heath-Brown \cite{heathbrown_new_2017}.
 \end{proof}
+
+\begin{theorem}[\cite{bellotti_generalised_2023}]For integer $k \ge 30$, one has
+\[
+\alpha_k \leq 1 - 1.421(k - 1.18)^{-2/3}.
+\]
+Moreover, $\alpha_k \leq 1 - 1.889k^{-2/3}$ for sufficiently large $k$.
+\end{theorem}
