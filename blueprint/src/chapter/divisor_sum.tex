@@ -1,44 +1,76 @@
 \chapter{The generalized Dirichlet divisor problem}\label{divisor-chapter}
 
-\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be a fixed integer. Then, $\alpha_k$ is the best (fixed) exponent for which one has the asymptotic
-$$ \sum_{n \leq x} d_k(n) = x P_{k-1}(\log x) + O(x^{\alpha_k+o(1)})$$
-for unbounded $x > 0$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) := \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function. The implied constant may depend on $k$.
+For any fixed integer $k \ge 1$, let 
+\[
+d_k(n) := \sum_{n_1 \cdots n_k = n}1
+\]
+denote the number of ways a positive integer $n$ may be written as a product of exactly $k$ positive factors. The divisor sum
+\[
+D_k(x) := \sum_{n \leq x} d_k(n)
+\]
+is known to satisfy the asymptotic formula 
+\[
+D_k(x) = x P_{k - 1}(\log x) + \Delta_k(x)
+\]
+where $P_{k - 1}$ is an explicit polynomial of degree $k-1$ and $\Delta_k(x) = o(x)$ is an error term.
+
+\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be a fixed integer. Then, $\alpha_k$ is the least (fixed) exponent for which
+$$ \Delta_k(x) \ll x^{\alpha_k+o(1)}$$
+for unbounded $x > 0$. Furthermore, $\beta_k$ is the least (fixed) exponent for which 
+\[
+\left(\frac{1}{x}\int_1^x (\Delta_k(t))^2\text{d}t\right)^{1/2} \ll x^{\beta_k + o(1)}
+\]
+for unbounded $x > 0$ (in both definitions, the implied constant may depend on $k$).
 \end{definition}
 
-Of course, one can also give a non-asymptotic definition: $\alpha_k$ is the least exponent such that for all $\eps > 0$ there exists $C > 0$ such that
-$$ \left|\sum_{n \leq x} d_k(n) - x P_{k-1}(\log x)\right| \leq C x^{\alpha_k + \eps}$$
-for all $x \geq C$.
+One can also give a non-asymptotic definition: $\alpha_k$, $\beta_k$ are respectively the least exponent such that for all $\eps > 0$, there exists $C = C(\eps, k) > 0$ for which
+\[
+|\Delta_k(x)| \leq C x^{\alpha_k + \eps},\qquad (x \ge C)
+\]
+and
+\[
+\left|\frac{1}{x}\int_1^x(\Delta_k(t))^2\text{d}t\right|^{1/2} \le Cx^{\beta_k + \eps},\qquad (x \ge C).
+\]
 
 In the case $k = 1$, the problem is trivial. In particular:
 
-\begin{lemma}[$d_1$ exponent]\label{divisor-1}\uses{divisor-def} One has $\alpha_1=0$.
+\begin{lemma}[$d_1$ exponent]\label{divisor-1}\uses{divisor-def} One has $\alpha_1=\beta_1=0$.
 \end{lemma}
 \begin{proof}
 Follows from $\sum_{n \le x}1 = x + O(1)$. 
 \end{proof}
 
-On the other hand, the value of $\alpha_k$ is an open problem for all $k \ge 2$. Unconditionally, the following lower-bound on $\alpha_k$ is known to hold. 
+However, the value of $\alpha_k$ is not known for $k \ge 2$. On the other hand, the values of $\beta_2$ and $\beta_3$ are known.
 
-\begin{lemma}[Lower bound on $\alpha_k$]\label{divisor-lower}\uses{divisor-def}
+\begin{theorem}[Hardy \cite{hardy_average_1917}]\label{avg-divisor-2}\uses{divisor-def} 
+One has $\beta_2 = 1/4$.
+\end{theorem}
+\begin{theorem}[Cram\'er \cite{cramer_uber_1922}]\label{avg-divisor-3}\uses{divisor-def} 
+One has $\beta_3 = 1/3$.
+\end{theorem}
+
+Nevertheless, the value of $\beta_k$ is not known for $k \ge 4$. Unconditionally, the following lower-bounds are known to hold. 
+
+\begin{lemma}[Lower bound on $\alpha_k$ and $\beta_k$]\label{divisor-lower}\uses{divisor-def}
 For all $k \geq 1$, one has
 \[
-\alpha_k \geq \frac{1}{2} - \frac{1}{2k}.
+\alpha_k \geq \beta_k \geq \frac{1}{2} - \frac{1}{2k}.
 \]
 \end{lemma}
-\begin{proof} See Hardy \cite{hardy_divisor_1916}.
+\begin{proof}The first inequality follows from inserting the bound $\Delta_k(x) \ll x^{\alpha_k + o(1)}$ into the definition of $\beta_k$. The second inequality is due to Titchmarsh \cite{titchmarsh_divisor_1938}. Note also that the weaker inequality $\alpha_k \ge 1/2 - 1/(2k)$ was first proved by Hardy \cite{hardy_divisor_1916}.
 \end{proof}
 
-Multiple authors {\bf [give cite]} have refined Hardy's result but only in the $o(1)$ term in the exponent. It is conjectured that this lower bound on $\alpha_k$ is in fact an equality \cite[p.\ 320]{titchmarsh_theory_1986}. Amongst other consequences, this conjecture implies the Lindel\"of hypothesis \cite[Chapter XII]{titchmarsh_theory_1986}.  
+It is conjectured that this lower bound on $\alpha_k$ and $\beta_k$ is in fact an equality \cite[p.\ 320]{titchmarsh_theory_1986}. Amongst other consequences, this conjecture implies the Lindel\"of hypothesis \cite[Chapter XII]{titchmarsh_theory_1986}.  
 \begin{conjecture}[Generalised Dirichlet divisor problem conjecture]
 For all $k \geq 1$, one has
 \[
-\alpha_k = \frac{1}{2} - \frac{1}{2k}.
+\alpha_k = \beta_k = \frac{1}{2} - \frac{1}{2k}.
 \]
 \end{conjecture}
 
-The remainder of this chapter focuses on upper bounds on $\alpha_k$. 
+The remainder of this chapter focuses on upper bounds on $\alpha_k$ and $\beta_k$. 
 
-\section{Known bounds on divisor sum exponents}
+\section{Known pointwise bounds on divisor sum exponents}
 
 Currently the sharpest known upper bound on $\alpha_2$ is:
 
