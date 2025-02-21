@@ -1,9 +1,13 @@
-\chapter{The generalized Dirichlet divisor problem}
+\chapter{The generalized Dirichlet divisor problem}\label{divisor-chapter}
 
-\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be an integer. Then, $\alpha_k$ is the best exponent for which one has the asymptotic
+\begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be a fixed integer. Then, $\alpha_k$ is the best (fixed) exponent for which one has the asymptotic
 $$ \sum_{n \leq x} d_k(n) = x P_{k-1}(\log x) + O(x^{\alpha_k+o(1)})$$
-as $x \to \infty$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) := \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function. The implied constant may depend on $k$. 
+for unbounded $x > 0$, where $P$ is an explicit polynomial of degree $k-1$ and $d_k(n) := \sum_{n_1 \dots n_k=n} 1$ is the $k^{\mathrm{th}}$ divisor function. The implied constant may depend on $k$.
 \end{definition}
+
+Of course, one can also give a non-asymptotic definition: $\alpha_k$ is the least exponent such that for all $\eps > 0$ there exists $C > 0$ such that
+$$ \left|\sum_{n \leq x} d_k(n) - x P_{k-1}(\log x)\right| \leq C x^{\alpha_k + \eps}$$
+for all $x \geq C$.
 
 In the case $k = 1$, the problem is trivial. In particular:
 
@@ -143,7 +147,7 @@ For completeness we record the historical progression in bounds for $\alpha_k$.
 \alpha_k \le 1 - \frac{1}{k}.
 \]
 \end{lemma}
-\begin{lemma}[Voronoi, Landau bound]
+\begin{lemma}[Voronoi, Landau bound]\label{voronoi-alpha}\uses{divisor-def}
 For $k \ge 2$, one has
 \[
 \alpha_k \leq 1 - \frac{2}{k + 1}.
@@ -153,7 +157,7 @@ For $k \ge 2$, one has
 See Voronoi \cite{voronoi_sur_1903} for $k = 2$ and Landau \cite{landau_uber_1912} for $k \ge 3$. 
 \end{proof}
 
-\begin{lemma}[Hardy--Littlewood bound for $k \ge 4$]
+\begin{lemma}[Hardy--Littlewood bound for $k \ge 4$]\label{hl-alpha}\uses{divisor-def}
 For $k \ge 4$, one has
 \[
 \alpha_k \leq 1 - \frac{3}{k + 2}.
@@ -200,7 +204,7 @@ See Tong \cite{}.
     \end{align*}
 \end{theorem}
 
-\begin{lemma}[Heath-Brown bound for large $k$]
+\begin{lemma}[Heath-Brown bound for large $k$]\label{hb-alpha-large}\uses{divisor-def}
 For any $k \ge 2$, one has
 \[
 \alpha_k \le 1 - 0.849k^{-2/3}.
