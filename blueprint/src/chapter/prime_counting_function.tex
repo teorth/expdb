@@ -1,52 +1,54 @@
 \chapter{The Prime Counting Function}
 \label{chap:prime_counting_function}
 
-\section{Introdcution}
-The prime counting function, denoted by $\pi(x)$, is defined as the number prime less than or equal to a given real number $x$. In formula form,
+\section{Introduction}
+The prime counting function, denoted by $\pi(x)$, is defined as the number of primes less than or equal to a given real number $x$. In formula form,
 \[
 \pi(x) = \sum_{\substack{p \le x \\ p \text{ prime}}} 1.
 \]
 This function is central to number theory because it measures the distribution of prime numbers among the integers.
 
 \section{The Prime Number Theorem and Asymptotic Behavior}
-The Prime Number Theorem (PNT) provides the leading asymptotic behavior of $\pi(x)$
+The Prime Number Theorem (PNT) provides the leading asymptotic behavior of $\pi(x)$:
 \[
 \pi(x) \sim \frac{x}{\log x} \quad \text{as } x \to \infty.
 \]
 This indicates that for large $x$, the ratio $\frac{\pi(x)}{x/\log x}$ approaches 1.
 
 \section{Upper Bounds for $\pi(x)$}
-Upper bounds give estimates that$\pi(x)$ does not exceed certain functions of $x$
+Upper bounds provide estimates ensuring that $\pi(x)$ does not exceed certain functions of $x$.
 
-\subsection{Chebyshev's Upper Bound} 
-Chebyshev established that there exist constant $c_1$ and $c_2$ such that for sufficiently large $x$
+\subsection{Chebyshev's Upper Bound}
+Chebyshev established that there exist constants \(c_1\) and \(c_2\) such that for sufficiently large \(x\),
 \[
-\frac{x}{\log x +c+1} < \pi(x) < \frac{x}{\log x - c_2}.
+c_1 \frac{x}{\log x} \leq \pi(x) \leq c_2 \frac{x}{\log x}.
 \]
+This result provides a fundamental constraint on the growth of $\pi(x)$.
 
 \section{Lower Bounds for $\pi(x)$}
-Lower bounds ensure that $\pi(x)$ is not too small compared to its asymptotic prediction. 
+Lower bounds ensure that $\pi(x)$ is not too small compared to its asymptotic prediction.
 
 \subsection{A Classical Lower Bound}
-a classical result povides a lower bound: 
+A classical result provides a lower bound:
 \[
 \pi(x) > \frac{x}{\log x + 2},
 \]
-for sufficiently large $x$. Although this is a rough estimate, it is significant as a starting point for more refined results.
+for sufficiently large $x$. Although this is a rough estimate, it serves as a starting point for more refined results.
 
 \section{Error Terms in the Prime Number Theorem}
-Beyond the asymptotic approximation, it is importantt to understand the error term in the Prime Number Theorem. One common form of the error term is:
+Beyond the asymptotic approximation, it is important to understand the error term in the Prime Number Theorem. One common form of the error term is:
 \[
-\pi(x) = \operatorname{Li}(x) + 0\left(x e^{-c\sqrt{\log x}}\right),
+\pi(x) = \operatorname{Li}(x) + O\left(x e^{-c\sqrt{\log x}}\right),
 \]
-for some postitive constat $c$, where $\operatorname{Li}(x)$ is the logarithmic integral. This error term reflects how the actual count deviates from the predicted main term.
+for some positive constant \(c\), where $\operatorname{Li}(x)$ is the logarithmic integral. This error term reflects how the actual count deviates from the predicted main term.
 
 \section{Conclusion}
-The bounds and error estimate discussed above are fundamental in underatanding the distributation of prime number. Improvement in these estimates contine to be an active area of research, particularly in the context of the Riemann Hypothesis and other deep results in analytic number theory.
+The bounds and error estimates discussed above are fundamental in understanding the distribution of prime numbers. Improvements in these estimates continue to be an active area of research, particularly in the context of the Riemann Hypothesis and other deep results in analytic number theory.
 
-\section{Reference}
+\section{References}
 For further reading and more detailed proofs, consult:
-\begin{itemize} 
-	\item TME-EMT Article on Prime Counting Function: \url{https://tmeemt.github.io/Chest/Article/Art01.html}
-	\item Wikipedia page on the Prime Counting Function: \url{https://en.wikipedia.org/wiki/Prime-counting_function}
+\begin{itemize}
+    \item TME-EMT Article on Prime Counting Function: \url{https://tmeemt.github.io/Chest/Article/Art01.html}
+    \item Wikipedia page on the Prime Counting Function: \url{https://en.wikipedia.org/wiki/Prime-counting_function}
 \end{itemize}
+
