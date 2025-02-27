@@ -15,7 +15,7 @@ The Prime Number Theorem (PNT) provides the leading asymptotic behavior of $\pi(
 \]
 This indicates that for large $x$, the ratio $\frac{\pi(x)}{x/\log x}$ approaches 1.
 
-\section{Upper Bounds for $\pi(x)$}
+\section{Upper Bounds for \texorpdfstring{$\pi(x)$}{pi(x)}}
 Upper bounds provide estimates ensuring that $\pi(x)$ does not exceed certain functions of $x$.
 
 \subsection{Chebyshev's Upper Bound}
@@ -25,7 +25,7 @@ c_1 \frac{x}{\log x} \leq \pi(x) \leq c_2 \frac{x}{\log x}.
 \]
 This result provides a fundamental constraint on the growth of $\pi(x)$.
 
-\section{Lower Bounds for $\pi(x)$}
+\section{Lower Bounds for \texorpdfstring{$\pi(x)$}{pi(x)}}
 Lower bounds ensure that $\pi(x)$ is not too small compared to its asymptotic prediction.
 
 \subsection{A Classical Lower Bound}
@@ -35,6 +35,29 @@ A classical result provides a lower bound:
 \]
 for sufficiently large $x$. Although this is a rough estimate, it serves as a starting point for more refined results.
 
+\section{Sharper Upper and Lower Bounds}
+Recent research has provided tighter estimates on $\pi(x)$. For example, Dusart (2010) proved that for sufficiently large $x$,
+\[
+\frac{x}{\log x} \left(1 + \frac{1}{\log x}\right) < \pi(x) < \frac{x}{\log x} \left(1 + \frac{1.25506}{\log x}\right).
+\]
+These refined bounds improve upon Chebyshev's original inequalities and help in numerical computations.
+
+\section{Alternative Approximations}
+Besides $x/\log x$, more accurate approximations for $\pi(x)$ exist, such as Riemann’s R-function:
+\[
+R(x) = \sum_{n=1}^{\infty} \frac{\mu(n)}{n} \operatorname{Li}(x^{1/n}),
+\]
+where $\mu(n)$ is the Möbius function. This provides an integral-based approach to estimating $\pi(x)$ with better precision.
+
+\section{Computational Aspects}
+Computing $\pi(x)$ efficiently is a key problem in number theory. Several algorithms exist, including:
+\begin{itemize}
+    \item **Direct sieving methods** (e.g., the Sieve of Eratosthenes)
+    \item **Meissel-Lehmer algorithm**, which divides the computation into smaller, manageable parts
+    \item **Lagarias-Miller-Odlyzko method**, which uses integral approximations
+\end{itemize}
+Modern implementations allow computation of $\pi(x)$ for very large $x$, with values exceeding $10^{18}$ computed in practice.
+
 \section{Error Terms in the Prime Number Theorem}
 Beyond the asymptotic approximation, it is important to understand the error term in the Prime Number Theorem. One common form of the error term is:
 \[
@@ -42,13 +65,22 @@ Beyond the asymptotic approximation, it is important to understand the error ter
 \]
 for some positive constant \(c\), where $\operatorname{Li}(x)$ is the logarithmic integral. This error term reflects how the actual count deviates from the predicted main term.
 
+\section{Future Research Directions}
+Some active areas of research related to $\pi(x)$ include:
+\begin{itemize}
+    \item **Improving error bounds** using explicit estimates on zeta zeros.
+    \item **Connections to the Riemann Hypothesis**, which predicts even sharper estimates for $\pi(x)$.
+    \item **Efficient computation techniques** for evaluating $\pi(x)$ at extremely large values.
+\end{itemize}
+Further progress in these areas could lead to a deeper understanding of prime number distribution.
+
 \section{Conclusion}
 The bounds and error estimates discussed above are fundamental in understanding the distribution of prime numbers. Improvements in these estimates continue to be an active area of research, particularly in the context of the Riemann Hypothesis and other deep results in analytic number theory.
 
 \section{References}
 For further reading and more detailed proofs, consult:
 \begin{itemize}
-    \item TME-EMT Article on Prime Counting Function: \url{https://tmeemt.github.io/Chest/Article/Art01.html}
+    \item Dusart, P. (2010). Estimates of some functions over primes without Riemann Hypothesis.
     \item Wikipedia page on the Prime Counting Function: \url{https://en.wikipedia.org/wiki/Prime-counting_function}
+    \item TME-EMT Article on Prime Counting Function: \url{https://tmeemt.github.io/Chest/Article/Art01.html}
 \end{itemize}
-
