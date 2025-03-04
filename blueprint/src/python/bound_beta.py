@@ -162,6 +162,114 @@ def compute_best_beta_bounds(hypothesis_set, domain=None):
     return derived_bounds
 
 
+def apply_van_der_corput_process_for_beta(bounds):
+    # Lemma 4.6 gives a bound of the form \beta(\alpha) <= max( f1(alpha), f2(alpha), f3(alpha) )
+
+    # f3 contains a sup over a term h'. If bounds is piecewise linear with each intercept C >= -1 and continuous then we can take h' = h
+    bd0 = bounds[0]
+    p0 = bd0.data.bound.deep_copy()
+    C = p0.c
+    M = p0.m
+    if (C < -1) or ( C + M - frac(1,2) < -1):
+        return []
+    for i in range(len(bounds)-1):
+        bd1 = bounds[i]
+        bd2 = bounds[i+1]
+        p1 = bd1.data.bound.deep_copy()
+        p2 = bd2.data.bound.deep_copy()
+
+        v1 = p1.domain.x1
+        v2 = p2.domain.x0
+        C = p2.c
+        M = p2.m
+        if p1.at(v1, True) != p2.at(v2, True):
+            return []
+        if (C < -1) or ( C + M - frac(1,2) < -1):
+            return []
+
+    # extend beta bounds to [0.5, 1]
+    boundData1 = [[ h.data.bound.domain.x0, h.data.bound.domain.x1, h.data.bound.m, h.data.bound.c ]  for h in bounds ]
+    boundData2 = [[ 1 - h.data.bound.domain.x1, 1 - h.data.bound.domain.x0, 1 - h.data.bound.m, h.data.bound.c  + h.data.bound.m - frac(1,2) ]  for h in bounds ]
+    boundData2 = boundData2[::-1]
+    boundData = boundData1 + boundData2
+
+    newBounds = []
+    for bd in bounds:
+        p = bd.data.bound.deep_copy()
+        v0 = p.domain.x0
+        v1 = p.domain.x1
+        domain1 = p.domain.deep_copy()
+        m1 = p.m
+        c1 = p.c
+
+        # We set h = ((1+c2+m2)alpha)/(2+2*c2) + c2/(2+2*c2)
+        # In this case f1(alpha) = f3(alpha)
+        for i in range(1,len(boundData)):
+            dat = boundData[i]
+            m2 = dat[2]
+            c2 = dat[3]
+            X0 = dat[0]
+            X1 = dat[1]
+
+            # Skip over what would generate current best bounds
+            if frac(1+c2+m2,2+2*c2) == m1 and frac( c2,2+2*c2) == c1:
+                continue
+
+            # To apply this bound we require
+            # X0 <= alpha/(1 + h - alpha) <= X1
+            domain2 = domain1.intersect( Interval( frac( X0, 1 + c2 + m2*X0), frac( X1, 1 + c2 + m2*X1),   True, True ) )
+            if domain2.length() == 0:
+                continue
+
+            # check that f2(alpha) >= f1(alpha) and is an improvement over the current beta bound
+            u0 = domain2.x0
+            u1 = domain2.x1
+            if  1 + c2 + m2 - 2*m1*(1 + c2) == 0:
+                if c2 > 2*c1*(1+c2):
+                    continue
+            elif  1 + c2 + m2 - 2*m1*(1 + c2) > 0:
+                u1 = min( [u1, frac(2*c1*(1+c2) - c2, 1 + c2 + m2 - 2*m1*(1 + c2)) ] )
+            else:
+                u0 = max( [u0, frac(2*c1*(1+c2) - c2, 1 + c2 + m2 - 2*m1*(1 + c2)) ] )
+            if  3*m2 - c2 - 1 < 0:
+                u1 = min( [u1, frac( -3*c2, 3*m2 - c2 - 1) ] )
+            if u1 > u0:
+                newBounds.append( Affine( frac(1+c2+m2,2+2*c2), frac( c2,2+2*c2), Interval( u0, u1, True, True) ) )
+        #TODO check if picking h so that f1(alpha) = f2(alpha) achieves any new bounds
+
+    if len(newBounds) > 0:      
+        # Merge the same bound that appears over multiple intervals
+        newBounds1 = [nb.deep_copy() for nb in newBounds]
+        newBounds2 = []
+        while len(newBounds1) > 0:
+            f1 = newBounds1[0].deep_copy()
+            fm = f1.m
+            fc = f1.c 
+            sameFs0 = [ nb for nb in newBounds1 if (nb.m == fm) and (nb.c == fc) ]
+            sameFs0.sort(  key=lambda f: f.domain.x0 )
+            sameFs = []
+            for SF in sameFs0:
+                if not(SF in sameFs):
+                    sameFs.append(SF.deep_copy())
+            curF = sameFs[0].deep_copy()
+            for i in range(1, len(sameFs)):
+                newF = sameFs[i].deep_copy()
+                u0 = curF.domain.x0
+                u1 = curF.domain.x1
+                v0 = newF.domain.x0
+                v1 = newF.domain.x1
+                if v0 <= u1:
+                    curF = Affine( curF.m, curF.c, Interval(curF.domain.x0, max( [curF.domain.x1, newF.domain.x1] ), True, True) )
+                else:
+                    newBounds2.append(curF.deep_copy())
+                    curF = sameFs[i].deep_copy()
+            newBounds2.append(curF.deep_copy())
+            newBounds1 = [ nb for nb in newBounds1 if (nb.m != fm) or (nb.c != fc) ]
+
+        return [nb for nb in newBounds2]
+    return []
+
+
 # Displays a beta bound (a Hypothesis object), both in console and as a plot
 def display_beta_bounds(hypotheses):
 
@@ -178,6 +286,54 @@ def display_beta_bounds(hypotheses):
             (p.at(p.domain.x0, True), p.at(p.domain.x1, True)),
             color="black",
         )
+    plt.xlim((-0.05, 0.55))
+    plt.ylim((-0.05, 0.5))
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$\beta(\alpha)$")
+    plt.title(r"Best bound on $\beta(\alpha)$")
+    plt.show()
+
+
+def display_two_sets_of_beta_bounds(hypotheses, newhypotheses):
+
+    for h in hypotheses:
+        p = h.data.bound
+        plt.plot(
+            (p.domain.x0, p.domain.x1),
+            (p.at(p.domain.x0, True), p.at(p.domain.x1, True)),
+            color="black",
+        )
+
+    for h in newhypotheses:
+        p = h.data.bound
+        pDom = p.domain
+        p0 = pDom.x0
+        p1 = pDom.x1
+        u0 = p1
+        u1 = p0
+        for m in hypotheses:
+            q = m.data.bound
+            if (p.m == q.m) and (p.c == q.c):
+                qDom = q.domain
+                q0 = qDom.x0
+                q1 = qDom.x1
+                if q0 <= u0:
+                    u0 = q0
+                if q1 >= u1:
+                    u1 = q1
+        if u0 > p0:
+            plt.plot(
+                (p0, u0),
+                (p.at(p0, True), p.at(u0, True)),
+                color="red",
+            )
+        if u1 < p1:
+            plt.plot(
+                (u1, p1),
+                (p.at(u1, True), p.at(p1, True)),
+                color="red",
+            )
+
     plt.xlim((-0.05, 0.55))
     plt.ylim((-0.05, 0.5))
     plt.xlabel(r"$\alpha$")
