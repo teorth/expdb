@@ -1354,19 +1354,3 @@ def prove_all():
     # prove_prime_gap2()
 
 #prove_zero_density_guth_maynard_improved(False)
-
-# Compute the best zero density estimates obtainable from literature results
-compute_best_zero_density()
-
-# Add your new additive energy estimate!
-literature.add_hypothesis(
-    ad.Additive_Energy_Estimate(
-        Region(...)
-    )
-)
-
-# Recompute best zero density estimates
-hyps = compute_best_zero_density()
-
-# Print the proofs
-hyps[0].recursively_list_proofs()

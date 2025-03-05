@@ -4,7 +4,7 @@ For any fixed integer $k \ge 1$, let
 \[
 d_k(n) := \sum_{n_1 \cdots n_k = n}1
 \]
-denote the number of ways a positive integer $n$ may be written as a product of exactly $k$ positive factors. The divisor sum
+denote the number of ways a positive integer $n$ may be written as a product of exactly $k$ positive integers. The divisor sum
 \[
 D_k(x) := \sum_{n \leq x} d_k(n)
 \]
@@ -12,7 +12,7 @@ is known to satisfy the asymptotic formula
 \[
 D_k(x) = x P_{k - 1}(\log x) + \Delta_k(x)
 \]
-where $P_{k - 1}$ is an explicit polynomial of degree $k-1$ and $\Delta_k(x) = o(x)$ is an error term.
+where $P_{k - 1}$ is an explicit polynomial of degree $k-1$ and $\Delta_k(x) = o(x)$ is an error term. The (generalized) Dirichlet divisor problem concerns bounding the growth rate of $\Delta_k(x)$ as $x\to\infty$. 
 
 \begin{definition}[Divisor sum exponents]\label{divisor-def} Let $k \geq 1$ be a fixed integer. Then, $\alpha_k$ is the least (fixed) exponent for which
 $$ \Delta_k(x) \ll x^{\alpha_k+o(1)}$$

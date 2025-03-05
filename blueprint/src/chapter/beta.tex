@@ -108,6 +108,8 @@ We record the classical bounds on $\beta$:
 \begin{lemma}[Van der Corput $A$ process for $\beta$]\label{vdca-beta}\uses{beta-def} If $0 \leq \alpha \leq 2/3$ and $h \geq 0$ then
 $$ 2\beta(\alpha) \leq \max\left( 2\alpha - h, 2h, \alpha - h + \sup_{2\alpha-1 \leq h' \leq h} \left((h'+1-\alpha)\beta\left(\frac{\alpha}{h'+1-\alpha}\right)+h'\right)\right).$$
 \end{lemma}
+\python{bound_beta}
+\code{apply_van_der_corput_process_for_beta(bounds)}
 
 \begin{proof}  By definition, there exists an unbounded $T$, $N = T^{\alpha+o(1)}$, $F$ a model phase function, and $I \subset [N,2N]$ such that
     $$ \sum_{n \in I} e(T F(n/N)) = T^{\beta(\alpha)+o(1)}.$$

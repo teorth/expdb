@@ -217,7 +217,7 @@ def beta_bound_examples2():
     )
     derived_pairs = compute_exp_pairs(
         hypotheses, search_depth=1, prune=True
-    )  
+    )
     hypotheses.add_hypotheses(derived_pairs)
     hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
     bounds = compute_best_beta_bounds(hypotheses)
@@ -231,16 +231,16 @@ def beta_bound_examples2():
     # Apply Lemma 4.6
     newBounds = apply_van_der_corput_process_for_beta(bounds)
 
-    add_beta_bound(hypotheses, newBounds, Reference.make("Lemma 4.6", 2025 ),)
+    add_beta_bound(hypotheses, newBounds, Reference.make("ANTEDB Lemma 4.6", 2025))
 
     bounds = compute_best_beta_bounds(hypotheses)
     hypotheses.add_hypotheses(bounds)
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
-    new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hypotheses) if not( newPair in exp_pairs) ]
+    new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hypotheses) if not(newPair in exp_pairs) ]
                             
     if len(new_exp_pairs) > 0:
-        for  newPair in new_exp_pairs:
+        for newPair in new_exp_pairs:
             print('Found', newPair) 
         hypotheses.add_hypotheses(new_exp_pairs)
         exp_pairs.extend(new_exp_pairs)

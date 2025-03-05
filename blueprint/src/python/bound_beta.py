@@ -162,7 +162,7 @@ def compute_best_beta_bounds(hypothesis_set, domain=None):
     return derived_bounds
 
 
-def apply_van_der_corput_process_for_beta(bounds):
+def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
     # Lemma 4.6 gives a bound of the form \beta(\alpha) <= max( f1(alpha), f2(alpha), f3(alpha) )
 
     # f3 contains a sup over a term h'. If bounds is piecewise linear with each intercept C >= -1 and continuous then we can take h' = h
