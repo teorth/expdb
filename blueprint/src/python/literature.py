@@ -341,7 +341,7 @@ def add_beta_bound_trudgian_yang_2024():
     bbeta.add_beta_bound(
         literature,
         [
-            Affine(frac(359, 414), frac(13, 414), Interval("[0, 2848/12173)")),
+            Affine(frac(346, 414), frac(13, 414), Interval("[0, 2848/12173)")),
             Affine(frac(139, 194), frac(13, 194), Interval("[1328/4447, 104/343)")),
             Affine(frac(521, 796), frac(18, 199), Interval("[1508/3825, 62831/155153]")),
         ],
