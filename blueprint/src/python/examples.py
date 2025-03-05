@@ -198,6 +198,58 @@ def beta_bound_examples():
     for b in mbs:
         print(f"\\mu(x) \\leq {b}")
 
+# example using Lemma 4.6
+def beta_bound_examples2():
+    # Compute best known beta bounds
+    hypotheses = Hypothesis_Set()  
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Upper bound on beta")
+    )
+    hypotheses.add_hypothesis(trivial_exp_pair)
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
+    )
+    derived_pairs = compute_exp_pairs(
+        hypotheses, search_depth=1, prune=True
+    )  
+    hypotheses.add_hypotheses(derived_pairs)
+    hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
+    bounds = compute_best_beta_bounds(hypotheses)
+    hypotheses.add_hypotheses(bounds)
+    exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
+    exp_pairs.sort(key=lambda p: p.data.k)
+    hypotheses.add_hypotheses(exp_pairs)
+    bounds = compute_best_beta_bounds(hypotheses)
+    oldbounds = [bb for bb in bounds]
+
+    # Apply Lemma 4.6
+    newBounds = apply_van_der_corput_process_for_beta(bounds)
+
+    add_beta_bound(hypotheses, newBounds, Reference.make("Lemma 4.6", 2025 ),)
+
+    bounds = compute_best_beta_bounds(hypotheses)
+    hypotheses.add_hypotheses(bounds)
+    new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
+
+    new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hypotheses) if not( newPair in exp_pairs) ]
+                            
+    if len(new_exp_pairs) > 0:
+        for  newPair in new_exp_pairs:
+            print('Found', newPair) 
+        hypotheses.add_hypotheses(new_exp_pairs)
+        exp_pairs.extend(new_exp_pairs)
+        exp_pairs.sort(key=lambda p: p.data.k)
+
+
+    #display_beta_bounds(bounds)
+    display_two_sets_of_beta_bounds(oldbounds, bounds)
+
 
 def large_values_examples():
 
@@ -505,4 +557,4 @@ def all_examples():
 #    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 # all_examples()
-beta_bound_examples()
+beta_bound_examples2()
