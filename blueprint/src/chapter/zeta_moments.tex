@@ -38,7 +38,7 @@ $$ \mu(\sigma+\eps/2) \leq \mu(\sigma)-\delta/2 + O(1/A).$$
 Sending $A$ to infinity and $\eps$ to zero, we obtain a contradiction.
 \end{proof}
 
-\begin{corollary}\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindelof hypothesis holds, then $M(\sigma,A) = 1 + \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
+\begin{corollary}[Relationship with Lindel\"of hypothesis]\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindel\"of hypothesis holds, then $M(\sigma,A) = 1 + \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$. Conversely, if $M(1/2, A) = 1$ for arbitrarily large $A \ge 0$, then the Lindel\"of hypothesis is true. 
 \end{corollary}
 
 Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq 1 + \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds. Compared to the pointwise estimates $\mu(\sigma)$ of $\zeta(\sigma + it)$, which are currently open for all $0 < \sigma < 1$, more are known about moment estimates $M(\sigma, A)$. In particular, 
@@ -54,6 +54,8 @@ for any unbounded $T>1$, due to \cite{hardy_contributions_1916} and \cite{hardy_
 \end{proof}
 
 From \Cref{zeta-moment-basic} and \Cref{mad_known_est} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
+
+\section{Relationship to zeta large value estimates}
 
 We can relate $M(\sigma,A)$ to $\LV_\zeta(\sigma,\tau)$:
 
@@ -145,6 +147,8 @@ and thus
 $$ |W| \ll T^{o(1)} ( T (N^{-1/2} V)^{-1} (V')^{-5} + T^5 (N^{-1/2} V)^{-1} (V')^{-31})$$
 and the claim now follows from the lower bound on $V'$.
 \end{proof}
+
+\section{Known moment growth bounds}
 
 \begin{lemma}[Ivic's table of moment bounds]\label{ivic-moment}\cite[Theorem 8.4]{ivic}\uses{zeta-moment-def}  We have $M(\sigma,A) = 1$ when $A$ is equal to
 \begin{align*}
