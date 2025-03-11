@@ -14,21 +14,16 @@ holds for all $T \geq C$.
 \item[(i)] $M(\sigma,A)$ is convex in $\sigma$.
 \item[(ii)] For any $\sigma$, $a (M(\sigma,1/a)-1)$ is convex non-increasing in $a$.
 \item[(iii)] $M(\sigma,A)=1$ for all $A \geq 0$ and $\sigma \geq 1$.
-\item[(iv)] $M(1/2,A)=1$ for all $0 \leq A \leq 4$.
-\item[(v)] $M(\sigma,A) \geq 1$ for all $1/2 \leq \sigma \leq 1$ and $A \geq 0$.
-\item[(vi)] $M(\sigma,0) = 1$ for all $\sigma$.
-\item[(vii)] $M(1-\sigma,A) = M(1-\sigma,A) + (1/2-\sigma) A$ for all $\sigma \in \R$ and $A \geq 0$.
-\item[(viii)] For any $\sigma$, $a(M(\sigma,1/a)-1)$ converges to $\mu(\sigma)$ as $a \to 0$.  In particular (by previous properties), $M(\sigma,A) \leq A \mu(\sigma) + 1$ for all $\sigma \geq 0$ and $A \geq 0$, and also $M(\sigma,A) \leq M(\sigma,A_0) + \mu(\sigma)(A-A_0)$ for $\sigma \geq 0$ and $A \geq A_0 \geq 0$.
+\item[(iv)] $M(\sigma,A) \geq 1$ for all $A \geq 0$ and $1/2 \leq \sigma \leq 1$.
+\item[(v)] $M(\sigma,0) = 1$ for all $\sigma$.
+\item[(vi)] $M(1-\sigma,A) = M(1-\sigma,A) + (1/2-\sigma) A$ for all $\sigma \in \R$ and $A \geq 0$.
+\item[(vii)] For any $\sigma$, $a(M(\sigma,1/a)-1)$ converges to $\mu(\sigma)$ as $a \to 0$.  In particular (by previous properties), $M(\sigma,A) \leq A \mu(\sigma) + 1$ for all $\sigma \geq 0$ and $A \geq 0$, and also $M(\sigma,A) \leq M(\sigma,A_0) + \mu(\sigma)(A-A_0)$ for $\sigma \geq 0$ and $A \geq A_0 \geq 0$.
 \end{itemize}
 \end{lemma}
 
-\begin{proof} The claim (i) follows from the Phragmen-Lindel\"of principle.  The claim (ii) follows from H\"older.  The claim (iii) follows from standard upper and lower bounds on $\zeta(\sigma+it)$ for $\sigma \geq 1$.  For the claim (iv), we have standard moment estimates
-$$ \int_T^{2T} |\zeta(1/2+it)|^2\ dt = T^{1+o(1)}$$
-and
-$$ \int_T^{2T} |\zeta(1/2+it)|^4\ dt = T^{1+o(1)}$$
-for any unbounded $T>1$, and the claim follows from H\"older's inequality.  The claim (v) follows from (i)-(iv), and (vi) is trivial. The claim (vii) follows easily from the functional equation.
+\begin{proof} The claim (i) follows from the Phragmen-Lindel\"of principle.  The claim (ii) follows from H\"older.  The claim (iii) follows from standard upper and lower bounds on $\zeta(\sigma+it)$ for $\sigma \geq 1$. The claim (iv) follows from (i)-(iii), and (v) is trivial. The claim (vi) follows easily from the functional equation.
 
-For (viii), the bound $M(\sigma,A) \leq A \mu(\sigma) + 1$ is trivial, which implies that
+For (vii), the bound $M(\sigma,A) \leq A \mu(\sigma) + 1$ is trivial, which implies that
 $$ \lim_{a \to 0} a(M(\sigma,1/a)-1) \leq \mu(\sigma).$$
 Suppose for contradiction that
 $$ \lim_{a \to 0} a(M(\sigma,1/a)-1) < \mu(\sigma),$$
@@ -46,7 +41,19 @@ Sending $A$ to infinity and $\eps$ to zero, we obtain a contradiction.
 \begin{corollary}\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindelof hypothesis holds, then $M(\sigma,A) = 1 + \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$.
 \end{corollary}
 
-Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq 1 + \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds.  From Lemma \ref{zeta-moment-basic} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
+Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq 1 + \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds. Compared to the pointwise estimates $\mu(\sigma)$ of $\zeta(\sigma + it)$, which are currently open for all $0 < \sigma < 1$, more are known about moment estimates $M(\sigma, A)$. In particular, 
+
+\begin{lemma}\label{mad_known_est}One has $M(1/2,A)=1$ for all $0 \leq A \leq 4$.
+\end{lemma}
+\begin{proof}
+Follows from H\"older's inequality and the standard estimates
+$$ \int_T^{2T} |\zeta(1/2+it)|^2\ dt = T^{1+o(1)}$$
+and 
+$$ \int_T^{2T} |\zeta(1/2+it)|^4\ dt = T^{1+o(1)}$$
+for any unbounded $T>1$, due to \cite{hardy_contributions_1916} and \cite{hardy_littlewood_approximate_1923} respectively. 
+\end{proof}
+
+From \Cref{zeta-moment-basic} and \Cref{mad_known_est} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
 
 We can relate $M(\sigma,A)$ to $\LV_\zeta(\sigma,\tau)$:
 
