@@ -18,6 +18,8 @@ If you propose to add a new chapter, or rearrange existing ones, one will also h
 
 Some examples of possible chapter topics to contribute can be found in the [introduction to the ANTEDB blueprint](https://teorth.github.io/expdb/blueprint/intro-chapter.html).  Please feel free to contact [Terence Tao](https://www.math.ucla.edu/~tao/) if you are interested in fleshing out one of these chapters, in order to coordinate with any other contributors.
 
+For standalone chapter submissions that are not integrated with the rest of the blueprint, add the `\unintegrated` macro at the beginning of the chapter.  We will eventually plan to integrate the content more fully in to the ANTEDB, but are happy to take unintegrated submissions as a first step towards that.
+
 ## Contributing to Python code
 
 Python code is stored in [this directory](https://github.com/teorth/expdb/tree/main/blueprint/src/python).  References to python code within the blueprint can be made using the (somewhat crude) `\code{}`, `\python{}`, `\literature{}`, and `\derived{}` macros, defined in [common.tex](https://github.com/teorth/expdb/blob/main/blueprint/src/macros/common.tex).
