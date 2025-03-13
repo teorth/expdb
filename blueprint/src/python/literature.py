@@ -469,7 +469,7 @@ add_huxley_exponent_pairs(Constants.EXP_PAIR_TRUNCATION)
 # objects.  one could round the exponents up to suitable precision (taking care to stay inside the triangle)
 
 # for m in range(3, Constants.EXP_PAIR_TRUNCATION):
-#     literature.add_hypothesis(literature_exp_pair(1/(25 * m * m * mp.log(m)),
+#     literature.add_hypothesis(literature_exp_pair(1/(25 * m * m * (m - 2) * mp.log(m)),
 #                                          1 - 1/(25 * m * m * mp.log(m)),
 #                                          rm.get('titchmarsh_theory_1986')))
 
