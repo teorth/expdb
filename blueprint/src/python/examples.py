@@ -215,6 +215,7 @@ def beta_bound_examples2():
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
     )
+
     derived_pairs = compute_exp_pairs(
         hypotheses, search_depth=1, prune=True
     )
@@ -246,6 +247,15 @@ def beta_bound_examples2():
         exp_pairs.extend(new_exp_pairs)
         exp_pairs.sort(key=lambda p: p.data.k)
 
+
+    print('HULL')
+    points = np.array([[p.data.k, p.data.l] for p in exp_pairs])
+    hull = ConvexHull( points)
+    Xs = points[hull.vertices,0]
+    Ys = points[hull.vertices,1]
+    Ps = [[Xs[i],Ys[i]] for i in range(len(Xs))  ]
+    for P in Ps:
+        print(P)
 
     #display_beta_bounds(bounds)
     display_two_sets_of_beta_bounds(oldbounds, bounds)
@@ -538,10 +548,79 @@ def zero_density_energy_examples():
     LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
     bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
 
+# example using Lemma 6.7
+def beta_to_mu_example():
+    # Compute best known beta bounds
+    hypotheses = Hypothesis_Set()  
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Upper bound on beta")
+    )
+    hypotheses.add_hypothesis(trivial_exp_pair)
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair to beta bound transform")
+    )
+    derived_pairs = compute_exp_pairs(
+        hypotheses, search_depth=1, prune=True
+    )  
+    hypotheses.add_hypotheses(derived_pairs)
+
+    hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
+    bounds = compute_best_beta_bounds(hypotheses)
+    hypotheses.add_hypotheses(bounds)
+    exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
+    exp_pairs.sort(key=lambda p: p.data.k)
+    hypotheses.add_hypotheses(exp_pairs)
+    bounds = compute_best_beta_bounds(hypotheses)
+    newBounds = apply_van_der_corput_process_for_beta(bounds)
+    add_beta_bound(hypotheses, newBounds, Reference.make("Lemma 4.6", 2025 ),)
+    bounds = compute_best_beta_bounds(hypotheses)
+    hypotheses.add_hypotheses(bounds)
+    new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hypotheses) if not( newPair in exp_pairs) ]
+    if len(new_exp_pairs) > 0:
+        hypotheses.add_hypotheses(new_exp_pairs)
+        exp_pairs.extend(new_exp_pairs)
+        exp_pairs.sort(key=lambda p: p.data.k)
+    bounds = compute_best_beta_bounds(hypotheses)
+
+    # Compute the best known bounds on mu
+    HL = literature.find_hypothesis(keywords="Hardy, Littlewood, bound on \\mu(1/2)")
+    hypotheses.add_hypothesis(HL)
+    hypotheses.add_hypotheses(literature.list_hypotheses("Upper bound on mu"))
+    mbs = hypotheses.list_hypotheses("Upper bound on mu")
+    mbs.append(bound_mu_trivial)
+    mbs.extend(exponent_pair_to_mu_bound(p) for p in exp_pairs)
+    for bound in mbs:
+        if 2 * bound.data.sigma > 1:
+            mbs.append(apply_functional_equation(bound))
+    hypotheses.add_hypotheses(mbs)
+    mbspw = best_mu_bound_piecewise(Interval(frac(1, 2), frac(277, 300)), hypotheses)
+    print('Best known upper bounds on Mu')
+    print()
+    for b in mbspw:
+        print(f"\\mu(x) \\leq {b}")
+
+    # Try to reproduce the bounds on mu by only applying Lemma 6.7 to the bounds on beta
+    hypotheses2 = Hypothesis_Set()  
+    new_mbs = beta_bounds_to_mu_bounds(bounds) 
+    hypotheses2.add_hypotheses(new_mbs)
+    new_mbspw = best_mu_bound_piecewise(Interval(frac(1, 2), frac(277, 300)), hypotheses2)
+    print()
+    print('Mu bounds generated from Beta bounds')
+    print()
+    for b in new_mbspw:
+        print(f"\\mu(x) \\leq {b}")
+
 def all_examples():
     # mu_bound_examples()
     # exp_pair_examples()
     # beta_bound_examples()
+    # beta_bound_examples2()
     # large_values_examples()
     # zeta_large_values_examples()
     # zero_density_estimates_examples()
@@ -550,6 +629,7 @@ def all_examples():
     # zero_density_estimates_examples4()
     # lver_to_zero_density_example()
     # zero_density_energy_examples()
+    # beta_to_mu_example()
 
     prove_exponent_pair(frac(89,1282), frac(997,1282))
 #    prove_exponent_pair(frac(652397,9713986), frac(7599781,9713986))
@@ -557,4 +637,3 @@ def all_examples():
 #    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 # all_examples()
-beta_bound_examples2()

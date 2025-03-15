@@ -155,6 +155,47 @@ def exponent_pair_to_mu_bound(exp_pair: Hypothesis) -> Hypothesis:
         {exp_pair},
     )
 
+
+# Lemma 6.7 (Connection with dual exponent pairs)
+# If bounds are the current best known upper bounds for \beta then the best known bounds for \mu are returned
+# (As of this commit)
+# TODO work out how to keep track of which pieces of the beta bounds contribute to which bounds on mu
+def beta_bounds_to_mu_bounds(bounds):
+    MyAffs = []
+    bd = bounds[0]
+    p = bd.data.bound.deep_copy()
+    C = p.c
+    M = p.m
+    V0 = p.domain.x0
+    V1 = p.domain.x1
+    if M <= frac(1,2):
+        MyAffs.append( Affine( -V0, M*V0 + C, Interval( frac(1,2), 1, True, True ) ) )
+    elif M >= 1:
+        MyAffs.append( Affine( -V1, M*V1 + C, Interval( frac(1,2), 1, True, True ) ) )
+    else:
+        MyAffs.append( Affine( -V1, M*V1 + C, Interval( frac(1,2), M, True, True ) ) )
+        MyAffs = Affine( -V0, M*V0 + C, Interval( M, 1 ) ).max_with( MyAffs, Interval( frac(1,2), 1, True, True )  )
+    for i in range(1, len(bounds)):
+        bd = bounds[i]
+        p = bd.data.bound.deep_copy()
+        C = p.c
+        M = p.m
+        V0 = p.domain.x0
+        V1 = p.domain.x1
+        if M <= frac(1,2):
+            MyAffs = Affine( -V0, M*V0 + C, Interval( frac(1,2), 1, True, True ) ).max_with( MyAffs, Interval( frac(1,2), 1, True, True )  )
+        elif M >= 1:
+            MyAffs = Affine( -V1, M*V1 + C, Interval( frac(1,2), 1, True, True ) ).max_with( MyAffs, Interval( frac(1,2), 1, True, True )  )
+        else:
+            MyAffs = Affine( -V1, M*V1 + C, Interval( frac(1,2), M , True, True) ).max_with( MyAffs, Interval( frac(1,2), 1, True, True )  )
+            MyAffs = Affine( -V0, M*V0 + C, Interval( M, 1, True, True ) ).max_with( MyAffs, Interval( frac(1,2), 1, True, True )  )
+
+    new_mbs = [ derived_bound_mu( Aff.domain.x0, Aff.at(Aff.domain.x0, True), "Using beta bounds and Lemma 6.7", set(),)  for Aff in  MyAffs]
+    Aff = MyAffs[-1]
+    new_mbs.append( derived_bound_mu( Aff.domain.x1, Aff.at(Aff.domain.x1, True), "Using beta bounds and Lemma 6.7", set(),)  )
+    return new_mbs
+
+
 # Calculate the set of bounds on mu(sigma) implied by a hypothesis set
 def get_bounds(hypothesis_set):
     # create the list of available bounds
