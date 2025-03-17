@@ -1354,3 +1354,4 @@ def prove_all():
     # prove_prime_gap2()
 
 #prove_zero_density_guth_maynard_improved(False)
+prove_all_zero_density_estimates()
