@@ -344,6 +344,10 @@ def lv_zlv_to_zd(
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
     if not isinstance(sigma_interval, Interval):
         raise ValueError("Parameter sigma_interval must be of type Interval.")
+    if tau0 < 2 or tau0 > Constants.TAU_UPPER_LIMIT:
+        raise ValueError(f"Parameter tau0 must be between 2 and {Constants.TAU_UPPER_LIMIT}")
+    if sigma_interval.x0 < frac(1,2) pr sigma_interval.x1 > 1:
+        raise ValueError(f"Parameter sigma_interval must be a subset of [1/2, 1]")
 
     sigma_lim = (sigma_interval.x0, sigma_interval.x1)
     rho_lim = (0, Constants.LV_DEFAULT_UPPER_BOUND)
