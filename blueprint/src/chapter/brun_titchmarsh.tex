@@ -1,0 +1,147 @@
+\chapter{Brun-Titchmarsh type theorems}\label{brun-titchmarsh-chapter}
+
+\begin{definition}[Prime counting function on arithmetic progressions]
+Suppose $a,q\in\mathbb Z$ with $\gcd(a,q)=1$. For each $x\geq0$, define
+$$\pi(x;q,a)=\sum_{\substack{p\leq x\\p\text{ prime}\\q\mid(p-a)}}1.$$
+The ordinary prime counting function can be recovered by $\pi(x)=\pi(x;1,1)$.
+\end{definition}
+
+The Prime Number Theorem (PNT) shows that $\pi(x)\sim\frac x{\log x}$ as $x\to\infty$. On the other hand, known results on the asymptotic behavior of $\pi(x;q,a)$ depend greatly on how $q$ and $x$ are sent to $\infty$. Heuristically, it is expected that for ``most'' sequences $q_n,x_n\to\infty$ with $q_n<x_n$, $\pi(x_n;q_n,a)\sim\frac{x_n}{\varphi(q_n)\log(x_n)}$ as $n\to\infty$. Brun-Titchmarsh type theorems make this precise by provide asymptotic upper or lower bounds on $\pi(x;q,a)$ in terms of $\frac x{\varphi(q)\log x}$ or related quantities, presupposing constraints between $q$ and $x$.
+
+\begin{definition}[Logarithmic integral function]
+Define the offset logarithmic integral function for $x\geq2$ by $\operatorname{Li}(x)=\int_2^x\frac{\mathrm du}{\log u}$. Note that $\operatorname{Li}(x)\sim\frac x{\log x}$.
+\end{definition}
+
+We first record two early results which recover the correct asymptotic under stringent assumptions.
+
+\begin{theorem}[Brun-Titchmarsh theorem under GRH (1929) \cite{titchmarsh_divisor_1930}]\label{titchmarsh-GRH-asymptotic}
+Under the Generalized Riemann Hypothesis (GRH), if $q<x$, then
+$$\pi(x;q,a)=\frac{\operatorname{Li}(x)}{\varphi(q)}+O(x^{1/2}\log x).$$
+\end{theorem}
+
+\begin{theorem}[Walfisz (1936) \cite{walfisz_1936}]\label{walfisz-small-q-asymptotic}
+Fix $B\geq0$ and suppose $q\leq(\log x)^B$. Then there exists $A=A(B)>0$ such that
+$$\pi(x;q,a)=\frac{\operatorname{Li}(x)}{\varphi(q)}+O(x\exp(-A\sqrt{\log x})).$$
+\end{theorem}
+
+\section{Upper bounds}
+Titchmarsh's original theorem establishes a coarse asymptotic upper bound.
+
+\begin{theorem}[Brun-Titchmarsh theorem (1929) \cite{titchmarsh_divisor_1930}]
+If $0<\theta<1$ and $q\leq x^\theta$, then
+$$\pi(x;q,a)=O\left(\frac x{\varphi(q)\log x}\right)+O(x^{6(1-\theta)/7}).$$
+\end{theorem}
+
+Later bounds more generally bound the number of prime numbers equivalent to $a\pmod q$ in the interval $[x,x+y]$. Observe that setting $x=0$ indeed yields an improvement on previous results.
+
+\begin{theorem}[Lint, Richert (1965) \cite{lint_richert_1965}]
+If $y>q$, then
+$$\pi(x+y;q,a)-\pi(x;q,a)<\frac{2y}{\varphi(q)\log(y/q)}\min\left(\frac32,1+\frac6{\log(y/q)}\right).$$
+\end{theorem}
+
+\begin{theorem}[Montgomery, Vaughan (1973) \cite{montgomery_vaughan_1973}]
+If $y>q$, then
+$$\pi(x+y;q,a)-\pi(x;q,a)<\frac{2y}{\varphi(q)\log(y/q)}.$$
+\end{theorem}
+
+On the other hand, various bounds improve on this result under polynomial relationships of the form $q\leq x^\theta$. To state these, we need the following definition.
+\begin{definition}[$\theta$ and $C_\theta$]
+Suppose $x>0$ and $q\in\mathbb Z$. Define $\theta:=\frac{\log q}{\log x}$, and let $C_\theta>0$ be the smallest constant such that
+$$\max_{a:\gcd(a,q)=1}\pi(x;q,a)\leq\frac{(C_\theta+o(1))x}{\varphi(q)\log(x)}$$
+as $x\to\infty$.
+\end{definition}
+
+Here is the historical progression of bounds on $C_\theta$.
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $C_\theta$}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    Reference & Range of $\theta$ & Upper bound on $C_\theta$\\
+    \hline
+    Motohashi (1973) \cite{motohashi_1973} & $(0,1/3)$ & $16/(8-3\theta)$\\
+    \hline
+    Motohashi (1973) \cite{motohashi_1973} & $(2/5,1/2]$ & $2/(2-3\theta)$\\
+    \hline
+    Motohashi (1974) \cite{motohashi_1974} & $[1/3,2/5]$ & $4/(2-\theta)$\\
+    \hline
+    Goldfeld (1975) \cite{goldfeld_1975} & $(0,24/71)$ & $16/(8-3\theta)$\\
+    \hline
+    Iwaniec (1982) \cite{iwaniec_1982} & $(0,9/20)$ & $16/(8-3\theta)$\\
+    \hline
+    Iwaniec (1982) \cite{iwaniec_1982} & $[9/20,2/3]$ & $8/(6-7\theta)$\\
+    \hline
+    Friedlander \& Iwaniec (1997) \cite{friedlander_iwaniec_1997} & $[6/11,1)$ & $(2-((1-\theta)/4)^6)/(1-\theta)$\\
+    \hline
+    Maynard (2013) \cite{maynard_2013} & $(0,1/8]$ & $2$\\
+    \hline
+    Bourgain \& Garaev (2014) \cite{bourgain_garaev_2014} & $[1-\delta,1)$ & $(2-c_0(1-\theta)^2)/(1-\theta)$\\
+    \hline
+    \end{tabular}
+\label{bt-ctheta-table}
+\end{table}
+
+\section{Lower bounds}
+The most basic lower bound is Dirichlet's theorem, stating that $\lim_{x\to\infty}\pi(x;q,a)=\infty$; we shall not record it here. Until relatively recently, good lower bounds were not known on $\pi(x;q,a)$ other than Theorem \ref{walfisz-small-q-asymptotic} for small $q$, but there are many known estimates for the smallest value of $x$ for which $\pi(x;q,a)>0$.
+
+\begin{definition}[Linnik's constant $L$]
+Define $L$ to be the infimum over all $L'>0$ where there exists $q_0(L')>0$ such that for all $q\geq q_0(L')$ and $x>q^{L'}$, $\min_{\gcd(a,q)=1}\pi(x;q,a)>0$.
+\end{definition}
+
+Here is the historical progression of $L$.
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $L$}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound on $L$\\
+    \hline
+    Linnik (1994) \cite{linnik-1} & $<\infty$\\
+    \hline
+    Pan (1957) \cite{pan_1957} & $10000$\\
+    \hline
+    Pan (1958) \cite{pan_1958} & $5448$\\
+    \hline
+    Chen (1965) \cite{chen_1965} & $777$\\
+    \hline
+    Jutila (1970) \cite{jutila_1970} & $630$\\
+    \hline
+    Chen (1977) \cite{chen_1977} & $168$\\
+    \hline
+    Jutila (1977) \cite{jutila_1977} & $80$\\
+    \hline
+    Graham (1977) \cite{graham_1977} & $36$\\
+    \hline
+    Graham (1981) \cite{graham_1981} & $20$\\
+    \hline
+    Chen (1979) \cite{chen_1979} & $17$\\
+    \hline
+    Wang (1986) \cite{wang_1986} & $16$\\
+    \hline
+    Chen \& Liu (1989) \cite{chen_liu_1989} & $13.5$\\
+    \hline
+    Wang (1991) \cite{wang_1991} & $8$\\
+    \hline
+    Heath-Brown (1992) \cite{heath_brown_least_prime} & $5.5$\\
+    \hline
+    Xylouris (2011) \cite{xylouris_2011} & $5.18$\\
+    \hline
+    \end{tabular}
+\label{bt-l-table}
+\end{table}
+
+Recent work by Maynard \cite{maynard_2013} establishes asymptotic lower bounds for $\pi(x;q,a)$.
+
+\begin{theorem}[Maynard (2013) \cite{maynard_2013}]
+For sufficiently large $q$ and $x>q^8$, we have
+$$\frac{\log q}{q^{1/2}}\left(\frac x{\varphi(q)\log x}\right)\ll\pi(x;q,a).$$
+\end{theorem}
+
+\begin{theorem}[Maynard (2013) \cite{maynard_2013}]
+Let $\epsilon>0$. There exists $q_0(\epsilon)>0$ such that for all $q\geq q_0(\epsilon)$,
+$$\frac{q^{-\epsilon}x}{\varphi(q)\log x}\ll\pi(x;q,a).$$
+\end{theorem}
