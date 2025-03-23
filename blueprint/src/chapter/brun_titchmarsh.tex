@@ -1,6 +1,5 @@
 \chapter{Brun-Titchmarsh type theorems}\label{brun-titchmarsh-chapter}
 
-\unintegrated
 
 \begin{definition}[Prime counting function on arithmetic progressions]
 Suppose $a,q\in\mathbb Z$ with $\gcd(a,q)=1$. For each $x\geq0$, define
@@ -63,17 +62,32 @@ Here is the historical progression of bounds on $C_\theta$.
     \hline
     Reference & Range of $\theta$ & Upper bound on $C_\theta$\\
     \hline
+    Titchmarsh (1930) & $(0,1)$ & Finite\\
+    \hline
+    \begin{tabular}{@{}c@{}} van Lint \& Richert (1965) \cite{lint_richert_1965}\\
+    Montgomery \& Vaughan (1973) \cite{montgomery_vaughan_1973}\\
+    Selberg (1991) \cite{selberg-collected-II}
+    \end{tabular} & $(0,1)$ & $2/(1-\theta)$\\
+    \hline
     Motohashi (1973) \cite{motohashi_1973} & $(0,1/3)$ & $16/(8-3\theta)$\\
+    \hline
+    Motohashi (1974) \cite{motohashi_1974} & $(0,1/3]$ & $2$ (on LH)\\
     \hline
     Motohashi (1973) \cite{motohashi_1973} & $(2/5,1/2]$ & $2/(2-3\theta)$\\
     \hline
     Motohashi (1974) \cite{motohashi_1974} & $[1/3,2/5]$ & $4/(2-\theta)$\\
     \hline
+    Motohashi (1974) \cite{motohashi_1974} & $[1/3,2/5]$ & $2/(2-3\theta)$ (on LH)\\
+    \hline
     Goldfeld (1975) \cite{goldfeld_1975} & $(0,24/71)$ & $16/(8-3\theta)$\\
     \hline
     Iwaniec (1982) \cite{iwaniec_1982} & $(0,9/20)$ & $16/(8-3\theta)$\\
     \hline
+    Iwaniec (1982) \cite{iwaniec_1982} & $(0,9/20)$ & $8/(4-2\theta)$ (if $q$ cube-free)\\
+    \hline
     Iwaniec (1982) \cite{iwaniec_1982} & $[9/20,2/3]$ & $8/(6-7\theta)$\\
+    \hline
+    Baker (1996) \cite{baker} & $(9/20,1/2)$ & $4/(2-\theta)$\\
     \hline
     Friedlander \& Iwaniec (1997) \cite{friedlander_iwaniec_1997} & $[6/11,1)$ & $(2-((1-\theta)/4)^6)/(1-\theta)$\\
     \hline
@@ -81,9 +95,84 @@ Here is the historical progression of bounds on $C_\theta$.
     \hline
     Bourgain \& Garaev (2014) \cite{bourgain_garaev_2014} & $[1-\delta,1)$ & $(2-c_0(1-\theta)^2)/(1-\theta)$\\
     \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $(9/20,1/2)$ & $16/(8-(3+7/32)\theta)$ \\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $(9/20,1/2)$ & $16/(8-3\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[1/2,12/23)$ & $8/(5-5\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[12/23,32/61)$ & $32/(32-43\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[32/61,8/15)$ & $24/(16-17\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[8/15,7/13)$ & $48/(40-49\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[7/13,6/11)$ & $16/(11-12\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[6/11,4/7)$ & $32/(28-35\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[9/51,9/11]$ & $160/(89-91\theta)$ (if $q$ smooth square-free)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[1/8,5/12)$ & $2$ (if $q$ smooth square-free)\\
+    \hline
+    Xi \& Zheng (2024) \cite{xi-zheng} & $[5/12,9/20)$ & $5/(5-6\theta)$ (if $q$ smooth square-free)\\
+    \hline
     \end{tabular}
 \label{bt-ctheta-table}
 \end{table}
+
+Let $\theta_{\mathrm{char}}$ be the least constant such that for every $\eps>0$ there exists $\delta>0$ such that one has a character sum bound of the form
+$$ \sum_{l \leq L} \chi(l) \ll L q^{-\delta}$$
+whenever $\chi$ is a non-principal character mod $q$ and $L \geq q^{\theta_{\mathrm{char}}}+\eps$.  The Burgess bound \cite{burgess, burgess2} shows that $\theta_{\mathrm{char}} \leq 3/8$, which can be improved to $\theta_{\mathrm{char}} \leq 1/4$ for cube-free $q$.  The extended Lindel\"of hypothesis implies that $\theta_{\mathrm{char}}=0$.
+
+In \cite[Theorem 3]{iwaniec_1982} it was shown that
+$$ C_\theta \leq \max( \frac{2}{1 - \theta \theta_{\mathrm{char}}}, \frac{2}{2-12\theta/5}).$$
+This was improved in \cite{lou-yao-1986} to
+$$ C_\theta \leq \max( \frac{2}{1 - \theta \theta_{\mathrm{char}}}, \frac{2}{8/7-24\theta/35}).$$
+A further (complicated) bound on $C_\theta$ in the range $3/7 \leq \theta < 9/20$ may be found in \cite[Theorem 2]{baker}.
+
+In \cite{xi-zheng}, the bound $C_\theta \leq 16/(8-(3+2\theta_{\mathrm{RP}})\theta)$ for $9/20 < \theta < 1/2$ was established, where $\theta_{\mathrm{RP}}$ is the exponent for the Ramanujan--Petersson conjecture for $GL_2(\Q)$.  By the work of Kim and Sarnak \cite{kim2003refined} one has $\theta_{\mathrm{RP}} \leq 7/64$.  One can also convert exponent pairs to bounds on $C_\theta$:
+
+\begin{theorem}[From exponent pairs to Brun--Titchmarsh]\label{convert}\cite[Theorem 1.4]{xi-zheng} If $(k,\ell)$ is an exponent pair, then
+    $$ C_\theta \leq \frac{4}{(3+k-\ell) - (3+3k-\ell)\theta}$$
+whenever
+$$ \frac{1+k-\ell}{2+2k-2\ell} \leq \theta \leq \frac{1+k-\ell}{1+2k-\ell}.$$
+\end{theorem}
+
+Averaged versions of the Brun--Titchmarsh inequality were proven in \cite{baker-harman-1996}.
+
+For any $\theta$, let $C'_\theta$ denote the best constant for which one has an upper bound
+$$\pi(x+x^\theta) - \pi(x) \leq (C'_\theta+o(1)) \frac{x^\theta}{\log x}$$
+for unbounded $x$.  The following bounds on $C'_\theta$ are known:
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $C'_\theta$}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    Reference & Range of $\theta$ & Upper bound on $C'_\theta$\\
+    \hline
+    Montgomery \& Vaughan (1973) \cite{montgomery_vaughan_1973} & $(0,1)$ & $2/\theta$ \\
+    \hline
+    Iwaniec (1982) \cite{iwaniec_1982} & $(1/3,1)$ & $18/(15\theta-2)$ \\
+    \hline
+    Iwaniec (1982) \cite{iwaniec_1982} & $(1/2,1)$ & $4/(1+\theta)$ \\
+    \hline
+    Lou \& Yao (1989) \cite{lou-yao-1989} & $(6/11,11/20]$ & $22/(100\theta-45)$ \\
+    \hline
+    Lou \& Yao (1992) \cite{lou-yao-chebychev} & $(6/11,1]$ & $1.031$ \\
+    \hline
+    Baker, Harman, \& Pintz (1997) \cite{baker-harman-pintz_goldbach_1997} & $(0.55,1)$ & $1.01$ \\
+    \hline
+    Li (2025) \cite{li_number_2025} & $0.52$ & $2.7614$\\
+    \hline
+    \end{tabular}
+\label{bt-ctheta'-table}
+\end{table}
+
+
+
+Upper bounds on $\pi(x+x^\theta) - \pi(x)$ can be found in \cite{iwaniec_1982},
 
 \section{Lower bounds}
 The most basic lower bound is Dirichlet's theorem, stating that $\lim_{x\to\infty}\pi(x;q,a)=\infty$; we shall not record it here. Until relatively recently, good lower bounds were not known on $\pi(x;q,a)$ other than Theorem \ref{walfisz-small-q-asymptotic} for small $q$, but there are many known estimates for the smallest value of $x$ for which $\pi(x;q,a)>0$.
@@ -130,7 +219,13 @@ Here is the historical progression of $L$.
     \hline
     Heath-Brown (1992) \cite{heath_brown_least_prime} & $5.5$\\
     \hline
+    Meng (2000) \cite{meng} & $4.5$ (if $q$ prime)\\
+    \hline
+    Xylouris (2009) \cite{xylouris_thesis_2009} & $5.2$\\
+    \hline
     Xylouris (2011) \cite{xylouris_2011} & $5.18$\\
+    \hline
+    Xylouris (2011) \cite{xylouris_thesis_2011} & $5$\\
     \hline
     \end{tabular}
 \label{bt-l-table}
