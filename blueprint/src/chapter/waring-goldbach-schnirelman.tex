@@ -1,0 +1,280 @@
+\chapter{Waring and Goldbach type problems, and Schnirelman's constant}\label{waring-goldbach-schnirelman-chapter}
+
+\section{Waring Problem}
+
+\begin{definition}
+    Let $A\subset\N$ be such that there exists $k$ for which
+    \begin{equation}
+        \underbrace{A+A+\cdots+A}_{k\text{ times}}=S \label{addbasis}
+    \end{equation}
+    Then $A$ is called an additive basis of $\N$. The minimum $k$ for which \eqref{addbasis} holds is the order of $A$.
+\end{definition}
+
+\begin{definition}\label{g(k)}
+For any $k\ge1$ let $A_k=\{n^k:n\in\N\cup\{0\}\}$. Let $g(k)$ be the order of $A_k$ when it exists.
+That is, $g(k)$ is the minimum number of $k$ powers needed to write any natural number as the sum of (not necessarily unique) $g(k)$ many $k$ powers including 0.
+\end{definition}
+
+\begin{definition}\label{G(k)}
+For any $k\ge1$, let $G(k)$ be the minimum $m$ such that there exists $N\ge1$ for which
+$$\underbrace{A_k+\cdots+A_k}_{m\text{ times}}=\N\setminus J_N.$$
+where $J_N=\{1,\dots,N\}$.
+That is, $G(k)$ is the minimum number of $k$ powers such that every sufficiently large integer may be written as the sum of (not necessarily unique) $G(k)$ many $k$ powers including 0.
+\end{definition}
+
+\subsection{Known values of g(k)}
+
+\begin{theorem}[Lagrange's Four Square Theorem]
+We have $g(2)=4$; that is every natural number may be written as the sum of $4$ perfect squares.
+\end{theorem}
+
+\begin{theorem}[Linnik \cite{Linnik_Линник1943}]
+$g(k)$ exists for all $k\ge1$.
+\label{HilbertExistence}
+\end{theorem}
+
+
+Linnik's proof relied on the notion of Schnirelmann density, which will be discussed later.
+
+In fact, the exact value of $g(k)$ is known for almost all $k\ge1$. We have
+$$g(k)=2^k+\left[\frac32\right]^k-2\;\;\text{ if }\;\; 2^k\left\{\frac32\right\}^k+\left[\frac32\right]^k\le2^k$$
+and, otherwise,
+$$g(k)=2^k+\left[\frac32\right]^k+\left[\frac43\right]^k-\xi$$
+where $\xi=2$ if $$\left[\frac32\right]^k+\left[\frac43\right]^k+\left[\frac32\right]^k\left[\frac43\right]^k\ge2^k$$
+and $3$ otherwise. Note that $[x]$ is the greatest integer less than $x$ and $\{x\}=x-[x]$. It has been shown that there at at most finitely many exceptions \cite{Mahler_1957}. To complete the proof, it suffices to show
+$$\left\{\left(\frac32\right)^k\right\}\le1-\left(\frac34\right)^{k-1}$$
+It has been shown for all $k > 5000$, $\{(3/2)^k\}\le1-a^{k}$ where $a=2^{-0.9}\approx0.53$, and for sufficiently large $k$, $\{(3/2)^k\}\le1-(0.5769\dots)^{-k}$ \cite{Dubitskas1990ALB} \cite{Bennett_1993}.
+
+\subsection{Known values of $G(k)$}
+
+Only 2 values of $G(k)$ are known definitively: $G(2)=4$ as shown by Lagrange and $G(4)=16$ as shown by Davenport \cite{7dbd7a34-182d-3a8c-ac41-9dfc57f8937a}.
+
+\begin{definition}
+    Let $G_1(k)$ be the smallest number $m$ such that
+    $$d(\underbrace{A_k+\cdots+A_k}_{m\text{ times}})=1$$
+    where $d(A)$ represents the natural density of $A$:
+    $$d(A)=\lim_{N\to\infty}\frac{\#(A\cap J_N)}{N}$$
+\end{definition}
+
+$G_1(k)$ has been determined for $5$ values:
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Davenport \cite{Davenport1939} & $G_1(3)=4$\\
+        \hline
+        Hardy and Littlewood \cite{Hardy1925} & $G_1(4)=15$\\
+        \hline
+        Vaughan \cite{Vaughan1986} & $G_1(8)=32$\\
+        \hline
+        Wooley \cite{wooley_1992} & $G_1(16)=64$\\
+        \hline
+        Wooley \cite{wooley_1992} & $G_1(32)=128$\\
+        \hline
+    \end{tabular}
+    \caption{Known values of $G_1(k)$}
+    \label{tab:G1values}
+\end{table}
+
+\subsection{General bounds for $G(k)$}
+
+\begin{theorem}[Brudern and Wooley 2022 \cite{bruedern2022waringsproblemlargerpowers}]
+    For all $k\ge1$,
+$$G(k)<k(\log k+C_1)+C_2$$
+Furthermore,
+$$G(k)\le\lceil k(\log k+4.20032)\rceil$$
+\label{BW2022}
+\end{theorem}
+
+This bound is the sharpest to date and was a significant improvement over the previous bound by Wooley \cite{wooley_1992}: for sufficiently large $k$,
+$$G(k)\le k(\log k+\log\log k+2+O(\log\log k/\log k))$$
+
+\subsection{Bounds for special cases for $G(k)$}
+
+\subsubsection{$k=3$}
+
+\begin{lemma} $G(3)\ge4$
+\end{lemma}
+\begin{proof}
+    Note cubes are congruent $1,-1,0$ modulo $9$. Thus, numbers congruent $4,5$ modulo $9$ may not be expressed as the sum of $3$ cubes.
+\end{proof}
+
+
+\begin{theorem}[Linnik \cite{Linnik_1943_sum_cubes}] $G(3)\le7$\end{theorem}
+
+
+The exact value of $G(3)$ is conjectured to be $4$, but has not been proven.
+
+\subsubsection{Conjectured $G(k)$ for small $k$}
+
+\Cref{tab:Gkforsmallk} summarizes the best upper bounds for $G(k)$ and the conjectured values of $G(k)$ for $7\le k\le 20$.
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|l|l|l|l|l|}
+        \hline
+ & 7& 8& 9& 10& 11& 12& 13& 14&15 & 16& 17&  18&19&20\\
+        \hline
+         Best Bound&  31&  39&  47&  55&  63&  72&  81&  89&  97& 105& 113&  121&129&137\\
+         \hline
+         Conjectured&  8&  32&  13&  12&  12&  16&  14&  15&  16& 64& 18&  27&20&25\\
+         \hline
+    \end{tabular}
+    \caption{Conjectured and best upper bounds for $G(k)$ for $7\le k\le 20$}
+    \label{tab:Gkforsmallk}
+\end{table}
+
+The upper bounds for $k\le13$ were deduced from Wooley \cite{Wooley_2016} and the bounds for $14\le k\le 20$ are from Theorem \ref{BW2022}.
+
+\subsection{Generalized Waring problem and connections to the Generalized Riemann Hypothesis}
+
+Waring's Problem concerns the solvability of equations of the form
+\begin{equation}
+    x_1^k+x_2^k+\cdots+x_n^k=m \label{eqn1}
+\end{equation}
+for $m,n,k\in\N$, and Theorem \ref{HilbertExistence} states that for any fixed $k\ge1$, there exists $n\in \N$ such that (\ref{eqn1}) is solvable for all $m\in\N$. A more generalized problem arises when $k$ is not fixed. Given any $\mathbf k=(k_1,\dots,k_n)\in\N^n$, the generalized Waring problem concerns the solvability of the equations of the form
+\begin{equation}
+    x_1^{k_1}+x_2^{k_2}+\cdots+x_n^{k_n}=m\label{WaringGeneral}
+\end{equation}
+The following theorem due to Erich Kamke provides a partial result.
+
+\begin{theorem}[Kamke]
+    Let $f(x)$ be an integer valued polynomial such that there does not exist $d\in\N$ such that $d|f(n)$ for all $n\in\N$. Then for sufficiently large $k$,
+    $$f(x_1)+f(x_2)+\cdots+f(x_k)=m$$
+    is solvable for all large enough $m$.
+\end{theorem}
+
+Assuming the Generalized Riemann Hypothesis (GRH), The solvability of (\ref{WaringGeneral}) can be guaranteed for specific $\mathbf k$. For example:
+
+\begin{theorem}[Wooley]
+    Assuming GRH, then
+    \begin{equation}
+        x_1^2+x_2^2+x_3^3+x_4^3+x_5^6+x_6^6=n \label{WooleyThm}
+    \end{equation}
+    is solvable for sufficiently high $n$. Furthermore, (\ref{WooleyThm}) is not solvable for at most $O((\log N)^{3+\epsilon})$ integers between $1$ and $N$.
+\end{theorem}
+
+\section{Goldbach-Style Problems}
+
+Goldbach's original conjecture stated that every positive integer could be written as the sum of $3$ primes. In light of Waring's problem, a natural extension of Goldbach's problem asks when
+\begin{equation}
+    p_1^k+p_2^k+\cdots+p_m^k=n\label{GoldbachEqn}
+\end{equation}
+is solvable for all $n\in\N$ for $p_1,\dots p_k$ prime and $k\in\N$. It is conjectured when $m\ge k+1$ and for sufficiently large $n$ satisfying local conditions, which will be made more explicit for specific values of $k$, (\ref{GoldbachEqn}) is solvable.
+
+\subsection{When $k=2$}
+
+It is conjectured that
+\begin{equation}
+n=p_1^2+p_2^2+p_3^2+p_4^2 \label{GoldbachSquares}
+\end{equation}
+is solvable whenever $n\equiv 4\;(\operatorname{mod}\; 24)$. The following theorem gives the closest solution.
+
+\begin{theorem}[Liu, Wooley, Yu \cite{LIU2004298}]
+    Let $E(N)$ be the number of integers $n\equiv 4\;(\operatorname{mod}\; 24)$ for which (\ref{GoldbachSquares}) is not solvable. For any $\epsilon>0$,
+    $$E(N)\ll O(N^{\frac38+\epsilon})$$
+\end{theorem}
+
+\subsection{When $k=4,5$}
+
+Following Kawada and Wooley, we define the following quantities to give the relevant local conditions for the cases $k=4$ and $k=5$. Let $\theta=\theta(p,k)$ be the greatest power of $p$ dividing $k$; that is $p^\theta|k$ but $p^{\theta+1}\nmid k$. Then, let
+\[ \gamma(k,p)=\left\{\begin{matrix}
+\theta+2 & \text{ when } p=2, \theta>0  \\
+\theta+1 & \text{ otherwise}  \\
+\end{matrix}\right\}\]
+and
+$$K(k)=\prod_{(p-1)|k}p^{\gamma(k,p)}$$
+In particular, $K(4)=240$ and $K(5)=2$.
+
+\begin{definition}
+    For $k\in\N$, let $H(k)$ be the minimum integer $s$ such that
+    $$p_1^k+p_2^k+\cdots+p_s^k=n$$
+    is solvable for sufficiently large $n$ whenever $n\equiv s\;(\operatorname{mod}\; K(k))$.
+\end{definition}
+
+Finding the value of $H(k)$ is the main focus of the modern Waring-Goldbach problem.
+
+\begin{theorem}[Wooley, Kawada 2001 \cite{kawada_koichi_wooley_trevor_2001}] We have
+    \begin{itemize}
+        \item $H(4)\le14$
+        \item For any positive $A$,
+        $$p_1^4+p_2^4+\cdots+p_7^4=n$$
+        has at most $O(N(\log N)^{-A})$ exceptions for $n\equiv 7\;(\operatorname{mod}\; 240)$ and $1\le n\le N$.
+        \item $H(k)\le21$
+        \item For any positive $A$,
+        $$p_1^5+p_2^5+\cdots+p_{11}^5=n$$
+        has at most $O(N(\log N)^{-A})$ exceptions for $n$ odd and $1\le n\le N$.
+    \end{itemize}
+\end{theorem}
+
+ In 2014, Zhao improved the bound for $k=4$ and showed $H(4)\le 13$ \cite{https://doi.org/10.1112/plms/pdt072}.
+
+\subsection{When $k\ge7$}
+
+\begin{theorem}[Kumchev, Wooley 2016 \cite{Kumchev2016}] For large values of $k$,
+\begin{equation}
+    H(k)\le(4k-2)\log k-(2\log  2-1)k-3
+\end{equation}
+
+\Cref{tab:Hkbounds} summarizes the best bounds on $H(k)$ for $7\le k\le20$.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|l|l|l|c|}
+        \hline
+          7&8&  9&  10&  11&  12&  13&  14&  15&  16&    17&18&19&20\\
+        \hline
+          45&57&  69&  81&  93&  107&  121&  134&  149&  163&    177&193&207&223\\
+        \hline
+        \end{tabular}
+    \caption{Upper bounds for $H(k)$}
+    \label{tab:Hkbounds}
+\end{table}
+
+\end{theorem}
+
+\section{Schnirelmann Density}
+
+\subsection{Existence of Additive Basis}
+
+\begin{definition}
+    Define the Schnirelmann density of $A\subset \N$ as
+    $$\sigma A=\inf_{n\ge1}\frac{\#(A\cap J_n)}{n}$$
+\end{definition}
+
+\begin{definition}
+    Define the lower asymptotic density of $A\subset \N$ as
+    $$\delta A=\liminf_{n\to\infty}\frac{\#(A\cap J_n)}{n}$$
+\end{definition}
+
+\begin{theorem}[Schnirelmann \cite{Schnirelmann1933}]
+    Suppose $\sigma A>0$. Then $A$ is an additive basis for $\N$. \label{addbasisthm}
+\end{theorem}
+
+With Theorem \ref{addbasisthm}, it is possible to prove many sets form additive bases. For example:
+
+\begin{theorem}[Schnirelmann \cite{Schnirelmann1933}]
+    Let $\mathbb P$ denote the set of primes. Then, $\delta(\mathbb P+\mathbb P)>0$. Therefore, $\mathbb P$ is an additive basis for $\N$. The order of $\mathbb P$ is denoted $C$ and called Schnirelmann's constant.
+\end{theorem}
+
+Schnirelmann originally bounded $C<80000$ and Helfgott showed in 2013 that $C\le4$ \cite{helfgott2015ternarygoldbachproblem}. Goldbach's conjecture claims that $C=3$.
+
+\begin{theorem}[Romanoff \cite{ASNSP_1995_4_22_4_645_0}]
+    Let $\mathfrak S_a=\{p+a^k:p\in\mathbb P, k\in\N\}$. Then, $\sigma\mathfrak S_a>0$ for all $a\in\N$. Thus, each integer $n$ may be written as the sum of at most $C_a$ primes and $C_a$ powers of $a$, where $C_a$ is a constant depending only on $a$.
+\end{theorem}
+
+
+\subsection{Essential Components}
+
+\begin{definition}
+    $B\subset \N$ is called an essential component if $\sigma(A+B)>\sigma(A)$ for any $A\subset\N$ with $0<\sigma A<1$.
+\end{definition}
+
+Linnik showed in 1933 gave the first example of an essential component that is not a basis \cite{zbMATH03105552}.
+Erdos showed in 1936 that every basis is also an essential component \cite{Erdos1935}.
+The minimum possible size of an essential component remained an open problem until Ruzsa showed in 1984\cite{Ruzsa_1987} that for any $\epsilon>0$, there exists an essential component $H$ such that
+$$\#(H\cap J_n)\ll (\log n)^{1+\epsilon}$$ but there does not exist an essential component such that
+$$\#(H\cap J_n)\ll(\log  n)^{1+o(1)}$$
