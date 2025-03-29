@@ -1251,8 +1251,7 @@ def prove_zero_density_energy_12():
         verbose = True
     )
     print(combined_lv.data.region)
-    """
-    """
+
     hypotheses.add_hypothesis(combined_lv)
     hypotheses.add_hypothesis(literature.find_hypothesis(keywords="Heath-Brown large value energy region 2a"))
 
@@ -1354,4 +1353,5 @@ def prove_all():
     # prove_prime_gap2()
 
 #prove_zero_density_guth_maynard_improved(False)
-prove_all_zero_density_estimates()
+#prove_all_zero_density_estimates()
+prove_zero_density_energy_12()
