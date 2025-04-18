@@ -201,7 +201,7 @@ def beta_bound_examples():
 # example using Lemma 4.6
 def beta_bound_examples2():
     # Compute best known beta bounds
-    hypotheses = Hypothesis_Set()  
+    hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Upper bound on beta")
     )
@@ -239,10 +239,10 @@ def beta_bound_examples2():
     new_exp_pairs = beta_bounds_to_exponent_pairs(hypotheses)
 
     new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hypotheses) if not(newPair in exp_pairs) ]
-                            
+
     if len(new_exp_pairs) > 0:
         for newPair in new_exp_pairs:
-            print('Found', newPair) 
+            print('Found', newPair)
         hypotheses.add_hypotheses(new_exp_pairs)
         exp_pairs.extend(new_exp_pairs)
         exp_pairs.sort(key=lambda p: p.data.k)
@@ -551,7 +551,7 @@ def zero_density_energy_examples():
 # example using Lemma 6.7
 def beta_to_mu_example():
     # Compute best known beta bounds
-    hypotheses = Hypothesis_Set()  
+    hypotheses = Hypothesis_Set()
     hypotheses.add_hypotheses(
         literature.list_hypotheses(hypothesis_type="Upper bound on beta")
     )
@@ -567,7 +567,7 @@ def beta_to_mu_example():
     )
     derived_pairs = compute_exp_pairs(
         hypotheses, search_depth=1, prune=True
-    )  
+    )
     hypotheses.add_hypotheses(derived_pairs)
 
     hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
@@ -606,8 +606,8 @@ def beta_to_mu_example():
         print(f"\\mu(x) \\leq {b}")
 
     # Try to reproduce the bounds on mu by only applying Lemma 6.7 to the bounds on beta
-    hypotheses2 = Hypothesis_Set()  
-    new_mbs = beta_bounds_to_mu_bounds(bounds) 
+    hypotheses2 = Hypothesis_Set()
+    new_mbs = beta_bounds_to_mu_bounds(bounds)
     hypotheses2.add_hypotheses(new_mbs)
     new_mbspw = best_mu_bound_piecewise(Interval(frac(1, 2), frac(277, 300)), hypotheses2)
     print()
@@ -637,3 +637,5 @@ def all_examples():
 #    prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 # all_examples()
+
+prove_zero_density_energy_12()
