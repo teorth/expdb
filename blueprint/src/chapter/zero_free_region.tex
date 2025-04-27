@@ -37,11 +37,29 @@ In light of \Cref{zero-free-basic-lem}, for the rest of the chapter we will focu
 \[
 D\subseteq \{z \in \mathbb{C}: \Re z > 1/2, \Im z > 0\}.
 \]
-The first zero free region for non-trivial zeros proved was on $D = \{z \in \mathbb{C}: \Re z = 1\}$, and was used to prove the prime number theorem $\pi(x) \sim x/\log x$ as $x \to \infty$.
+The first non-trivial zero-free region was due to de la Vall\'ee Poussin \cite{de_la_vallee_poussin_recherches_1896} and Hadamard \cite{hadamard_distribution_1896}, who showed independently that:
+
 
 \begin{theorem}[Non-vanishing on the 1-line]
 One has $\zeta(1 + it) \ne 0$ for any real $t$.
 \end{theorem}
+\begin{proof}
+For $\Re s > 1$, one has
+\[
+\Re \log \zeta(s) = \sum_{p}\sum_{m = 1}^{\infty}\frac{\cos (t \log p^m)}{mp^{m\sigma}}
+\]
+where the outer sum runs through all primes. Applying this formula at $s = \sigma, \sigma + it$ and $\sigma + 2it$ ($t \ne 0$), and since $3 + 4\cos\theta + \cos 2\theta = 2(1 + \cos\theta)^2 \ge 0$, one has
+\[
+3\Re \log \zeta(\sigma) + 4\Re \log \zeta(\sigma + it) + \Re\log \zeta(\sigma + 2it) = \sum_{p}\sum_{m = 1}^{\infty}\frac{3 + \cos (t \log p^m) + \cos (2t\log p^m)}{mp^{m\sigma}} \ge 0.
+\]
+It follows that $|\zeta(\sigma)^3 \zeta(\sigma + it)^4 \zeta(\sigma + 2it)| \ge 1$. Now as $\sigma \to 1$ from above (and $t$ remains fixed), one has
+\[
+\zeta(\sigma) \ll \frac{1}{\sigma - 1},\qquad \zeta(\sigma + 2it) \ll 1,
+\]
+since $\zeta$ has a simple pole at $s = 1$ and no pole at $\sigma + 2it$. If $\zeta(1 + it) = 0$, then $\zeta(\sigma + it) \ll \sigma - 1$ so that $|\zeta(\sigma)^3 \zeta(\sigma + it)^4 \zeta(\sigma + 2it)| \ll \sigma - 1$, a contradiction.
+\end{proof}
+
+This was used to prove the prime number theorem $\pi(x) \sim x/\log x$ as $x \to \infty$ (in fact the two statements are equivalent).
 
 \section{Relation to upper bound on zeta in the critical strip}
 
@@ -61,8 +79,6 @@ where $A > 0$ is an absolute constant.
 \begin{proof}
 See \cite[Theorem 3.10]{titchmarsh_theory_1986}.
 \end{proof}
-
-The following zero free region of classical type was proved independently by de la Vall\'ee Poussin and Hadamard.
 
 \begin{theorem}[Classical zero free region]\label{zfr-classical}
 One has $\zeta(\sigma + it) \ne 0$ if 
