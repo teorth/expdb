@@ -3,46 +3,80 @@
 
 \unintegrated
 
-\section{Introduction}
-The prime counting function, denoted by $\pi(x)$, is defined as the number of primes less than or equal to a given real number $x$. In formula form,
+Let $\Lambda(n)$ denote the von Mangoldt function, i.e. $\Lambda(n) = \log p$ if $n = p^m$ where p is prime and $m$ is a positive integer, and $\Lambda(n) = 0$ otherwise. 
+
+\begin{definition}
+For all $x \ge 1$ define the prime counting functions $\psi(x)$, $\theta(x)$ and $\pi(x)$ as
 \[
-\pi(x) = \sum_{\substack{p \le x \\ p \text{ prime}}} 1.
+\psi(x) := \sum_{n \le x}\Lambda(n),\qquad \theta(x) := \sum_{p \le x}\log p,\qquad \pi(x) := \sum_{p \le x}1
 \]
-This function is central to number theory because it measures the distribution of prime numbers among the integers.
+where the first sum is over positive integers $n$ and the last two sums are over primes $p$.
+\end{definition}
 
-\section{The Prime Number Theorem and Asymptotic Behavior}
-The Prime Number Theorem (PNT) provides the leading asymptotic behavior of $\pi(x)$:
+These functions, particularly $\pi(x)$, are central to number theory because they measure the long range distribution of prime numbers among the integers. A well-known result is the prime number theorem.
+
+\begin{theorem}[Prime number theorem]
+As $x \to \infty$, 
 \[
-\pi(x) \sim \frac{x}{\log x} \quad \text{as } x \to \infty.
+\pi(x) \sim \frac{x}{\log x} \sim \operatorname{li}(x) := \int_2^{\infty}\frac{dt}{\log t}.
 \]
-This indicates that for large $x$, the ratio $\frac{\pi(x)}{x/\log x}$ approaches 1.
+\end{theorem}
 
-\section{Upper Bounds for \texorpdfstring{$\pi(x)$}{pi(x)}}
-Upper bounds provide estimates ensuring that $\pi(x)$ does not exceed certain functions of $x$.
+The following are equivalent formulations of the prime number theorem.
 
-\subsection{Chebyshev's Upper Bound}
-Chebyshev established that there exist constants \(c_1\) and \(c_2\) such that for sufficiently large \(x\),
-\[
-c_1 \frac{x}{\log x} \leq \pi(x) \leq c_2 \frac{x}{\log x}.
-\]
-This result provides a fundamental constraint on the growth of $\pi(x)$.
+\begin{theorem}
+As $x \to \infty$, one has $\psi(x) \sim x$ and $\theta(x) \sim x$.
+\end{theorem}
 
-\section{Lower Bounds for \texorpdfstring{$\pi(x)$}{pi(x)}}
-Lower bounds ensure that $\pi(x)$ is not too small compared to its asymptotic prediction.
+\section{Error Bounds for prime counting functions}
+In addition to their asymptotic behaviour, various bounds on the deviation from their respective asymptotics are known. The current best-known error bounds are derived from zero-free regions of the Riemann zeta function $\zeta(s)$. 
 
-\subsection{A Classical Lower Bound}
-A classical result provides a lower bound:
-\[
-\pi(x) > \frac{x}{\log x + 2},
-\]
-for sufficiently large $x$. Although this is a rough estimate, it serves as a starting point for more refined results.
+\begin{theorem}[Korobov--Vinogradov estimate]
+There exists a positive constant $A$, such that
+\begin{align*}
+\psi(x) - x, \; \theta(x) - x, \; \pi(x) - \operatorname{li}(x) \ll x\exp\left(-A\frac{(\log x)^{3/5}}{(\log\log x)^{1/5}}\right).
+\end{align*}
+\end{theorem}
 
-\section{Sharper Upper and Lower Bounds}
-Recent research has provided tighter estimates on $\pi(x)$. For example, Dusart (2010) proved that for sufficiently large $x$,
-\[
-\frac{x}{\log x} \left(1 + \frac{1}{\log x}\right) < \pi(x) < \frac{x}{\log x} \left(1 + \frac{1.25506}{\log x}\right).
-\]
-These refined bounds improve upon Chebyshev's original inequalities and help in numerical computations.
+\Cref{prime-error-table} lists the historical progression on estimates of $\pi(x)$.
+
+\begin{table}[ht]
+    \caption{Historical estimates of $\pi(x)$, for $x$ sufficiently large.}
+    \centering
+    \renewcommand{\arraystretch}{2.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Estimate of $\pi(x)$\\
+    \hline
+    Chebyshev & $c_1 \dfrac{x}{\log x} \leq \pi(x) \leq c_2 \dfrac{x}{\log x}$ for some constants $0 < c_1 < 1 < c_2$\\
+    \hline
+    de la Vallee Poussin, Hadamard & $\pi(x) - x = o(x)$\\
+    \hline
+    de la Vallee Poussin & $\pi(x)  - x \ll x\exp(-A\sqrt{\log x})$ for some $A > 0$\\
+    \hline
+    Littlewood & $\pi(x) - x \ll x\exp(-A\sqrt{\log x\log\log x})$ for some $A > 0$\\
+    \hline 
+    Korobov, Vinogradov & $\pi(x) - x \ll x\exp(-A(\log x)^{3/5}(\log\log x)^{-1/5})$ for some $A > 0$\\
+    \hline
+    \end{tabular}\label{prime-error-table}
+\end{table}
+
+\Cref{prime-error-table-explicit} lists the historical progression of explicit bounds on $\pi(x)$.
+
+\begin{table}[ht]
+    \caption{Historical explicit estimates of $\pi(x)$.}
+    \centering
+    \renewcommand{\arraystretch}{2.2}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Estimate of $\pi(x)$\\
+    \hline
+    Classical & $\pi(x) > \dfrac{x}{\log x + 2}$ for sufficiently large $x$\\
+    \hline
+    Dusart (2010) & $\dfrac{x}{\log x} \left(1 + \dfrac{1}{\log x}\right) < \pi(x) < \dfrac{x}{\log x} \left(1 + \dfrac{1.25506}{\log x}\right)$ for suff. large $x$\\
+    \hline
+    \end{tabular}\label{prime-error-table-explicit}
+\end{table}
 
 \section{Alternative Approximations}
 Besides $x/\log x$, more accurate approximations for $\pi(x)$ exist, such as Riemann’s R-function:
@@ -60,13 +94,6 @@ Computing $\pi(x)$ efficiently is a key problem in number theory. Several algori
 \end{itemize}
 Modern implementations allow computation of $\pi(x)$ for very large $x$, with values exceeding $10^{18}$ computed in practice.
 
-\section{Error Terms in the Prime Number Theorem}
-Beyond the asymptotic approximation, it is important to understand the error term in the Prime Number Theorem. One common form of the error term is:
-\[
-\pi(x) = \operatorname{Li}(x) + O\left(x e^{-c\sqrt{\log x}}\right),
-\]
-for some positive constant \(c\), where $\operatorname{Li}(x)$ is the logarithmic integral. This error term reflects how the actual count deviates from the predicted main term.
-
 \section{Future Research Directions}
 Some active areas of research related to $\pi(x)$ include:
 \begin{itemize}
@@ -75,9 +102,6 @@ Some active areas of research related to $\pi(x)$ include:
     \item **Efficient computation techniques** for evaluating $\pi(x)$ at extremely large values.
 \end{itemize}
 Further progress in these areas could lead to a deeper understanding of prime number distribution.
-
-\section{Conclusion}
-The bounds and error estimates discussed above are fundamental in understanding the distribution of prime numbers. Improvements in these estimates continue to be an active area of research, particularly in the context of the Riemann Hypothesis and other deep results in analytic number theory.
 
 \section{References}
 For further reading and more detailed proofs, consult:
