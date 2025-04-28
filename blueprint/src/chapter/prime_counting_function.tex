@@ -6,7 +6,7 @@
 Let $\Lambda(n)$ denote the von Mangoldt function, i.e. $\Lambda(n) = \log p$ if $n = p^m$ where p is prime and $m$ is a positive integer, and $\Lambda(n) = 0$ otherwise. 
 
 \begin{definition}
-For all $x \ge 1$ define the prime counting functions $\psi(x)$, $\theta(x)$ and $\pi(x)$ as
+For all $x \ge 1$ define the Chebyshev prime counting functions $\psi(x)$, $\theta(x)$ and $\pi(x)$ as
 \[
 \psi(x) := \sum_{n \le x}\Lambda(n),\qquad \theta(x) := \sum_{p \le x}\log p,\qquad \pi(x) := \sum_{p \le x}1
 \]
@@ -29,7 +29,11 @@ As $x \to \infty$, one has $\psi(x) \sim x$ and $\theta(x) \sim x$.
 \end{theorem}
 
 \section{Error Bounds for prime counting functions}
-In addition to their asymptotic behaviour, various bounds on the deviation from their respective asymptotics are known. The current best-known error bounds are derived from zero-free regions of the Riemann zeta function $\zeta(s)$. 
+In addition to their asymptotic behaviour, various bounds on the deviation from their respective asymptotics are known. The current best-known error bounds are derived from zero-free regions of the Riemann zeta function $\zeta(s)$. The relation between zeroes of $\zeta(s)$ and error bounds for prime counting functions are illustrated through von Mangoldt's explicit formula: for all non-integer $x > 0$, one has
+\[
+\psi(x) = x - \sum_{\rho}\frac{x^\rho}{\rho} - \log 2\pi - \frac{1}{2}\log(1 - x^{-2}),
+\]
+where $\rho$ runs through all non-trivial zeroes of $\zeta(s)$.
 
 \begin{theorem}[Korobov--Vinogradov estimate]
 There exists a positive constant $A$, such that
@@ -48,42 +52,26 @@ There exists a positive constant $A$, such that
     \hline
     Reference & Estimate of $\pi(x)$\\
     \hline
-    Chebyshev & $c_1 \dfrac{x}{\log x} \leq \pi(x) \leq c_2 \dfrac{x}{\log x}$ for some constants $0 < c_1 < 1 < c_2$\\
+    Chebyshev & $c_1 \dfrac{x}{\log x} \leq \pi(x) \leq c_2 \dfrac{x}{\log x}$ for some constants $0 < c_1 < 1 < c_2$, i.e. $\pi(x) = \dfrac{x}{\log x}(1 + O(1))$\\
     \hline
-    de la Vallee Poussin, Hadamard & $\pi(x) = \operatorname{li}(x)(1 + o(1))$\\
+    de la Vall\'{e}e Poussin \cite{de_la_vallee_poussin_recherches_1896}, Hadamard \cite{hadamard_distribution_1896} & $\pi(x) = \dfrac{x}{\log x}(1 + o(1))$\\
     \hline
-    de la Vallee Poussin & $\pi(x) - \operatorname{li}(x) \ll x\exp(-A\sqrt{\log x})$ for some $A > 0$\\
+    de la Vall\'{e}e Poussin \cite{de_la_vallee_poussin_fonction_1899} & $\pi(x) = \operatorname{li}(x) + O(x\exp(-A\sqrt{\log x}))$ for some $A > 0$\\
     \hline
-    Littlewood & $\pi(x) - \operatorname{li}(x) \ll x\exp(-A\sqrt{\log x\log\log x})$ for some $A > 0$\\
+    Littlewood \cite{littlewood_researches_1922} & $\pi(x) = \operatorname{li}(x) + O(x\exp(-A\sqrt{\log x\log\log x}))$ for some $A > 0$\\
     \hline 
-    Korobov, Vinogradov & $\pi(x) - \operatorname{li}(x) \ll x\exp(-A(\log x)^{3/5}(\log\log x)^{-1/5})$ for some $A > 0$\\
+    Korobov, Vinogradov \cite{vinogradov_eine_1958} & $\pi(x) = \operatorname{li}(x) + O(x\exp(-A(\log x)^{3/5}(\log\log x)^{-1/5}))$ for some $A > 0$\\
     \hline
     \end{tabular}\label{prime-error-table}
 \end{table}
 
-\Cref{prime-error-table-explicit} lists the historical progression of explicit bounds on $\pi(x)$.
-
-\begin{table}[ht]
-    \caption{Historical explicit estimates of $\pi(x)$.}
-    \centering
-    \renewcommand{\arraystretch}{2.2}
-    \begin{tabular}{|c|c|}
-    \hline
-    Reference & Estimate of $\pi(x)$\\
-    \hline
-    Classical & $\pi(x) > \dfrac{x}{\log x + 2}$ for sufficiently large $x$\\
-    \hline
-    Dusart (2010) & $\dfrac{x}{\log x} \left(1 + \dfrac{1}{\log x}\right) < \pi(x) < \dfrac{x}{\log x} \left(1 + \dfrac{1.25506}{\log x}\right)$ for suff. large $x$\\
-    \hline
-    \end{tabular}\label{prime-error-table-explicit}
-\end{table}
-
-\section{Alternative Approximations}
-Besides $x/\log x$, more accurate approximations for $\pi(x)$ exist, such as Riemann’s R-function:
+Under the Riemann hypothesis, stronger error bounds are known. 
+\begin{theorem}[\cite{koch_sur_1901}]
+If the Riemann hypothesis is true, then
 \[
-R(x) = \sum_{n=1}^{\infty} \frac{\mu(n)}{n} \operatorname{Li}(x^{1/n}),
+\psi(x) - x,\; \theta(x) - x \ll x^{1/2}(\log x)^2,\qquad \pi(x) - \operatorname{li}(x) \ll x^{1/2}\log x.
 \]
-where $\mu(n)$ is the Möbius function. This provides an integral-based approach to estimating $\pi(x)$ with better precision.
+\end{theorem}
 
 \section{Computational Aspects}
 Computing $\pi(x)$ efficiently is a key problem in number theory. Several algorithms exist, including:
