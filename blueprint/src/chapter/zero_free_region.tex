@@ -156,7 +156,7 @@ The result follows from applying \Cref{mu_to_zero_free}.
 \begin{lemma}[Relation to prime number theorem error term]\label{zero_free_to_pnt}
 Suppose $\zeta(\sigma + it) \ne 0$ for $\sigma \ge 1 - \eta(t)$ where $\eta(t)$ is a positive and decreasing function. Then
 \[
-\sum_{n \le x}\Lambda(n) - x \ll x \exp\left(-A \omega(x) \right),\qquad (x \to \infty)
+\sum_{n \le x}\Lambda(n) - x \ll x \exp\left(-A \omega(x) \right)\qquad (x \to \infty)
 \]
 for an absolute constant $A > 0$, where 
 \[
@@ -188,3 +188,16 @@ Applying \Cref{zero_free_to_pnt}, one obtains the error term estimates in the pr
     \end{tabular}
 \label{zero-free-pnt-table}
 \end{table}
+
+The following type of converse statement is also known.
+
+\begin{theorem}[\cite{turan_new_1984} Theorem 40.1] If for some $0 < \alpha \le 1$ one has
+\[
+\psi(x) - x \ll x \exp(-A(\log x)^{1/(1 + \alpha)})\qquad (x \to \infty)
+\]
+then $\zeta(\sigma + it) \ne 0$ for $t$ sufficiently large and
+\[
+\sigma > 1 - \frac{A}{(\log t)^{\alpha}}.
+\]
+Here $A$ denotes an absolute positive constant, not necessarily the same at each occurrence. 
+\end{theorem}
