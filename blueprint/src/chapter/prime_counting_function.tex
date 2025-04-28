@@ -73,6 +73,35 @@ If the Riemann hypothesis is true, then
 \]
 \end{theorem}
 
+\section{Omega results}
+
+In the opposite direction, it is known that 
+\begin{theorem}[Schmidt \cite{schmidt_uber_1903}]
+As $x \to \infty$,
+\[
+\psi(x) = x + \Omega(x^{1/2}).
+\]
+\end{theorem}
+This can be improved slightly conditioned on the Riemann hypothesis.
+\begin{theorem}[Littlewood \cite{littlewood_sur_1914}]
+If the Riemann hypothesis is true, then as $x \to \infty$,
+\[
+|\pi(x) - \operatorname{li}(x)| = \Omega\left(x^{1/2}\frac{\log\log\log x}{\log x}\right).
+\]
+\end{theorem}
+
+Furthermore it is also known that
+\begin{theorem}[Grosswald \cite{grosswald_sur_1965}]
+If 
+\[
+\theta = \sup_{\rho: \zeta(\rho) = 0}\Re \rho > 1/2
+\]
+then as $x \to \infty$,
+\[
+\psi(x) = x + \Omega(x^{\theta}).
+\]
+\end{theorem}
+
 \section{Computational Aspects}
 Computing $\pi(x)$ efficiently is a key problem in number theory. Several algorithms exist, including:
 \begin{itemize}
