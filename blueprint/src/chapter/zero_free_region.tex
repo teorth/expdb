@@ -1,17 +1,11 @@
-\chapter{Zero free region for the zeta function}\label{zerofree-chapter}
+\chapter{Zero free regions}\label{zerofree-chapter}
+A zero of the Riemann zeta function is a complex number $\rho = \beta + i\gamma$ for which $\zeta(\rho) = 0$. 
+\begin{itemize}
+    \item There are infinitely many ``trivial" zeros of the form $\rho = -2n$ for integer $n \ge 1$; these zeros are well understood.
+    \item There are a countably infinite number of ``non-trivial zeros lying inside the critical strip $0 < \Re z < 1$.
+\end{itemize}
 
-\unintegrated 
-
-A zero of the Riemann zeta function is a complex number $\rho = \beta + i\gamma$ for which $\zeta(\rho) = 0$. The zeta function has a infinite number of zeros of the form $\rho = -2n$ for integer $n \ge 1$; these are known as trivial zeros and are well understood. There are also an infinite number zeros inside the ``critical strip" $0 < \Re z < 1$, called non-trivial zeros. The locations of the non-trivial zeros have deep consequences for many fields of mathematics. A well-known conjecture regarding the non-trivial zeros is the Riemann hypothesis. 
-
-\begin{conjecture}[Riemann hypothesis]\label{rh}
-If $\rho$ is a non-trivial zero of the Riemann zeta function, then $\Re \rho = 1/2$.
-\end{conjecture}
-
-This conjecture remains far out of reach. Instead, currently what are known are zero free regions.  
-
-\begin{definition}[Zero free region]\label{zeta-zero-free-def}
-A zero-free region of the Riemann zeta function is a set $D \subset \mathbb{C}$ for which $\zeta(s) \ne 0$ for all $s \in D$. 
+\begin{definition}[Zero free region of $\zeta(s)$]\label{zeta-zero-free-def}A zero-free region of the Riemann zeta function is a set $D \subset \mathbb{C}$ for which $\zeta(s) \ne 0$ for all $s \in D$. 
 \end{definition}
 
 \begin{lemma}[Basic properties of zero free regions]\label{zero-free-basic-lem}
@@ -32,6 +26,13 @@ and claim (iii) follows from the Euler product formula
 \zeta(s) = \prod_{p}(1 - p^{-s})^{-1},\qquad (\Re s > 1).
 \]
 \end{proof}
+
+A well-known conjecture regarding the non-trivial zeroes of $\zeta(s)$ is the Riemann hypothesis. 
+
+\begin{conjecture}[Riemann hypothesis]\label{rh}
+If $\rho$ is a non-trivial zero of the Riemann zeta function, then $\Re \rho = 1/2$.
+\end{conjecture}
+
 
 In light of \Cref{zero-free-basic-lem}, for the rest of the chapter we will focus on the quadrant 
 \[
@@ -61,7 +62,7 @@ since $\zeta$ has a simple pole at $s = 1$ and no pole at $\sigma + 2it$. If $\z
 
 This was used to prove the prime number theorem $\pi(x) \sim x/\log x$ as $x \to \infty$ (in fact the two statements are equivalent).
 
-\section{Relation to upper bound on zeta in the critical strip}
+\section{Relation to growth rates of zeta}
 
 Using estimates of $\zeta(\sigma + it)$ close to the line $\sigma = 1$, one can extend the zero free region slightly inside the critical strip. 
 
@@ -150,54 +151,3 @@ so that
 \]
 The result follows from applying \Cref{mu_to_zero_free}.
 \end{proof}
-
-\section{Relation to the error term in the prime number theorem}
-
-\begin{lemma}[Relation to prime number theorem error term]\label{zero_free_to_pnt}
-Suppose $\zeta(\sigma + it) \ne 0$ for $\sigma \ge 1 - \eta(t)$ where $\eta(t)$ is a positive and decreasing function. Then
-\[
-\sum_{n \le x}\Lambda(n) - x \ll x \exp\left(-A \omega(x) \right)\qquad (x \to \infty)
-\]
-for an absolute constant $A > 0$, where 
-\[
-\omega(x) := \inf_{t \ge 1}(\eta (t) \log x + \log t).
-\]
-\end{lemma}
-\begin{proof}
-See e.g. \cite{ingham_distribution_1990}.
-\end{proof}
-
-Applying \Cref{zero_free_to_pnt}, one obtains the error term estimates in the prime number theorem given in Table \ref{zero-free-pnt-table}.   
-
-\begin{table}[ht]
-    \def\arraystretch{2.5}
-    \centering
-    \caption{Error bounds on the prime number theorem. Here $A$ represents an absolute, positive constant, which may be different at each occurrence.}
-    \begin{tabular}{|c|c|c|}
-    \hline
-    Bound on $(\psi(x) - x)/x$ & Associated zero-free region & Reference \\
-    \hline
-    $\exp(-A(\log x)^{1/2})$ & $\sigma \ge 1 - \dfrac{A}{\log t}$ & \Cref{zfr-classical} \\
-    \hline 
-    $\exp(-A(\log x \log\log x)^{1/2})$ & $\sigma \ge 1 - \dfrac{A\log\log t}{\log t}$ & \Cref{zfr-littlewood} \\
-    \hline 
-    $\exp(-A(\log x)^{4/7 + o(1)})$ & $\sigma \ge 1 - \dfrac{A}{(\log t)^{3/4 + o(1)}}$ & \Cref{zfr-chudakov} \\
-    \hline 
-    $\exp\left(-A\dfrac{(\log x)^{3/5}}{(\log\log x)^{1/5}}\right)$ & $\sigma \ge 1 - \dfrac{A}{(\log t)^{2/3}(\log\log t)^{1/3}}$ & \Cref{zfr-vk} \\
-    \hline 
-    \end{tabular}
-\label{zero-free-pnt-table}
-\end{table}
-
-The following type of converse statement is also known.
-
-\begin{theorem}[\cite{turan_new_1984} Theorem 40.1] If for some $0 < \alpha \le 1$ one has
-\[
-\psi(x) - x \ll x \exp(-A(\log x)^{1/(1 + \alpha)})\qquad (x \to \infty)
-\]
-then $\zeta(\sigma + it) \ne 0$ for $t$ sufficiently large and
-\[
-\sigma > 1 - \frac{A}{(\log t)^{\alpha}}.
-\]
-Here $A$ denotes an absolute positive constant, not necessarily the same at each occurrence. 
-\end{theorem}
