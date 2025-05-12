@@ -5,6 +5,7 @@ from literature import *
 import exponent_pair as ep
 import zero_density_estimate as zd
 import prime_gap as pg
+from typing import Optional
 
 ######################################################################################
 # Derivations of exponent pairs
@@ -163,7 +164,7 @@ def best_proof_of_exponent_pair(
         l: frac, 
         proof_method: int=Proof_Optimization_Method.DATE, 
         verbose: bool=True
-    ) -> Hypothesis | None:
+    ) -> Optional[Hypothesis]:
 
     """
     Finds the best proof of the exponent pair (k, l) according to some measure 
@@ -1351,7 +1352,3 @@ def prove_all():
     # prove_all_zero_density_estimates()
     # prove_all_zero_density_energy_estimates()
     # prove_prime_gap2()
-
-#prove_zero_density_guth_maynard_improved(False)
-#prove_all_zero_density_estimates()
-prove_zero_density_energy_12()

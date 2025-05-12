@@ -74,7 +74,7 @@ class Reference_Manager:
     # Read the bibtex file and store references as Reference objects. Assumes
     # label of the references are unique.
     def load(self):
-        file = open(self.path, "r")
+        file = open(self.path, "r", encoding="utf8")
         lines = file.readlines()
         file.close()
 

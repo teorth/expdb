@@ -1,3 +1,4 @@
+from typing import Optional
 
 # Basic code for handling hypotheses in the exponent database.  The code here is
 # intended to be as flexible and general as possible, anticipating that different
@@ -39,7 +40,6 @@
 #       depends on (defaults to the empty set).
 
 # TODO: add `Lean proof` attribute
-
 
 class Hypothesis:
     def __init__(self, name, hypothesis_type, data, proof, reference):
@@ -228,7 +228,7 @@ class Hypothesis_Set:
     
     def find_hypothesis(
         self, hypothesis_type="Any", data="Any", name="Any", keywords="Any", year="Any"
-    ) -> Hypothesis | None:
+    ) -> Optional[Hypothesis]:
         """
         Returns the first instance of a Hypothesis in the set that matches the 
         specified requirements.
