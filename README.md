@@ -44,7 +44,7 @@ Hypothesis data: A(x) \leq 3/(2 - x) on [1/2,1)
 Hypothesis reference: {On} the estimation of ${N}(\sigma, T)$ Ingham 1940
 Hypothesis dependencies: set()
 ```
-There are no dependencies because this `Hypothesis` object directly references the literature. Alternatively, theorems may also be represented as a `Hypothesis` that (recursively) depend on other hypotheses. The dependency structure can be represented as a tree whose root is the theorem and whose leaves are other known theorems (either trivial or proved in the literature). This tree also represents a proof of the `Hypothesis`. For instance, we may also derive Ingham's estimate using other hypotheses in the database, such as [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object representing the same result but containing a proof of Ingham's result. represented as a dependency tree. 
+There are no dependencies because this `Hypothesis` object directly references the literature. Alternatively, theorems may also be represented as a `Hypothesis` that (recursively) depend on other hypotheses. The dependency structure is a tree whose root is the theorem and whose leaves are other known theorems (either trivial or proved in the literature). This tree also represents a proof of the `Hypothesis`. For instance, we may also derive Ingham's estimate using other hypotheses in the database, such as [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object containing the same result but also containing a proof of the estimate represented as a dependency tree. 
 ```
 import derived
 
