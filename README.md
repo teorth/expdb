@@ -61,31 +61,13 @@ h.recursively_list_proofs()
 ```
 Console output
 ```
-Found proof of (2/9, 11/18) with complexity = 13 and date = 1920:
 - [Derived exponent pair (2/9, 11/18)]  i.e. The exponent pair (2/9, 11/18). Follows from "Derived exponent pair (1/9, 13/18)" and taking the van der Corput B transform. Dependencies:
         - [Derived exponent pair (1/9, 13/18)]  i.e. The exponent pair (1/9, 13/18). Follows from "Derived exponent pair (2/7, 4/7)" and taking the van der Corput A transform. Dependencies:
                 - [Derived exponent pair (2/7, 4/7)]  i.e. The exponent pair (2/7, 4/7). Follows from "Derived exponent pair (1/14, 11/14)" and taking the van der Corput B transform. Dependencies:
                         - [Derived exponent pair (1/14, 11/14)]  i.e. The exponent pair (1/14, 11/14). Follows from "Derived exponent pair (1/6, 2/3)" and taking the van der Corput A transform. Dependencies:
                                 - [Derived exponent pair (1/6, 2/3)]  i.e. The exponent pair (1/6, 2/3). Follows from "Derived exponent pair (1/2, 1/2)" and taking the van der Corput A transform. Dependencies:
-                                        - [Derived exponent pair (1/2, 1/2)]
-i.e. The exponent pair (1/2, 1/2). Follows from "Trivial exponent pair (0, 1)" and taking the van der Corput B transform. Dependencies:
-                                                - [van der Corput B transform]
-  i.e. van der Corput B transform. See [van der Corput, 1920].
-                                                - [Trivial exponent pair (0, 1)]  i.e. The exponent pair (0, 1). Triangle inequality.
-                                        - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-                                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-                        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
-                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
-- [Derived exponent pair (2/9, 11/18)]  i.e. The exponent pair (2/9, 11/18). Follows from "Derived exponent pair (1/9, 13/18)" and taking the van der Corput B transform. Dependencies:
-        - [Derived exponent pair (1/9, 13/18)]  i.e. The exponent pair (1/9, 13/18). Follows from "Derived exponent pair (2/7, 4/7)" and taking the van der Corput A transform. Dependencies:
-                - [Derived exponent pair (2/7, 4/7)]  i.e. The exponent pair (2/7, 4/7). Follows from "Derived exponent pair (1/14, 11/14)" and taking the van der Corput B transform. Dependencies:
-                        - [Derived exponent pair (1/14, 11/14)]  i.e. The exponent pair (1/14, 11/14). Follows from "Derived exponent pair (1/6, 2/3)" and taking the van der Corput A transform. Dependencies:
-                                - [Derived exponent pair (1/6, 2/3)]  i.e. The exponent pair (1/6, 2/3). Follows from "Derived exponent pair (1/2, 1/2)" and taking the van der Corput A transform. Dependencies:
-                                        - [Derived exponent pair (1/2, 1/2)]
-i.e. The exponent pair (1/2, 1/2). Follows from "Trivial exponent pair (0, 1)" and taking the van der Corput B transform. Dependencies:
-                                                - [van der Corput B transform]
-  i.e. van der Corput B transform. See [van der Corput, 1920].
+                                        - [Derived exponent pair (1/2, 1/2)] i.e. The exponent pair (1/2, 1/2). Follows from "Trivial exponent pair (0, 1)" and taking the van der Corput B transform. Dependencies:
+                                                - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
                                                 - [Trivial exponent pair (0, 1)]  i.e. The exponent pair (0, 1). Triangle inequality.
                                         - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
                                 - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
