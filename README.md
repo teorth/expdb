@@ -1,6 +1,7 @@
 
 
 
+
 # Analytic Number Theory Exponent Database
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-lightblue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -21,29 +22,29 @@ This is intended to be a living database; additional corrections, updates, and c
 - [A blog post](https://terrytao.wordpress.com/2025/01/28/new-exponent-pairs-zero-density-estimates-and-zero-additive-energy-estimates-a-systematic-approach/) by Terence Tao describing this paper and project
 - [Mathbases](https://github.com/MathBases/MathBases) - A directory of math databases (including this one)
 
-## Proof automation
-In the Python side of the database, theorems and conjectures are represented using the `Hypothesis` object, which either contain a literature reference or depend on one or more other `Hypothesis` objects. The basic structure of a "proof" is represented as a dependency tree of `Hypothesis` objects, whose root node is the theorem to be proved, and whose leaves are known theorems (either trivial or proved in the literature). For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function 
+## Python database and proof automation
+Each theorem and conjecture in the database is represented both in [natural language](https://teorth.github.io/expdb/blueprint/intro-chapter.html) and also in Python using the `Hypothesis` object. Each `Hypothesis` may either contain a reference to a result from the literature or depend on one or more other `Hypothesis` objects. The special predefined set `literature` contains all hypotheses of the first kind. For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function 
 ```math
 N(\sigma, T) \ll T^{3(1-\sigma)/(2-\sigma) + o(1)}\qquad (1/2 \le \sigma \le 1, T \to \infty)
 ```
-is represented as a `Hypothesis` in the`literature` hypothesis set, which can be retrieved using
+is represented as a `Hypothesis` in `literature`, and can be retrieved using
 ```
 import literature
 
 h = literature.find_hypothesis(hypothesis_type="Zero density estimate", keywords="Ingham")
 print("Hypothesis name:", h)
 print("Hypothesis data:", h.data)
-print("Hypothesis reference:", h.reference.title, h.reference.year)
+print("Hypothesis reference:", h.reference.title(), h.reference.author(), h.reference.year())
 print("Hypothesis dependencies:", h.dependencies)
 ``` 
 Console output
 ```
 Hypothesis name: Ingham (1940) zero density estimate
 Hypothesis data: A(x) \leq 3/(2 - x) on [1/2,1)
-Hypothesis reference: {On} the estimation of ${N}(\sigma, T)$ 1940
+Hypothesis reference: {On} the estimation of ${N}(\sigma, T)$ Ingham 1940
 Hypothesis dependencies: set()
 ```
-There are no dependencies because this `Hypothesis` object directly references the literature. However, we may also derive Ingham's estimate using other hypotheses in the database. For instance, the file [derived.py](https://github.com/teorth/expdb/blob/main/blueprint/src/python/derived.py) contains a derivation of Ingham's result, using [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object representing the same result but containing a proof represented as a dependency tree. 
+There are no dependencies because this `Hypothesis` object directly references the literature. Alternatively, theorems may also be represented as a `Hypothesis` that (recursively) depend on other hypotheses. The dependency structure can be represented as a tree whose root is the theorem and whose leaves are other known theorems (either trivial or proved in the literature). This tree also represents a proof of the `Hypothesis`. For instance, we may also derive Ingham's estimate using other hypotheses in the database, such as [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object representing the same result but containing a proof of Ingham's result. represented as a dependency tree. 
 ```
 import derived
 
@@ -58,7 +59,7 @@ Console output
         - [Derived zeta large value estimate]  i.e. (σ,τ,ρ) in Disjoint union of {['8/3 - 4/3σ + τ >= 0', '-2 + τ >= 0']}. Follows from 1 zeta large value estimates. Dependencies:
                 - [Classical large value estimate]  i.e. ρ <= max(2 - 2σ, 1 - 2σ + τ). Classical.
 ```
-A number of functions can be used to automatically find proofs given a desired result and a set of assumed`Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
+The database also implements a limited form of automated theorem proving (ATP) using known relationships between certain exponents in analytic number theory. A number of functions can be used to automatically find proofs given a desired result and a set of assumed `Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
 ```
 from exponent_pair import *
 
