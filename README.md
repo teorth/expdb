@@ -22,7 +22,8 @@ This is intended to be a living database; additional corrections, updates, and c
 - [Mathbases](https://github.com/MathBases/MathBases) - A directory of math databases (including this one)
 
 ## Proof automation
-In the Python side of the database, theorems and conjectures are represented using the `Hypothesis` object, which either contain a literature reference or depend on one or more other `Hypothesis` objects. The basic structure of a "proof" is represented as a dependency tree of `Hypothesis` objects, whose root node is the theorem to be proved, and whose leaves are known theorems (either trivial or proved in the literature). For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function $$ N(\sigma, T) \ll T^{3(1-\sigma)/(2-\sigma) + o(1)}\qquad (1/2 \le \sigma \le 1, T \to \infty)$$
+In the Python side of the database, theorems and conjectures are represented using the `Hypothesis` object, which either contain a literature reference or depend on one or more other `Hypothesis` objects. The basic structure of a "proof" is represented as a dependency tree of `Hypothesis` objects, whose root node is the theorem to be proved, and whose leaves are known theorems (either trivial or proved in the literature). For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function 
+$$N(\sigma, T) \ll T^{3(1-\sigma)/(2-\sigma) + o(1)}\qquad (1/2 \le \sigma \le 1, T \to \infty)$$
 is represented as a `Hypothesis` in the`literature` hypothesis set, which can be retrieved using
 ```
 import literature
@@ -57,6 +58,8 @@ Console output
 ```
 A number of functions can be used to automatically find proofs given a desired result and a set of assumed`Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
 ```
+from exponent_pair import *
+
 h = best_proof_of_exponent_pair(frac(4,18), frac(11,18))
 h.recursively_list_proofs()
 ```
