@@ -59,7 +59,7 @@ Console output
         - [Derived zeta large value estimate]  i.e. (σ,τ,ρ) in Disjoint union of {['8/3 - 4/3σ + τ >= 0', '-2 + τ >= 0']}. Follows from 1 zeta large value estimates. Dependencies:
                 - [Classical large value estimate]  i.e. ρ <= max(2 - 2σ, 1 - 2σ + τ). Classical.
 ```
-The database also implements a limited form of automated theorem proving (ATP) using known relationships between certain exponents in analytic number theory. A number of functions can be used to automatically find proofs given a desired result and a set of assumed `Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
+The database also implements a limited automated theorem prover using known relationships between certain exponents in analytic number theory. A number of functions can be used to automatically find proofs given a desired result and a set of assumed `Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
 ```
 from exponent_pair import *
 
