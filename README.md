@@ -1,5 +1,6 @@
 
 
+
 # Analytic Number Theory Exponent Database
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-lightblue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -54,7 +55,7 @@ Console output
         - [Derived zeta large value estimate]  i.e. (σ,τ,ρ) in Disjoint union of {['8/3 - 4/3σ + τ >= 0', '-2 + τ >= 0']}. Follows from 1 zeta large value estimates. Dependencies:
                 - [Classical large value estimate]  i.e. ρ <= max(2 - 2σ, 1 - 2σ + τ). Classical.
 ```
-A number of functions can be used to automatically find proofs given a desired result and a set of assumed`Hypothesis`. For example, to find a proof of the exponent pair $(4/18, 11/18)$, one can use
+A number of functions can be used to automatically find proofs given a desired result and a set of assumed`Hypothesis`. For example, to find a proof of the [exponent pair](https://teorth.github.io/expdb/blueprint/exponent-pairs-chapter.html) $(\frac{4}{18}, \frac{11}{18}) = BABA^2B(0, 1)$, one can use
 ```
 h = best_proof_of_exponent_pair(frac(4,18), frac(11,18))
 h.recursively_list_proofs()
@@ -62,16 +63,16 @@ h.recursively_list_proofs()
 Console output
 ```
 - [Derived exponent pair (2/9, 11/18)]  i.e. The exponent pair (2/9, 11/18). Follows from "Derived exponent pair (1/9, 13/18)" and taking the van der Corput B transform. Dependencies:
+        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920]. 
         - [Derived exponent pair (1/9, 13/18)]  i.e. The exponent pair (1/9, 13/18). Follows from "Derived exponent pair (2/7, 4/7)" and taking the van der Corput A transform. Dependencies:
+                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
                 - [Derived exponent pair (2/7, 4/7)]  i.e. The exponent pair (2/7, 4/7). Follows from "Derived exponent pair (1/14, 11/14)" and taking the van der Corput B transform. Dependencies:
+                        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
                         - [Derived exponent pair (1/14, 11/14)]  i.e. The exponent pair (1/14, 11/14). Follows from "Derived exponent pair (1/6, 2/3)" and taking the van der Corput A transform. Dependencies:
+                                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
                                 - [Derived exponent pair (1/6, 2/3)]  i.e. The exponent pair (1/6, 2/3). Follows from "Derived exponent pair (1/2, 1/2)" and taking the van der Corput A transform. Dependencies:
+                                        - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
                                         - [Derived exponent pair (1/2, 1/2)] i.e. The exponent pair (1/2, 1/2). Follows from "Trivial exponent pair (0, 1)" and taking the van der Corput B transform. Dependencies:
                                                 - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
                                                 - [Trivial exponent pair (0, 1)]  i.e. The exponent pair (0, 1). Triangle inequality.
-                                        - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-                                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-                        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
-                - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
-        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].                                                       
 ```
