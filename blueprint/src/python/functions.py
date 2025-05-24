@@ -61,7 +61,7 @@ class Interval:
             and self.include_lower == other.include_lower
             and self.include_upper == other.include_upper
         )
-    
+
     # -------------------------------------------------------------------------
     # Public static functions
     def parse(s):
@@ -89,7 +89,7 @@ class Interval:
 
     # Returns true if the interval contains the point x
     def contains(self, x):
-        # previous implementation required 6 comparisons, new implementation only 
+        # previous implementation required 6 comparisons, new implementation only
         # requires 4 comparisons (but more cases)
         if self.include_lower:
             if self.include_upper:
@@ -166,7 +166,7 @@ class Affine:
     def to_str(self, variable):
         s3 = f"  ({self.label})" if self.label is not None else ""
         return f"{Str_Helper.format([self.c, self.m], [variable])} for {variable} \\in {self.domain}{s3}"
-    
+
     # Evaluates the function at x. If extend_domain is True, then the domain of
     # the function will be ignored.
     def at(self, x, extend_domain=False):
@@ -558,15 +558,15 @@ class Piecewise:
 
     # Simplify the function by computing unions of polytopes
     def simplify(self, max_grouping=3):
-        
+
         # a single simplification iteration, which tries to represent multiple
         # Affine2 objects as a single object. The parameter n represents the
         # number of objects we try to combine at a time .
         def iteration(matchable, n):
-            
+
             # Flag to indicate whether any changes have been made
             changed = False
-            
+
             # Prevent modifying set when iterating
             keys = [k for k in matchable]
             for key in keys:
@@ -575,22 +575,22 @@ class Piecewise:
                 for c in itertools.combinations(range(len(group)), n):
                     union = Polytope.try_union([group[fi].domain for fi in c])
                     if union is not None:
-                        # Add new element at the end of list 
+                        # Add new element at the end of list
                         f = group[c[0]]
                         new_f = Affine2(f.a, union, f.label)
                         group.append(new_f)
-                        
+
                         # Remove indices of c from group
                         matchable[key] = [group[gi] for gi in range(len(group)) if gi not in c]
-                        
+
                         # Since the group has now been altered, we can no longer
                         # continue iterating through this group. Instead move
                         # onto the next group.
                         changed = True
-                        
+
                         break
             return changed
-        
+
         # First - compute the matchable sets (in terms of the function and label)
         matchable = {}
         for i in range(len(self.pieces)):
@@ -601,7 +601,7 @@ class Piecewise:
                 matchable[key].append(p)
             else:
                 matchable[key] = [p]
-        
+
         # Often it is possible to aggregate the entire set - try that first
         # Unfortunately, this method is simply too slow
         # keys = [k for k in matchable]
@@ -612,7 +612,7 @@ class Piecewise:
         #     if union is not None:
         #         f = group[0]
         #         matchable[key] = [Affine2(f.a, union, f.label)]
-            
+
         # For now - only match 2 - 3 at a time
         for n in range(2, max_grouping + 1):
             while iteration(matchable, n):
@@ -622,7 +622,7 @@ class Piecewise:
         pieces = []
         for key in matchable:
             pieces.extend(matchable[key])
-        
+
         self.pieces = pieces
 
 
@@ -651,12 +651,12 @@ class SympyHelper:
 # This class is currently experimental.
 # Differences to RationalFunction class:
 # 1) Interval is used to represent domain of definition
-# 2) Less reliance on symbolic algebra - interval storage uses tuple of numbers instead of 
+# 2) Less reliance on symbolic algebra - interval storage uses tuple of numbers instead of
 #   symbolic object
-# 3) Object is now immutable 
+# 3) Object is now immutable
 class RationalFunction2:
-    
-    # coeffs: either: 
+
+    # coeffs: either:
     # - list of numbers, representing the coefficients of P(x)
     # - tuple of list of numbers, representing the coefficients of P(x), Q(x)
     # domain: Interval
@@ -665,7 +665,7 @@ class RationalFunction2:
             raise ValueError("Parameter coeffs must be of type list of tuple or tuple")
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
-        
+
         if len(coeffs) == 0:
             raise ValueError("Parameter coeffs must have at least 1 element")
 
@@ -676,13 +676,13 @@ class RationalFunction2:
             self._num_coeffs = tuple(coeffs[0])
             self._den_coeffs = tuple(coeffs[1])
         self.domain = domain
-    
+
     def __repr__(self):
 
-        # handle special cases first 
-        if self.is_zero(): 
+        # handle special cases first
+        if self.is_zero():
             return f"0 on {self.domain}"
-        if self.is_constant(): 
+        if self.is_constant():
             return f"{self._num_coeffs[0] / self._den_coeffs[0]} on {self.domain}"
 
         num = RationalFunction2._poly_str(self._num_coeffs, "x")
@@ -690,21 +690,21 @@ class RationalFunction2:
 
         if den == "1":
             return f"{num} on {self.domain}"
- 
-        # Add brackets if required 
+
+        # Add brackets if required
         if sum(1 for c in self._num_coeffs if c != 0) > 1: num = "(" + num + ")"
         if sum(1 for c in self._den_coeffs if c != 0) > 1: den = "(" + den + ")"
 
         return f"{num}/{den} on {self.domain}"
 
     # Static functions ------------------------------------------------------------
-    # Pretty-print a polynomial given the coefficients and the variable name 
+    # Pretty-print a polynomial given the coefficients and the variable name
     def _poly_str(coeffs, var_name):
         deg = len(coeffs) - 1
         s = []
         front = True
         for c in coeffs:
-            if front: 
+            if front:
                 if c < 0: s.append("-")
             else:
                 s.append("-" if c < 0 else "+")
@@ -722,7 +722,7 @@ class RationalFunction2:
         stem = f"{var}" if deg == 1 else f"{var}^{deg}"
         if abs(c) == 1: return stem
         return f"{abs(c)}" + stem
-    
+
     # Instance methods -----------------------------------------------------------
     # Returns whether this polynomial is zero
     def is_zero(self):
@@ -736,7 +736,7 @@ class RationalFunction2:
         return all(c == 0 for c in self._num_coeffs[2:]) and \
                 all(c == 0 for c in self._den_coeffs[1:])
 
-    
+
 # Represents the univariate function P(x)/Q(x) where P, Q are polynomials. Currently
 # this is just a wrapper around the sympy symbolic algebra library.
 class RationalFunction:
@@ -772,24 +772,24 @@ class RationalFunction:
         res = self.num * other.den - self.den * other.num
 
         # Direct test if result is numeric
-        if isinstance(res, numbers.Number): 
+        if isinstance(res, numbers.Number):
             return res == 0
         
-        # Symbolic test otherwise 
+        # Symbolic test otherwise
         return res.equals(0)
 
     def __add__(self, other):
         return self.add(other)
-    
+
     def __sub__(self, other):
         return self.sub(other)
 
     def __mul__(self, other):
         return self.mul(other)
-    
+
     def __truediv__(self, other):
         return self.div(other)
-    
+
     # Static functions -------------------------------------------------
 
     def parse(expr):
@@ -800,22 +800,22 @@ class RationalFunction:
         r.den = den
         return r
 
-    # Given a list of (RationalFunction, Interval) tuples, compute the "most optimal" function 
-    # on a domain, returning a list of (RationalFunction, Interval, Integer) tuples. Optimality 
-    # is typically taken to be either the minimum or the maximum. The last element of each tuple 
+    # Given a list of (RationalFunction, Interval) tuples, compute the "most optimal" function
+    # on a domain, returning a list of (RationalFunction, Interval, Integer) tuples. Optimality
+    # is typically taken to be either the minimum or the maximum. The last element of each tuple
     # indicates the index of where piece comes from in the original func_and_domains list.
-    # If a function is not defined on an interval, it is treated as +infinity (resp. -infinity). 
-    # The comparator parameter compares two RationalFunction instances on an interval 
+    # If a function is not defined on an interval, it is treated as +infinity (resp. -infinity).
+    # The comparator parameter compares two RationalFunction instances on an interval
     # on which they are guaranteed to be defined. Returns true if the first RationalFunction
-    # instance is more "optimal" 
+    # instance is more "optimal"
     def _compute_optimal(
-            func_and_domains: list, 
-            domain: Interval, 
-            comparator, 
-            default, 
+            func_and_domains: list,
+            domain: Interval,
+            comparator,
+            default,
             track_dependencies=True
         ) -> list:
-        
+
         # Start with default bound with reference index -1
         best_bound = [(RationalFunction([default]), domain, -1)]
 
@@ -864,26 +864,26 @@ class RationalFunction:
             return best_bound
         else:
             return [(b[0], b[1]) for b in best_bound]
-    
-    # Given a list of (RationalFunction, Interval) tuples, compute their (piecewise) minimum. 
-    # The result is returned as a list of (RationalFunction, Interval, Integer) tuples, where 
-    # the last element indicates the index of the RationalFunction piece in the original 
+
+    # Given a list of (RationalFunction, Interval) tuples, compute their (piecewise) minimum.
+    # The result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
+    # the last element indicates the index of the RationalFunction piece in the original
     # list of functions.
-    # If a function is not defined on an interval, it is treated as -infinity. 
+    # If a function is not defined on an interval, it is treated as -infinity.
     def min(func_and_domains: list, domain: Interval, track_dependencies=True) -> list:
         if not isinstance(func_and_domains, list):
             raise ValueError("Parameter piecewise_funcs must be of type list")
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
-        
+
         return RationalFunction._compute_optimal(
             func_and_domains, domain, lambda x, y: x < y, 1000000, track_dependencies)
 
-    # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The 
-    # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where 
-    # the last element indicates the index of the RationalFunction piece in the original 
+    # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The
+    # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
+    # the last element indicates the index of the RationalFunction piece in the original
     # list of functions
-    # If a function is not defined on an interval, it is treated as -infinity. 
+    # If a function is not defined on an interval, it is treated as -infinity.
     def max(func_and_domains: list, domain: Interval, track_dependencies=True) -> list:
         if not isinstance(func_and_domains, list):
             raise ValueError("Parameter piecewise_funcs must be of type list")
@@ -912,7 +912,7 @@ class RationalFunction:
             r.den = self.den * other.den
             return r
         return NotImplementedError()
-    
+
     def subtract(self, other):
         r = RationalFunction([])
         if isinstance(other, numbers.Number):

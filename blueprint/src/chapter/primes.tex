@@ -207,6 +207,9 @@ The following general bound on $\GAPSQUARE$ is known:
 \begin{proof} See \cite[Lemma 2]{heath_brown_consecutive_II}. We remark that this lemma allows $\sigma$ to range over $0 \leq \sigma \leq 1$ rather than $1/2 \leq \sigma \leq 1$, but it is easy to see that the contributions of the $0 \leq \sigma < 1/2$ cases are dominated by the $\sigma=1/2$ case.
 \end{proof}
 
+\code{compute_gap2()}
+
+
 This proposition can be used to recover the following bounds on $\GAPSQUARE$:
 
 \begin{corollary}\
@@ -272,6 +275,37 @@ The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are re
     \end{tabular}
 \end{table}\label{gaplarge-table}
 
+For any $0 < \theta < 1$, let $\PNTEXCEP(\theta)$ denote the least exponent $\mu$ such that for all unbounded $X$, one has $\sum_{x \leq n < x + x^\theta} \Lambda(n) = (1+o(1)) x^\theta$ for all $x \in [X,2X]$ outside of an exceptional set of measure $O(X^{\mu+o(1)})$.  Thus for instance $\PNTEXCEP(\theta)=-\infty$ for $\theta > \PNTALL$ (and $\PNTEXCEP(\theta) \geq 0$ for $\theta < \PNTALL$), and $\PNTEXCEP(\theta) < 1$ implies $\theta \geq \PNTAA$. The quantity $\PNTEXCEP(\theta)$ is clearly non-decreasing in $\theta$.
+
+The following bounds are known:
+
+\begin{lemma}[Bounds on $\mu$]\label{baz-bound}\
+  \begin{itemize}
+  \item[(i)]  \cite[Theorem 2(i)]{bazzanella-perelli}  For sufficiently small $\Delta>0$, we have $\PNTEXCEP(1/6 + \Delta) \leq 1 - c\Delta$ and $\PNTEXCEP(7/12-\Delta) \leq \frac{5}{8} + \frac{7}{4}\Delta + O(\Delta^2)$.
+  \item[(ii)] \cite[Theorem 2(ii)]{bazzanella-perelli} Assuming RH, we have $\PNTEXCEP(\theta) \leq 1-\theta$ for $0 < \theta \leq 1/2$.
+    \item[(iii)] \cite[Lemma 1]{bazzanella} We have
+  $$
+  \PNTEXCEP(\theta) \leq
+  \begin{cases}
+  \frac{3(1-\theta)}{2} & \frac{1}{2} < \theta \leq \frac{11}{21} \\
+  \frac{47-42\theta}{35}& \frac{11}{21} < \theta \leq \frac{23}{42} \\
+  \frac{36\theta^2-96\theta+55}{39-36\theta} & \frac{23}{42} < \theta \leq \frac{7}{12} \\
+  \end{cases}
+  $$
+  Some further bounds were claimed in the region $1/6 < \theta \leq 1/2$, but unfortunately the arguments provided are incomplete (the claim (13) of that paper is not justified for $\theta \leq 1/2$).
+  \item[(iv)] \cite{gafni-tao} For any $0 < \theta < 1$, one has
+$$\PNTEXCEP(\theta) \leq \inf_{\eps>0} \sup_{\stackrel{0 \leq \sigma < 1}{\A(\sigma) \geq \frac{1}{1-\theta}-\eps}} \min(\mu_{2,\sigma}(\theta), \mu_{4,\sigma}(\theta))$$
+where
+$$ \mu_{2,\sigma}(\theta) \coloneqq (1-\theta)(1-\sigma) \A(\sigma) + 2\sigma - 1$$
+and
+$$ \mu_{4,\sigma}(\theta) \coloneqq (1-\theta)(1-\sigma) \A^*(\sigma) + 4\sigma-3.$$
+  \end{itemize}
+\end{lemma}
+
+\code{prime_excep()}
+
+
+
 \section{Extremal values of prime gaps}
 
 Consider now the problem of determining upper bounds on
@@ -282,9 +316,9 @@ as well as lower bounds on
 \begin{equation}\label{eqn:large-prime-gaps}
 G(X) := \max_{p_{n + 1} \le X}(p_{n + 1} - p_n).
 \end{equation}
-From the prime number theorem one expects $p_{n + 1} - p_n$ to be of size $\log p_n$ on average, so that 
+From the prime number theorem one expects $p_{n + 1} - p_n$ to be of size $\log p_n$ on average, so that
 \begin{theorem}[Consequences of the prime number theorem]
-One has 
+One has
 \[
 \liminf_{n\to\infty}\frac{p_{n + 1} - p_n}{\log p_n} \le 1,\qquad G(X) \ge (1 + o(1)) \log X\quad (X \to \infty).
 \]
@@ -293,7 +327,7 @@ One has
 However, $p_{n + 1} - p_n$ can be sometimes be much smaller or much larger than its average size. The following is a classical conjecture regarding small prime gaps.
 
 \begin{conjecture}[Twin prime conjecture]
-One has 
+One has
 \[
 \liminf_{n\to\infty}(p_{n + 1} - p_n) = 2.
 \]
@@ -323,7 +357,7 @@ Assuming the Elliott-Halberstam conjecture (EH), one has
 \liminf_{n\to\infty}(p_{n + 1} - p_n) \le 12.
 \]
 \end{theorem}
-\begin{theorem}[Polymath 8b \cite{polymath_variants_2014}] 
+\begin{theorem}[Polymath 8b \cite{polymath_variants_2014}]
 Assuming the Generalized Elliott-Halberstam conjecture (GEH), one has
 \[
 \liminf_{n\to\infty}(p_{n + 1} - p_n) \le 6.
@@ -354,7 +388,7 @@ Historical progress towards this problem is recorded in \Cref{small-primegap-tab
     \end{tabular}
 \end{table}\label{small-primegap-table}
 
-The current best known lower bound on $G(X)$ is 
+The current best known lower bound on $G(X)$ is
 \begin{theorem}[Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017}]
 For unbounded $X$, one has
 \[
@@ -388,4 +422,4 @@ G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}
     Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017} & $\displaystyle G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}$ \\
     \hline
 \end{tabular}
-\end{table}\label{small-primegap-table}
+\end{table}\label{small-primegap-table2}

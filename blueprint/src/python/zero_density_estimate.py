@@ -118,7 +118,7 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
     Parameters
     ----------
     hypotheses : Hypothesis
-        The hypothesis set to add to. 
+        The hypothesis set to add to.
     estimate : str
         A function of x representing a bound on A(x).
     interval : Interval
@@ -126,12 +126,12 @@ def add_zero_density(hypotheses, estimate, interval, ref, params=""):
     ref : Reference
         The literature reference for this zero density estimate.
     params : str, optional
-        Additional parameters to include in the hypothesis name. 
+        Additional parameters to include in the hypothesis name.
 
     Returns
     -------
     Hypothesis
-        A hypothesis representing this zero-density estimate. 
+        A hypothesis representing this zero-density estimate.
     """
     hypotheses.add_hypotheses(
         Hypothesis(
