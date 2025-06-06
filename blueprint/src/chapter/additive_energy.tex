@@ -196,7 +196,7 @@ As usual, we have an equivalent non-asymptotic definition of the large value ene
 \begin{lemma}[Non-asymptotic form of large value energy region]\label{lve-asymp}\uses{lv-edef} Let $1/2 \leq \sigma \leq 1$, $\tau \geq 0$,  $\rho, \rho^* \geq 0$, and $s \in \R$ be fixed.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(\sigma,\tau,\rho,\rho^*,s) \in \Energy$.
-    \item[(ii)] For every $\eps>0$ and $C > 0$, there exists a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$,
+    \item[(ii)] For every $\eps>0$ there exists $C, \delta > 0$ such that there is a large value pattern $(N,T,V,(a_n)_{n \in [N,2N]},J,W)$ with $N \geq C$, $N^{\tau-\delta} \leq T \leq N^{\tau+\delta}$, $N^{\sigma-\delta} \leq V \leq N^{\sigma+\delta}$,
     $N^{\rho-\eps} \leq |W| \leq N^{\rho+\eps}$,
     $N^{\rho^*-\eps} \leq E_1(W) \leq N^{\rho^*+\eps}$, and
     $N^{s-\eps} \leq S(N, W) \leq N^{s+\eps}$.
@@ -586,7 +586,7 @@ Now we turn to another application of double zeta sums to large value theorems.
 
     \begin{proof}\uses{bourgain-lvt}  With $\rho \leq \min(1,4-2\tau)$, $5\rho/4+\tau/2+1$ and $2\rho+1$ are both bounded by $\rho+2$, hence
     $$ \max(\rho+2, 2\rho+1, 5\rho/4 + \tau/2 + 1) = \rho+2.$$
-    Furthermore, $5s/4+\tau+1$ is a convex combination of $s+2$ and $2s + 2\tau-2$, hence
+    Furthermore, $5s/4+\tau/2+1$ is a convex combination of $s+2$ and $2s + 2\tau-2$, hence
     $$\max(s+2, 2s+1, 5s/4 + \tau/2 + 1) \leq \max(s+2, 2s + \max(1,2\tau-2)).$$
     Thus \eqref{rs} simplifies to
     $$(\rho+2)/2 + \max(s+2, 2s+\max(1,2\tau-2))/2 \geq

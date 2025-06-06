@@ -4,7 +4,7 @@
 \begin{equation}\label{exp-pair-triangle}
     \{ (k,\ell) \in \R^2: 0 \leq k \leq 1/2 \leq \ell \leq 1, k+\ell \leq 1 \}
 \end{equation}
-with the following property: for all model phase functions $F$, all $T \geq N \leq 1$, and all intervals $I \subset [N,2N]$, one has
+with the following property: for all model phase functions $F$, all $T \geq N \geq 1$, and all intervals $I \subset [N,2N]$, one has
 \begin{equation}\label{ntf}
  \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)}
 \end{equation}
@@ -19,7 +19,7 @@ One can formulate the notion of an exponent pair without recourse to asymptotic 
 \begin{lemma}[Non-asymptotic definition of exponent pair]\uses{exp-pair-def}  Let $(k,\ell)$ be a fixed element of \eqref{exp-pair-triangle}.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(k,\ell)$ is an exponent pair.
-    \item[(ii)] For every (fixed) $\eps>0$ there exist (fixed) $C, P > 0$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
+    \item[(ii)] For every (fixed) $\eps>0$ there exist (fixed) $C, P > 0$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
     $$ |\sum_{n \in I} e(T F(n/N))| \leq C (T/N)^{k+\eps} N^{\ell+\eps}.$$
    \end{itemize}
 \end{lemma}
@@ -323,7 +323,7 @@ $\dfrac{13}{84} + \dfrac{1}{2}\alpha$ & $\dfrac{3}{7}\leq \alpha \leq \dfrac{1}{
 
 Furthermore, more exponent pairs can be derived upon incorporating \Cref{vdca-beta}.
 
-\begin{theorem}[More new exponent pairs]\label{new-exp-pairs-2}
+\begin{theorem}[Cushing (2025) exponent pairs]\label{new-exp-pairs-2}
 The following are exponent pairs:
 \[
 \left(\frac{311}{4822}, \frac{3799}{4822}\right),\quad \left(\frac{80219}{1298878}, \frac{515638}{649439}\right).
