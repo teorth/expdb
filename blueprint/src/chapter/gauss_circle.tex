@@ -6,6 +6,12 @@ For any fixed integer $k \ge 2$ and unbounded $R$, consider the problem of estim
 \[
 S_k(R) := \# \mathbb{Z}^k \cap B_k(R) = \# \{x \in \mathbb{Z}^k: |x| \le R\}.
 \]
+Equivalently, $S_k(R)$ may be written as the partial sum 
+\[
+S_k(R) = \sum_{n \le R^{2}}r_k(n)
+\]
+where $r_k(n)$ counts the number of integer solutions to the equation $x_1^2 + \cdots + x_k^2 = n$.
+
 By considering the volume of a $k$-dimensional ball of radius $R$, one has the asymptotic
 \[
 S_k(R) \sim \operatorname{Vol}(B_k(R)) = \frac{\pi^{k/2}}{\Gamma(k/2 + 1)}R^k.
@@ -21,6 +27,20 @@ P_k(R) := S_k(R) - \operatorname{Vol}(B_k(R)) \ll R^{\theta^{\operatorname{Gauss
 
 It is conjectured that 
 
-\begin{conjecture}
+\begin{conjecture}\label{gauss-circle-conj}
 One has $\theta^{\operatorname{Gauss}}_{2} = 1/2$ and $\theta^{\operatorname{Gauss}}_{k} = k - 2$ for integer $k \ge 3$.
 \end{conjecture}
+
+This conjecture is known to hold for $k \ge 4$. 
+
+\begin{theorem}
+For integer $k \ge 4$, one has $\theta^{\operatorname{Gauss}}_{k} = k - 2$.
+\end{theorem}
+
+The remaining open cases are $k = 2, 3$. For such cases the following lower-bounds on $\theta^{\operatorname{Gauss}}_{k}$ are known:
+
+\begin{theorem}[Hardy \cite{}]\label{gauss-circle-lower-23}
+One has $\theta^{\operatorname{Gauss}}_{2} \ge 1/2$ and $\theta^{\operatorname{Gauss}}_{3} \ge 1$.
+\end{theorem}
+
+In light of \Cref{gauss-circle-conj} and \Cref{gauss-circle-lower-23}, in the rest of this chapter we shall focus on upper bounds on $\theta^{\operatorname{Gauss}}_{k}$ for $k = 2, 3$.
