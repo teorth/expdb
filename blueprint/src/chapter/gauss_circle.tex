@@ -1,0 +1,26 @@
+\chapter{The Gauss circle problem and its generalizations}\label{gauss-circle-chapter}
+
+\unintegrated
+
+For any fixed integer $k \ge 2$ and unbounded $R$, consider the problem of estimating the number of integer lattice points contained in $B_k(R)$, a $k$-dimensional ball of radius $R$:
+\[
+S_k(R) := \# \mathbb{Z}^k \cap B_k(R) = \# \{x \in \mathbb{Z}^k: |x| \le R\}.
+\]
+By considering the volume of a $k$-dimensional ball of radius $R$, one has the asymptotic
+\[
+S_k(R) \sim \operatorname{Vol}(B_k(R)) = \frac{\pi^{k/2}}{\Gamma(k/2 + 1)}R^k.
+\]
+The generalized Gauss circle problem concerns estimating the error term in this approximation.
+
+\begin{definition}
+For fixed integer $k \ge 2$, define $\theta^{\operatorname{Gauss}}_{k}$ as the least (fixed) exponent for which
+\[
+P_k(R) := S_k(R) - \operatorname{Vol}(B_k(R)) \ll R^{\theta^{\operatorname{Gauss}}_{k} + o(1)}.
+\]
+\end{definition}
+
+It is conjectured that 
+
+\begin{conjecture}
+One has $\theta^{\operatorname{Gauss}}_{2} = 1/2$ and $\theta^{\operatorname{Gauss}}_{k} = k - 2$ for integer $k \ge 3$.
+\end{conjecture}
