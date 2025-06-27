@@ -31,7 +31,10 @@ It is conjectured that
 One has $\theta^{\operatorname{Gauss}}_{2} = 1/2$ and $\theta^{\operatorname{Gauss}}_{k} = k - 2$ for integer $k \ge 3$.
 \end{conjecture}
 
-This conjecture is known to hold for $k \ge 4$. 
+
+\section{Known bounds on $\theta^{\operatorname{Gauss}}_k$}
+
+\Cref{gauss-circle-conj} is known to hold for $k \ge 4$. 
 
 \begin{theorem}
 For integer $k \ge 4$, one has $\theta^{\operatorname{Gauss}}_{k} = k - 2$.
@@ -43,4 +46,30 @@ The remaining open cases are $k = 2, 3$. For such cases the following lower-boun
 One has $\theta^{\operatorname{Gauss}}_{2} \ge 1/2$ and $\theta^{\operatorname{Gauss}}_{3} \ge 1$.
 \end{theorem}
 
-In light of \Cref{gauss-circle-conj} and \Cref{gauss-circle-lower-23}, in the rest of this chapter we shall focus on upper bounds on $\theta^{\operatorname{Gauss}}_{k}$ for $k = 2, 3$.
+In light of \Cref{gauss-circle-conj} and \Cref{gauss-circle-lower-23}, in the rest of this section we shall focus on upper bounds on $\theta^{\operatorname{Gauss}}_{k}$ for $k = 2, 3$.
+
+The case $k = 2$ is known classically as Gauss's circle problem. The current sharpest known bound on $\theta_2^{\operatorname{Gauss}}$ is
+\begin{theorem}[Li--Yang (2023) \cite{li_yang_gauss_2024}] 
+One has $\theta_2^{\operatorname{Gauss}} \le 2\theta^*$, where $\theta^* = 0.31448\ldots$ is the solution to the equation
+\[
+\frac{8}{25}\theta - \frac{(\sqrt{2(1+14\theta)} - 5\sqrt{-1+8\theta})^2}{200} + \frac{51}{200} = \theta
+\]
+on the interval $[0.3, 0.35]$.
+\end{theorem}
+
+The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ is recorded in \Cref{gauss-circle-table-2}.
+
+
+\begin{table}[ht]
+    \def\arraystretch{1.2}
+    \centering
+    \caption{Historical bounds on $\theta_2^{\operatorname{Gauss}}$}
+    \begin{tabular}{|c|c|}
+    \hline
+    Reference & Upper bound on $\theta_2^{\operatorname{Gauss}}$\\
+    \hline 
+    Li--Yang (2023) \cite{li_yang_gauss_2024} & $0.62896\ldots$\\
+    \hline 
+    \end{tabular}
+\label{gauss-circle-table-2}
+\end{table}
