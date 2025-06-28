@@ -373,9 +373,53 @@ def mu_bounds_plot():
     plt.grid(True)
     plt.show()
 
-# van_der_corput_plot2()
-# beta_bound_plot()
-# exp_pair_plot()
-# zero_density_plot()
-# zero_density_energy_plot()
-mu_bounds_plot()
+def gauss_circle_error_plot(k: int = 2):
+    """
+    Given an integer k, plots the error term in the estimation of the number of 
+    integer lattice points inside a ball of dimension k for various radii r. 
+    """
+
+    def N(k: int, r: int):
+        """
+        Computes the number of integer lattice points inside a k-dimensional ball of radius r.
+        """
+        r2 = r * r
+        if k == 2:
+            return sum(2 * int(math.sqrt(r2 - x * x)) + 1 for x in range(-r, r + 1))
+        else:
+            count = 0
+            for x in range(-r, r + 1):
+                x2 = x * x
+                for y in range(-int(math.sqrt(r2 - x2)), int(math.sqrt(r2 - x2)) + 1):
+                    y2 = y * y
+                    count += 2 * int(math.sqrt(r2 - x2 - y2)) + 1
+            return count
+    
+    def E(k, r):
+        """
+        Computes the error term in the Gauss circle problem for a given k and radius r.
+        """
+        if k == 2:
+            return abs(N(k, r) - math.pi * r * r)
+        elif k == 3:
+            return abs(N(k, r) - (4/3) * math.pi * r**3)
+        else:
+            raise NotImplementedError("Currently only k=2 is supported.")
+    
+    rs = range(0, 1000)
+    errors = [E(k, r) for r in rs]
+
+    # Sanity check for the error term
+    for r in range(100):
+        print(r, N(2, r))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(rs, errors, color="gray")
+    plt.xlabel(r"$R$")
+    plt.ylabel(r"$|S_2(R) - \pi R^2|$" if k == 2 else r"$|S_3(R) - \frac{4}{3} \pi R^3|$")
+    plt.grid(True, linestyle="dotted")
+    plt.tight_layout()
+    plt.show()  
+
+
+gauss_circle_error_plot(k=2)
