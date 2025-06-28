@@ -25,19 +25,19 @@ S_k(R) - \operatorname{Vol}(B_k(R)) \ll R^{\theta^{\operatorname{Gauss}}_{k} + o
 \]
 \end{definition}
 
-\Cref{fig:gauss_circle_2} and \Cref{fig:gauss_circle_3} plots this error term for $k = 2$ and $k = 3$ respectively (for $0 < R \le 1000$).
+\Cref{fig:gauss_circle_2} and \Cref{fig:gauss_circle_3} plots the magnitude of this error term for $k = 2$ and $k = 3$ respectively (for $0 < R \le 1000$).
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{chapter/gauss_circle_error_2.png}
-    \caption{$S_k(R) - \operatorname{Vol}(B_k(R))$ for $k = 2$ and $0 < R \le 1000$}
+    \caption{$|S_k(R) - \operatorname{Vol}(B_k(R))|$ for $k = 2$ and $0 < R \le 1000$}
     \label{fig:gauss_circle_2}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{chapter/gauss_circle_error_3.png}
-    \caption{$S_k(R) - \operatorname{Vol}(B_k(R))$ for $k = 3$ and $0 < R \le 1000$}
+    \caption{$|S_k(R) - \operatorname{Vol}(B_k(R))|$ for $k = 3$ and $0 < R \le 1000$}
     \label{fig:gauss_circle_3}
 \end{figure}
 
@@ -65,7 +65,7 @@ For integer $k \ge 4$, one has $\theta^{\operatorname{Gauss}}_{k} = k - 2$.
 
 The remaining open cases are $k = 2, 3$. For such cases the following lower-bounds on $\theta^{\operatorname{Gauss}}_{k}$ are known:
 
-\begin{theorem}[Hardy \cite{}]\label{gauss-circle-lower-23}
+\begin{theorem}\label{gauss-circle-lower-23}
 One has $\theta^{\operatorname{Gauss}}_{2} \ge 1/2$ and $\theta^{\operatorname{Gauss}}_{3} \ge 1$.
 \end{theorem}
 
@@ -84,7 +84,7 @@ on the interval $[0.3, 0.35]$.
 The value of $\alpha$ is the same as that appearing in \Cref{divisor-2-bound}. Historically, methods used to make progress in the $\alpha_2$ exponent in the Dirichlet divisor problem have led to corresponding improvements in $\theta_2^{\operatorname{Gauss}}$ (and vice versa). This may be unsurprising given that both problems reduce to counting the number of lattice points contained in a curved region with a smooth boundary (with the region being the hyperbola $\{(m,n) \in [0, \infty)^2: mn \le x \}$ in the case of the Dirichlet divisor problem).
 \end{remark}
 
-The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ is recorded in \Cref{gauss-circle-table-2}.
+The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ is recorded in \Cref{gauss-circle-table-2} and \Cref{fig:gauss_circle_historical}.
 
 
 \begin{table}[ht]
@@ -103,22 +103,29 @@ The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ 
     \hline
     Littlewood--Walfisz (1924) \cite{littlewood_lattice_1924} & $37/56 = 0.6607\ldots$\\
     \hline
-    Walfisz (1927) \cite{} & $163/247 = 0.6599\ldots$\\
+    Walfisz (1927) \cite{walfisz_teilerprobleme_1927} & $163/247 = 0.6599\ldots$\\
     \hline
-    van der Corput (1928) \cite{} & $27/41 = 0.6585\ldots$\\
+    Nieland (1928) \cite{nieland_zum_1928} & $27/41 = 0.6585\ldots$\\
     \hline
-    Titchmarsh (1934) \cite{} & $15/23 = 0.6521\ldots$\\
+    Titchmarsh (1935) \cite{titchmarsh_lattice_points_1935} & $15/23 = 0.6521\ldots$\\
     \hline
-    Hua (1942) \cite{} & $13/20 = 0.65$\\
+    Hua (1942) \cite{hua_lattice_points_1942} & $13/20 = 0.65$\\
     \hline
     Iwaniec--Mozzochi (1988) \cite{iwaniec_divisor_1988} & $7/11 = 0.6363\ldots$ \\
     \hline
-    Huxley (1993) \cite{} & $46/73 = 0.6301\ldots$\\
+    Huxley (1993) \cite{huxley_lattice_1993} & $46/73 = 0.6301\ldots$\\
     \hline
     Huxley (2003) \cite{huxley_exponential_2003} & $131/208 = 0.6298\ldots$\\
     \hline
-    Li--Yang (2023) \cite{li_yang_gauss_2024} & $2\theta^* = 0.6289\ldots$\\
+    Li--Yang (2023) \cite{li_yang_gauss_2024} & $2\alpha* = 0.6289\ldots$\\
     \hline 
     \end{tabular}
 \label{gauss-circle-table-2}
 \end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{chapter/gauss_circle_historical_bounds.png}
+    \caption{Historical upper bounds on $\theta_2^{\rm Gauss}$}
+    \label{fig:gauss_circle_historical}
+\end{figure}

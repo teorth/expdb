@@ -409,9 +409,8 @@ def gauss_circle_error_plot(k: int = 2):
     rs = range(0, 1000)
     errors = [E(k, r) for r in rs]
 
-    # Sanity check for the error term
-    for r in range(100):
-        print(r, N(2, r))
+    for r in range(10):
+        print(r, errors[r])
 
     plt.figure(figsize=(10, 6))
     plt.plot(rs, errors, color="gray")
@@ -421,5 +420,55 @@ def gauss_circle_error_plot(k: int = 2):
     plt.tight_layout()
     plt.show()  
 
+def plot_historical_gauss_circle_estimates():
+    """
+    Step function of historical upper bounds on θ₂^{Gauss},
+    with angled labels anchored by their left endpoint near each point.
+    """
+    years = [
+        1834, 1906, 1923, 1924, 1927, 1928, 1935,
+        1942, 1988, 1993, 2003, 2023
+    ]
 
-gauss_circle_error_plot(k=2)
+    bounds = [
+        1.0,
+        2/3,
+        2/3,
+        37/56,
+        163/247,
+        27/41,
+        15/23,
+        13/20,
+        7/11,
+        46/73,
+        131/208,
+        0.6289
+    ]
+
+    labels = [
+        "Gauss (1834)", "Sierpiński (1906)", "van der Corput (1923)", "Littlewood–Walfisz (1924)",
+        "Walfisz (1927)", "Nieland (1928)", "Titchmarsh (1935)", "Hua (1942)",
+        "Iwaniec–Mozzochi (1988)", "Huxley (1993)", "Huxley (2003)", "Li–Yang (2023)"
+    ]
+
+    plt.figure(figsize=(11, 6))
+    plt.step(years, bounds, where='post', marker='o', linestyle='-', color='grey')
+
+    # Correct alignment: left edge of label close to the point
+    for x, y, label in zip(years, bounds, labels):
+        plt.text(x + 1, y + 0.002, label, fontsize=8,
+                 ha='left', va='bottom', rotation=45)
+
+    plt.xlabel("Year")
+    plt.ylabel(r"Upper Bound on $\theta_2^{\mathrm{Gauss}}$")
+    plt.xticks(years, rotation=45)
+    plt.ylim(0.5, 1.1)
+    plt.xlim(1830, 2050)
+    plt.grid(True, linestyle='dotted', alpha=0.6)
+    plt.tight_layout()
+    plt.show()
+
+
+
+
+plot_historical_gauss_circle_estimates()
