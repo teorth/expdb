@@ -956,3 +956,98 @@ In Table \ref{zero_density_heuristic} we list some examples in which the heurist
     \end{table}
 
     One consequence of Heuristic \ref{lv-heuristic} is that, in the regimes where the heuristic is accurate, combining multiple large values theorems together are unlikely to achieve new zero density theorems that could not be accomplished with each large value theorem separately.
+    
+\section{Explicit results}
+A number of explicit versions of the above zero-density estimates have been established, which are particularly relevant when $\sigma$ is close to $1/2$ or $1$, where factors of $T^{o(1)}$ become significant. 
+
+\begin{theorem}[\cite{simonic}]
+For $T \ge 3$ and $1/2 \le \sigma \le 0.778$, one has
+$$
+N(\sigma, 2 T)-N(\sigma, T) \leq  5874.051 T^{1-\frac{1}{4}\left(\sigma-\frac{1}{2}\right)} \log T+ 1.107 \log ^2 T + 0.345\log T \log \log T.
+$$
+\end{theorem}
+Sharper bounds for $T$ large can be found in \cite{simonic}.
+
+\begin{theorem}[\cite{chourasiya_explicit_2025}]For every $T\ge 3 $ and $1/2\le \sigma\le 5/8$ one has
+\[
+N(\sigma, T) \leq 8.604 T^{\frac{3(1-\sigma)}{2-\sigma}} \log ^3 T+9.461 \log ^2 T+167.8 \log T.
+\]
+For every $T\ge 3 $ and $5/8\le \sigma\le 7/8$ one has
+    \[
+    N(\sigma, T) \leq 22.44 T^{\frac{3(1-\sigma)}{2-\sigma}} \log ^3 T+8.290 \log ^2 T+147.0 \log T.
+    \]
+\end{theorem}
+
+\begin{theorem}[\cite{chourasiya_explicit_2024}]For every $T\ge 3$ and $\sigma\ge 3/5$, one has
+    \begin{equation*}
+N(\sigma, T) \leq 0.7756 T^{4 \sigma(1-\sigma)} \log ^{5-2 \sigma} T.
+\end{equation*}
+\end{theorem}
+Further bounds for larger values of $\sigma$ can be found in \cite{chourasiya_explicit_2024}.
+
+\begin{theorem}[\cite{ramare_explicit_2016}]\label{th:ramareexpl} For every $T\ge 3$ and $\sigma\ge 0.52$ one has
+    \begin{equation*}
+N(\sigma, T) \leq 965(3 T)^{\frac{8(1-\sigma)}{3}}(\log T)^{5-2 \sigma}+51.5(\log T)^2.
+\end{equation*}
+\end{theorem}
+
+The following result is an improvement upon \cref{th:ramareexpl}.
+\begin{theorem}[\cite{Kadiri_explicit_2018}]\label{th:explicitkln}
+For each tuple ($\sigma_0, A, B)$ of Table \ref{zerodensity_kadiri}, one has
+\[
+N(\sigma, T) \leq AT^{\frac{8}{3}(1-\sigma)}(\log T)^{5-2\sigma} + B(\log T)^2
+\]
+for each $\sigma_0 \le \sigma \le 1$ and $T \ge 3$.
+\end{theorem}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+$\sigma_0$ & $A$ & $B$ \\
+\hline
+0.75 & 5.277 & 4.403 \\
+0.80 & 6.918 & 3.997 \\
+0.85 & 8.975 & 3.588 \\
+0.90 & 11.499 & 3.186 \\
+0.95 & 14.513 & 2.772 \\
+0.98 & 16.544 & 2.532 \\
+\hline
+\end{tabular}
+\caption{Some examples of ($\sigma_0, A, B)$}
+\label{zerodensity_kadiri}
+\end{table}
+See \cite{Kadiri_explicit_2018} for further estimates.\\
+The following result is an explicit log-free zero density estimate.
+\begin{theorem}[\cite{bellotti_2024}]\label{th:explbellogfree}
+For every $T\ge 3$ and $\sigma\in[0.9927,1]$, one has $$N(\sigma, T) \leq 4.45 \cdot 10^{12} \cdot T^{8(1-\sigma)}.$$
+\end{theorem}
+Sharper estimates of the form
+$$N(\sigma,T)\le CT^{B(1-\sigma)},\qquad \sigma\in[\sigma_0,1],\quad T\in[T_0,T_1]$$ can be found in \cite{bellotti_2024}. We mention a couple of examples in Table \ref{table:bellottilogfree}.
+\begin{table}[h]
+\def\arraystretch{1.3}
+\centering
+\caption{Values of constants $C,B$}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ $B$ & $C$ & $\sigma_0$ & $T_0$ & $T_1$ \\
+\hline
+$1.551$ & $1.62\cdot 10^{11}$ & $0.9927$ & $3$ & $\exp(6.7\cdot 10^{12})$\\
+\hline
+$1.551$ & $1.62\cdot 10^{11}$ & $0.985$ & $\exp(80)$ & $\exp(6.7\cdot 10^{12})$\\
+\hline
+\end{tabular}
+\label{table:bellottilogfree}
+\end{table}
+\begin{theorem}[\cite{bellotti}]\label{th:explicitkvbel}
+For every $\sigma\in[0.98,1]$ and $T\ge 3$, one has:\begin{equation*}
+    N(\sigma,T)\le2.15\cdot 10^{23}\cdot T^{57.8875(1-\sigma)^{3/2}}(\log T)^{10393/900}.
+\end{equation*}
+\end{theorem}
+Note that \cref{th:explicitkvbel} implies the following log-free zero-density bound.
+\begin{corollary}[\cite{bellotti_2024}]\label{th:kvaslokgfreebel}
+For every $T\ge \exp(6.7\cdot 10^{12})$ and $\sigma\in[0.98,1]$, one has$$N(\sigma, T) \leq 4.45 \cdot 10^{12} \cdot T^{11.3(1-\sigma)}.$$
+\end{corollary}
+
+
+

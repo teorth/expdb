@@ -373,9 +373,102 @@ def mu_bounds_plot():
     plt.grid(True)
     plt.show()
 
-# van_der_corput_plot2()
-# beta_bound_plot()
-# exp_pair_plot()
-# zero_density_plot()
-# zero_density_energy_plot()
-mu_bounds_plot()
+def gauss_circle_error_plot(k: int = 2):
+    """
+    Given an integer k, plots the error term in the estimation of the number of 
+    integer lattice points inside a ball of dimension k for various radii r. 
+    """
+
+    def N(k: int, r: int):
+        """
+        Computes the number of integer lattice points inside a k-dimensional ball of radius r.
+        """
+        r2 = r * r
+        if k == 2:
+            return sum(2 * int(math.sqrt(r2 - x * x)) + 1 for x in range(-r, r + 1))
+        else:
+            count = 0
+            for x in range(-r, r + 1):
+                x2 = x * x
+                for y in range(-int(math.sqrt(r2 - x2)), int(math.sqrt(r2 - x2)) + 1):
+                    y2 = y * y
+                    count += 2 * int(math.sqrt(r2 - x2 - y2)) + 1
+            return count
+    
+    def E(k, r):
+        """
+        Computes the error term in the Gauss circle problem for a given k and radius r.
+        """
+        if k == 2:
+            return abs(N(k, r) - math.pi * r * r)
+        elif k == 3:
+            return abs(N(k, r) - (4/3) * math.pi * r**3)
+        else:
+            raise NotImplementedError("Currently only k=2 is supported.")
+    
+    rs = range(0, 1000)
+    errors = [E(k, r) for r in rs]
+
+    for r in range(10):
+        print(r, errors[r])
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(rs, errors, color="gray")
+    plt.xlabel(r"$R$")
+    plt.ylabel(r"$|S_2(R) - \pi R^2|$" if k == 2 else r"$|S_3(R) - \frac{4}{3} \pi R^3|$")
+    plt.grid(True, linestyle="dotted")
+    plt.tight_layout()
+    plt.show()  
+
+def plot_historical_gauss_circle_estimates():
+    """
+    Step function of historical upper bounds on θ₂^{Gauss},
+    with angled labels anchored by their left endpoint near each point.
+    """
+    years = [
+        1834, 1906, 1923, 1924, 1927, 1928, 1935,
+        1942, 1988, 1993, 2003, 2023
+    ]
+
+    bounds = [
+        1.0,
+        2/3,
+        2/3,
+        37/56,
+        163/247,
+        27/41,
+        15/23,
+        13/20,
+        7/11,
+        46/73,
+        131/208,
+        0.6289
+    ]
+
+    labels = [
+        "Gauss (1834)", "Sierpiński (1906)", "van der Corput (1923)", "Littlewood–Walfisz (1924)",
+        "Walfisz (1927)", "Nieland (1928)", "Titchmarsh (1935)", "Hua (1942)",
+        "Iwaniec–Mozzochi (1988)", "Huxley (1993)", "Huxley (2003)", "Li–Yang (2023)"
+    ]
+
+    plt.figure(figsize=(11, 6))
+    plt.step(years, bounds, where='post', marker='o', linestyle='-', color='grey')
+
+    # Correct alignment: left edge of label close to the point
+    for x, y, label in zip(years, bounds, labels):
+        plt.text(x + 1, y + 0.002, label, fontsize=8,
+                 ha='left', va='bottom', rotation=45)
+
+    plt.xlabel("Year")
+    plt.ylabel(r"Upper Bound on $\theta_2^{\mathrm{Gauss}}$")
+    plt.xticks(years, rotation=45)
+    plt.ylim(0.5, 1.1)
+    plt.xlim(1830, 2050)
+    plt.grid(True, linestyle='dotted', alpha=0.6)
+    plt.tight_layout()
+    plt.show()
+
+
+
+
+plot_historical_gauss_circle_estimates()
