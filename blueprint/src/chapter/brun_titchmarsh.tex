@@ -52,7 +52,14 @@ $$\max_{a:\gcd(a,q)=1}\pi(x;q,a)\leq\frac{(C_\theta+o(1))x}{\varphi(q)\log(x)}$$
 as $x\to\infty$.
 \end{definition}
 
-Here is the historical progression of bounds on $C_\theta$.
+Here is the historical progression of bounds on $C_\theta$, where
+$$
+C_1(\theta) = - \frac{66}{33 - 16 \theta} \int_{2}^{4} \frac{\log(t-1)}{t} d t + \frac{8}{4 - \left(3 + \frac{7}{64} \right) \theta} \int_{\frac{8 - \left(7 + \frac{7}{32} \right) \theta }{4 \theta}}^{\frac{165\left(4-\left(3+\frac{7}{64} \right) \theta \right)}{4(33 - 16 \theta)} - \frac{1}{4}} \frac{\log(t-1)}{t} d t + \frac{8}{4 - \left(1 + \frac{7}{64} \right) \theta} \int_{\max \left(\frac{4- \left(1+ \frac{7}{64} \right) \theta}{2 (2-3 \theta )} - \frac{5}{4}, 2 \right)}^{\frac{8 - \left(7 + \frac{7}{32} \right) \theta }{4 \theta}} \frac{\log(t-1)}{t} d t
+$$
+and
+$$
+C_2(\theta) = - \frac{66}{33 - 16 \theta} \int_{2}^{4} \frac{\log(t-1)}{t} d t + \frac{16}{8 - 7 \theta} \int_{\frac{8 - 7 \theta}{4 \theta}}^{\frac{165(8-7 \theta)}{8(33 - 16 \theta)} } \frac{\log(t-1)}{t} d t + \frac{16}{8 - 3 \theta} \int_{\max \left(\frac{9 \theta}{4(2 - 3 \theta)}, 2 \right)}^{\frac{8 - 7 \theta}{4 \theta}} \frac{\log(t-1)}{t} d t.
+$$
 
 \begin{table}[ht]
     \def\arraystretch{1.2}
@@ -117,6 +124,12 @@ Here is the historical progression of bounds on $C_\theta$.
     \hline
     Xi \& Zheng (2024) \cite{xi-zheng} & $[5/12,9/20)$ & $5/(5-6\theta)$ (if $q$ smooth square-free)\\
     \hline
+    Xi \& Zheng (2025) \cite{xi-zheng-1} & $[9/20,1/2)$ & $66/(33-16\theta) - C_1(\theta)$ \\
+    \hline
+    Xi \& Zheng (2025) \cite{xi-zheng-1} & $[9/20,1/2)$ & $66/(33-16\theta) - C_2(\theta)$ (if $q$ prime)\\
+    \hline
+    Xi \& Zheng (2025) \cite{xi-zheng-1} & $[3/10,3/4]$ & $24/(15-16\theta)$ (if $q$ smooth square-free)\\
+    \hline
     Xi \& Zheng (2025) \cite{xi-zheng-2} & $[1/2,34/67]$ & $240/(184-217\theta)$ (if $q$ prime)\\
     \hline
     Xi \& Zheng (2025) \cite{xi-zheng-2} & $[1/2,(\nu (2 \nu +1))/(4 \nu^2 + \nu + 4)]$ & $\frac{8}{6 - 7 \theta + \frac{2 \nu - (3 \nu + 4) \theta}{\nu (2 \nu - 1)}}$ for every integer $\nu \geq 5$ (if $q$ prime)\\
@@ -143,7 +156,7 @@ whenever
 $$ \frac{1+k-\ell}{2+2k-2\ell} \leq \theta \leq \frac{1+k-\ell}{1+2k-\ell}.$$
 \end{theorem}
 
-Averaged versions of the Brun--Titchmarsh inequality were proven in \cite{deshouillers-iwaniec-BT}, \cite{mikawa_1991}, \cite{baker-harman-1996}.
+Averaged versions of the Brun--Titchmarsh inequality were proven in \cite{HooleyBT1}, \cite{Hooleypa}, \cite{iwaniec_1982}, \cite{deshouillers-iwaniec-BT}, \cite{Fouvry1984}, \cite{Fouvry1985} \cite{mikawa_1991}, \cite{baker-harman-1996}, \cite{baker-harman-677} and \cite{li_average_2025}.
 
 For any $\theta$, let $C'_\theta$ denote the best constant for which one has an upper bound
 $$\pi(x+x^\theta) - \pi(x) \leq (C'_\theta+o(1)) \frac{x^\theta}{\log x}$$
