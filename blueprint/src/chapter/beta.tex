@@ -117,7 +117,7 @@ Applying \cite[(2.54)]{ivic} with $H := T^h$, as well as the ensuing computation
 $$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{T/N^2 \ll j \ll H} |\sum_{n \in I \cap I-j} e(T (F((n+j)/N) - F(n/N)))|$$
 and hence by the pigeonhole principle
 $$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N)))|$$
-for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  One can verify that $-\frac{1}{\sigma} \frac{N}{j} (F(u+j/N)-F(u))$ is a model phase function.  Thus, by Definition \ref{beta-def}, one has
+for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  One can verify that $-\frac{1}{\sigma} \frac{N}{j} (F(u+j/N)-F(u/N))$ is a model phase function.  Thus, by Definition \ref{beta-def}, one has
 $$ \sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N))) \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
 and the claim follows after evaluating all terms as powers of $T$.
 \end{proof}
@@ -154,7 +154,7 @@ Let $\beta_k(\alpha) = \alpha + (1 - k\alpha)/(2^k - 2)$ and
 \[
 \alpha_k = \frac{2^k}{(k - 1)2^k + 2}.
 \]
-Via a routine computation, $\beta_{k + 1}(\alpha) \le \beta_k(\alpha)$ for $\alpha \ge \alpha_k$ and any $k \ge 2$. Thus, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 \le \alpha \le 1/2$, it suffices to just show that the same result holds for $0 \le \alpha \le \alpha_{k}$. However, for $0 \le \alpha \le \alpha_k$ and $k \ge 2$, we have
+Via a routine computation, $\beta_k(\alpha) \le \beta_{k+1}(\alpha)$ for $\alpha \ge \alpha_k$ and any $k \ge 2$. Thus, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 \le \alpha \le 1/2$, it suffices to just show that the same result holds for $0 \le \alpha \le \alpha_{k}$. However, for $0 \le \alpha \le \alpha_k$ and $k \ge 2$, we have
 \[
 0 \le \alpha \le \alpha_k \le \frac{2^{k + 1}}{(k - 3)2^k + 8}
 \]
@@ -300,6 +300,7 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
 
 \begin{table}[ht]
     \caption{Huxley table 17.1.}
+    \label{huxley-table-1}
     \centering
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{|c|c|c|}
@@ -339,10 +340,11 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
     $\frac{13+253\alpha}{318}$ & $\frac{2848}{12173} =0.2339\dots$ & $\frac{161}{646} = 0.2492\dots$ \\
     \hline
     \end{tabular}
-    \end{table}\label{huxley-table-1}
+    \end{table}
 
     \begin{table}[ht]
         \caption{Huxley table 19.2.}
+        \label{huxley-table-2}
         \centering
         \renewcommand{\arraystretch}{1.2}
         \begin{tabular}{|c|c|c|}
@@ -370,7 +372,7 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
         $\frac{29+173\alpha}{280}$ & $\frac{227}{601}=0.3777\dots$ & $\frac{12}{31} = 0.3870\dots$ \\
         \hline
         \end{tabular}
-\end{table}\label{huxley-table-2}
+\end{table}
 
 
 % Area, Lattice points and Exponential sums
