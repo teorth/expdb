@@ -1,7 +1,7 @@
 \chapter{Exponent pairs}\label{exponent-pairs-chapter}
 
 \begin{definition}[Exponent pair]\label{exp-pair-def}\uses{phase-def}  An exponent pair is a (fixed) element $(k,\ell)$ of the triangle
-\begin{equation}\label{exp-pair-triangle}
+\begin{equation}\label{eq:exp-pair-triangle}
     \{ (k,\ell) \in \R^2: 0 \leq k \leq 1/2 \leq \ell \leq 1, k+\ell \leq 1 \}
 \end{equation}
 with the following property: for all model phase functions $F$, all $T \geq N \geq 1$, and all intervals $I \subset [N,2N]$, one has
@@ -16,7 +16,7 @@ whenever $T \geq N \geq 1$, $I$ is an interval in $[N,2N]$, and $F \in {\mathcal
 
 One can formulate the notion of an exponent pair without recourse to asymptotic notation:
 
-\begin{lemma}[Non-asymptotic definition of exponent pair]\uses{exp-pair-def}  Let $(k,\ell)$ be a fixed element of \eqref{exp-pair-triangle}.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic definition of exponent pair]\uses{exp-pair-def}  Let $(k,\ell)$ be a fixed element of \eqref{eq:exp-pair-triangle}.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(k,\ell)$ is an exponent pair.
     \item[(ii)] For every (fixed) $\eps>0$ there exist (fixed) $C, P > 0$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
@@ -28,7 +28,7 @@ The proof of this lemma is similar to that of Lemma \ref{beta-asymp} and is omit
 
 Exponent pairs are closely related to the function $\beta$ from the previous chapter:
 
-\begin{lemma}[Duality between exponent pairs and $\beta$]\label{beta-duality}\uses{beta-def, exp-pair-def}  Let $(k,\ell)$ be in the triangle \eqref{exp-pair-triangle}.  Then the following are equivalent:
+\begin{lemma}[Duality between exponent pairs and $\beta$]\label{beta-duality}\uses{beta-def, exp-pair-def}  Let $(k,\ell)$ be in the triangle \eqref{eq:exp-pair-triangle}.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(k,\ell)$ is an exponent pair.
     \item[(ii)] $\beta(\alpha) \leq k + (\ell-k)\alpha$ for all $0 \leq \alpha \leq 1$.
@@ -43,7 +43,7 @@ Thus exponent pairs are dual to the convex hull of the graph of $\beta$.  But $\
 
 \begin{proof}  If (i) holds, then for any $0 < \alpha < 1$, any unbounded $T \geq 1$, any $N = T^{\alpha+o(1)}$, interval $I \subset [N,2N]$, and model phase function $F$, we have from (i) that
 $$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)} = T^{k + (\ell-k)\alpha + o(1)}.$$
-From Definition \ref{beta-def} we conclude that $\beta(\alpha) \leq k + (\ell-k) \alpha$.  Also since $(k,\ell)$ lies in \eqref{exp-pair-triangle}, we see from \eqref{beta-0}, \eqref{beta-1} that we also have $\beta(\alpha) \leq k + (\ell-k) \alpha$ for $\alpha=0,1$.
+From Definition \ref{beta-def} we conclude that $\beta(\alpha) \leq k + (\ell-k) \alpha$.  Also since $(k,\ell)$ lies in \eqref{eq:exp-pair-triangle}, we see from \eqref{beta-0}, \eqref{beta-1} that we also have $\beta(\alpha) \leq k + (\ell-k) \alpha$ for $\alpha=0,1$.
 
 Now suppose that (ii) holds.  Let $F, T, N, I$ be as in Definition \ref{exp-pair-def}.  By underspill it suffices to show that
 $$ \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+\eps+o(1)} N^{\ell+\eps+o(1)}$$
@@ -72,7 +72,7 @@ giving the claim.
 \begin{proof}\uses{beta-duality, beta-triv} Immediate from Lemma \ref{beta-duality} and Lemma \ref{beta-triv}.
 \end{proof}
 
-\begin{conjecture}[Exponent pairs conjecture]\label{exp-pair-conj}\uses{exp-pair-def, exp-pair-closed, exp-pair-trivial}  $(0,1/2)$ is an exponent pair.  (Equivalently, by Corollary \ref{exp-pair-closed} and Proposition \ref{exp-pair-trivial}, every point in the triangle \eqref{exp-pair-triangle} is an exponent pair.)
+\begin{conjecture}[Exponent pairs conjecture]\label{exp-pair-conj}\uses{exp-pair-def, exp-pair-closed, exp-pair-trivial}  $(0,1/2)$ is an exponent pair.  (Equivalently, by Corollary \ref{exp-pair-closed} and Proposition \ref{exp-pair-trivial}, every point in the triangle \eqref{eq:exp-pair-triangle} is an exponent pair.)
 \end{conjecture}
 
 \python{exponent_pair}
