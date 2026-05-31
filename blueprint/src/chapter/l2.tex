@@ -18,6 +18,6 @@ $$ \int_I |\sum_{r=1}^R a_r e(\xi_r t)|^2\ dt = T - \int_\R |\sum_{r=1}^R a_r e(
 Since $\hat \psi$ is rapidly decreasing and has $L^2$ norm $1$, one can compute
 $$ \frac{1}{N} \int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t) \ll (1 + \mathrm{dist}(t, \partial I) / N)^{-10}$$
 and hence by \eqref{trap} and the triangle inequality
-$$ \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 \left(\int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t)\right)\ dt \ll N$$
+$$ \int_\R |\sum_{r=1}^R a_r e(\xi_r t)|^2 \left(\frac{1}{N} \int_I |\hat \psi((t-t_0)/N)|^2\ dt_0 - 1_I(t)\right)\ dt \ll N$$
 giving the claim.
 \end{proof}
