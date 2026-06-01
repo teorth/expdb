@@ -334,7 +334,22 @@ def add_beta_bound_bourgain_2017():
 add_beta_bound_bourgain_2017()
 
 
+def add_beta_bound_heath_brown_2020():
+    # Theorem 4.25 (Heath-Brown 2020) for 1/2 <= alpha <= 3/4
+    # f1(alpha) = alpha * (12*alpha + 5) / (16*alpha + 4)
+    # f2(alpha) = 8/9 * alpha
+    # Breakpoint at alpha = 13/20. f1 is convex on [1/2, 13/20].
+    # Chord from (1/2, 11/24) to (13/20, 26/45):
+    # slope = 43/54, intercept = 13/216
 
+    bbeta.add_beta_bound(
+        literature,
+        [
+            Affine(frac(43, 54), frac(13, 216), Interval("[1/2, 13/20]")),
+            Affine(frac(8, 9),   frac(0),       Interval("[13/20, 3/4]")),
+        ],
+        rm.get("demeter_small_2020"),
+    )
 def add_beta_bound_trudgian_yang_2024():
     # Other bounds on beta are stated in the LaTeX blueprint, however they have
     # already been added to the beta bounds literature
