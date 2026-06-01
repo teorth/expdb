@@ -501,11 +501,16 @@ See \cite[Theorem~1]{heathbrown_new_2017}.
 See \cite[Equation~(3.18)]{bourgain_decoupling_2017}.
 \end{proof}
 
-\begin{theorem}[2020 Heath-Brown bound]\label{beta-hb-2020}\uses{beta-def}\cite[Theorem 11.2]{demeter_small_2020}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
+\begin{theorem}[2020 Heath-Brown bound]\label{beta-hb-2020}\uses{beta-def}  If $\alpha$ is fixed with $1 \leq 4\alpha-1 \leq 2$ (i.e., $1/2 \leq \alpha \leq 3/4$), then
 $$ \beta(\alpha) \leq \max\left( \alpha\left(1 - \frac{4\alpha-1}{4(4\alpha-1)+8}\right), \frac{8}{9} \alpha\right).$$
 \end{theorem}
 
-{\bf TODO: implement this in python}
+\literature
+\code{add_beta_bound_heath_brown_2020()}
+
+\begin{proof}
+See \cite[Theorem 11.2]{demeter_small_2020}.
+\end{proof}
 
 \begin{theorem}[Combined bound]\label{combined-bound}\uses{beta-def}  For $X \leq \alpha \leq Y$, one has $\beta(\alpha) \leq \beta_0(\alpha)$, where $\beta_0, X, Y$ are given by Table \ref{huxley_table_ranges}.
 \end{theorem}
