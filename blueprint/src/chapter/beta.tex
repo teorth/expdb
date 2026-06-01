@@ -189,8 +189,8 @@ for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_poi
 
 \begin{lemma}[Reflection]\label{beta-reflect}\uses{beta-def}  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
 \end{lemma}
-
-{\bf TODO: implement this in python}
+\python{bound_beta}
+\code{apply_reflection_beta(bounds)}
 
 \begin{proof}  This is the van der Corput $B$-process. See e.g., \cite[p 370]{huxley_area_1996}.
 \end{proof}
