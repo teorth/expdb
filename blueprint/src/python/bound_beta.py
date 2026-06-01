@@ -81,7 +81,59 @@ trivial_beta_bound_2 = classical_bound_beta(
 )
 
 # TODO: create a method to implement the B-process for beta bounds
+def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
+    """
+    Implements Lemma 4.10 (van der Corput B-process for beta):
+    
+        beta(1 - alpha) = 1/2 - alpha + beta(alpha),  for 0 < alpha < 1
+    
+    Mathematical transformation:
+        If beta(alpha) <= m*alpha + c  for alpha in [x0, x1]
+        Then beta(alpha) <= (1-m)*alpha + (c + m - 1/2)  for alpha in [1-x1, 1-x0]
+    
+    Parameters:
+        bounds: list of Hypothesis objects of type "Upper bound on beta"
+    
+    Returns:
+        list of new Hypothesis objects representing the reflected bounds
+    """
+    if not bounds:
+        return []
 
+    reflected = []
+
+    for bd in bounds:
+        # Step 1: Extract the affine bound data
+        p = bd.data.bound.deep_copy()
+        m  = p.m
+        c  = p.c
+        x0 = p.domain.x0
+        x1 = p.domain.x1
+
+        # Step 2: Apply the reflection transformation (Lemma 4.10)
+        # beta(alpha') <= (1-m)*alpha' + (c + m - 1/2)
+        # for alpha' in [1 - x1, 1 - x0]
+        new_m  = 1 - m
+        new_c  = c + m - frac(1, 2)
+        new_x0 = 1 - x1
+        new_x1 = 1 - x0
+
+        # Step 3: Build the new Affine bound with reflected interval
+        new_affine = Affine(new_m, new_c, Interval(new_x0, new_x1, True, True))
+
+        # Step 4: Wrap in a derived Hypothesis, preserving the dependency chain
+        new_hyp = derived_bound_beta(
+            new_affine,
+            f'Follows from Lemma 4.10 (reflection) applied to "{bd.name}"',
+            {bd},
+        )
+        reflected.append(new_hyp)
+
+    # Step 5: Reverse the list because reflecting [x0, x1] -> [1-x1, 1-x0]
+    # reverses the order of intervals on the number line
+    reflected.reverse()
+
+    return reflected
 
 # Given a set of hypotheses, compute the bounds on \beta(\alpha) implied by the
 # assumed exponent pairs. Returns a list of Hypothesis objects representing derived
