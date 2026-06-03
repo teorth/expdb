@@ -80,7 +80,6 @@ trivial_beta_bound_2 = classical_bound_beta(
     Affine(1, -1, Interval(1, Constants.ALPHA_UPPER_LIMIT, False, True))
 )
 
-# TODO: create a method to implement the B-process for beta bounds
 def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
     """
     Implements Lemma 4.10 (van der Corput B-process for beta):

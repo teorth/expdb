@@ -334,7 +334,22 @@ def add_beta_bound_bourgain_2017():
 add_beta_bound_bourgain_2017()
 
 
+def add_beta_bound_heath_brown_2020():
+    # Theorem 4.25 (Heath-Brown 2020) for 1/2 <= alpha <= 3/4
+    # f1(alpha) = alpha * (12*alpha + 5) / (16*alpha + 4)
+    # f2(alpha) = 8/9 * alpha
+    # Breakpoint at alpha = 13/20. f1 is convex on [1/2, 13/20].
+    # Chord from (1/2, 11/24) to (13/20, 26/45):
+    # slope = 43/54, intercept = 13/216
 
+    bbeta.add_beta_bound(
+        literature,
+        [
+            Affine(frac(43, 54), frac(13, 216), Interval("[1/2, 13/20]")),
+            Affine(frac(8, 9),   frac(0),       Interval("[13/20, 3/4]")),
+        ],
+        rm.get("demeter_small_2020"),
+    )
 def add_beta_bound_trudgian_yang_2024():
     # Other bounds on beta are stated in the LaTeX blueprint, however they have
     # already been added to the beta bounds literature
@@ -602,9 +617,6 @@ def add_literature_bounds_mu():
     literature.add_hypotheses(
         [
             # Bounds on the critical line
-            literature_bound_mu(
-                frac(1, 2), frac(1, 6), rm.get("hardy_littlewood_1923")
-            ),
             literature_bound_mu(frac(1, 2), frac(193, 988), rm.get("walfisz_1924")),
             literature_bound_mu(
                 frac(1, 2), frac(27, 164), rm.get("titchmarsh_van_1931")
@@ -627,22 +639,6 @@ def add_literature_bounds_mu():
             ),
             literature_bound_mu(
                 frac(1, 2), frac(139, 858), Reference.make("Kolesnik", 1985)
-            ),
-            literature_bound_mu(frac(1, 2), frac(9, 56), rm.get("bombieri_order_1986")),
-            literature_bound_mu(
-                frac(1, 2), frac(89, 560), rm.get("watt_exponential_1989")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(17, 108), rm.get("huxley_exponential_1991")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(89, 570), rm.get("huxley_exponential_1993")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(32, 205), rm.get("huxley_exponential_2005")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(13, 84), rm.get("bourgain_decoupling_2017")
             ),
             
             # Bounds off the critical line
@@ -711,8 +707,8 @@ literature.add_hypotheses(
     literature_bound_mu(
         1 - frac(1, pow(2, n - 1)),
         frac(1, (n + 1) * pow(2, n - 1)),
-        Reference.make("Hardy--Littlewood", "Unknown date"),
-    )  # TODO: find the exact year
+        Reference.make("Hardy--Littlewood",1922),
+    )  
     for n in range(4, Constants.EXP_PAIR_TRUNCATION)
 )
 

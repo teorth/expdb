@@ -226,19 +226,117 @@ def prove_exponent_pairs():
 ######################################################################################
 # Derivations of bounds on zeta growth rates in the critical strip (mu bounds)
 
+def derive_all_literature_mu_bounds() -> list[Hypothesis]:
+    """
+    Derive mu bounds from all available exponent pairs in the literature by
+    applying Corollary 6.8: if (k, l) is an exponent pair, then mu(l - k) <= k.
+
+    This implements the TODO in Lemma 6.12 of the blueprint: supplement the
+    historical citations in Table 6.1 with derivations from exponent pairs
+    already recorded in the database.
+
+    Only exponent pairs with l >= 1/2 + k (i.e., on or above the symmetry line)
+    are used, since only these yield sigma = l - k in [0, 1/2], the interesting range.
+    Dominated bounds (where another derived bound gives a smaller mu at the same
+    sigma) are filtered out to keep the output non-redundant.
+
+    Returns
+    -------
+    list of Hypothesis
+        Derived upper bounds on mu(sigma), one per non-dominated exponent pair.
+    """
+    hypotheses = Hypothesis_Set()
+    hypotheses.add_hypothesis(trivial_exp_pair)
+
+    # Load all exponent pairs from the literature
+    exp_pairs = literature.list_hypotheses(hypothesis_type="Exponent pair")
+    hypotheses.add_hypotheses(exp_pairs)
+
+    # Load transforms so we can generate A- and B-process pairs
+    hypotheses.add_hypotheses(
+        literature.list_hypotheses(hypothesis_type="Exponent pair transform")
+    )
+
+    # Expand by one step of A/B transforms
+    hypotheses.add_hypotheses(compute_exp_pairs(hypotheses, search_depth=1))
+
+    # Apply Corollary 6.8 to each exponent pair: mu(l - k) <= k
+    # Only keep pairs where sigma = l - k is in (0, 1/2], the non-trivial range
+    raw_bounds = []
+    for ep_hyp in hypotheses.list_hypotheses(hypothesis_type="Exponent pair"):
+        k = ep_hyp.data.k
+        l = ep_hyp.data.l
+        sigma = l - k
+        # sigma must be in (0, 1/2] for the bound to be non-trivial
+        # (sigma = 0 gives mu(0) <= 0 which is subsumed by the trivial bound,
+        #  sigma > 1/2 would require l - k > 1/2 which forces l > 1, impossible)
+        if sigma <= 0 or sigma > frac(1, 2):
+            continue
+        mu_hyp = exponent_pair_to_mu_bound(ep_hyp)
+        raw_bounds.append((sigma, k, mu_hyp))
+
+    # Filter: for each sigma value, keep only the bound with the smallest k
+    # (i.e., the tightest bound mu(sigma) <= k).
+    # Group by sigma, then take the minimum k in each group.
+    best_by_sigma = {}  # sigma -> (k, Hypothesis)
+    for (sigma, k, mu_hyp) in raw_bounds:
+        if sigma not in best_by_sigma or k < best_by_sigma[sigma][0]:
+            best_by_sigma[sigma] = (k, mu_hyp)
+
+    # Collect results sorted by sigma for readability
+    derived_mu_bounds = []
+    for sigma in sorted(best_by_sigma.keys()):
+        k, mu_hyp = best_by_sigma[sigma]
+        derived_mu_bounds.append(mu_hyp)
+
+    # Report to console
+    print(f"Derived {len(derived_mu_bounds)} non-dominated mu bounds from exponent pairs:")
+    for sigma in sorted(best_by_sigma.keys()):
+        k, _ = best_by_sigma[sigma]
+        print(f"  mu({sigma}) <= {k}   [sigma = {float(sigma):.6f}]")
+
+    return derived_mu_bounds
+
+
+def prove_hardy_littlewood_mu_bound() -> Hypothesis:
+    """
+    Prove the Hardy-Littlewood bound mu(1/2) <= 1/6 using the van der Corput
+    exponent pair (1/6, 2/3), returning the proof as a Hypothesis object.
+    """
+    HL_bound = literature.find_hypothesis(data=Bound_mu(frac(1, 2), frac(1, 6)))
+    A_transform = literature.find_hypothesis(keywords="van der Corput A transform")
+    B_transform = literature.find_hypothesis(keywords="van der Corput B transform")
+    print(f"We will reprove {HL_bound.desc()}.")
+    B_exp_pair = B_transform.data.transform(trivial_exp_pair)
+    print(f"We have {B_exp_pair.desc_with_proof()}")
+    AB_exp_pair = A_transform.data.transform(B_exp_pair)
+    print(f"This implies {AB_exp_pair.desc_with_proof()}")
+    mu_bound = exponent_pair_to_mu_bound(AB_exp_pair)
+    print(f"This implies {mu_bound.desc_with_proof()}")
+    return mu_bound
+
+
 def compute_best_mu_bound(
-        sigma_interval: Interval = Interval(frac(1,2), frac(99,100))
+        sigma_interval: Interval = Interval(frac(1, 2), frac(99, 100))
     ) -> list[Affine]:
     """
     Compute the best-known mu bounds from known exponent pairs and bounds on the
     beta function.
 
+    This now incorporates the derived bounds from derive_all_literature_mu_bounds()
+    in addition to those recorded directly in the literature, implementing the
+    TODO in Lemma 6.12 of the blueprint.
+
     Parameters
     ----------
-    sigma_interval: Interval
+    sigma_interval : Interval
         The values of sigma on which the bound on mu(sigma) is computed.
-    """
 
+    Returns
+    -------
+    list of Affine
+        Piecewise linear upper bound on mu(sigma) over sigma_interval.
+    """
     hypotheses = Hypothesis_Set()
     hypotheses.add_hypothesis(trivial_exp_pair)
 
@@ -246,26 +344,27 @@ def compute_best_mu_bound(
         "Upper bound on beta",
         "Exponent pair",
         "Exponent pair transform",
-        "Exponent pair to beta bound transform"
+        "Exponent pair to beta bound transform",
     ]
     for hyp_type in assume:
         hyps = literature.list_hypotheses(hypothesis_type=hyp_type)
         print(f"Assuming {len(hyps)} hypotheses of type {hyp_type}.")
         hypotheses.add_hypotheses(hyps)
 
-    # Expand the hypothesis set using a few iterations of
-    # exp pairs <-> beta bounds
+    # Expand the hypothesis set using a few iterations of exp pairs <-> beta bounds
     hypotheses.add_hypotheses(compute_exp_pairs(hypotheses, search_depth=1))
     hypotheses.add_hypotheses(exponent_pairs_to_beta_bounds(hypotheses))
     hypotheses.add_hypotheses(compute_best_beta_bounds(hypotheses))
     hypotheses.add_hypotheses(beta_bounds_to_exponent_pairs(hypotheses))
+
+    # Include derived mu bounds (Lemma 6.12 TODO)
+    hypotheses.add_hypotheses(derive_all_literature_mu_bounds())
 
     print("The following bounds on mu were obtained in the range [1/2, 99/100]")
     mbs = best_mu_bound_piecewise(sigma_interval, hypotheses)
     for b in mbs:
         print(f"\\mu(x) \\leq {b}. {b.domain.x1} = {float(b.domain.x1)}")
     return mbs
-
 
 ######################################################################################
 # Derivations of large value estimates
