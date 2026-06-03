@@ -708,7 +708,7 @@ literature.add_hypotheses(
         1 - frac(1, pow(2, n - 1)),
         frac(1, (n + 1) * pow(2, n - 1)),
         Reference.make("Hardy--Littlewood",1922),
-    )  # TODO: find the exact year
+    )  
     for n in range(4, Constants.EXP_PAIR_TRUNCATION)
 )
 
