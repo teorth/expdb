@@ -617,9 +617,6 @@ def add_literature_bounds_mu():
     literature.add_hypotheses(
         [
             # Bounds on the critical line
-            literature_bound_mu(
-                frac(1, 2), frac(1, 6), rm.get("hardy_littlewood_1923")
-            ),
             literature_bound_mu(frac(1, 2), frac(193, 988), rm.get("walfisz_1924")),
             literature_bound_mu(
                 frac(1, 2), frac(27, 164), rm.get("titchmarsh_van_1931")
@@ -642,22 +639,6 @@ def add_literature_bounds_mu():
             ),
             literature_bound_mu(
                 frac(1, 2), frac(139, 858), Reference.make("Kolesnik", 1985)
-            ),
-            literature_bound_mu(frac(1, 2), frac(9, 56), rm.get("bombieri_order_1986")),
-            literature_bound_mu(
-                frac(1, 2), frac(89, 560), rm.get("watt_exponential_1989")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(17, 108), rm.get("huxley_exponential_1991")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(89, 570), rm.get("huxley_exponential_1993")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(32, 205), rm.get("huxley_exponential_2005")
-            ),
-            literature_bound_mu(
-                frac(1, 2), frac(13, 84), rm.get("bourgain_decoupling_2017")
             ),
             
             # Bounds off the critical line
