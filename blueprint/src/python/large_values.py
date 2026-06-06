@@ -424,7 +424,59 @@ def apply_huxley_subdivision(hypothesis):
         raise ValueError('Parameter hypothesis must be of type Hypothesis')
     if hypothesis.hypothesis_type != 'Large value estimate':
         raise ValueError('Parameter hypothesis must be a Hypothesis of type "Large value estimate"')
+    original_region = hypothesis.data.region
 
-    # Iterate through the pieces, extracting the facets (which are just lines)
-    # then compute their projection onto the \sigma space
-    raise NotImplementedError()
+    # 1. Build the Huxley-subdivided region from original polytopes
+    pieces = original_region.polytopes
+    shifted_pieces = []
+
+    for piece in pieces:
+        rho_upper_bounds = []
+        other_constraints = []
+
+        # Separate upper bounds on rho from other geometric constraints
+        for constraint in piece.constraints:
+            if len(constraint) == 4 and constraint[3] < 0:
+                scale = -constraint[3]
+                rho_upper_bounds.append([
+                    frac(constraint[0], scale),
+                    frac(constraint[1], scale),
+                    frac(constraint[2], scale)
+                ])
+            else:
+                other_constraints.append(constraint)
+
+        # Apply Huxley subdivision: if slope c2 > 1, cap it at slope 1
+        improved_bounds = []
+        for (c0, c1, c2) in rho_upper_bounds:
+            if c2 > 1:
+                improved_bounds.append([c0, c1, frac(1)])
+            else:
+                improved_bounds.append([c0, c1, c2])
+
+        # Reconstruct the polytope piece with the refined upper bounds
+        new_constraints = list(other_constraints)
+        for (c0, c1, c2) in improved_bounds:
+            new_constraints.append([c0, c1, c2, frac(-1)])
+
+        if new_constraints:
+            shifted_pieces.append(Polytope(new_constraints))
+
+    if not shifted_pieces:
+        return None
+
+    # 2. Form the new region and intersect it to keep the tightest bounds
+    shifted_region = Region.union(shifted_pieces)
+    improved_region = Region.intersect([original_region, shifted_region])
+
+    # 3. Check for actual improvements
+    if improved_region == original_region:
+        return None
+
+    # 4. Package and return the derived hypothesis
+    proof_str = (
+        f"Obtained from [{hypothesis}] by applying Huxley subdivision "
+        f"(Lemma 7.4(ii)): LV(σ,τ') ≤ LV(σ,τ) + (τ'-τ) for τ' ≥ τ."
+    )
+
+    return derived_bound_LV(improved_region, proof_str, {hypothesis})
