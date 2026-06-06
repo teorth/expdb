@@ -626,22 +626,122 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 #   - k < 11/85
 #   - 11/85 < k < 1/5
 #   - s0 = (144k - 11l - 11)/(170k - 22)
-def bourgain_ep_to_zd():
-
-    # Temporary:
-    # For now, manually enter the exponent pairs found from the above numerical optimisation
-    eps = [
-        (frac(11,85), frac(59,85)),
-        (frac(391, 4595), frac(3461, 4595)),
-        (frac(2779, 38033), frac(58699, 76066)),
-        (frac(89, 1282), frac(997, 1282)),
-        (frac(652397, 9713986), frac(7599781, 9713986)),
-        (frac(2371, 43205), frac(280013, 345640)),
-        (frac(9, 217), frac(1461, 1736)),
-        (frac(10769, 351096), frac(609317, 702192)),
-        (frac(89, 3478), frac(15327, 17390)),
-        (frac(1, 100), frac(14, 15))
+def bourgain_ep_to_zd(hypotheses=None, exp_pairs=None):
+   
+    # --- Determine which pairs to use ---
+    if exp_pairs is None:
+        if hypotheses is None:
+            raise ValueError("Must supply either hypotheses or exp_pairs.")
+        
+        # Dynamically compute the current exponent pair hull
+        hypotheses.add_hypotheses(
+            ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
+        )
+        hypotheses.add_hypotheses(ep.exponent_pairs_to_beta_bounds(hypotheses))
+        hypotheses.add_hypotheses(ep.compute_best_beta_bounds(hypotheses))
+        ep_hyps = ep.beta_bounds_to_exponent_pairs(hypotheses)
+        
+        # Filter to Bourgain-valid pairs
+        pair_objs = [
+            h for h in ep_hyps
+            if h.data.k < frac(1, 5)
+            and h.data.l > frac(3, 5)
+            and 15 * h.data.l + 20 * h.data.k > 13
         ]
+    else:
+        # Legacy path: caller passes explicit (k, l) tuples
+        pair_objs = [
+            ep.derived_exp_pair(k, l, f"Supplied pair ({k},{l})", set())
+            for (k, l) in exp_pairs
+        ]
+
+    # --- Build bounds list ---
+    bounds = []
+    for h in pair_objs:
+        k, l = h.data.k, h.data.l
+        s0_base = max(frac(1, 2), (l + 1) / (2 * (k + 1)))
+        
+        if k <= frac(11, 85):
+            s0 = s0_base
+        else:
+            s0 = max(
+                s0_base,
+                frac(144 * k - 11 * l - 11, 170 * k - 22)
+            )
+            
+        if s0 >= 1:
+            continue
+            
+        func = RF([4 * k], [2 * (1 + k), -1 - l])
+        bounds.append((func, Interval(s0, 1), h))
+
+    if not bounds:
+        return []
+
+    # --- Collect critical sigma values (intersections and boundaries) ---
+    crits = set()
+    crits.add(frac(1, 2))
+    for i in range(len(bounds)):
+        func_i, int_i, _ = bounds[i]
+        crits.add(int_i.x0)
+        crits.add(int_i.x1)
+        
+        for j in range(i + 1, len(bounds)):
+            func_j, int_j, _ = bounds[j]
+            common = Interval(
+                max(int_i.x0, int_j.x0),
+                min(int_i.x1, int_j.x1)
+            )
+            if common.x0 < common.x1:
+                # Correctly invoke the project's native API for intersection over an interval
+                crits.update(func_i.intersections(func_j, common))
+
+    crits = sorted(crits)
+
+    # --- Build the optimal piecewise solution ---
+    soln = []
+    for idx in range(len(crits) - 1):
+        s1, s2 = crits[idx], crits[idx + 1]
+        if s2 <= s1 or s1 < frac(1, 2):
+            continue
+            
+        interval = Interval(s1, s2)
+        test_sigma = (s1 + s2) / 2
+        
+        best_value = None
+        best_func = None
+        best_h = None
+        
+        for func, intv, h in bounds:
+            if intv.contains(test_sigma):
+                val = func.at(test_sigma)
+                if best_value is None or val < best_value:
+                    best_value = val
+                    best_func = func
+                    best_h = h
+                    
+        if best_func is not None:
+            soln.append((best_func, Interval(s1, s2), best_h))
+
+    # --- Clean up and merge adjacent intervals sharing the same optimal bound ---
+    merged = []
+    for func, interval, h in soln:
+        if (merged
+                and merged[-1][0] == func
+                and merged[-1][1].x1 == interval.x0):
+            prev_func, prev_int, prev_h = merged[-1]
+            merged[-1] = (func, Interval(prev_int.x0, interval.x1), h)
+        else:
+            merged.append((func, interval, h))
+
+    return [
+        derived_zero_density_estimate(
+            Zero_Density_Estimate.from_rational_func(func, interval),
+            f"Follows from [Bourgain, 1995] with exponent pair {h.data}",
+            {h}
+        )
+        for func, interval, h in merged
+    ]
 
     bounds = []
     for (k, l) in eps:
