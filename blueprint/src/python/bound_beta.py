@@ -285,6 +285,9 @@ def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypo
                 u1 = min( [u1, frac( -3*c2, 3*m2 - c2 - 1) ] )
             if u1 > u0:
                 newBounds.append( Affine( frac(1+c2+m2,2+2*c2), frac( c2,2+2*c2), Interval( u0, u1, True, True) ) )
+                # Also try h such that f1(alpha) = f2(alpha)
+        f1_eq_f2_bounds = apply_van_der_corput_f1_eq_f2([bd])
+        newBounds.extend(f1_eq_f2_bounds)
 
     if len(newBounds) > 0:      
         # Merge the same bound that appears over multiple intervals
@@ -518,7 +521,8 @@ def display_two_sets_of_beta_bounds(hypotheses, newhypotheses):
     plt.ylabel(r"$\beta(\alpha)$")
     plt.title(r"Best bound on $\beta(\alpha)$")
     plt.show()
-    def combine_beta_bounds(hypotheses: list) -> list:
+    
+def combine_beta_bounds(hypotheses: list) -> list:
     """Compute the pointwise minimum and return a non-redundant list of Hypothesis."""
     if not hypotheses:
         return []
