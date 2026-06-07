@@ -145,7 +145,6 @@ def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
 #   - hypothesis_set: (Hypothesis_Set object)
 # Returns:
 #   - a list of Hypothesis objects, each representing a derived beta bound
-# TODO: combine all beta bounds into a single beta bound (i.e. remove redundancies)
 def exponent_pairs_to_beta_bounds(hypothesis_set):
     if not isinstance(hypothesis_set, Hypothesis_Set):
         raise "hypothesis_set must be of type Hypothesis_Set"
@@ -286,7 +285,9 @@ def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypo
                 u1 = min( [u1, frac( -3*c2, 3*m2 - c2 - 1) ] )
             if u1 > u0:
                 newBounds.append( Affine( frac(1+c2+m2,2+2*c2), frac( c2,2+2*c2), Interval( u0, u1, True, True) ) )
-        #TODO check if picking h so that f1(alpha) = f2(alpha) achieves any new bounds
+                # Also try h such that f1(alpha) = f2(alpha)
+        f1_eq_f2_bounds = apply_van_der_corput_f1_eq_f2([bd])
+        newBounds.extend(f1_eq_f2_bounds)
 
     if len(newBounds) > 0:      
         # Merge the same bound that appears over multiple intervals
@@ -319,7 +320,136 @@ def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypo
 
         return [nb for nb in newBounds2]
     return []
+def apply_van_der_corput_f1_eq_f2(bounds: list[Hypothesis]) -> list[Affine]:
+    """
+    Implements the optimized van der Corput process from Lemma 4.6 
+    by picking h(alpha) such that f1(alpha) = f2(alpha).
+    """
+    if not bounds:
+        return []
 
+    # 1. Extend beta bounds to [0, 1] using reflection lemma
+    boundData1 = [
+        [h.data.bound.domain.x0, h.data.bound.domain.x1, h.data.bound.m, h.data.bound.c, h]
+        for h in bounds
+    ]
+    boundData2 = [
+        [1 - h.data.bound.domain.x1, 1 - h.data.bound.domain.x0,
+         1 - h.data.bound.m, h.data.bound.c + h.data.bound.m - frac(1, 2), h]
+        for h in bounds
+    ]
+    boundData2 = boundData2[::-1]
+    boundData_all = boundData1 + boundData2
+
+    newBounds = []
+
+    # 2. Match each current bound with all auxiliary bounds
+    for bd in bounds:
+        p  = bd.data.bound.deep_copy()
+        v0 = p.domain.x0
+        v1 = p.domain.x1
+        m1 = p.m
+        c1 = p.c
+
+        for dat in boundData_all:
+            X0, X1, m2, c2 = dat[0], dat[1], dat[2], dat[3]
+
+            if m2 + c2 + 1 == 0:
+                continue
+
+            # Helper to solve the quadratic equation exactly in Q
+            def solve_t(alpha):
+                L1_val = m1 * alpha + c1
+                if L1_val <= 0:
+                    return None
+                A_val = (1 - alpha) * m2
+                B_val = (1 - alpha) * c2 + L1_val * (1 - 2 * alpha)
+                C_val = alpha * L1_val
+
+                if A_val == 0:
+                    if B_val == 0:
+                        return None
+                    return frac(C_val, B_val)
+                else:
+                    disc = B_val * B_val + 4 * A_val * C_val
+                    if disc < 0:
+                        return None
+                    
+                    import math
+                    num, den = disc.numerator, disc.denominator
+                    sqrt_num, sqrt_den = math.isqrt(num), math.isqrt(den)
+                    
+                    # Ensure perfect square to maintain exact fraction arithmetic
+                    if sqrt_num * sqrt_num != num or sqrt_den * sqrt_den != den:
+                        return None  
+                    
+                    sqrt_disc = frac(sqrt_num, sqrt_den)
+                    t = frac(-B_val + sqrt_disc, 2 * A_val)
+                    if t < 0:
+                        t = frac(-B_val - sqrt_disc, 2 * A_val)
+                    return t if t >= 0 else None
+
+            def B_val(alpha, t):
+                return (1 - alpha) * (m2 * t + c2)
+
+            def h_val(alpha, t):
+                return frac(alpha * (1 + t), t) - 1 if alpha != 0 else None
+
+            # Evaluate at endpoints to build the conservative affine interpolant
+            results = []
+            for alpha_test in [v0, v1]:
+                t_sol = solve_t(alpha_test)
+                if t_sol is None or t_sol < X0 or t_sol > X1:
+                    results.append(None)
+                    continue
+                h_sol = h_val(alpha_test, t_sol)
+                if h_sol is None or h_sol <= 0:
+                    results.append(None)
+                    continue
+                results.append((alpha_test, B_val(alpha_test, t_sol)))
+
+            if results[0] is None or results[1] is None:
+                continue
+
+            (a0, b0), (a1, b1) = results
+            if a0 == a1:
+                continue
+
+            # Linear interpolation between endpoints
+            new_m = frac(b1 - b0, a1 - a0)
+            new_c = b0 - new_m * a0
+
+            if new_m == m1 and new_c >= c1:
+                continue  
+
+            # Find sub-interval where this new bound actually improves the current one
+            u0, u1 = v0, v1
+            dm = new_m - m1
+            dc = c1 - new_c
+            if dm > 0:
+                u1 = min(u1, frac(dc, dm))
+            elif dm < 0:
+                u0 = max(u0, frac(dc, dm))
+
+            if u1 > u0:
+                newBounds.append(Affine(new_m, new_c, Interval(u0, u1, True, True)))
+
+    if not newBounds:
+        return []
+
+    # 3. Clean up and merge identical segments
+    newBounds.sort(key=lambda f: (f.m, f.c, f.domain.x0))
+    merged = []
+    cur = newBounds[0].deep_copy()
+    for nb in newBounds[1:]:
+        if nb.m == cur.m and nb.c == cur.c and nb.domain.x0 <= cur.domain.x1:
+            cur = Affine(cur.m, cur.c, Interval(cur.domain.x0, max(cur.domain.x1, nb.domain.x1), True, True))
+        else:
+            merged.append(cur)
+            cur = nb.deep_copy()
+    merged.append(cur)
+
+    return merged
 
 # Displays a beta bound (a Hypothesis object), both in console and as a plot
 def display_beta_bounds(hypotheses):
@@ -391,3 +521,84 @@ def display_two_sets_of_beta_bounds(hypotheses, newhypotheses):
     plt.ylabel(r"$\beta(\alpha)$")
     plt.title(r"Best bound on $\beta(\alpha)$")
     plt.show()
+    
+def combine_beta_bounds(hypotheses: list) -> list:
+    """Compute the pointwise minimum and return a non-redundant list of Hypothesis."""
+    if not hypotheses:
+        return []
+
+    # 1. Collect all domain endpoints and intersection points
+    breakpoints = set()
+    bounds_data = []
+    
+    for hyp in hypotheses:
+        aff = hyp.data.bound
+        x0, x1, m, c = aff.domain.x0, aff.domain.x1, aff.m, aff.c
+        bounds_data.append((m, c, x0, x1, hyp))
+        breakpoints.add(x0)
+        breakpoints.add(x1)
+
+    n = len(bounds_data)
+    for i in range(n):
+        mi, ci, x0i, x1i, _ = bounds_data[i]
+        for j in range(i + 1, n):
+            mj, cj, x0j, x1j, _ = bounds_data[j]
+            if mi != mj:
+                alpha_cross = frac(cj - ci, mi - mj)
+                if x0i <= alpha_cross <= x1i and x0j <= alpha_cross <= x1j:
+                    breakpoints.add(alpha_cross)
+
+    breakpoints = sorted(breakpoints)
+
+    # 2. Find which hypothesis achieves the minimum on each sub-interval
+    result_pieces = []
+    for k in range(len(breakpoints) - 1):
+        left, right = breakpoints[k], breakpoints[k + 1]
+        if left == right:
+            continue
+
+        mid = frac(left + right, 2)
+        best_val, best_hyp, best_m, best_c = None, None, None, None
+
+        for (m, c, x0, x1, hyp) in bounds_data:
+            if x0 <= mid <= x1:
+                val = m * mid + c
+                if best_val is None or val < best_val:
+                    best_val, best_hyp, best_m, best_c = val, hyp, m, c
+
+        if best_hyp is not None:
+            result_pieces.append((best_m, best_c, left, right, best_hyp))
+
+    if not result_pieces:
+        return []
+
+    # 3. Merge adjacent intervals sharing identical affine functions
+    merged = []
+    cur_m, cur_c, cur_left, cur_right, cur_hyp = result_pieces[0]
+
+    for i in range(1, len(result_pieces)):
+        m, c, left, right, hyp = result_pieces[i]
+        if m == cur_m and c == cur_c and hyp is cur_hyp and left == cur_right:
+            cur_right = right
+        else:
+            merged.append((cur_m, cur_c, cur_left, cur_right, cur_hyp))
+            cur_m, cur_c, cur_left, cur_right, cur_hyp = m, c, left, right, hyp
+
+    merged.append((cur_m, cur_c, cur_left, cur_right, cur_hyp))
+
+    # 4. Build the final clean Hypothesis objects list
+    result = []
+    for (m, c, x0, x1, source_hyp) in merged:
+        new_affine = Affine(m, c, Interval(x0, x1, True, True))
+        if new_affine == source_hyp.data.bound:
+            result.append(source_hyp)
+        else:
+            result.append(
+                derived_bound_beta(
+                    new_affine,
+                    f"Pointwise minimum of beta bounds; tightest bound on [{x0}, {x1}] is from: {source_hyp.name}",
+                    {source_hyp},
+                )
+            )
+
+    return result
