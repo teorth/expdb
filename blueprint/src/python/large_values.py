@@ -480,3 +480,62 @@ def apply_huxley_subdivision(hypothesis):
     )
 
     return derived_bound_LV(improved_region, proof_str, {hypothesis})
+def apply_reflection_lv(hypothesis: Hypothesis) -> Hypothesis:
+    """
+    Implements Lemma 8.3(iv) - Reflection property for LV_zeta.
+
+    Equation (8.1):
+        LV_zeta(1/2 + (sigma-1/2)/(tau-1), tau/(tau-1))
+            = 1/(tau-1) * LV_zeta(sigma, tau)
+    """
+    if not isinstance(hypothesis, Hypothesis):
+        raise ValueError("Parameter must be of type Hypothesis")
+    if hypothesis.hypothesis_type != "Large value estimate":
+        raise ValueError('Parameter must be of type "Large value estimate"')
+
+    original_region = hypothesis.data.region
+    new_pieces = []
+
+    for polytope in original_region.polytopes:
+
+        # 1. Extract vertices using the existing get_vertices method
+        vertices = polytope.get_vertices()
+        new_vertices = []
+
+        for v in vertices:
+            sigma = frac(v[0])
+            tau   = frac(v[1])
+            rho   = frac(v[2])
+
+            # Reflection property requires strictly tau > 1
+            if tau <= 1:
+                continue
+
+            denom = tau - 1
+
+            # 2. Apply exact non-linear transformation (Equation 8.1)
+            sigma_prime = frac(1, 2) + (sigma - frac(1, 2)) / denom
+            tau_prime   = tau / denom
+            rho_prime   = rho / denom
+
+            new_vertices.append([sigma_prime, tau_prime, rho_prime])
+
+        # 3. Reconstruct the polytope using the existing from_V_rep method
+        if len(new_vertices) >= 4:
+            reflected_polytope = Polytope.from_V_rep(new_vertices)
+            if reflected_polytope is not None:
+                new_pieces.append(reflected_polytope)
+
+    if not new_pieces:
+        return None
+
+    reflected_region = Region.union(new_pieces)
+
+    proof_str = (
+        f"Follows from Lemma 8.3(iv) (Reflection, eq. 8.1): "
+        f"LV_zeta(1/2 + (σ-1/2)/(τ-1), τ/(τ-1)) = 1/(τ-1) · LV_zeta(σ,τ). "
+        f"Applied to [{hypothesis}] via exact non-linear vertex transformation."
+    )
+
+    return derived_bound_LV(reflected_region, proof_str, {hypothesis})
+
