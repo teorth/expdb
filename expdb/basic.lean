@@ -11,14 +11,14 @@ import Mathlib.Analysis.Asymptotics.Asymptotics
 open Filter Topology Asymptotics
 
 -- ===========================================================
--- SECTION 1: Phase Function e(θ) = exp(2πiθ)
+-- Phase Function e(θ) = exp(2πiθ)
 -- ===========================================================
 
 /-- Definition: e(θ) := e^(2πiθ) as defined in Blueprint p. 4 -/
 noncomputable def e (θ : ℝ) : ℂ :=
   Complex.exp (2 * Real.pi * θ * Complex.I)
 
-/-- Base case: e(0) = 1 -/
+/-- Base case: e(0) = 1
 lemma e_zero : e 0 = 1 := by
   simp [e]
 
@@ -38,23 +38,7 @@ lemma e_int (n : ℤ) : e n = 1 := by
   rw [h, Complex.exp_int_mul_two_pi_mul_I]
 
 -- ===========================================================
--- SECTION 2 & 3: Asymptotic Notation
--- ===========================================================
-
-/-- Bounded Sequence: defined as O(1) atTop -/
-def IsBoundedSeq (X : ℕ → ℝ) : Prop :=
-  IsBigO atTop X (fun _ => (1 : ℝ))
-
-/-- Infinitesimal Sequence: defined as o(1) atTop -/
-def IsInfinitesimal (X : ℕ → ℝ) : Prop :=
-  IsLittleO atTop X (fun _ => (1 : ℝ))
-
--- Custom notation matching the Blueprint's style
-notation X " =O= " Y => IsBigO atTop X Y
-notation X " =o= " Y => IsLittleO atTop X Y
-
--- ===========================================================
--- SECTION 4: Separated Sequences
+--  Separated Sequences
 -- ===========================================================
 
 /-- 1-Separated Sets: distance between distinct elements is at least 1 -/
@@ -71,7 +55,7 @@ lemma isSeparated_iff_isLambdaSeparated_one (W : Finset ℝ) :
   rfl
 
 -- ===========================================================
--- SECTION 5: 1-Bounded Sequences
+-- 1-Bounded Sequences
 -- ===========================================================
 
 /-- 1-Bounded complex sequence: |aₙ| ≤ 1 for all n -/
@@ -84,7 +68,7 @@ lemma e_is_one_bounded (θ : ℕ → ℝ) : IsOneBounded (fun n => e (θ n)) := 
   rw [norm_e]
 
 -- ===========================================================
--- Cheap nonstandard notation
+-- Asymptotic Notation
 -- ===========================================================
 
 /-- An infinitesimal sequence: a sequence that converges to 0 -/
