@@ -36,6 +36,78 @@ lemma e_int (n : ℤ) : e n = 1 := by
   simp [e]
   have h : (2 * Real.pi * (n : ℝ) * Complex.I) = (n : ℂ) * (2 * Real.pi * Complex.I) := by push_cast; ring
   rw [h, Complex.exp_int_mul_two_pi_mul_I]
+-- ===========================================================
+-- Empty Supremum / Infimum Conventions 
+-- ===========================================================
+
+/-- Convention: empty supremum = -∞ (⊥ in EReal) -/
+lemma blueprintSup_empty_convention :
+    Sup (∅ : Set EReal) = ⊥ :=
+  EReal.sSup_empty
+
+/-- Convention: empty infimum = +∞ (⊤ in EReal) -/
+lemma blueprintInf_empty_convention :
+    Inf (∅ : Set EReal) = ⊤ :=
+  EReal.sInf_empty
+
+/-- sup_{σ₀ ≤ σ < σ₁} f(σ) = -∞ when σ₁ < σ₀ -/
+noncomputable def blueprintSup (σ₀ σ₁ : ℝ) (f : ℝ → EReal) : EReal :=
+  Sup (f '' {σ : ℝ | σ₀ ≤ σ ∧ σ < σ₁})
+
+lemma blueprintSup_empty {σ₀ σ₁ : ℝ} (f : ℝ → EReal) (h : σ₁ < σ₀) :
+    blueprintSup σ₀ σ₁ f = ⊥ := by
+  have h_empty : {σ : ℝ | σ₀ ≤ σ ∧ σ < σ₁} = ∅ := by
+    ext σ
+    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    intro ⟨h1, h2⟩
+    linarith
+  simp [blueprintSup, h_empty]
+  exact EReal.sSup_empty
+
+-- ===========================================================
+-- N^(-∞) = 0 Convention 
+-- ===========================================================
+
+/-- Extended real power: handles N^r for r : EReal.
+    The only special case stated in the blueprint is N^(-∞) = 0 when N > 1.
+    For r = +∞ we leave it as the natural limit (not specified by blueprint). -/
+noncomputable def blueprintPower (N : ℝ) (r : EReal) : ℝ :=
+  if r = ⊥ then 0
+  else N ^ r.toReal
+
+/-- Blueprint convention: N^(-∞) = 0 for N > 1 -/
+lemma blueprintPower_bot {N : ℝ} (hN : N > 1) :
+    blueprintPower N ⊥ = 0 := by
+  simp [blueprintPower]
+
+/-- For finite exponents, blueprintPower agrees with real power -/
+lemma blueprintPower_coe {N : ℝ} (r : ℝ) :
+    blueprintPower N (r : EReal) = N ^ r := by
+  simp [blueprintPower, EReal.coe_ne_bot, EReal.toReal_coe]
+
+-- ===========================================================
+-- Indicator Function 
+-- ===========================================================
+
+/-- 1_I(n) = 1 if n ∈ I, else 0 -/
+def indicatorFunction {α : Type*} [DecidableEq α] (I : Set α) 
+    [DecidablePred (· ∈ I)] (n : α) : ℝ :=
+  if n ∈ I then 1 else 0
+
+/-- Indicator is 0 or 1 -/
+lemma indicatorFunction_values {α : Type*} [DecidableEq α] 
+    (I : Set α) [DecidablePred (· ∈ I)] (n : α) :
+    indicatorFunction I n = 0 ∨ indicatorFunction I n = 1 := by
+  simp [indicatorFunction]
+  split_ifs <;> simp
+
+-- ===========================================================
+-- Cardinality |W| for Finsets 
+-- ===========================================================
+
+/-- We use Finset.card for cardinality, written |W| in the blueprint.
+    In Lean we use W.card or Finset.card W to avoid notation conflicts. -/
+example (W : Finset ℝ) : W.card = Finset.card W := rfl
 
 -- ===========================================================
 --  Separated Sequences
@@ -68,7 +140,7 @@ lemma e_is_one_bounded (θ : ℕ → ℝ) : IsOneBounded (fun n => e (θ n)) := 
   rw [norm_e]
 
 -- ===========================================================
--- Asymptotic Notation
+-- Asymptotic Notation (Blueprint p. 5)
 -- ===========================================================
 
 /-- An infinitesimal sequence: a sequence that converges to 0 -/
@@ -85,7 +157,7 @@ def EventuallyLeUpToInfinitesimal (X Y : ℕ → ℝ) : Prop :=
 notation X " ≤o " Y => EventuallyLeUpToInfinitesimal X Y
 
 -- ===========================================================
--- Underspill Principle (Blueprint p. 6)
+-- Underspill Principle 
 -- ===========================================================
 
 /-- Underspill Principle:
