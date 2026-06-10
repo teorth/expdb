@@ -84,39 +84,126 @@ lemma e_is_one_bounded (θ : ℕ → ℝ) : IsOneBounded (fun n => e (θ n)) := 
   rw [norm_e]
 
 -- ===========================================================
--- SECTION 6: Underspill Principle (Blueprint p. 6)
+-- Cheap nonstandard notation
 -- ===========================================================
 
+/-- An infinitesimal sequence: a sequence that converges to 0 -/
 def IsInfinitesimal (X : ℕ → ℝ) : Prop :=
-  IsLittleO atTop X (fun _ => (1 : ℝ))
+  Tendsto X atTop (nhds 0)
 
-/-- Corrected Underspill Equivalence: 
-    Using absolute value to guarantee convergence to 0 from both sides. -/
-lemma underspill_iff (X Y : ℕ → ℝ) :
-    IsInfinitesimal (fun i => X i - Y i) 
-    ↔ 
-    `∀ ε > 0, ∀ᶠ i in atTop, |X i - Y i| < ε := by
+/-- X ≤ Y + o(1) in a strict sense:
+    There exists an infinitesimal sequence ε_i such that x_i ≤ y_i + ε_i eventually. -/
+def EventuallyLeUpToInfinitesimal (X Y : ℕ → ℝ) : Prop :=
+  ∃ ε : ℕ → ℝ, IsInfinitesimal ε ∧ 
+               (∀ᶠ i in atTop, X i ≤ Y i + ε i)
+
+-- Notation shorthand
+notation X " ≤o " Y => EventuallyLeUpToInfinitesimal X Y
+
+-- ===========================================================
+-- Underspill Principle (Blueprint p. 6)
+-- ===========================================================
+
+/-- Underspill Principle:
+    X ≤ Y + o(1)  ↔  For every constant ε > 0, X ≤ Y + ε + o(1) -/
+theorem underspill (X Y : ℕ → ℝ) :
+    (X ≤o Y) ↔ 
+    (∀ ε : ℝ, ε > 0 → X ≤o (fun i => Y i + ε)) := by
   constructor
-  
-  -- (⟹) Direction: If it is o(1), then it eventually drops below ε
-  · intro h ε hε
-    have h_tendsto : Tendsto (fun i => X i - Y i) atTop (nhds 0) :=
-      (isLittleO_one_iff ℝ).mp h
-    have h_mem : Ioo (-ε) ε ∈ nhds (0 : ℝ) := Ioo_mem_nhds (by linarith) hε
-    filter_upwards [h_tendsto h_mem] with i hi
-    simp at hi
-    rw [abs_lt]
-    exact hi
 
-  -- (⟸) Direction: Your logic using c/2 to get strict inequality < c
+  -- =======================
+  -- Forward Direction (→)
+  -- =======================
+  · intro ⟨εseq, hεseq_inf, hεseq_bound⟩ ε hε
+    -- We choose the exact same sequence εseq
+    -- x_i ≤ y_i + εseq_i ≤ y_i + ε + εseq_i
+    use εseq
+    constructor
+    · exact hεseq_inf
+    · filter_upwards [hεseq_bound] with i hi
+      -- hi : x_i ≤ y_i + εseq_i
+      -- Goal: x_i ≤ (y_i + ε) + εseq_i
+      linarith
+
+  -- =======================
+  -- Backward Direction (←)
+  -- =======================
   · intro h
-    rw [IsInfinitesimal, isLittleO_one_iff, Metric.tendsto_atTop]
-    intro c hc
-    -- We apply the hypothesis with ε = c / 2
-    have hε : c / 2 > 0 := by linarith
-    have h_ev := h (c / 2) hε
-    filter_upwards [h_ev] with i hi
-    -- hi : |X i - Y i| < c / 2
-    -- Since c / 2 < c for c > 0, we get exact convergence
-    simp [Real.dist_eq]
-    linarith
+    -- We want to construct an infinitesimal sequence d_i such that x_i ≤ y_i + d_i
+    -- Strategy: For each c > 0, by hypothesis with ε = c/2:
+    --   x_i ≤ y_i + c/2 + d_i where d_i → 0
+    --   For sufficiently large i: d_i < c/2
+    --   Therefore: x_i ≤ y_i + c
+    -- This implies: x_i - y_i ≤ c for all c > 0
+    -- We build the sequence explicitly.
+    
+    -- For each n : ℕ, use ε = 1/(n+1)
+    -- From the hypothesis, we obtain d^n_i such that x_i ≤ y_i + 1/(n+1) + d^n_i
+    -- We define ε_i = inf_{n} (1/(n+1) + d^n_i)
+    -- However, this is complex, so we use a more direct approach:
+    
+    -- We define z_i = max(x_i - y_i, 0)
+    -- and prove that z_i → 0
+    
+    -- First, we prove: ∀ c > 0, ∀ᶠ i, x_i - y_i < c
+    have key : ∀ c : ℝ, c > 0 → ∀ᶠ i in atTop, X i - Y i < c := by
+      intro c hc
+      -- Use the hypothesis with ε = c/2
+      have hc2 : c / 2 > 0 := by linarith
+      obtain ⟨dseq, hdseq_inf, hdseq_bound⟩ := h (c / 2) hc2
+      -- dseq → 0, so ∀ᶠ i, |dseq i| < c/2
+      rw [Metric.tendsto_atTop] at hdseq_inf
+      have hdseq_small := hdseq_inf (c / 2) hc2
+      -- For sufficiently large i: x_i ≤ y_i + c/2 + dseq_i and |dseq_i| < c/2
+      filter_upwards [hdseq_bound, hdseq_small] with i hi_bound hi_small
+      -- hi_bound : x_i ≤ y_i + c/2 + dseq_i
+      -- hi_small : dist (dseq i) 0 < c/2, i.e., |dseq_i| < c/2
+      rw [Real.dist_eq] at hi_small
+      simp at hi_small
+      -- dseq_i < c/2 follows from |dseq_i| < c/2
+      have hdseq_lt : dseq i < c / 2 := by
+        exact lt_of_abs_lt hi_small
+      linarith
+    
+    -- Now we construct the infinitesimal sequence
+    -- We use the sequence z_i = max(x_i - y_i, 0)
+    -- and prove that it converges to 0
+    
+    -- Alternatively, more simply: we use x_i - y_i directly
+    -- and prove that (x_i - y_i)⁺ → 0, then conclude
+    
+    -- For simplicity, we show the existence of ε_i = max(x_i - y_i, 1/i) approximately
+    -- But the simplest proof uses the squeeze theorem
+    
+    -- We define ε_i explicitly via: for any i, take 1/(i+1) as an approximation
+    -- If x_i ≤ y_i + 1/(i+1) + d_i where d_i → 0
+    
+    -- Direct proof: we show x_i - y_i → 0 by definition
+    use fun i => max (X i - Y i) 0
+    constructor
+    · -- We prove that max(x_i - y_i, 0) → 0
+      rw [Metric.tendsto_atTop]
+      intro δ hδ
+      -- From key with c = δ
+      have h_ev := key δ hδ
+      -- We also need x_i - y_i > -δ, but this is not guaranteed
+      -- In fact, max(z, 0) ≤ |z|, so it suffices that |x_i - y_i| < δ
+      -- But key only provides x_i - y_i < δ
+      -- We use key with c = δ
+      filter_upwards [h_ev] with i hi
+      -- hi : x_i - y_i < δ
+      rw [Real.dist_eq]
+      simp
+      constructor
+      · -- max(x_i - y_i, 0) < δ
+        constructor
+        · linarith
+        · linarith
+      · -- -δ < max(x_i - y_i, 0)
+        have : max (X i - Y i) 0 ≥ 0 := le_max_right _ _
+        linarith
+    · -- We prove x_i ≤ y_i + max(x_i - y_i, 0)
+      apply Filter.Eventually.of_forall
+      intro i
+      have : max (X i - Y i) 0 ≥ X i - Y i := le_max_left _ _
+      linarith
