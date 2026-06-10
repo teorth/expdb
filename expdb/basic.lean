@@ -1,8 +1,6 @@
 /-
   ANTEDB Blueprint -- Chapter 2: Basic Notation
   ===============================================
-  Source: "Database of known results on analytic number theory exponents"
-  Tao, Trudgian, Yang (2026)
 -/
 
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
@@ -89,25 +87,36 @@ lemma e_is_one_bounded (θ : ℕ → ℝ) : IsOneBounded (fun n => e (θ n)) := 
 -- SECTION 6: Underspill Principle (Blueprint p. 6)
 -- ===========================================================
 
-/-- Underspill Principle: If the difference is o(1), 
-    then X_i ≤ Y_i + ε holds eventually for all ε > 0. -/
-lemma underspill (X Y : ℕ → ℝ) (h : IsInfinitesimal (fun i => X i - Y i)) :
-    ∀ ε > 0, ∀ᶠ i in atTop, X i ≤ Y i + ε := by
-  intro ε hε
-  have h_tendsto : Tendsto (fun i => X i - Y i) atTop (nhds 0) := h.tendsto_nhds
-  have h_mem : {x : ℝ | x < ε} ∈ nhds (0 : ℝ) := Iio_mem_nhds hε
-  have h_ev := h_tendsto h_mem
-  filter_upwards [h_ev] with i hi
-  simp at hi
-  linarith
+def IsInfinitesimal (X : ℕ → ℝ) : Prop :=
+  IsLittleO atTop X (fun _ => (1 : ℝ))
 
--- ===========================================================
--- SECTION 7: Automatic Uniformity
--- ===========================================================
+/-- Corrected Underspill Equivalence: 
+    Using absolute value to guarantee convergence to 0 from both sides. -/
+lemma underspill_iff (X Y : ℕ → ℝ) :
+    IsInfinitesimal (fun i => X i - Y i) 
+    ↔ 
+    `∀ ε > 0, ∀ᶠ i in atTop, |X i - Y i| < ε := by
+  constructor
+  
+  -- (⟹) Direction: If it is o(1), then it eventually drops below ε
+  · intro h ε hε
+    have h_tendsto : Tendsto (fun i => X i - Y i) atTop (nhds 0) :=
+      (isLittleO_one_iff ℝ).mp h
+    have h_mem : Ioo (-ε) ε ∈ nhds (0 : ℝ) := Ioo_mem_nhds (by linarith) hε
+    filter_upwards [h_tendsto h_mem] with i hi
+    simp at hi
+    rw [abs_lt]
+    exact hi
 
-/-- Formulation of Proposition 2.1 (i): If a sequence is pointwise bounded for each x,
-    it is uniformly bounded by a constant C independent of both x and i. -/
-def AutomaticUniformityProperty (f : ℕ → ℕ → ℝ) : Prop :=
-  (∀ x, IsBoundedSeq (fun i => f i x)) → ∃ C : ℝ, ∀ x i, |f i x| ≤ C
-
-end
+  -- (⟸) Direction: Your logic using c/2 to get strict inequality < c
+  · intro h
+    rw [IsInfinitesimal, isLittleO_one_iff, Metric.tendsto_atTop]
+    intro c hc
+    -- We apply the hypothesis with ε = c / 2
+    have hε : c / 2 > 0 := by linarith
+    have h_ev := h (c / 2) hε
+    filter_upwards [h_ev] with i hi
+    -- hi : |X i - Y i| < c / 2
+    -- Since c / 2 < c for c > 0, we get exact convergence
+    simp [Real.dist_eq]
+    linarith
