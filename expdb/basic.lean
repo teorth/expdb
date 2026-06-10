@@ -11,7 +11,7 @@ import Mathlib.Analysis.Asymptotics.Asymptotics
 open Filter Topology Asymptotics
 
 -- ===========================================================
--- Phase Function e(θ) = exp(2πiθ)
+--  Function e(θ) = exp(2πiθ)
 -- ===========================================================
 
 /-- Definition: e(θ) := e^(2πiθ) as defined in Blueprint p. 4 -/
