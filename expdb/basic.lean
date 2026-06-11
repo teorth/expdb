@@ -7,8 +7,11 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import Mathlib.Topology.Algebra.Order.LiminfLimsup
 import Mathlib.Analysis.Normed.Field.Basic
 import Mathlib.Analysis.Asymptotics.Asymptotics
+import Mathlib.Data.EReal.Basic
+import Mathlib.Order.Filter.Basic
+import Mathlib.Topology.MetricSpace.Sequences
 
-open Filter Topology Asymptotics
+open Filter Topology Asymptotics Real
 
 -- ===========================================================
 --  Function e(θ) = exp(2πiθ)
@@ -140,7 +143,7 @@ lemma e_is_one_bounded (θ : ℕ → ℝ) : IsOneBounded (fun n => e (θ n)) := 
   rw [norm_e]
 
 -- ===========================================================
--- Asymptotic Notation (Blueprint p. 5)
+-- Asymptotic Notation 
 -- ===========================================================
 
 /-- An infinitesimal sequence: a sequence that converges to 0 -/
@@ -156,13 +159,83 @@ def EventuallyLeUpToInfinitesimal (X Y : ℕ → ℝ) : Prop :=
 -- Notation shorthand
 notation X " ≤o " Y => EventuallyLeUpToInfinitesimal X Y
 
-/-- X ≍ Y  (X and Y are comparable):
-    defined as  X ≪ Y ≪ X,  i.e. X = O(Y) and Y = O(X). -/
-def IsAsymptoticallyEquiv (X Y : ℕ → ℝ) : Prop :=
-  (∃ C : ℝ, 0 < C ∧ ∀ᶠ i in atTop, |X i| ≤ C * Y i) ∧
-  (∃ C : ℝ, 0 < C ∧ ∀ᶠ i in atTop, |Y i| ≤ C * X i)
+-- ============================================================
+--  Auxiliary lemmas for subsequence extraction
+-- ============================================================
 
-notation X " ≍ " Y => IsAsymptoticallyEquiv X Y
+/-- From a property holding arbitrarily late, extract a strictly
+    increasing sequence on which it holds. -/
+private lemma extract_strictMono_subseq {P : ℕ → Prop}
+    (h : ∀ j, ∃ i ≥ j, P i) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∀ n, P (φ n) := by
+  have step : ∀ prev, ∃ i > prev, P i :=
+    fun prev => let ⟨i, hi, hP⟩ := h (prev + 1); ⟨i, by omega, hP⟩
+  let φ : ℕ → ℕ :=
+    fun n => n.rec (h 0).choose (fun _ prev => (step prev).choose)
+  exact ⟨strictMono_nat_of_lt_succ fun n => (step (φ n)).choose_spec.1,
+         fun n => n.casesOn (h 0).choose_spec.2
+                             (fun _ => (step (φ _)).choose_spec.2)⟩
+
+/-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
+    with |f(φ n)(x n)| > n.  Used in the proof of Proposition 2.1(i). -/
+private lemma extract_bad_seq_i
+    (E : ℕ → Finset ℝ) (f : ∀ i, (E i : Set ℝ) → ℂ)
+    (bad : ∀ j, ∃ i ≥ j, ∃ x : (E i : Set ℝ), (j : ℝ) < Complex.abs (f i x)) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+    ∃ x : ∀ n, (E (φ n) : Set ℝ), ∀ n, (n : ℝ) < Complex.abs (f (φ n) (x n)) := by
+  have step : ∀ n prev, ∃ i > prev, ∃ x : (E i : Set ℝ), (n : ℝ) < Complex.abs (f i x) :=
+    fun n prev => by
+      obtain ⟨i, hi, x, hx⟩ := bad (max (prev + 1) n)
+      exact ⟨i, by linarith [le_max_left (prev+1) n, hi],
+             x, by exact_mod_cast lt_of_le_of_lt (le_max_right _ _) hx⟩
+  let data : ℕ → Σ i, (E i : Set ℝ) :=
+    fun n => n.rec ⟨(step 0 0).choose, (step 0 0).choose_spec.2.choose⟩
+      fun n p => ⟨(step (n+1) p.1).choose, (step (n+1) p.1).choose_spec.2.choose⟩
+  exact ⟨strictMono_nat_of_lt_succ fun n => (step (n+1) (data n).1).choose_spec.1,
+         fun n => (data n).2,
+         fun n => n.casesOn (step 0 0).choose_spec.2.choose_spec
+                             (fun _ => (step _ _).choose_spec.2.choose_spec)⟩
+
+/-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
+    with |f(φ n)(x n)| ≥ 1/(n+1).  Used in the proof of Proposition 2.1(ii). -/
+private lemma extract_bad_seq_ii
+    (E : ℕ → Finset ℝ) (f : ∀ i, (E i : Set ℝ) → ℂ)
+    (bad : ∀ j, ∃ i ≥ j, ∃ x : (E i : Set ℝ), (1:ℝ)/(j+1) ≤ Complex.abs (f i x)) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+    ∃ x : ∀ n, (E (φ n) : Set ℝ), ∀ n, (1:ℝ)/(n+1) ≤ Complex.abs (f (φ n) (x n)) := by
+  have step : ∀ n prev, ∃ i > prev, ∃ x : (E i : Set ℝ), (1:ℝ)/(n+1) ≤ Complex.abs (f i x) :=
+    fun n prev => by
+      obtain ⟨i, hi, x, hx⟩ := bad (max (prev+1) n)
+      refine ⟨i, by linarith [le_max_left (prev+1) n, hi], x, ?_⟩
+      calc (1:ℝ)/(n+1) ≤ 1/(max (prev+1) n + 1) := by
+              gcongr; exact_mod_cast Nat.succ_le_succ (le_max_right _ _)
+           _ ≤ Complex.abs (f i x) := hx
+  let data : ℕ → Σ i, (E i : Set ℝ) :=
+    fun n => n.rec ⟨(step 0 0).choose, (step 0 0).choose_spec.2.choose⟩
+      fun n p => ⟨(step (n+1) p.1).choose, (step (n+1) p.1).choose_spec.2.choose⟩
+  exact ⟨strictMono_nat_of_lt_succ fun n => (step (n+1) (data n).1).choose_spec.1,
+         fun n => (data n).2,
+         fun n => n.casesOn (step 0 0).choose_spec.2.choose_spec
+                             (fun _ => (step _ _).choose_spec.2.choose_spec)⟩
+
+/-- Build a strictly increasing threshold sequence φ such that
+    |f(φ n)(x)| ≤ 1/(n+1) for all x ∈ E(φ n). -/
+private lemma build_increasing_thresholds
+    (E : ℕ → Finset ℝ) (f : ∀ i, (E i : Set ℝ) → ℂ)
+    (scale : ∀ n, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : (E i : Set ℝ),
+             Complex.abs (f i x) ≤ 1/n) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+    ∀ n, ∀ x : (E (φ n) : Set ℝ), Complex.abs (f (φ n) x) ≤ 1/(n+1) := by
+  choose i_seq hi_seq using fun n => scale (n+1) (Nat.succ_pos n)
+  let φ : ℕ → ℕ :=
+    fun n => n.rec (i_seq 0) (fun k p => max (i_seq (k+1)) (p+1))
+  refine ⟨strictMono_nat_of_lt_succ fun n =>
+           Nat.lt_of_lt_of_le (Nat.lt_succ_self _) (le_max_right _ _),
+         fun n x => hi_seq n (φ n) ?_ x⟩
+  cases n with
+  | zero => exact le_refl _
+  | succ n => exact le_max_left _ _
+
 -- ===========================================================
 -- Underspill Principle 
 -- ===========================================================
@@ -270,3 +343,152 @@ theorem underspill (X Y : ℕ → ℝ) :
       intro i
       have : max (X i - Y i) 0 ≥ X i - Y i := le_max_left _ _
       linarith
+
+-- ============================================================
+-- Asymptotic relations  X = O(Y),  X ≪ Y,  X ≍ Y
+-- ============================================================
+
+/-- X = O(Y): there exists a fixed C with |X| ≤ C·Y eventually. -/
+def IsBigOSeq (X Y : ℕ → ℝ) : Prop :=
+  ∃ C : ℝ, 0 < C ∧ ∀ᶠ i in atTop, |X i| ≤ C * Y i
+
+/-- X ≪ Y  (X is much less than Y):
+    same as X = O(Y) in the blueprint's variable-quantity sense. -/
+def IsVeryLT (X Y : ℕ → ℝ) : Prop := IsBigOSeq X Y
+
+notation X " ≪ " Y => IsVeryLT X Y
+notation Y " ≫ " X => IsVeryLT X Y
+
+/-- X = o(Y): there exists an infinitesimal c with |X| ≤ c·Y eventually. -/
+def IsLittleOSeq (X Y : ℕ → ℝ) : Prop :=
+  ∃ c : ℕ → ℝ, IsInfinitesimal c ∧ ∀ᶠ i in atTop, |X i| ≤ c i * Y i
+
+/-- X ≍ Y  (X and Y are comparable):
+    X ≪ Y and Y ≪ X,  i.e. X = O(Y) and Y = O(X). -/
+def IsAsymptoticallyEquiv (X Y : ℕ → ℝ) : Prop :=
+  (X ≪ Y) ∧ (Y ≪ X)
+
+notation X " ≍ " Y => IsAsymptoticallyEquiv X Y
+
+-- ============================================================
+-- Pointwise-bounded and pointwise-infinitesimal functions
+-- ============================================================
+
+/-- f is pointwise O(1): for every variable sequence (x_i) ∈ E_i,
+    the values (f_i(x_i)) are eventually bounded. -/
+def IsPointwiseBounded (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ) : Prop :=
+  ∀ x : ∀ i, E i, ∃ C : ℝ, ∀ᶠ i in atTop, Complex.abs (f i (x i)) ≤ C
+
+/-- f is pointwise o(1): for every variable sequence (x_i) ∈ E_i,
+    the values (f_i(x_i)) tend to 0. -/
+def IsPointwiseInfinitesimal (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ) : Prop :=
+  ∀ x : ∀ i, E i, IsInfinitesimal (fun i => Complex.abs (f i (x i)))
+
+-- ============================================================
+-- Proposition 2.1 — Automatic uniformity   
+-- ============================================================
+
+-- Helper: rewrite |f(φ m)(y(φ m))| as |f(φ m)(x_bad m)| avoiding cast issues.
+private lemma abs_y_eq_abs_x_bad
+    {E : ℕ → Finset ℝ} {f : ∀ i, (E i : Set ℝ) → ℂ}
+    {φ : ℕ → ℕ} (hφ : StrictMono φ)
+    {x_bad : ∀ n, (E (φ n) : Set ℝ)}
+    {default_elem : ∀ i, (E i : Set ℝ)}
+    (m : ℕ) :
+    let y : ∀ j, (E j : Set ℝ) := fun j =>
+      if h : ∃ n, φ n = j then
+        (show (E (φ h.choose) : Set ℝ) = E j by rw [h.choose_spec]) ▸ x_bad h.choose
+      else default_elem j
+    Complex.abs (f (φ m) (y (φ m))) = Complex.abs (f (φ m) (x_bad m)) := by
+  simp only []
+  split_ifs with h
+  · generalize_proofs hp
+    have : h.choose = m := hφ.injective hp
+    rw [this]
+  · exact absurd ⟨m, rfl⟩ h
+
+/-- **Proposition 2.1(i) — Automatic uniform bound.**
+    If f(x) = O(1) for every variable x ∈ E, then after passing to a
+    subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
+theorem automatic_uniformity_i
+    (E : ℕ → Finset ℝ) (hE : ∀ i, (E i).Nonempty)
+    (f : ∀ i, (E i : Set ℝ) → ℂ)
+    (hf : IsPointwiseBounded (fun i => (E i : Set ℝ)) f) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+    ∃ C : ℝ, ∀ᶠ i in atTop, ∀ x : (E (φ i) : Set ℝ),
+    Complex.abs (f (φ i) x) ≤ C := by
+  by_contra h_fail
+  push_neg at h_fail
+  -- Build a bad sequence: for each j find i ≥ j and x with |f i x| > j
+  have bad : ∀ j, ∃ i ≥ j, ∃ x : (E i : Set ℝ), (j:ℝ) < Complex.abs (f i x) := fun j => by
+    obtain ⟨i, hi, x, hx⟩ := (h_fail id strictMono_id j).exists; exact ⟨i, hi, x, hx⟩
+  obtain ⟨φ, hφ, x_bad, hx_bad⟩ := extract_bad_seq_i E f bad
+  -- Extend x_bad to a full variable sequence y
+  let default_elem : ∀ i, (E i : Set ℝ) :=
+    fun i => ⟨(hE i).choose, (hE i).choose_mem⟩
+  classical
+  let y : ∀ j, (E j : Set ℝ) := fun j =>
+    if h : ∃ n, φ n = j then
+      (show (E (φ h.choose) : Set ℝ) = E j by rw [h.choose_spec]) ▸ x_bad h.choose
+    else default_elem j
+  -- Apply pointwise bound to y
+  obtain ⟨C_y, hC_y⟩ := hf y
+  rw [Filter.eventually_atTop] at hC_y
+  obtain ⟨j₀, hj₀⟩ := hC_y
+  obtain ⟨n₁, hn₁⟩ := exists_nat_gt C_y
+  -- Find m with φ(m) ≥ j₀ and m > n₁
+  obtain ⟨m, hm_ge, hm_large⟩ : ∃ m, φ m ≥ j₀ ∧ m > n₁ := by
+    obtain ⟨m, hm⟩ := (hφ.tendsto_atTop).eventually (eventually_ge_atTop j₀) |>.exists
+    exact ⟨max m (n₁+1), le_trans hm (hφ.monotone (le_max_left _ _)), by omega⟩
+  -- Derive contradiction
+  have heq := abs_y_eq_abs_x_bad hφ m (default_elem := default_elem)
+  linarith [hj₀ (φ m) hm_ge (y (φ m)),
+            hx_bad m,
+            show C_y < (m:ℝ) from by exact_mod_cast hm_large,
+            heq ▸ hj₀ (φ m) hm_ge (y (φ m))]
+
+/-- **Proposition 2.1(ii) — Automatic uniform infinitesimal.**
+    If f(x) = o(1) for every variable x ∈ E, then after passing to a
+    subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
+theorem automatic_uniformity_ii
+    (E : ℕ → Finset ℝ) (hE : ∀ i, (E i).Nonempty)
+    (f : ∀ i, (E i : Set ℝ) → ℂ)
+    (hf : IsPointwiseInfinitesimal (fun i => (E i : Set ℝ)) f) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+    ∃ c : ℕ → ℝ, IsInfinitesimal c ∧
+    ∀ᶠ i in atTop, ∀ x : (E (φ i) : Set ℝ),
+    Complex.abs (f (φ i) x) ≤ c i := by
+  -- Step 1: for each n ≥ 1, the bound 1/n eventually holds uniformly
+  have scale : ∀ n, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : (E i : Set ℝ),
+      Complex.abs (f i x) ≤ 1/n := by
+    intro n hn
+    by_contra h_fail; push_neg at h_fail
+    have bad : ∀ j, ∃ i ≥ j, ∃ x : (E i : Set ℝ), (1:ℝ)/n < Complex.abs (f i x) :=
+      fun j => by obtain ⟨i, hi, x, hx⟩ := h_fail j; exact ⟨i, hi, x, hx⟩
+    obtain ⟨φ, hφ, x_bad, hx_bad⟩ :=
+      extract_bad_seq_ii E f (fun j => let ⟨i,hi,x,hx⟩ := bad j; ⟨i,hi,x,le_of_lt hx⟩)
+    let default_elem : ∀ i, (E i : Set ℝ) :=
+      fun i => ⟨(hE i).choose, (hE i).choose_mem⟩
+    classical
+    let y : ∀ j, (E j : Set ℝ) := fun j =>
+      if h : ∃ m, φ m = j then
+        (show (E (φ h.choose) : Set ℝ) = E j by rw [h.choose_spec]) ▸ x_bad h.choose
+      else default_elem j
+    have hfy := hf y
+    rw [IsInfinitesimal, Metric.tendsto_atTop] at hfy
+    obtain ⟨N₀, hN₀⟩ := hfy (1/(2*n)) (by positivity)
+    obtain ⟨m, hm⟩ := (hφ.tendsto_atTop).eventually (eventually_ge_atTop N₀) |>.exists
+    have heq := abs_y_eq_abs_x_bad hφ m (default_elem := default_elem)
+    have h1 : Complex.abs (f (φ m) (y (φ m))) < 1/(2*n) := by
+      have := hN₀ (φ m) hm
+      rwa [Real.dist_eq, abs_of_nonneg (Complex.abs.nonneg _), sub_zero] at this
+    linarith [hx_bad m, heq ▸ h1,
+              show (1:ℝ)/(2*n) < 1/n by
+                apply div_lt_div_of_pos_left one_pos (by positivity); linarith]
+  -- Step 2: build strictly increasing thresholds and conclude
+  obtain ⟨φ, hφ, hφ_bd⟩ := build_increasing_thresholds E f scale
+  refine ⟨φ, hφ, fun n => 1/(↑n+1), ?_, Filter.eventually_atTop.mpr ⟨0, fun n _ x => hφ_bd n x⟩⟩
+  rw [IsInfinitesimal]
+  exact (tendsto_const_nhds.div_atTop
+    (Filter.Tendsto.atTop_add tendsto_natCast_atTop_atTop tendsto_const_nhds)).congr
+    (fun n => by ring_nf)
