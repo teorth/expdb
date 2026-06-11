@@ -156,6 +156,13 @@ def EventuallyLeUpToInfinitesimal (X Y : ℕ → ℝ) : Prop :=
 -- Notation shorthand
 notation X " ≤o " Y => EventuallyLeUpToInfinitesimal X Y
 
+/-- X ≍ Y  (X and Y are comparable):
+    defined as  X ≪ Y ≪ X,  i.e. X = O(Y) and Y = O(X). -/
+def IsAsymptoticallyEquiv (X Y : ℕ → ℝ) : Prop :=
+  (∃ C : ℝ, 0 < C ∧ ∀ᶠ i in atTop, |X i| ≤ C * Y i) ∧
+  (∃ C : ℝ, 0 < C ∧ ∀ᶠ i in atTop, |Y i| ≤ C * X i)
+
+notation X " ≍ " Y => IsAsymptoticallyEquiv X Y
 -- ===========================================================
 -- Underspill Principle 
 -- ===========================================================
