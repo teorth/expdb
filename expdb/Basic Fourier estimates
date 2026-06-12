@@ -5,7 +5,7 @@
     Let ξ_1, …, ξ_R be real numbers that are (1/N)-separated. Then for any
     interval I of length T, and any sequence a_1, …, a_R of complex numbers,
     one has
-
+ 
         ∫_I |∑_{r=1}^R a_r e(ξ_r t)|^2 dt = (T + O(N)) ∑_{r=1}^R |a_r|^2.
 
   This file follows the user's handwritten proof, broken into Goals 1–7:
