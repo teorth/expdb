@@ -240,6 +240,7 @@ The new exponent pairs in \Cref{new-exp-pair} may be used to obtain sharper boun
 
 \begin{table}[ht]
 \caption{Current sharpest known bound on $\mu(\sigma)$ for $1/2 \le \sigma \le 1$}
+\label{best-mu-table}
 \centering
 \renewcommand{\arraystretch}{2.2}
 \begin{tabular}{|c|c|c|}
@@ -269,7 +270,7 @@ $\mu(\sigma) \leq \dfrac{29}{130} - \dfrac{3}{13}\sigma$ & $\dfrac{7441}{8695}\l
 \begin{tabular}{@{}c@{}}
 $\mu(\sigma) \leq \lambda\mu_n + (1 - \lambda)\mu_{n + 1}$ \\ $\mu_n = \dfrac{2}{(n - 1)^2(n + 2)}$ \\ $\lambda = (\sigma_{n + 1} - \sigma)/(\sigma_{n + 1} - \sigma_n)$ \end{tabular} & \begin{tabular}{@{}c@{}}$\sigma_n \leq \sigma \leq \sigma_{n + 1}$\\ $\sigma_n = 1 - \dfrac{3 n^2 - 3 n + 2}{n(n - 1)^2(n + 2)},\quad (n \ge 7)$\end{tabular} & \Cref{hb_mu_bounds} \\
 \hline
-\end{tabular}\label{best-mu-table}
+\end{tabular}
 \end{table}
 Derived in \texttt{derived.py} as: \texttt{compute\_best\_mu\_bound()}.
 
