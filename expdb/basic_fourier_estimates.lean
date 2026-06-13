@@ -18,32 +18,6 @@ Proof structure:
   Goal 6: ∫_ℝ F·E ≪ N  (dyadic decomposition)
   Goal 7: Assembly → Lemma 3.1
 -/
-
--- ============================================================
--- التعريفات الأساسية
--- e(θ) = exp(2πiθ)
--- ============================================================
-
-def e (θ : ℝ) : ℂ := Complex.exp (2 * π * Complex.I * θ)
-
-@[simp]
-lemma e_def (θ : ℝ) : e θ = Complex.exp (2 * π * Complex.I * θ) := rfl
-
-lemma norm_e (θ : ℝ) : ‖e θ‖ = 1 := by
-  simp [e_def, Complex.norm_exp_ofReal_mul_I]
-
--- ψ̂(u) = ∫_ℝ ψ(x) e(-xu) dx
-def psiHat (ψ : ℝ → ℝ) (u : ℝ) : ℂ :=
-  ∫ x : ℝ, (ψ x : ℂ) * e (-(x * u))
-
--- F(t) = |∑ aᵣ e(ξᵣ t)|²
-def expSumSq {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ) (t : ℝ) : ℝ :=
-  ‖∑ r, a r * e (ξ r * t)‖ ^ 2
-
--- ξ₁,...,ξᴿ are 1/N-separated: |ξᵣ - ξₛ| ≥ 1/N for r ≠ s
-def Separated (N : ℝ) {R : ℕ} (ξ : Fin R → ℝ) : Prop :=
-  ∀ r s : Fin R, r ≠ s → |ξ r - ξ s| ≥ 1 / N
-
 -- ============================================================
 -- BumpData: ψ smooth, supported on [-1/4,1/4], L²-norm = 1
 -- ψ(t) ≥ 0 (from handwritten proof: "we can choose ψ s.t. ψ(t) ≥ 0")
@@ -67,6 +41,10 @@ lemma hasCompactSupport (B : BumpData) : HasCompactSupport B.ψ :=
       have h := B.supp x hx
       simp only [Set.mem_Icc, abs_le] at h ⊢
       exact ⟨h.1, h.2⟩)
+
+-- ψ̂(u) = ∫_ℝ ψ(x) e(-xu) dx
+def psiHat (ψ : ℝ → ℝ) (u : ℝ) : ℂ :=
+  ∫ x : ℝ, (ψ x : ℂ) * e (-(x * u))
 
 -- ψ is integrable
 lemma integrable (B : BumpData) : Integrable B.ψ :=
