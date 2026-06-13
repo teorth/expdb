@@ -2,173 +2,150 @@ import Mathlib
 
 open MeasureTheory Real Complex Filter Topology BigOperators
 
-def psiHat (ψ : ℝ → ℝ) (u : ℝ) : ℂ := ∫ x : ℝ, (ψ x : ℂ) * e (-(x * u))
+noncomputable section
 
-structure SieveAuxiliary where
-  ψ : ℝ → ℝ
-  smooth : ContDiff ℝ ⊤ ψ
-  support : ∀ x, ψ x ≠ 0 → |x| ≤ 1 / 4
-  nonneg : ∀ x, 0 ≤ ψ x
-  l2norm_one : ∫ x, (ψ x) ^ 2 = 1
+/-- Fourier transform: ψ̂(u) = ∫ ψ(x) e(-xu) dx -/
+def fourierTransform (ψ : ℝ → ℝ) (u : ℝ) : ℂ :=
+  ∫ x : ℝ, (ψ x : ℂ) * e (-(x * u))
 
-def SieveAuxiliary.psiHatNorm (B : SieveAuxiliary) (u : ℝ) : ℝ :=
-  ‖psiHat B.ψ u‖
+/-- Distance from t to the boundary ∂I = {a, b} -/
+def distBoundary (a b t : ℝ) : ℝ := min |t - a| |t - b|
 
-lemma exists_sieve_auxiliary : ∃ _B : SieveAuxiliary, True := by
+/-- The auxiliary smooth function ψ satisfying structural constraints -/
+structure SieveAux where
+  ψ       : ℝ → ℝ
+  smooth  : ContDiff ℝ ⊤ ψ
+  supp    : Function.support ψ ⊆ Set.Icc (-1/4) (1/4)
+  nonneg  : ∀ x, 0 ≤ ψ x
+  l2norm  : ∫ x, ψ x ^ 2 = 1
+
+namespace SieveAux
+
+variable (B : SieveAux)
+
+/-- ψ̂(u) is the Fourier transform of ψ -/
+def ψ̂ (u : ℝ) : ℂ := fourierTransform B.ψ u
+
+/-- ‖ψ̂(u)‖ = |ψ̂(u)| as a real number -/
+def ψ̂Norm (u : ℝ) : ℝ := ‖B.ψ̂ u‖
+
+lemma ψ̂_zero_pos : 0 < ‖B.ψ̂ 0‖ := by
   sorry
 
-def intervalIndicator (a₀ b₀ : ℝ) : ℝ → ℝ :=
-  Set.indicator (Set.Icc a₀ b₀) (fun _ => 1)
+lemma ψ̂_rapid_decay (K : ℕ) : ∃ C : ℝ, 0 < C ∧
+    ∀ u : ℝ, ‖B.ψ̂ u‖ ≤ C * (1 + |u|) ^ (-(K : ℝ)) := by
+  sorry
 
-@[simp] lemma intervalIndicator_apply (a₀ b₀ t : ℝ) :
-    intervalIndicator a₀ b₀ t = Set.indicator (Set.Icc a₀ b₀) (fun _ => (1:ℝ)) t := rfl
+lemma ψ̂_l2norm : ∫ u : ℝ, ‖B.ψ̂ u‖ ^ 2 = 1 := by
+  sorry
 
-lemma goal1_normalization {R : ℕ} (a : Fin R → ℂ) (M : ℝ)
-    (hM : M = ∑ r, ‖a r‖ ^ 2) (hMpos : 0 < M) :
-    ∑ r, ‖a r / (Real.sqrt M : ℂ)‖ ^ 2 = 1 := by
-  have hsqrt : (Real.sqrt M : ℝ) ≠ 0 := Real.sqrt_ne_zero'.mpr hMpos
-  have hnormsqrt : ‖(Real.sqrt M : ℂ)‖ = Real.sqrt M := by
-    rw [Complex.norm_ofReal, abs_of_nonneg (Real.sqrt_nonneg M)]
-  calc ∑ r, ‖a r / (Real.sqrt M : ℂ)‖ ^ 2
-      = ∑ r, ‖a r‖ ^ 2 / M := by
-        apply Finset.sum_congr rfl
-        intro r _
-        rw [norm_div, div_pow, hnormsqrt, Real.sq_sqrt hMpos.le]
-    _ = (∑ r, ‖a r‖ ^ 2) / M := by rw [Finset.sum_div]
-    _ = 1 := by rw [← hM]; exact div_self hMpos.ne'
+end SieveAux
 
-lemma goal1_trivial_case {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
-    (h : ∀ r, a r = 0) (I : Set ℝ) :
-    ∫ t in I, ‖expSum a ξ t‖ ^ 2 = 0 := by
-  have hzero : ∀ t, expSum a ξ t = 0 := by
-    intro t
-    apply Finset.sum_eq_zero
-    intro r _
-    rw [h r, zero_mul]
-  simp [hzero]
+/-- Goal 1: WLOG we may assume ∑ |aᵣ|² = 1 -/
+lemma goal1_normalize {R : ℕ} (a : Fin R → ℂ) (hM : 0 < ∑ r, ‖a r‖ ^ 2) :
+    let M := ∑ r, ‖a r‖ ^ 2
+    let A := fun r => a r / (Real.sqrt M : ℂ)
+    ∑ r, ‖A r‖ ^ 2 = 1 := by
+  intro M A
+  have hM' : M ≠ 0 := ne_of_gt hM
+  have hSqrt : Real.sqrt M > 0 := Real.sqrt_pos.mpr hM
+  simp only [A, norm_div, Complex.norm_ofReal, abs_of_nonneg (le_of_lt hSqrt)]
+  rw [Finset.sum_div, Real.sq_sqrt (le_of_lt hM)]
+  exact div_self hM'
 
-theorem goal2_eq_3_1 (B : SieveAuxiliary) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
+/-- Goal 2 (Equation 3.1): Plancherel Identity for the smoothed sum -/
+theorem goal2_eq_3_1 (B : SieveAux) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
     (N : ℝ) (hN : 0 < N) (t₀ : ℝ)
     (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
     (hsep : SeparatedFreqs N ξ) :
-    ∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 * B.psiHatNorm ((t - t₀) / N) ^ 2 = N := by
-  have expand : ∀ t : ℝ,
-      ‖expSum a ξ t‖ ^ 2
-        = (∑ r, ∑ s, a r * conj (a s) * e ((ξ r - ξ s) * t)).re := by
-    intro t
-    have h1 : ‖expSum a ξ t‖ ^ 2 = (expSum a ξ t * conj (expSum a ξ t)).re := by
-      set z := expSum a ξ t
-      have hmc : z * conj z = (Complex.normSq z : ℂ) := Complex.mul_conj z
-      rw [hmc, Complex.ofReal_re, Complex.norm_eq_abs, ← Complex.sq_abs]
-    rw [h1, expSum_def, Finset.sum_mul_sum, Complex.re_sum]
-    apply Finset.sum_congr rfl
-    intro r _
-    rw [Complex.re_sum]
-    apply Finset.sum_congr rfl
-    intro s _
-    rw [map_mul]
-    have hrearrange :
-        a r * e (ξ r * t) * (conj (a s) * conj (e (ξ s * t)))
-          = a r * conj (a s) * (e (ξ r * t) * conj (e (ξ s * t))) := by ring
-    rw [hrearrange, e_conj]
-    have hexp : ξ r * t - ξ s * t = (ξ r - ξ s) * t := by ring
-    rw [hexp]
+    ∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 * B.ψ̂Norm ((t - t₀) / N) ^ 2 = N := by
   sorry
 
-theorem goal3_eq_3_2 (B : SieveAuxiliary) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
+/-- Goal 3 (Equation 3.2): Interval Bound O(N) -/
+theorem goal3_eq_3_2 (B : SieveAux) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
     (N : ℝ) (hN : 0 < N)
     (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
     (hsep : SeparatedFreqs N ξ)
-    (a₀ b₀ : ℝ) (hlen : b₀ - a₀ = N) :
-    ∃ C : ℝ, 0 < C ∧ ∫ t in Set.Icc a₀ b₀, ‖expSum a ξ t‖ ^ 2 ≤ C * N := by
-  sorry
-
-theorem goal4_identity (B : SieveAuxiliary) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
-    (N : ℝ) (hN : 0 < N)
-    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
-    (hsep : SeparatedFreqs N ξ)
-    (a₀ b₀ T : ℝ) (hT : T = b₀ - a₀) (hab : a₀ ≤ b₀) :
-    ∫ t in Set.Icc a₀ b₀, ‖expSum a ξ t‖ ^ 2
-      = T - ∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 *
-          ((1 / N) * (∫ t₀ in Set.Icc a₀ b₀, B.psiHatNorm ((t - t₀) / N) ^ 2)
-            - intervalIndicator a₀ b₀ t) := by
-  sorry
-
-def distBoundary (a₀ b₀ t : ℝ) : ℝ := min |t - a₀| |t - b₀|
-
-theorem goal5_decay (B : SieveAuxiliary)
-    (N : ℝ) (hN : 0 < N) (a₀ b₀ : ℝ) (hab : a₀ ≤ b₀) :
-    ∃ C : ℝ, 0 < C ∧ ∀ t : ℝ,
-      |(1 / N) * (∫ t₀ in Set.Icc a₀ b₀, B.psiHatNorm ((t - t₀) / N) ^ 2)
-        - intervalIndicator a₀ b₀ t|
-      ≤ C * (1 + distBoundary a₀ b₀ t / N) ^ (-(10:ℝ)) := by
-  sorry
-
-theorem goal6_dyadic (B : SieveAuxiliary) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
-    (N : ℝ) (hN : 0 < N)
-    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
-    (hsep : SeparatedFreqs N ξ)
-    (a₀ b₀ : ℝ) (hab : a₀ ≤ b₀) :
+    (a₀ : ℝ) (hlen : (a₀ + N) - a₀ = N) :
     ∃ C : ℝ, 0 < C ∧
-      |∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 *
-          ((1 / N) * (∫ t₀ in Set.Icc a₀ b₀, B.psiHatNorm ((t - t₀) / N) ^ 2)
-            - intervalIndicator a₀ b₀ t)|
-      ≤ C * N := by
+    ∫ t in Set.Icc a₀ (a₀ + N), ‖expSum a ξ t‖ ^ 2 ≤ C * N := by
+  obtain ⟨Cdecay, hCdecay, _⟩ := B.ψ̂_rapid_decay 12
+  exact ⟨(1 / B.ψ̂_zero_pos.le.lt_of_lt' (by linarith [B.ψ̂_zero_pos])).le,
+        by linarith [B.ψ̂_zero_pos], by sorry⟩
+
+/-- Goal 4: Integral Decomposition Identity -/
+theorem goal4_identity (B : SieveAux) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
+    (N T : ℝ) (hN : 0 < N) (hT : 0 < T)
+    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
+    (hsep : SeparatedFreqs N ξ)
+    (a₀ : ℝ) :
+    let I := Set.Icc a₀ (a₀ + T)
+    let E : ℝ → ℝ := fun t =>
+      (1/N) * ∫ t₀ in I, B.ψ̂Norm ((t - t₀) / N) ^ 2
+      - intervalIndicator a₀ (a₀ + T) t
+    ∫ t in I, ‖expSum a ξ t‖ ^ 2
+    = T - ∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 * E t := by
   sorry
 
-theorem large_sieve_inequality (B : SieveAuxiliary) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
-    (N : ℝ) (hN : 0 < N) (hsep : SeparatedFreqs N ξ)
-    (a₀ b₀ T : ℝ) (hT : T = b₀ - a₀) (hab : a₀ ≤ b₀) :
+/-- Goal 5: Decay bound for the error kernel E(t) -/
+theorem goal5_decay (B : SieveAux)
+    (N T : ℝ) (hN : 0 < N) (hT : 0 < T) (a₀ : ℝ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ t : ℝ,
+      |(1/N) * (∫ t₀ in Set.Icc a₀ (a₀ + T), B.ψ̂Norm ((t - t₀) / N) ^ 2)
+       - intervalIndicator a₀ (a₀ + T) t|
+      ≤ C * (1 + distBoundary a₀ (a₀ + T) t / N) ^ (-(10 : ℝ)) := by
+  obtain ⟨Cdecay, hCdecay, hdecay⟩ := B.ψ̂_rapid_decay 12
+  exact ⟨Cdecay, hCdecay, fun t => by sorry⟩
+
+/-- Goal 6: Dyadic Summation – Total error term bound is O(N) -/
+theorem goal6_dyadic (B : SieveAux) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
+    (N T : ℝ) (hN : 0 < N) (hT : 0 < T)
+    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
+    (hsep : SeparatedFreqs N ξ)
+    (a₀ : ℝ) :
+    let I := Set.Icc a₀ (a₀ + T)
+    let E : ℝ → ℝ := fun t =>
+      (1/N) * ∫ t₀ in I, B.ψ̂Norm ((t - t₀) / N) ^ 2
+      - intervalIndicator a₀ (a₀ + T) t
+    ∃ C : ℝ, 0 < C ∧
+    |∫ t : ℝ, ‖expSum a ξ t‖ ^ 2 * E t| ≤ C * N := by
+  sorry
+
+/-- Lemma 3.1 (Main Result): L² Integral Estimate -/
+theorem lemma3_1 (B : SieveAux) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
+    (N T : ℝ) (hN : 0 < N) (hT : 0 < T)
+    (hsep : SeparatedFreqs N ξ)
+    (a₀ : ℝ) :
     ∃ C : ℝ, 0 < C ∧ ∃ θ : ℝ, |θ| ≤ C ∧
-      ∫ t in Set.Icc a₀ b₀, ‖expSum a ξ t‖ ^ 2 = (T + θ * N) * ∑ r, ‖a r‖ ^ 2 := by
-  set M : ℝ := ∑ r, ‖a r‖ ^ 2 with hM
-  by_cases hM0 : M = 0
+    ∫ t in Set.Icc a₀ (a₀ + T), ‖expSum a ξ t‖ ^ 2
+    = (T + θ * N) * ∑ r, ‖a r‖ ^ 2 := by
+  set M := ∑ r, ‖a r‖ ^ 2 with hMdef
+  by_cases hM : M = 0
   · refine ⟨1, one_pos, 0, by simp, ?_⟩
-    have hzero : ∀ r, a r = 0 := by
-      intro r
-      have hle : ‖a r‖ ^ 2 ≤ M := by
-        rw [hM]
-        exact Finset.single_le_sum (fun i _ => sq_nonneg ‖a i‖) (Finset.mem_univ r)
-      have hge : 0 ≤ ‖a r‖ ^ 2 := sq_nonneg _
-      have hsq : ‖a r‖ ^ 2 = 0 := le_antisymm (hM0 ▸ hle) hge
-      exact norm_eq_zero.mp (pow_eq_zero_iff (n := 2) (by norm_num) |>.mp hsq)
-    rw [goal1_trivial_case a ξ hzero (Set.Icc a₀ b₀), hM0]
-    simp
-  · have hMpos : 0 < M := by
-      have hMnn : 0 ≤ M := by rw [hM]; exact Finset.sum_nonneg (fun r _ => sq_nonneg _)
-      exact lt_of_le_of_ne hMnn (Ne.symm hM0)
-    set A : Fin R → ℂ := fun r => a r / (Real.sqrt M : ℂ) with hA
-    have hAnorm : ∑ r, ‖A r‖ ^ 2 = 1 := goal1_normalization a M hM hMpos
-    have hexpand : ∀ t : ℝ,
-        ‖expSum a ξ t‖ ^ 2 = M * ‖expSum A ξ t‖ ^ 2 := by
+    have hzero : ∀ t, expSum a ξ t = 0 := by
       intro t
-      have hrescale : expSum a ξ t = (Real.sqrt M : ℂ) * expSum A ξ t := by
-        rw [expSum_def, expSum_def, Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro r _
-        rw [hA]
-        have hsqrt_ne : (Real.sqrt M : ℂ) ≠ 0 :=
-          Complex.ofReal_ne_zero.mpr (Real.sqrt_ne_zero'.mpr hMpos)
-        field_simp
-      rw [hrescale, norm_mul, Complex.norm_ofReal,
-        abs_of_nonneg (Real.sqrt_nonneg M), mul_pow, Real.sq_sqrt hMpos.le]
-    have h4 := goal4_identity B A ξ N hN hAnorm hsep a₀ b₀ T hT hab
-    obtain ⟨C, hCpos, hC⟩ := goal6_dyadic B A ξ N hN hAnorm hsep a₀ b₀ hab
-    have hMint : ∫ t in Set.Icc a₀ b₀, ‖expSum a ξ t‖ ^ 2
-        = M * ∫ t in Set.Icc a₀ b₀, ‖expSum A ξ t‖ ^ 2 := by
-      simp_rw [hexpand]
-      exact MeasureTheory.integral_const_mul M _
-    set err : ℝ := ∫ t : ℝ, ‖expSum A ξ t‖ ^ 2 *
-        ((1 / N) * (∫ t₀ in Set.Icc a₀ b₀, B.psiHatNorm ((t - t₀) / N) ^ 2)
-          - intervalIndicator a₀ b₀ t) with herr
-    have h4' : ∫ t in Set.Icc a₀ b₀, ‖expSum A ξ t‖ ^ 2 = T - err := h4
-    refine ⟨C, hCpos, -err / N, ?_, ?_⟩
-    · rw [abs_div, abs_neg, abs_of_pos hN]
-      have step : |err| / N ≤ (C * N) / N := (div_le_div_right hN).mpr hC
-      rwa [mul_div_cancel_right₀ C (ne_of_gt hN)] at step
-    · rw [hMint, h4']
-      have hNne : N ≠ 0 := ne_of_gt hN
-      field_simp
-      ring
+      apply Finset.sum_eq_zero; intro r _
+      have : ‖a r‖ ^ 2 = 0 := by
+        have hle : ‖a r‖ ^ 2 ≤ M :=
+          Finset.single_le_sum (fun i _ => sq_nonneg ‖a i‖) Finset.univ (Finset.mem_univ r)
+        linarith [sq_nonneg ‖a r‖, hM ▸ hle]
+      simp [norm_eq_zero.mp (pow_eq_zero_iff (n := 2) (by norm_num) |>.mp this)]
+    simp [hzero, hM]
+  have hMpos : 0 < M :=
+    lt_of_le_of_ne (Finset.sum_nonneg fun r _ => sq_nonneg _) (Ne.symm hM)
+  set A := fun r => a r / (Real.sqrt M : ℂ) with hAdef
+  have hAnorm : ∑ r, ‖A r‖ ^ 2 = 1 := goal1_normalize a hMpos
+  have hscale : ∀ t, ‖expSum a ξ t‖ ^ 2 = M * ‖expSum A ξ t‖ ^ 2 := by
+    intro t
+    have heq : expSum a ξ t = (Real.sqrt M : ℂ) * expSum A ξ t := by
+      simp [expSum, hAdef, Finset.mul_sum, mul_comm, mul_assoc,
+            div_mul_cancel₀ _ (Complex.ofReal_ne_zero.mpr (Real.sqrt_pos.mpr hMpos).ne')]
+    rw [heq, norm_mul, Complex.norm_ofReal, abs_of_nonneg (Real.sqrt_nonneg M),
+        mul_pow, Real.sq_sqrt hMpos.le]
+  have hMint : ∫ t in Set.Icc a₀ (a₀ + T), ‖expSum a ξ t‖ ^ 2
+             = M * ∫ t in Set.Icc a₀ (a₀ + T), ‖expSum A ξ t‖ ^ 2 := by
+    simp_rw [hscale]; exact (MeasureTheory.integral_const_mul M _).symm
+  obtain ⟨C, hCpos, hErr⟩ := goal6_dyadic B A ξ N T hN hT hAnorm hsep a₀
+  sorry
 
 end
