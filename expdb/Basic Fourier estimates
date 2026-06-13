@@ -1,4 +1,15 @@
- /-
+  ===============================================
+-/
+
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import Mathlib.Topology.Algebra.Order.LiminfLimsup
+import Mathlib.Analysis.Normed.Field.Basic
+import Mathlib.Analysis.Asymptotics.Asymptotics
+import Mathlib.Data.EReal.Basic
+import Mathlib.Order.Filter.Basic
+import Mathlib.Topology.MetricSpace.Sequences
+
+open Filter Topology Asymptotics Real                                                                                                              /-
   Lemma 3.1 (L² integral estimate), ANTEDB Blueprint, Chapter 3.
 
   Statement (blueprint):
