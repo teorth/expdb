@@ -312,14 +312,17 @@ theorem goal2 (B : BumpData) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
             linarith
       -- Connect hconv to the original integral via Fourier analysis
       simp [hconv]
-    · sorry  -- integrability
+    · exact (integrable_const 1).mono (ae_of_all _ (fun t => by simp [expSumSq]; positivity))
   · exact integrable_const
-  · sorry   -- integrability of off-diagonal term
+  · apply integrable_finset_sum; intro r _
+    apply integrable_finset_sum; intro s _
+    apply Integrable.re
+    apply Integrable.const_mul
+    exact (integrable_const 1).mono (ae_of_all _ (fun t => by simp [norm_e]; positivity))
 
 -- ============================================================
 -- GOAL 3: ∫_J |∑ aᵣ e(ξᵣ t)|² dt ≪ N for |J| = N  [eq (3.2)]
 --
--- From handwritten proof:
 --   Step 2: |ψ̂((t-t₀)/N)|² ≥ c·1_{[-δ/2,δ/2]}((t-t₀)/N)
 --   Step 3: N ≥ c · ∫_{J_{t₀}} F dt → ∫_J F ≪ N/c ≪ N
 -- ============================================================
@@ -435,14 +438,13 @@ theorem goal4 (B : BumpData) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
     · rw [integral_const_mul, mul_comm N, hFubini]
       rw [integral_indicator measurableSet_Icc]
       simp; ring
-    · exact (integrable_const_mul _ (by sorry)).mul_right _
+    · exact (integrable_const _).mul_right _
     · exact (integrable_indicator measurableSet_Icc).mul_left _
   exact hrearrange
 
 -- ============================================================
 -- GOAL 5: E(t) ≪ (1 + dist(t,∂I)/N)^{-10}
 --
--- From handwritten proof:
 --   Step 1: ψ̂ rapidly decaying (IBP)
 --   Step 2: 1/N ∫_I |ψ̂((t-t₀)/N)|² dt₀ = ∫_{I_t} |ψ̂(u)|² du
 --           where I_t = [(t-b₀)/N, (t-a₀)/N]
@@ -458,6 +460,14 @@ theorem goal5 (B : BumpData) (N : ℝ) (hN : 0 < N)
   obtain ⟨C_d, hC_d, hdecay⟩ := psiHat_decay B 12
   refine ⟨C_d ^ 2 * 8, by positivity, ?_⟩
   intro t
+have hint : Integrable (fun u => ‖psiHat B.ψ u‖ ^ 2) := by
+    apply Integrable.mono (f := fun u => C_d * (1 + |u|)^(-(12:ℝ)))
+    · apply Integrable.const_mul
+      exact integrable_rpow_neg (by norm_num)
+    · apply ae_of_all; intro u
+      exact hdecay u
+  have hint2 : Integrable (fun u => (1 + |u|)^(-(12:ℝ))) := by
+    apply integrable_rpow_neg_abs (by norm_num : (1:ℝ) < 12)
   -- Step 2: Substitution u = (t-t₀)/N
   -- 1/N ∫_I |ψ̂((t-t₀)/N)|² dt₀ = ∫_{I_t} |ψ̂(u)|² du
   have hsubst : (1 / N) * ∫ t₀ in Set.Icc a₀ b₀,
@@ -476,8 +486,8 @@ theorem goal5 (B : BumpData) (N : ℝ) (hN : 0 < N)
     calc ∫ u in {u | d ≤ |u|}, ‖psiHat B.ψ u‖ ^ 2
         ≤ C_d ^ 2 * ∫ u in {u | d ≤ |u|}, (1 + |u|) ^ (-(12 : ℝ)) := by
           apply set_integral_mono_ae
-          · sorry
-          · exact (Integrable.const_mul (by sorry) _)
+          · exact hint
+          · exact (Integrable.const_mul hint2_)
           · apply ae_of_all; intro u
             have := hdecay u
             nlinarith [norm_nonneg (psiHat B.ψ u), sq_nonneg (‖psiHat B.ψ u‖)]
@@ -679,8 +689,20 @@ theorem goal6 (B : BumpData) {R : ℕ} (a : Fin R → ℂ) (ξ : Fin R → ℝ)
             apply Finset.sum_le_sum; intro ℓ _
             apply Finset.sum_le_sum_of_subset; simp
           }
-      _ = 2 * (C₃ * C₅ * N) * ∑ ℓ in Finset.range (L + 1), (2:ℝ)^(-(9:ℝ)*ℓ) := by
-          simp; ring_nf; sorry
+      _ = 2 * (C₃ * C₅ * N) * ∑ ℓ in Finset.range (L + 1), (2:ℝ)^(-(9:ℝ)*ℓ)  := by
+  have hstep : ∀ ℓ : ℕ, (2^(ℓ+1) : ℝ) * (C₃ * N) * (C₅ * (2^ℓ)^(-(10:ℝ))) = 
+      2 * (C₃ * C₅ * N) * (2^(-(9:ℝ)))^ℓ := by
+    intro ℓ
+    have h1 : (2 : ℝ)^(ℓ+1) = 2 * 2^ℓ := by ring
+    have h2 : ((2:ℝ)^ℓ)^(-(10:ℝ)) = ((2:ℝ)^(-(9:ℝ)))^ℓ / (2:ℝ)^ℓ := by
+      rw [← Real.rpow_natCast 2 ℓ]
+      rw [← Real.rpow_mul (by norm_num)]
+      rw [← Real.rpow_natCast 2 ℓ]
+      simp [Real.rpow_neg, mul_comm]
+    rw [h1, h2]
+    ring
+  simp_rw [hstep]
+  rw [← Finset.mul_sum]
       -- Geometric series: ∑_{ℓ=0}^{L} 2^{-9ℓ} ≤ 1/(1-2^{-9})
       _ ≤ 2 * (C₃ * C₅ * N) * (1 / (1 - (2:ℝ)^(-(9:ℝ)))) := by
           apply mul_le_mul_of_nonneg_left _ (by positivity)
