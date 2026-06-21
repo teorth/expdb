@@ -543,11 +543,12 @@ def ivic_ep_to_zd(exp_pairs, m=2):
 
     # Search only among the vertices of H
     dep = None
-    sigma0 = 1
+    sigma0 = frac(1)
     for eph in exp_pairs:
         (k, l) = eph.data.k, eph.data.l
-        v = (3 * m * m * (1 + 2 * k + 2 * l) - (4 * k + 2 * l) * m + 2 * k + 2 * l) / (
-            4 * m * m * (1 + 2 * k + 2 * l) - (6 * k + 4 * l) * m + 2 * k + 2 * l
+        v = frac(
+            3 * m * m * (1 + 2 * k + 2 * l) - (4 * k + 2 * l) * m + 2 * k + 2 * l,
+            4 * m * m * (1 + 2 * k + 2 * l) - (6 * k + 4 * l) * m + 2 * k + 2 * l,
         )
         if v < sigma0:
             sigma0 = v
@@ -556,7 +557,26 @@ def ivic_ep_to_zd(exp_pairs, m=2):
     sigma0 = max(sigma0, frac(9 * m * m - 4 * m + 2, 12 * m * m - 6 * m + 2))
     sigma0 = min(sigma0, frac(6 * m * m - 5 * m + 2, 8 * m * m - 7 * m + 2))
 
-    zde = Zero_Density_Estimate(f"{3*m}/({3*m-2}x + {2-m})", Interval(sigma0, 1))
+    # Build the denominator string "(3m-2)*x + (2-m)", omitting a zero constant
+    # term and always using an explicit '*' so the expression parses (e.g. m=2
+    # previously produced "4x + 0", which sympy cannot parse).
+    a = 3 * m - 2          # coefficient of x
+    b = 2 - m              # constant term
+    if b == 0:
+        denom = f"{a}*x"
+    elif b > 0:
+        denom = f"{a}*x + {b}"
+    else:
+        denom = f"{a}*x - {-b}"
+    zde = Zero_Density_Estimate(f"{3*m}/({denom})", Interval(sigma0, 1))
+
+    # If no exponent pair improved on the trivial sigma0=1 (dep stays None),
+    # there is no nontrivial dependency to attach; mark the estimate as derived
+    # without a specific parent rather than dereferencing None.
+    if dep is None:
+        return derived_zero_density_estimate(
+            zde, "Ivic exponent-pair zero-density estimate (no improving pair found)", set()
+        )
     return derived_zero_density_estimate(
         zde, f"Follows from {dep.data}", {dep}
     )
@@ -823,6 +843,21 @@ def bourgain_ep_to_zd(hypotheses=None, exp_pairs=None):
 def ep_to_zd(hypotheses):
 
     # TODO: this routine is used quite often, should we roll it into a separate method?
+
+    # Seed the set with literature exponent-pair / beta-bound hypotheses if the
+    # caller has not already done so; otherwise beta_bounds_to_exponent_pairs
+    # below returns an empty hull (the original code silently produced no
+    # estimates when `hypotheses` contained only zero-density estimates).
+    try:
+        import literature as _lit
+        for _ht in ("Exponent pair", "Exponent pair bound", "Beta bound",
+                    "Upper bound on beta"):
+            existing = hypotheses.list_hypotheses(hypothesis_type=_ht)
+            if not existing:
+                hypotheses.add_hypotheses(_lit.literature.list_hypotheses(hypothesis_type=_ht))
+    except Exception:
+        pass
+
     hypotheses.add_hypotheses(
         ep.compute_exp_pairs(hypotheses, search_depth=5, prune=True)
     )
@@ -830,7 +865,22 @@ def ep_to_zd(hypotheses):
     hypotheses.add_hypotheses(ep.compute_best_beta_bounds(hypotheses))
     ephs = ep.beta_bounds_to_exponent_pairs(hypotheses)
 
-    return bourgain_ep_to_zd(ephs) + [ivic_ep_to_zd(ephs, m=2)]
+    # bourgain_ep_to_zd's dynamic path expects a Hypothesis_Set (it calls
+    # .add_hypotheses); passing the list `ephs` as the first positional arg
+    # raised AttributeError. Route the explicit pairs through the legacy
+    # `exp_pairs=` parameter instead, which takes (k, l) tuples.
+    pairs = []
+    seen = set()
+    for h in ephs:
+        try:
+            kl = (h.data.k, h.data.l)
+        except AttributeError:
+            continue
+        if kl not in seen:
+            seen.add(kl)
+            pairs.append(kl)
+
+    return bourgain_ep_to_zd(exp_pairs=pairs) + [ivic_ep_to_zd(ephs, m=2)]
 
 # Given a list of tuples (RationalFunction, interval),
 # returns a simplified list of tuples representing the same piecewise defined
