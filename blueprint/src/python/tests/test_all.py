@@ -14,4 +14,7 @@ print("All Polytope test cases passed.")
 import test_region
 print("All Region test cases passed.")
 
+import test_ep_to_zd
+print("All ep_to_zd regression test cases passed.")
+
 print("All test cases passed.")
