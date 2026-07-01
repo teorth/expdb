@@ -49,7 +49,7 @@ class Zero_Density_Energy_Estimate:
         """
         Returns a string representation of the zero density energy estimate.
         """
-        return f"A*(x) \leq {self.expr} on {self.interval}"
+        return f"A*(x) \\leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         """
@@ -220,7 +220,7 @@ def add_trivial_zero_density_energy_estimates(hypotheses: Hypothesis_Set):
     estimates from a set of hypothesis, and add them to the hypothesis set.
 
     For example, one has the trivial zero density energy estimate 
-    A^*(\\sigma) \leq 3A(\\sigma)
+    A^*(\\sigma) \\leq 3A(\\sigma)
     where A(\\sigma) is a zero density estimate. 
 
     Parameters
