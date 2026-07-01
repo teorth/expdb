@@ -766,7 +766,7 @@ def add_jutila_large_values_estimate(K):
 # Given in Table 7.1 of the LaTeX blueprint
 def add_bourgain_large_values_estimate():
     polys = [
-        # For now - assume that we can't say anthing about LV estimates
+        # For now - assume that we can't say anything about LV estimates
         # for tau <= 1
         Polytope.rect(
             (frac(1,2), frac(1)),                       # 1/2 <= σ <= 1

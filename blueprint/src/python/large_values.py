@@ -83,7 +83,7 @@ def convert_bounds(bounds: list) -> Large_Value_Estimate:
     Returns
     -------
     Large_Value_Estimate
-        The correponding Large_Value_Estimate object
+        The corresponding Large_Value_Estimate object
     """
 
     # The default domain of definition in (sigma, tau, rho) space

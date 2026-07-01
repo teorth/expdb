@@ -476,7 +476,7 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
     Parameters
     ----------
     LVER : Hypothesis
-        A regoin that contains the large value energy region, i.e. a region that
+        A region that contains the large value energy region, i.e. a region that
         contains the set of feasible tuples (sigma, tau, rho, rho*, s).
     LVER_zeta : Hypothesis
         A region that contains the zeta large value energy region.

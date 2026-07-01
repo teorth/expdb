@@ -155,7 +155,7 @@ def run_emptiness_tests():
     assert not p8.is_empty(include_boundary=True)
     assert p8.is_empty(include_boundary=False)
 
-    # Region reprsenting a 2-d line
+    # Region representing a 2-d line
     p9 = Polytope([
         [12, -12, -1],
         [frac(15,2), -frac(21,2), frac(1,2)],

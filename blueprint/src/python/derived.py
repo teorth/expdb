@@ -574,7 +574,7 @@ def prove_zero_density(
     Prove a zero density estimate for zeta given a set of hypotheses, a range of
     values of sigma, and a choice of tau0.
 
-    Paramters
+    Parameters
     ---------
     additional_hypotheses : list of Hypothesis
         The list of hypothesis from the literature to assume (other than classical
