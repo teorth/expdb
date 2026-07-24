@@ -748,7 +748,7 @@ class RationalFunction:
     # from highest degree to lowest degree) for both the numerator and denominator
     def __init__(self, num_coeffs, den_coeffs=None):
 
-        if den_coeffs == None:
+        if den_coeffs is None:
             den_coeffs = [1]
 
         num = 0
