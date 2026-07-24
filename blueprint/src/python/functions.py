@@ -941,8 +941,8 @@ class RationalFunction:
     def div(self, other):
         r = RationalFunction([])
         if isinstance(other, numbers.Number):
-            r.num = self.num * other
-            r.den = self.den
+            r.num = self.num
+            r.den = self.den * other
             return r
         if isinstance(other, RationalFunction):
             r.num = self.num * other.den

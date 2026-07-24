@@ -266,7 +266,7 @@ class Region:
             ps = [c.project(dims) for c in self.child]
             ps = [p for p in ps if p is not None]
             if len(ps) == 0: return None
-            if len(ps) == 1: return ps[1]
+            if len(ps) == 1: return ps[0]
             return Region(Region_Type.INTERSECT, ps)
 
         # In particular, complements are not yet supported.
