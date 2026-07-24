@@ -1,5 +1,7 @@
 # Update Mathlib and the Lean toolchain.
 
+set -euo pipefail # stop if any command fails
+
 # Download the latest lean-toolchain file from the Mathlib4 repository
 curl -L https://raw.githubusercontent.com/leanprover-community/mathlib4/master/lean-toolchain -o lean-toolchain
 
