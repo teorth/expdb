@@ -911,7 +911,7 @@ class RationalFunction:
             r.num = self.num * other.den + self.den * other.num
             r.den = self.den * other.den
             return r
-        return NotImplementedError()
+        raise NotImplementedError()
 
     def subtract(self, other):
         r = RationalFunction([])
