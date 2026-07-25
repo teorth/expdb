@@ -1,7 +1,9 @@
-import Expdb.Basic.Definitions
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Order.Filter.Basic
-import Mathlib.Topology.MetricSpace.Sequences
+module
+
+public import Expdb.Basic.Definitions
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Order.Filter.Basic
+public import Mathlib.Topology.MetricSpace.Sequences
 
 /-!
 # Project-specific asymptotic notation
@@ -10,13 +12,14 @@ This module formalizes the infinitesimal comparison relation and underspill prin
 Chapter 2 of the ANTEDB blueprint. The notation `X ≤o Y` is available after
 `open scoped Expdb`.
 
-The blueprint also uses non-standard objects indexed by some ambient
-parameter. Their asymptotic properties can be expressed using Mathlib's filter API:
--a bounded variable `X` satisfies
+The blueprint also uses non-standard objects indexed by an ambient natural-number parameter.
+These are represented by `Variable`. Their asymptotic properties can be expressed using Mathlib's
+filter API:
+- a bounded variable `X` satisfies
  `∃ C : ℝ, ∀ᶠ i in atTop, ‖X i‖ ≤ C`;
--an unbounded variable `X` satisfies
+- an unbounded variable `X` satisfies
  `Tendsto (fun i => ‖X i‖) atTop atTop`;
--an infinitesimal variable `X` satisfies
+- an infinitesimal variable `X` satisfies
  `Tendsto X atTop (nhds 0)`.
 
 If these conditions recur sufficiently often in later chapters, they may be given the
@@ -24,9 +27,27 @@ project-specific names `IsBoundedVariable`, `IsUnboundedVariable`, and
 `IsInfinitesimalVariable`.
 -/
 
+@[expose] public section
+
 open Filter Topology
 
 namespace Expdb
+
+universe u
+
+/-- A variable object is a family indexed by the ambient natural-number parameter. -/
+abbrev Variable (α : Type u) := ℕ → α
+
+namespace Variable
+
+/-- Regard a fixed object as a constant variable object. -/
+def constant {α : Type u} (x : α) : Variable α := fun _ ↦ x
+
+/-- A constant variable object has the same value at every ambient index. -/
+@[simp]
+theorem constant_apply {α : Type u} (x : α) (i : ℕ) : constant x i = x := rfl
+
+end Variable
 
 /-- The one-sided asymptotic relation `X ≤ Y + o(1)` from the blueprint.
 
@@ -36,8 +57,8 @@ It holds when there is a real error sequence tending to zero such that
 
 This does not assert that `X - Y` tends to zero; it only requires the positive part of `X - Y`
 to tend to zero. -/
-def IsLEUpToInfinitesimal (X Y : ℕ → ℝ) : Prop :=
-  ∃ err : ℕ → ℝ, Tendsto err atTop (nhds 0) ∧
+def IsLEUpToInfinitesimal (X Y : Variable ℝ) : Prop :=
+  ∃ err : Variable ℝ, Tendsto err atTop (nhds 0) ∧
     ∀ᶠ i in atTop, X i ≤ Y i + err i
 
 /-- `X ≤o Y` denotes the complete blueprint expression `X ≤ Y + o(1)`; it is not the
@@ -48,7 +69,7 @@ open scoped Expdb
 
 /-- The relation `X ≤ Y + o(1)` is equivalent to `X i ≤ Y i + δ` eventually for every fixed
 positive `δ`. -/
-theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : ℕ → ℝ) :
+theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : Variable ℝ) :
     (X ≤o Y) ↔
     ∀ δ : ℝ, 0 < δ → ∀ᶠ i in atTop, X i ≤ Y i + δ := by
   constructor
@@ -72,7 +93,7 @@ theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : ℕ → ℝ) :
 
 /-- **Underspill principle.** The relation `X ≤ Y + o(1)` holds if and only if
 `X ≤ Y + ε + o(1)` for every fixed `ε > 0`. -/
-theorem underspill (X Y : ℕ → ℝ) :
+theorem underspill (X Y : Variable ℝ) :
     (X ≤o Y) ↔
     (∀ ε : ℝ, ε > 0 → X ≤o (fun i => Y i + ε)) := by
   constructor

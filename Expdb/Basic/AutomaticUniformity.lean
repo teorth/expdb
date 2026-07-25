@@ -1,5 +1,6 @@
-import Expdb.Basic.Asymptotics
-import Mathlib.Analysis.Complex.Norm
+module
+
+public import Expdb.Basic.Asymptotics
 
 /-!
 # Automatic uniformity
@@ -8,9 +9,13 @@ This module formalizes Proposition 2.1 of the ANTEDB blueprint: pointwise bounde
 infinitesimality along every variable sequence can be made uniform after passing to a subsequence.
 -/
 
+@[expose] public section
+
 open Filter Topology
 
 namespace Expdb
+
+variable {α : Type*} [SeminormedAddCommGroup α]
 
 /-! ### Auxiliary lemmas for subsequence extraction -/
 
@@ -30,7 +35,7 @@ private lemma extract_strictMono_subseq {P : ℕ → Prop}
 /-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
     with |f(φ n)(x n)| > n.  Used in the proof of Proposition 2.1(i). -/
 private lemma extract_bad_seq_i
-    (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ)
+    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j : ℝ) < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ x : ∀ n, E (φ n), ∀ n, n < ‖f (φ n) (x n)‖ := by
@@ -51,7 +56,7 @@ private lemma extract_bad_seq_i
 /-- For a fixed threshold ε, extract a strictly increasing φ and bad elements
     x(n) ∈ E(φ n) with |f(φ n)(x n)| > ε. Used in Proposition 2.1(ii). -/
 private lemma extract_bad_seq_ii
-    (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ)
+    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
     {ε : ℝ}
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, ε < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -64,7 +69,7 @@ private lemma extract_bad_seq_ii
 /-- Build a strictly increasing threshold sequence φ such that
     |f(φ n)(x)| ≤ 1/(n+1) for all x ∈ E(φ n). -/
 private lemma build_increasing_thresholds
-    (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ)
+    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
     (scale : ∀ n : ℕ, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : E i,
              ‖f i x‖ ≤ 1/n) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -86,19 +91,19 @@ private lemma build_increasing_thresholds
 
 /-- A dependent family is pointwise `O(1)` when its values along every variable sequence are
 eventually bounded. -/
-def IsPointwiseBounded (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ) : Prop :=
+def IsPointwiseBounded (E : Variable (Set ℝ)) (f : ∀ i, E i → α) : Prop :=
   ∀ x : ∀ i, E i, ∃ C : ℝ, ∀ᶠ i in atTop, ‖f i (x i)‖ ≤ C
 
 /-- A dependent family is pointwise `o(1)` when its norms along every variable sequence tend
 to zero. -/
-def IsPointwiseInfinitesimal (E : ℕ → Set ℝ) (f : ∀ i, E i → ℂ) : Prop :=
+def IsPointwiseInfinitesimal (E : Variable (Set ℝ)) (f : ∀ i, E i → α) : Prop :=
   ∀ x : ∀ i, E i, Tendsto (fun i => ‖f i (x i)‖) atTop (nhds 0)
 
 /-! ### Proposition 2.1: automatic uniformity -/
 
 open Classical in
 private noncomputable def extend_subsequence
-    (E : ℕ → Set ℝ) (hE : ∀ i, (E i).Nonempty)
+    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (φ : ℕ → ℕ) (x : ∀ n, E (φ n)) : ∀ j, E j :=
   fun j =>
     if h : ∃ n, φ n = j then
@@ -106,8 +111,8 @@ private noncomputable def extend_subsequence
     else ⟨(hE j).choose, (hE j).choose_spec⟩
 
 private lemma norm_extend_subsequence_apply
-    {E : ℕ → Set ℝ} (hE : ∀ i, (E i).Nonempty)
-    {f : ∀ i, E i → ℂ} {φ : ℕ → ℕ} (hφ : StrictMono φ)
+    {E : Variable (Set ℝ)} (hE : ∀ i, (E i).Nonempty)
+    {f : ∀ i, E i → α} {φ : ℕ → ℕ} (hφ : StrictMono φ)
     (x : ∀ n, E (φ n)) (m : ℕ) :
     ‖f (φ m) (extend_subsequence E hE φ x (φ m))‖ = ‖f (φ m) (x m)‖ := by
   classical
@@ -125,8 +130,8 @@ private lemma norm_extend_subsequence_apply
     If f(x) = O(1) for every variable x ∈ E, then after passing to a
     subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_bounded
-    (E : ℕ → Set ℝ) (hE : ∀ i, (E i).Nonempty)
-    (f : ∀ i, E i → ℂ)
+    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : ∀ i, E i → α)
     (hf : IsPointwiseBounded E f) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ C : ℝ, ∀ i, ∀ x : E (φ i),
@@ -171,8 +176,8 @@ theorem automatic_uniformity_of_pointwise_bounded
     If f(x) = o(1) for every variable x ∈ E, then after passing to a
     subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_infinitesimal
-    (E : ℕ → Set ℝ) (hE : ∀ i, (E i).Nonempty)
-    (f : ∀ i, E i → ℂ)
+    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : ∀ i, E i → α)
     (hf : IsPointwiseInfinitesimal E f) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ c : ℕ → ℝ, Tendsto c atTop (nhds 0) ∧

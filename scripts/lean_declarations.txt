@@ -3,6 +3,9 @@ Expdb.IsSeparated
 Expdb.IsOneSeparated
 Expdb.IsBoundedFamily
 Expdb.IsOneBounded
+Expdb.Variable
+Expdb.Variable.constant
+Expdb.Variable.constant_apply
 Expdb.IsLEUpToInfinitesimal
 Expdb.isLEUpToInfinitesimal_iff_forall_pos
 Expdb.underspill
@@ -10,5 +13,9 @@ Expdb.IsPointwiseBounded
 Expdb.IsPointwiseInfinitesimal
 Expdb.automatic_uniformity_of_pointwise_bounded
 Expdb.automatic_uniformity_of_pointwise_infinitesimal
+Expdb.phaseInterval
+Expdb.IsPhaseFunction
+Expdb.modelPhaseError
+Expdb.IsModelPhaseFunction
 Expdb.l2_integral_estimate
 Expdb.l2_integral_estimate_error
