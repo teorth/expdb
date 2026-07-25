@@ -13,9 +13,8 @@ Chapter 2 of the ANTEDB blueprint. The notation `X ≤o Y` is available after
 `open scoped Expdb`.
 
 The blueprint also uses non-standard objects indexed by an ambient natural-number parameter.
-These are represented by `VariableObject`. Some of their asymptotic properties are encoded as:
-`VariableObject.IsBounded`, `VariableObject.IsUnbounded`,
-and `VariableObject.IsInfinitesimal`.
+These are represented by `VariableObject`. Their asymptotic properties are encoded in the
+`VariableObject` namespace.
 
 Variable functions whose domain type may depend on the ambient parameter are represented by
 `VariableFunction`. Their pointwise asymptotic properties are encoded in the
