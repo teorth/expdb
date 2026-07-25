@@ -40,11 +40,7 @@ abbrev VariableFunction (domain : VariableObject (Type u)) (codomain : Type v) :
 namespace VariableObject
 
 /-- Regard a fixed object as a variable object. -/
-def fixed {α : Type u} (x : α) : VariableObject α := fun _ ↦ x
-
-/-- A fixed object has the same value at every ambient index. -/
-@[simp]
-theorem fixed_apply {α : Type u} (x : α) (i : ℕ) : fixed x i = x := rfl
+abbrev fixed {α : Type u} (x : α) : VariableObject α := fun _ ↦ x
 
 variable {α : Type u} [SeminormedAddCommGroup α]
 
@@ -55,6 +51,12 @@ def IsBounded (X : VariableObject α) : Prop :=
 /-- A variable object is unbounded when its norm tends to infinity. -/
 def IsUnbounded (X : VariableObject α) : Prop :=
   Tendsto (fun i ↦ ‖X i‖) atTop atTop
+
+/-- A variable object is unbounded if and only if its norm eventually exceeds every fixed
+threshold. -/
+theorem isUnbounded_iff_forall_eventually_norm_ge (X : VariableObject α) :
+    X.IsUnbounded ↔ ∀ C : ℝ, ∀ᶠ i in atTop, C ≤ ‖X i‖ := by
+  rw [IsUnbounded, tendsto_atTop]
 
 /-- A variable object is infinitesimal when its norm tends to zero. -/
 def IsInfinitesimal (X : VariableObject α) : Prop :=

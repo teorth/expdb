@@ -120,7 +120,7 @@ private lemma norm_extend_subsequence_apply
 theorem automatic_uniformity_of_pointwise_bounded
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
-    (hf : VariableFunction.IsPointwiseBounded f) :
+    (hf : f.IsPointwiseBounded) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ C : ℝ, ∀ i, ∀ x : E (φ i),
     ‖f (φ i) x‖ ≤ C := by
@@ -166,7 +166,7 @@ theorem automatic_uniformity_of_pointwise_bounded
 theorem automatic_uniformity_of_pointwise_infinitesimal
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
-    (hf : VariableFunction.IsPointwiseInfinitesimal f) :
+    (hf : f.IsPointwiseInfinitesimal) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ c : ℕ → ℝ, Tendsto c atTop (nhds 0) ∧
     ∀ i, ∀ x : E (φ i),

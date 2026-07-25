@@ -5,9 +5,9 @@ Expdb.IsBoundedFamily
 Expdb.IsOneBounded
 Expdb.VariableObject
 Expdb.VariableObject.fixed
-Expdb.VariableObject.fixed_apply
 Expdb.VariableObject.IsBounded
 Expdb.VariableObject.IsUnbounded
+Expdb.VariableObject.isUnbounded_iff_forall_eventually_norm_ge
 Expdb.VariableObject.IsInfinitesimal
 Expdb.VariableFunction
 Expdb.VariableFunction.IsPointwiseBounded
