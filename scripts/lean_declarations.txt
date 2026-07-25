@@ -21,5 +21,6 @@ Expdb.phaseInterval
 Expdb.IsPhaseFunction
 Expdb.modelPhaseError
 Expdb.IsModelPhaseFunction
+Expdb.IsModelPhaseFunction.exists_subsequence_uniform_error
 Expdb.l2_integral_estimate
 Expdb.l2_integral_estimate_error
