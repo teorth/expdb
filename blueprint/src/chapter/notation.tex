@@ -38,13 +38,16 @@ We can develop other standard asymptotic notation in the natural fashion: given 
 
 A convenient property of this asymptotic formalism, analogous to the property of \emph{$\omega$-saturation} in nonstandard analysis, is that certain asymptotic bounds are automatically uniform in variable parameters.
 
-\begin{proposition}[Automatic uniformity]\label{auto}  Let $E = E_{\ii}$ be a non-empty variable set, and let $f = f_{\ii}: E \to \C$ be a variable function.  \begin{itemize}
+\begin{proposition}[Automatic uniformity]\label{auto}
+\lean{Expdb.automatic_uniformity_of_pointwise_bounded, Expdb.automatic_uniformity_of_pointwise_infinitesimal}
+\leanok
+Let $E = E_{\ii}$ be a non-empty variable set, and let $f = f_{\ii}: E \to \C$ be a variable function.  \begin{itemize}
     \item[(i)] Suppose that $f(x)=O(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists a fixed $C$ such that $|f(x)| \leq C$ for all $x \in E$.
     \item[(ii)] Suppose that $f(x)=o(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists an infinitesimal $c$ such that $|f(x)| \leq c$ for all $x \in E$.
 \end{itemize}
 \end{proposition}
 
-\begin{proof} We begin with (i).  Suppose that there is no uniform bound.  Then for any fixed natural number $n$, one can find arbitrarily large $\ii_n$ in the sequence and $x_{\ii_n} \in E_{\ii_n}$ such that $|f_{\ii_n}(x_{\ii_n})| \geq n$.  Clearly one can arrange matters so that the sequence $\ii_n$ is increasing.  If one then restricts to this sequence and sets $x$ to be the variable element $x_{\ii_n}$ of $E$, then $f(x)$ is unbounded, a contradiction.
+\begin{proof}\leanok We begin with (i).  Suppose that there is no uniform bound.  Then for any fixed natural number $n$, one can find arbitrarily large $\ii_n$ in the sequence and $x_{\ii_n} \in E_{\ii_n}$ such that $|f_{\ii_n}(x_{\ii_n})| \geq n$.  Clearly one can arrange matters so that the sequence $\ii_n$ is increasing.  If one then restricts to this sequence and sets $x$ to be the variable element $x_{\ii_n}$ of $E$, then $f(x)$ is unbounded, a contradiction.
 
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ in the ambient sequence such that $|f_{\ii}(x_{\ii})| \leq 1/n$ for all $\ii \geq \ii_n$ and $x_{\ii} \in E_{\ii}$, since if this were not the case one can construct an $x = x_{\ii} \in E$ such that $|f_{\ii}(x_{\ii})| \geq 1/n$ for $\ii$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\ii_n$ to be increasing.  Restricting to this sequence, and writing $c_{\ii_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
