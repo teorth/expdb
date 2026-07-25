@@ -1,6 +1,6 @@
 module
 
-public import Expdb.Basic.AutomaticUniformity
+public import Expdb.Basic.Asymptotics
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -26,23 +26,23 @@ def phaseInterval : Set ℝ := Set.Icc 1 2
 
 /-- A phase function is a variable real-valued function that is smooth on `[1, 2]` at every
 ambient index. -/
-def IsPhaseFunction (F : Variable (ℝ → ℝ)) : Prop :=
+def IsPhaseFunction (F : VariableFunction (fun _ ↦ ℝ) ℝ) : Prop :=
   ∀ i : ℕ, ContDiffOn ℝ ∞ (F i) phaseInterval
 
 /-- The error in the model phase condition at derivative order `p`, family index `i`, and
 point `u`. -/
 def modelPhaseError
-    (F : Variable (ℝ → ℝ)) (σ : ℝ) (p i : ℕ) (u : phaseInterval) : ℝ :=
+    (F : VariableFunction (fun _ ↦ ℝ) ℝ)
+    (σ : ℝ) (p i : ℕ) (u : phaseInterval) : ℝ :=
   iteratedDerivWithin (p + 1) (F i) phaseInterval u -
     iteratedDerivWithin p (fun v : ℝ => v ^ (-σ)) phaseInterval u
 
-/-- A variable family of phase functions is a model phase function when, for some fixed `σ > 0`,
+/-- A variable phase function is a model phase function when, for some fixed `σ > 0`,
 the error between its `(p + 1)`st derivative and the `p`th derivative of `u ↦ u ^ (-σ)` is
 pointwise infinitesimal for every fixed derivative order `p`. -/
-def IsModelPhaseFunction (F : Variable (ℝ → ℝ)) : Prop :=
+def IsModelPhaseFunction (F : VariableFunction (fun _ ↦ ℝ) ℝ) : Prop :=
   IsPhaseFunction F ∧
     ∃ σ : ℝ, 0 < σ ∧
-      ∀ p : ℕ, IsPointwiseInfinitesimal
-        (Variable.constant phaseInterval) (modelPhaseError F σ p)
+      ∀ p : ℕ, VariableFunction.IsPointwiseInfinitesimal (modelPhaseError F σ p)
 
 end Expdb

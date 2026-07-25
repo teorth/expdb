@@ -35,7 +35,7 @@ private lemma extract_strictMono_subseq {P : ℕ → Prop}
 /-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
     with |f(φ n)(x n)| > n.  Used in the proof of Proposition 2.1(i). -/
 private lemma extract_bad_seq_i
-    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
+    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j : ℝ) < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ x : ∀ n, E (φ n), ∀ n, n < ‖f (φ n) (x n)‖ := by
@@ -56,7 +56,7 @@ private lemma extract_bad_seq_i
 /-- For a fixed threshold ε, extract a strictly increasing φ and bad elements
     x(n) ∈ E(φ n) with |f(φ n)(x n)| > ε. Used in Proposition 2.1(ii). -/
 private lemma extract_bad_seq_ii
-    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
+    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
     {ε : ℝ}
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, ε < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -69,7 +69,7 @@ private lemma extract_bad_seq_ii
 /-- Build a strictly increasing threshold sequence φ such that
     |f(φ n)(x)| ≤ 1/(n+1) for all x ∈ E(φ n). -/
 private lemma build_increasing_thresholds
-    (E : Variable (Set ℝ)) (f : ∀ i, E i → α)
+    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
     (scale : ∀ n : ℕ, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : E i,
              ‖f i x‖ ≤ 1/n) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -87,23 +87,11 @@ private lemma build_increasing_thresholds
   have hb := hi_seq n (φ n) hge x
   rwa [Nat.cast_add, Nat.cast_one] at hb
 
-/-! ### Pointwise hypotheses -/
-
-/-- A dependent family is pointwise `O(1)` when its values along every variable sequence are
-eventually bounded. -/
-def IsPointwiseBounded (E : Variable (Set ℝ)) (f : ∀ i, E i → α) : Prop :=
-  ∀ x : ∀ i, E i, ∃ C : ℝ, ∀ᶠ i in atTop, ‖f i (x i)‖ ≤ C
-
-/-- A dependent family is pointwise `o(1)` when its norms along every variable sequence tend
-to zero. -/
-def IsPointwiseInfinitesimal (E : Variable (Set ℝ)) (f : ∀ i, E i → α) : Prop :=
-  ∀ x : ∀ i, E i, Tendsto (fun i => ‖f i (x i)‖) atTop (nhds 0)
-
 /-! ### Proposition 2.1: automatic uniformity -/
 
 open Classical in
 private noncomputable def extend_subsequence
-    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (φ : ℕ → ℕ) (x : ∀ n, E (φ n)) : ∀ j, E j :=
   fun j =>
     if h : ∃ n, φ n = j then
@@ -111,8 +99,8 @@ private noncomputable def extend_subsequence
     else ⟨(hE j).choose, (hE j).choose_spec⟩
 
 private lemma norm_extend_subsequence_apply
-    {E : Variable (Set ℝ)} (hE : ∀ i, (E i).Nonempty)
-    {f : ∀ i, E i → α} {φ : ℕ → ℕ} (hφ : StrictMono φ)
+    {E : VariableObject (Set ℝ)} (hE : ∀ i, (E i).Nonempty)
+    {f : VariableFunction (fun i ↦ E i) α} {φ : ℕ → ℕ} (hφ : StrictMono φ)
     (x : ∀ n, E (φ n)) (m : ℕ) :
     ‖f (φ m) (extend_subsequence E hE φ x (φ m))‖ = ‖f (φ m) (x m)‖ := by
   classical
@@ -130,9 +118,9 @@ private lemma norm_extend_subsequence_apply
     If f(x) = O(1) for every variable x ∈ E, then after passing to a
     subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_bounded
-    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
-    (f : ∀ i, E i → α)
-    (hf : IsPointwiseBounded E f) :
+    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : VariableFunction (fun i ↦ E i) α)
+    (hf : VariableFunction.IsPointwiseBounded f) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ C : ℝ, ∀ i, ∀ x : E (φ i),
     ‖f (φ i) x‖ ≤ C := by
@@ -176,9 +164,9 @@ theorem automatic_uniformity_of_pointwise_bounded
     If f(x) = o(1) for every variable x ∈ E, then after passing to a
     subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_infinitesimal
-    (E : Variable (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
-    (f : ∀ i, E i → α)
-    (hf : IsPointwiseInfinitesimal E f) :
+    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : VariableFunction (fun i ↦ E i) α)
+    (hf : VariableFunction.IsPointwiseInfinitesimal f) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ c : ℕ → ℝ, Tendsto c atTop (nhds 0) ∧
     ∀ i, ∀ x : E (φ i),
@@ -194,6 +182,7 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
       extract_bad_seq_ii E f bad
     let y : ∀ j, E j := extend_subsequence E hE φ x_bad
     have hfy := hf y
+    rw [VariableObject.IsInfinitesimal] at hfy
     rw [Metric.tendsto_atTop] at hfy
     obtain ⟨N₀, hN₀⟩ := hfy (1/(2*n)) (by positivity)
     obtain ⟨m, hm⟩ := (hφ.tendsto_atTop).eventually (eventually_ge_atTop N₀) |>.exists

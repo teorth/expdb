@@ -13,18 +13,13 @@ Chapter 2 of the ANTEDB blueprint. The notation `X ≤o Y` is available after
 `open scoped Expdb`.
 
 The blueprint also uses non-standard objects indexed by an ambient natural-number parameter.
-These are represented by `Variable`. Their asymptotic properties can be expressed using Mathlib's
-filter API:
-- a bounded variable `X` satisfies
- `∃ C : ℝ, ∀ᶠ i in atTop, ‖X i‖ ≤ C`;
-- an unbounded variable `X` satisfies
- `Tendsto (fun i => ‖X i‖) atTop atTop`;
-- an infinitesimal variable `X` satisfies
- `Tendsto X atTop (nhds 0)`.
+These are represented by `VariableObject`. Some of their asymptotic properties are encoded as:
+`VariableObject.IsBounded`, `VariableObject.IsUnbounded`,
+and `VariableObject.IsInfinitesimal`.
 
-If these conditions recur sufficiently often in later chapters, they may be given the
-project-specific names `IsBoundedVariable`, `IsUnboundedVariable`, and
-`IsInfinitesimalVariable`.
+Variable functions whose domain type may depend on the ambient parameter are represented by
+`VariableFunction`. Their pointwise asymptotic properties are encoded in the
+`VariableFunction` namespace.
 -/
 
 @[expose] public section
@@ -33,21 +28,57 @@ open Filter Topology
 
 namespace Expdb
 
-universe u
+universe u v
 
 /-- A variable object is a family indexed by the ambient natural-number parameter. -/
-abbrev Variable (α : Type u) := ℕ → α
+abbrev VariableObject (α : Type u) := ℕ → α
 
-namespace Variable
+/-- A variable function is a family of functions whose domain type may depend on the ambient
+natural-number parameter. -/
+abbrev VariableFunction (domain : VariableObject (Type u)) (codomain : Type v) :=
+  ∀ i, domain i → codomain
 
-/-- Regard a fixed object as a constant variable object. -/
-def constant {α : Type u} (x : α) : Variable α := fun _ ↦ x
+namespace VariableObject
 
-/-- A constant variable object has the same value at every ambient index. -/
+/-- Regard a fixed object as a variable object. -/
+def fixed {α : Type u} (x : α) : VariableObject α := fun _ ↦ x
+
+/-- A fixed object has the same value at every ambient index. -/
 @[simp]
-theorem constant_apply {α : Type u} (x : α) (i : ℕ) : constant x i = x := rfl
+theorem fixed_apply {α : Type u} (x : α) (i : ℕ) : fixed x i = x := rfl
 
-end Variable
+variable {α : Type u} [SeminormedAddCommGroup α]
+
+/-- A variable object is bounded when its norm is eventually bounded by a fixed constant. -/
+def IsBounded (X : VariableObject α) : Prop :=
+  ∃ C : ℝ, ∀ᶠ i in atTop, ‖X i‖ ≤ C
+
+/-- A variable object is unbounded when its norm tends to infinity. -/
+def IsUnbounded (X : VariableObject α) : Prop :=
+  Tendsto (fun i ↦ ‖X i‖) atTop atTop
+
+/-- A variable object is infinitesimal when its norm tends to zero. -/
+def IsInfinitesimal (X : VariableObject α) : Prop :=
+  Tendsto (fun i ↦ ‖X i‖) atTop (nhds 0)
+
+end VariableObject
+
+namespace VariableFunction
+
+variable {domain : VariableObject (Type u)}
+variable {α : Type v} [SeminormedAddCommGroup α]
+
+/-- A variable function is pointwise `O(1)` when evaluation along every variable choice is
+bounded. -/
+def IsPointwiseBounded (f : VariableFunction domain α) : Prop :=
+  ∀ x : ∀ i, domain i, VariableObject.IsBounded (fun i ↦ f i (x i))
+
+/-- A variable function is pointwise `o(1)` when evaluation along every variable choice is
+infinitesimal. -/
+def IsPointwiseInfinitesimal (f : VariableFunction domain α) : Prop :=
+  ∀ x : ∀ i, domain i, VariableObject.IsInfinitesimal (fun i ↦ f i (x i))
+
+end VariableFunction
 
 /-- The one-sided asymptotic relation `X ≤ Y + o(1)` from the blueprint.
 
@@ -57,8 +88,8 @@ It holds when there is a real error sequence tending to zero such that
 
 This does not assert that `X - Y` tends to zero; it only requires the positive part of `X - Y`
 to tend to zero. -/
-def IsLEUpToInfinitesimal (X Y : Variable ℝ) : Prop :=
-  ∃ err : Variable ℝ, Tendsto err atTop (nhds 0) ∧
+def IsLEUpToInfinitesimal (X Y : VariableObject ℝ) : Prop :=
+  ∃ err : VariableObject ℝ, Tendsto err atTop (nhds 0) ∧
     ∀ᶠ i in atTop, X i ≤ Y i + err i
 
 /-- `X ≤o Y` denotes the complete blueprint expression `X ≤ Y + o(1)`; it is not the
@@ -69,7 +100,7 @@ open scoped Expdb
 
 /-- The relation `X ≤ Y + o(1)` is equivalent to `X i ≤ Y i + δ` eventually for every fixed
 positive `δ`. -/
-theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : Variable ℝ) :
+theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : VariableObject ℝ) :
     (X ≤o Y) ↔
     ∀ δ : ℝ, 0 < δ → ∀ᶠ i in atTop, X i ≤ Y i + δ := by
   constructor
@@ -93,7 +124,7 @@ theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : Variable ℝ) :
 
 /-- **Underspill principle.** The relation `X ≤ Y + o(1)` holds if and only if
 `X ≤ Y + ε + o(1)` for every fixed `ε > 0`. -/
-theorem underspill (X Y : Variable ℝ) :
+theorem underspill (X Y : VariableObject ℝ) :
     (X ≤o Y) ↔
     (∀ ε : ℝ, ε > 0 → X ≤o (fun i => Y i + ε)) := by
   constructor
