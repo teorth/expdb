@@ -205,8 +205,7 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
 /-! ### Full-tail uniformity -/
 
 /-- Boundedness along every variable choice is equivalent to an eventual bound uniform over
-the original variable sets. This strengthens Proposition 2.1(i), and can alternatively be
-proved by applying that proposition to a hypothetical bad subsequence. -/
+the original variable sets. This strengthens `automatic_uniformity_of_pointwise_bounded`. -/
 theorem VariableFunction.isPointwiseBounded_iff_eventually_uniform
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
@@ -237,8 +236,8 @@ theorem VariableFunction.isPointwiseBounded_iff_eventually_uniform
     exact ⟨C, hC.mono fun i hi ↦ hi (x i)⟩
 
 /-- Infinitesimality along every variable choice is equivalent to convergence that is eventually
-uniform over the original variable sets. This strengthens Proposition 2.1(ii), and can
-alternatively be proved by applying that proposition to a hypothetical bad subsequence. -/
+uniform over the original variable sets. This strengthens
+`automatic_uniformity_of_pointwise_infinitesimal`. -/
 theorem VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
