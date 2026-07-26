@@ -160,9 +160,10 @@ class Hypothesis:
 
 
 class Hypothesis_Set:
-    def __init__(self, hypotheses=set()):
+    def __init__(self, hypotheses=None):
         self.hypotheses = set()
-        self.add_hypotheses(hypotheses)
+        if hypotheses is not None:
+            self.add_hypotheses(hypotheses)
         self.data = {}
         self.data_valid = False  # set to false whenever data needs to be recomputed
 
