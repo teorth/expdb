@@ -202,4 +202,74 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
     tendsto_one_div_add_atTop_nhds_zero_nat
   simpa using hc.norm
 
+/-! ### Full-tail uniformity -/
+
+/-- Boundedness along every variable choice is equivalent to an eventual bound uniform over
+the original variable sets. This strengthens Proposition 2.1(i), and can alternatively be
+proved by applying that proposition to a hypothetical bad subsequence. -/
+theorem VariableFunction.isPointwiseBounded_iff_eventually_uniform
+    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : VariableFunction (fun i ↦ E i) α) :
+    f.IsPointwiseBounded ↔
+      ∃ C : ℝ, ∀ᶠ i in atTop, ∀ x : E i, ‖f i x‖ ≤ C := by
+  constructor
+  · intro hf
+    by_contra h
+    push Not at h
+    have bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j : ℝ) < ‖f i x‖ := fun j => by
+      rcases Filter.frequently_atTop.mp (h j) j with ⟨i, hi, x, hx⟩
+      exact ⟨i, hi, x, hx⟩
+    obtain ⟨φ, hφ, x, hx⟩ := extract_bad_seq_i E f bad
+    let y : ∀ j, E j := extend_subsequence E hE φ x
+    obtain ⟨C, hC⟩ := hf y
+    rw [Filter.eventually_atTop] at hC
+    obtain ⟨j₀, hj₀⟩ := hC
+    obtain ⟨n₁, hn₁⟩ := exists_nat_gt C
+    obtain ⟨m, hm_ge, hm_large⟩ : ∃ m, φ m ≥ j₀ ∧ m > n₁ := by
+      obtain ⟨m, hm⟩ := (hφ.tendsto_atTop).eventually (eventually_ge_atTop j₀) |>.exists
+      exact ⟨max m (n₁ + 1), le_trans hm (hφ.monotone (le_max_left _ _)), by omega⟩
+    have heq := norm_extend_subsequence_apply hE (f := f) hφ x m
+    linarith [hj₀ (φ m) hm_ge, hx m,
+      show C < (m : ℝ) from
+        lt_trans hn₁ (by exact_mod_cast hm_large),
+      heq ▸ hj₀ (φ m) hm_ge]
+  · rintro ⟨C, hC⟩ x
+    exact ⟨C, hC.mono fun i hi ↦ hi (x i)⟩
+
+/-- Infinitesimality along every variable choice is equivalent to convergence that is eventually
+uniform over the original variable sets. This strengthens Proposition 2.1(ii), and can
+alternatively be proved by applying that proposition to a hypothetical bad subsequence. -/
+theorem VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (f : VariableFunction (fun i ↦ E i) α) :
+    f.IsPointwiseInfinitesimal ↔
+      ∀ ε : ℝ, 0 < ε →
+        ∀ᶠ i in atTop, ∀ x : E i, ‖f i x‖ < ε := by
+  constructor
+  · intro hf ε hε
+    classical
+    let x₀ : ∀ i, E i := fun i ↦ ⟨(hE i).choose, (hE i).choose_spec⟩
+    let x : ∀ i, E i := fun i ↦
+      if h : ∃ y : E i, ε ≤ ‖f i y‖ then h.choose else x₀ i
+    have hx (i : ℕ) (h : ∃ y : E i, ε ≤ ‖f i y‖) :
+        ε ≤ ‖f i (x i)‖ := by
+      simp only [x, dif_pos h]
+      exact h.choose_spec
+    have hsmall :=
+      (VariableObject.isInfinitesimal_iff_forall_pos
+        (fun i ↦ f i (x i))).1 (hf x) ε hε
+    by_contra h
+    have hfrequent :
+        ∃ᶠ i in atTop, ε ≤ ‖f i (x i)‖ := (not_eventually.mp h).mono fun i hi ↦ by
+      apply hx i
+      simpa only [not_forall, not_lt] using hi
+    obtain ⟨i, hilarge, hismall⟩ := (hfrequent.and_eventually hsmall).exists
+    exact (not_lt_of_ge hilarge) hismall
+  · intro h x
+    apply (VariableObject.isInfinitesimal_iff_forall_pos
+      (fun i ↦ f i (x i))).2
+    intro ε hε
+    filter_upwards [h ε hε] with i hi
+    exact hi (x i)
+
 end Expdb

@@ -75,11 +75,13 @@ namespace VariableFunction
 variable {domain : VariableObject (Type u)}
 variable {α : Type v} [SeminormedAddCommGroup α]
 
-/-- A variable function that is bounded along every variable choice. -/
+/-- A variable function that is bounded along every variable choice.
+The choice may vary with the ambient index; it is not a fixed point of the domain. -/
 def IsPointwiseBounded (f : VariableFunction domain α) : Prop :=
   ∀ x : ∀ i, domain i, VariableObject.IsBounded (fun i ↦ f i (x i))
 
-/-- A variable function that is infinitesimal along every variable choice. -/
+/-- A variable function that is infinitesimal along every variable choice.
+The choice may vary with the ambient index; it is not a fixed point of the domain. -/
 def IsPointwiseInfinitesimal (f : VariableFunction domain α) : Prop :=
   ∀ x : ∀ i, domain i, VariableObject.IsInfinitesimal (fun i ↦ f i (x i))
 

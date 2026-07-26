@@ -2,6 +2,7 @@ module
 
 public import Expdb.ExponentialSums.ExponentSumGrowth
 
+import Expdb.Basic.AutomaticUniformity
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
@@ -55,58 +56,27 @@ def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
 
 /-! ## Uniform approximation by fixed phases -/
 
-private theorem eventually_forall_norm_lt_of_pointwiseInfinitesimal
-    (f : VariableFunction (VariableObject.fixed phaseInterval) ℝ)
-    (hf : f.IsPointwiseInfinitesimal) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ i in atTop, ∀ u : phaseInterval, ‖f i u‖ < δ := by
-  classical
-  let u₀ : phaseInterval := ⟨1, by simp [phaseInterval]⟩
-  let u : ∀ _ : ℕ, phaseInterval := fun i ↦
-    if h : ∃ v : phaseInterval, δ ≤ ‖f i v‖ then h.choose else u₀
-  have hu (i : ℕ) (h : ∃ v : phaseInterval, δ ≤ ‖f i v‖) :
-      δ ≤ ‖f i (u i)‖ := by
-    simp only [u, dif_pos h]
-    exact h.choose_spec
-  have hsmall :=
-    (VariableObject.isInfinitesimal_iff_forall_pos
-      (fun i ↦ f i (u i))).1 (hf u) δ hδ
-  by_contra h
-  have hfrequent :
-      ∃ᶠ i in atTop, δ ≤ ‖f i (u i)‖ := (not_eventually.mp h).mono fun i hi ↦ by
-    apply hu i
-    simpa only [not_forall, not_lt] using hi
-  obtain ⟨i, hilarge, hismall⟩ := (hfrequent.and_eventually hsmall).exists
-  exact (not_lt_of_ge hilarge) hismall
-
-private theorem eventually_all_nat_le
-    (q : ℕ → ℕ → Prop) (hq : ∀ p, ∀ᶠ i in atTop, q p i) (P : ℕ) :
-    ∀ᶠ i in atTop, ∀ p, p ≤ P → q p i := by
-  induction P with
-  | zero =>
-      simpa using hq 0
-  | succ P hP =>
-      filter_upwards [hP, hq (P + 1)] with i hi hlast
-      intro p hp
-      rcases lt_or_eq_of_le hp with hp | rfl
-      · exact hi p (by omega)
-      · exact hlast
-
 private theorem eventually_isApproximate_of_modelError
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
     (hphase : IsPhaseFunction F)
     (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal)
     (P : ℕ) {δ : ℝ} (hδ : 0 < δ) :
     ∀ᶠ i in atTop, IsApproximateModelPhaseFunction (F i) σ P δ := by
-  have hp : ∀ p, ∀ᶠ i in atTop,
+  have hp : ∀ p ∈ Finset.range (P + 1), ∀ᶠ i in atTop,
       ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
-    fun p ↦ eventually_forall_norm_lt_of_pointwiseInfinitesimal
-      (modelPhaseError F σ p) (herror p) hδ
-  filter_upwards [eventually_all_nat_le
-    (fun p i ↦ ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ)
-    hp P] with i hi
+    fun p _ ↦
+      (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+        (VariableObject.fixed phaseInterval)
+        (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
+        (modelPhaseError F σ p)).1 (herror p) δ hδ
+  have hall :
+      ∀ᶠ i in atTop, ∀ p ∈ Finset.range (P + 1),
+        ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
+    (Finset.range (P + 1)).eventually_all.mpr hp
+  filter_upwards [hall] with i hi
   refine ⟨hphase i, ?_⟩
   intro p hp' u
-  exact (hi p hp' u).le
+  exact (hi p (Finset.mem_range.mpr (by omega)) u).le
 
 /-! ## From fixed bounds to asymptotic bounds -/
 
@@ -175,14 +145,17 @@ private theorem isModelPhaseFunction_of_approximations
     (happrox : ∀ i, IsApproximateModelPhaseFunction (F i) σ (P i) (δ i)) :
     IsModelPhaseFunction F := by
   refine ⟨fun i ↦ (happrox i).1, σ, hσ, ?_⟩
-  intro p u
-  apply (VariableObject.isInfinitesimal_iff_forall_pos
-    (fun i ↦ modelPhaseError F σ p i (u i))).2
+  intro p
+  apply (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+    (VariableObject.fixed phaseInterval)
+    (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
+    (modelPhaseError F σ p)).2
   intro ε hε
   have hδsmall :=
     (VariableObject.isInfinitesimal_iff_forall_pos δ).1 hδ ε hε
   filter_upwards [hP p, hδsmall] with i hip hiδ
-  have herror := (happrox i).2 p hip (u i)
+  intro u
+  have herror := (happrox i).2 p hip u
   rw [Real.norm_eq_abs, abs_of_nonneg (hδnonneg i)] at hiδ
   exact lt_of_le_of_lt herror hiδ
 
@@ -330,18 +303,20 @@ private theorem nonAsymptotic_of_isExponentSumBound
         K * T i ^ (β + ε / 2) := by
     simpa only [exponentialSum, exponentialSumAt, Real.norm_eq_abs,
       abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hTone i)) _)] using hiK
-  have hpowmono :
-      T i ^ (β + ε / 2) ≤ T i ^ (β + ε) :=
-    Real.rpow_le_rpow_of_exponent_le (hTone i) (by linarith)
   have hdominated :
-      K * T i ^ (β + ε / 2) ≤ C i * T i ^ (β + ε) := by
+      ‖exponentialSumAt (F i) (T i) (N i) (a i) (b i)‖ ≤
+        C i * T i ^ (β + ε) := by
     calc
-      K * T i ^ (β + ε / 2) ≤ C i * T i ^ (β + ε / 2) := by
+      ‖exponentialSumAt (F i) (T i) (N i) (a i) (b i)‖ ≤
+          K * T i ^ (β + ε / 2) := hnorm
+      _ ≤ C i * T i ^ (β + ε / 2) := by
         exact mul_le_mul_of_nonneg_right hiCK
           (Real.rpow_nonneg (le_trans zero_le_one (hTone i)) _)
       _ ≤ C i * T i ^ (β + ε) :=
-        mul_le_mul_of_nonneg_left hpowmono (le_trans zero_le_one (hCone i))
-  linarith [hviolate i]
+        mul_le_mul_of_nonneg_left
+          (Real.rpow_le_rpow_of_exponent_le (hTone i) (by linarith))
+          (le_trans zero_le_one (hCone i))
+  exact (not_lt_of_ge hdominated) (hviolate i)
 
 /-! ## Lemma 4.3 -/
 

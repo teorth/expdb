@@ -28,6 +28,8 @@ Expdb.isEqUpToInfinitesimal_iff_leUpToInfinitesimal
 Expdb.underspill
 Expdb.automatic_uniformity_of_pointwise_bounded
 Expdb.automatic_uniformity_of_pointwise_infinitesimal
+Expdb.VariableFunction.isPointwiseBounded_iff_eventually_uniform
+Expdb.VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
 Expdb.phaseInterval
 Expdb.IsPhaseFunction
 Expdb.modelPhaseError
