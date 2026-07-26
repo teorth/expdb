@@ -748,7 +748,7 @@ class RationalFunction:
     # from highest degree to lowest degree) for both the numerator and denominator
     def __init__(self, num_coeffs, den_coeffs=None):
 
-        if den_coeffs == None:
+        if den_coeffs is None:
             den_coeffs = [1]
 
         num = 0
@@ -911,7 +911,7 @@ class RationalFunction:
             r.num = self.num * other.den + self.den * other.num
             r.den = self.den * other.den
             return r
-        return NotImplementedError()
+        raise NotImplementedError()
 
     def subtract(self, other):
         r = RationalFunction([])
