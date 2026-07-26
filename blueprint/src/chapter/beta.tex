@@ -3,6 +3,8 @@
 \section{Phase functions}
 
 \begin{definition}[Phase function]\label{phase-def}
+\lean{Expdb.IsPhaseFunction, Expdb.IsModelPhaseFunction}
+\leanok
 A \emph{phase function} is a (variable) smooth function $F \colon [1,2] \to \R$.  A phase function $F$ will be called a \emph{model phase function} if there exists a fixed exponent $\sigma > 0$ with the property that
 \begin{equation}\label{fpu}
 F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma} = o(1)
@@ -18,7 +20,10 @@ Note from Proposition \ref{auto} that the $o(1)$ decay rate in \eqref{fpu} can b
 
 The main purpose of this chapter is to introduce and establish the basic properties of the following exponent function.
 
-\begin{definition}[Exponent sum growth exponent]\label{beta-def}\uses{phase-def}  For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
+\begin{definition}[Exponent sum growth exponent]\label{beta-def}\uses{phase-def}
+\lean{Expdb.exponentSumGrowthExponent, Expdb.IsExponentSumBound}
+\leanok
+For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
 $$ \sum_{n \in I} e(T F(n/N)) \ll T^{\beta(\alpha)+o(1)}.$$
 \end{definition}
 
@@ -34,7 +39,10 @@ whenever $T$ is unbounded, $N = T^{\alpha+o(1)}$, and $I$ is an interval in $[N,
 
 The quantity $\beta(\alpha)$ can also be formulated without asymptotic notation, but at the cost of introducing some ``epsilon and delta'' parameters:
 
-\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}  Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}
+\lean{Expdb.exponentSumGrowthExponent_le_iff_nonAsymptotic, Expdb.IsExponentSumBoundNonAsymptotic}
+\leanok
+Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
 \begin{itemize}
 \item[(i)] $\beta(\alpha) \leq \overline{\beta}$.
 \item[(ii)] For every (fixed) $\eps>0$ and $\sigma > 0$ there exists (fixed) $\delta>0$, $P \geq 1$, $C \geq 1$ with the following property: if $T \geq C$, $T^{\alpha-\delta} \leq N \leq T^{\alpha+\delta}$ are (fixed) real numbers, $I \subset [N,2N]$ is a (fixed) interval, and $F$ is a (fixed) phase function such that

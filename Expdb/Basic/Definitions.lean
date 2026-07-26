@@ -1,6 +1,8 @@
-import Mathlib.Analysis.Complex.Circle
-import Mathlib.Analysis.Normed.Field.Basic
-import Mathlib.Topology.MetricSpace.Pseudo.Defs
+module
+
+public import Mathlib.Analysis.Complex.Circle
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 /-!
 # Basic definitions
@@ -14,6 +16,8 @@ prefer using that representation directly, for example:
 -for suprema and infima, including those of empty sets, use Mathlib's `sSup` and `sInf`;
 -for finite cardinalities use `Finset.card`;
 -/
+
+@[expose] public section
 
 namespace Expdb
 

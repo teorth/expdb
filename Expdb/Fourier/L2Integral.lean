@@ -1,20 +1,12 @@
-import Expdb.Basic.Definitions
-import Mathlib.Analysis.Calculus.Deriv.Basic
+module
+
+public import Expdb.Basic.Definitions
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+
+import Mathlib.Algebra.Order.Interval.Set.Group
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.InnerProductSpace.Orthonormal
-import Mathlib.Algebra.Order.Interval.Set.Group
 import Mathlib.Analysis.PSeries
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.GCongr
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Push
-import Mathlib.Tactic.Ring
 
 /-!
 # L² integral estimate
@@ -22,6 +14,8 @@ import Mathlib.Tactic.Ring
 This module formalizes Lemma 3.1 from Chapter 3 of the ANTEDB blueprint. It proves both the
 blueprint's equality with a bounded error coefficient and the corresponding absolute-error bound.
 -/
+
+@[expose] public section
 
 open MeasureTheory Real Complex Filter Topology BigOperators
 open scoped FourierTransform SchwartzMap ContDiff
