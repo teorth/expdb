@@ -1,7 +1,7 @@
 module
 
 public import Expdb.ExponentialSums.ExponentSumGrowth
-import Expdb.Basic.AutomaticUniformity
+
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!

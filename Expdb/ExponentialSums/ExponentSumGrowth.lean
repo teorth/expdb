@@ -3,10 +3,8 @@ module
 public import Expdb.ExponentialSums.PhaseFunctions
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Order.Interval.Finset.Nat
+
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Algebra.Order.Floor.Semiring
-import Mathlib.Topology.Order.Monotone
 
 /-!
 # Exponential sum growth exponents

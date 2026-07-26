@@ -3,21 +3,10 @@ module
 public import Expdb.Basic.Definitions
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
-import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Algebra.Order.Interval.Set.Group
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.InnerProductSpace.Orthonormal
-import Mathlib.Algebra.Order.Interval.Set.Group
 import Mathlib.Analysis.PSeries
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.GCongr
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Push
-import Mathlib.Tactic.Ring
 
 /-!
 # L² integral estimate
