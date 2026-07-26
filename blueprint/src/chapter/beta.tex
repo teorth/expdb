@@ -39,7 +39,10 @@ whenever $T$ is unbounded, $N = T^{\alpha+o(1)}$, and $I$ is an interval in $[N,
 
 The quantity $\beta(\alpha)$ can also be formulated without asymptotic notation, but at the cost of introducing some ``epsilon and delta'' parameters:
 
-\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}  Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}
+\lean{Expdb.exponentSumGrowthExponent_le_iff_nonAsymptotic, Expdb.IsExponentSumBoundNonAsymptotic}
+\leanok
+Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
 \begin{itemize}
 \item[(i)] $\beta(\alpha) \leq \overline{\beta}$.
 \item[(ii)] For every (fixed) $\eps>0$ and $\sigma > 0$ there exists (fixed) $\delta>0$, $P \geq 1$, $C \geq 1$ with the following property: if $T \geq C$, $T^{\alpha-\delta} \leq N \leq T^{\alpha+\delta}$ are (fixed) real numbers, $I \subset [N,2N]$ is a (fixed) interval, and $F$ is a (fixed) phase function such that
