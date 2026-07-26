@@ -168,7 +168,7 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
     (f : VariableFunction (fun i ↦ E i) α)
     (hf : f.IsPointwiseInfinitesimal) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
-    ∃ c : ℕ → ℝ, Tendsto c atTop (nhds 0) ∧
+    ∃ c : VariableObject ℝ, c.IsInfinitesimal ∧
     ∀ i, ∀ x : E (φ i),
     ‖f (φ i) x‖ ≤ c i := by
   -- Step 1: for each n ≥ 1, the bound 1/n eventually holds uniformly
@@ -197,6 +197,9 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
   -- Step 2: build strictly increasing thresholds and conclude
   obtain ⟨φ, hφ, hφ_bd⟩ := build_increasing_thresholds E f scale
   refine ⟨φ, hφ, fun n => 1/(↑n+1), ?_, hφ_bd⟩
-  exact tendsto_one_div_add_atTop_nhds_zero_nat
+  rw [VariableObject.IsInfinitesimal]
+  have hc : Tendsto (fun n : ℕ ↦ 1 / ((n : ℝ) + 1)) atTop (nhds 0) :=
+    tendsto_one_div_add_atTop_nhds_zero_nat
+  simpa using hc.norm
 
 end Expdb
