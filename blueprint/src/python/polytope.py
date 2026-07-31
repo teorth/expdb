@@ -245,15 +245,24 @@ class Polytope:
     # A. Bemporad et al. "Convexity recognition of the union of polyhedra" (2001)
     # Algorithm 4.1
     #
-    # This implementation only works with finite polytopes - for infinite polytopes
-    # the wrong result is returned. See e.g. the test cases in test_polytope.
-    # TODO: implement check and error for infinite polytopes.
+    # This implementation only works with finite polytopes. Extreme rays are
+    # ignored by the vertex-only feasibility checks below, so unbounded inputs
+    # previously produced silently incorrect envelopes; reject them instead.
     def try_union(polys):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
 
         if len(polys) == 1:
             return polys[0]
+
+        for p in polys:
+            if p.rays is None:
+                p.compute_V_rep()
+            if p.rays:
+                raise ValueError(
+                    "Polytope.try_union only supports finite polytopes "
+                    "(an input has extreme rays)"
+                )
 
         # Performance optimisation: see if intersection is nonempty first. This
         # is relative cheap compared to the full union operation, since it only

@@ -307,6 +307,19 @@ def run_union_test():
     long_line = Polytope.rect((frac(1,2), frac(1,2)), (-1, 2))
     assert Polytope.try_union([square, long_line]) is None
 
+    # Unbounded inputs must be rejected: the union algorithm only inspects
+    # vertices, so extreme rays would otherwise yield a wrong envelope.
+    half_strip = Polytope([
+        [0, 1, 0],   # x >= 0
+        [0, 0, 1],   # y >= 0
+        [-1, 0, 1],  # y <= 1
+    ])
+    try:
+        Polytope.try_union([half_strip, square])
+        assert False, "expected ValueError for infinite polytope"
+    except ValueError as e:
+        assert "finite polytopes" in str(e)
+
 def run_union_3d_test():
     # Higher dimensional polytope test
     # ['1 - x >= 0', '8 - 14x + 5/2y - z >= 0', '8 - 4x - z >= 0', '3 - y >= 0', '-34/3 + 32/3x + z >= 0']
