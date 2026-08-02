@@ -2,7 +2,7 @@ module
 
 public import Expdb.ExponentialSums.ExponentSumGrowth
 
-import Expdb.Basic.AutomaticUniformity
+import Expdb.ExponentialSums.ExponentSumGrowthNonAsymptotic
 import Expdb.Fourier.L2Integral
 import Expdb.Mathlib.EulerMaclaurin
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
@@ -161,90 +161,36 @@ private theorem norm_iteratedDerivWithin_oscillatory_le
     (n.factorial : ℝ) * (2 * Real.pi + 1) ^ n * (K * T / N) ^ n at hcomp
   simpa only [q, div_eq_mul_inv, mul_comm N⁻¹] using hcomp
 
-private lemma map_Icc_natCast_int (a b : ℕ) :
-    (Finset.Icc a b).map
-      ⟨(fun n : ℕ ↦ (n : ℤ)), fun _ _ h ↦ Int.ofNat_inj.mp h⟩ =
-      Finset.Icc (a : ℤ) (b : ℤ) := by
-  ext z
-  simp only [Finset.mem_map, Finset.mem_Icc]
-  constructor
-  · rintro ⟨n, hn, rfl⟩
-    change (a : ℤ) ≤ (n : ℤ) ∧ (n : ℤ) ≤ (b : ℤ)
-    exact_mod_cast hn
-  · intro hz
-    have hz0 : 0 ≤ z := le_trans (Int.natCast_nonneg a) hz.1
-    have hzt : (z.toNat : ℤ) = z := Int.toNat_of_nonneg hz0
-    refine ⟨z.toNat, ?_, hzt⟩
-    constructor
-    · exact_mod_cast (show (a : ℤ) ≤ (z.toNat : ℤ) by simpa [hzt] using hz.1)
-    · exact_mod_cast (show (z.toNat : ℤ) ≤ (b : ℤ) by simpa [hzt] using hz.2)
-
-private lemma sum_Icc_int_eq_sum_Icc_nat
-    {E : Type*} [AddCommMonoid E] (f : ℤ → E) (a b : ℕ) :
-    ∑ z ∈ Finset.Icc (a : ℤ) (b : ℤ), f z =
-      ∑ n ∈ Finset.Icc a b, f n := by
-  rw [← map_Icc_natCast_int]
-  simp
-
-private theorem oscillatory_sum_eq_eulerMaclaurin
-    {F : ℝ → ℝ} {T N : ℝ} {a b s : ℕ} (hab : a ≤ b)
-    (hF : ContDiffOn ℝ (s + 1) F phaseInterval)
-    (hmap : Set.MapsTo (N⁻¹ * ·) (Set.Icc (a : ℝ) (b : ℝ)) phaseInterval) :
-    ∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ) =
-      (∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)) +
-      (2⁻¹ : ℝ) •
-        ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) + (𝐞 (T * F ((b : ℝ) / N)) : ℂ)) +
-      ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-        (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ))
-            (Set.Icc (a : ℝ) (b : ℝ)) b -
-          iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ))
-            (Set.Icc (a : ℝ) (b : ℝ)) a) +
-      (-1 : ℝ) ^ s •
-        ∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-          iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ))
-            (Set.Icc (a : ℝ) (b : ℝ)) x := by
-  rcases hab.eq_or_lt with rfl | hab
-  · simp only [Finset.Icc_self, Finset.sum_singleton, intervalIntegral.integral_same,
-      sub_self, smul_zero, Finset.sum_const_zero]
-    module
-  let f : ℝ → ℂ := fun x ↦ 𝐞 (T * F (x / N))
-  let interval : Set ℝ := Set.Icc (a : ℝ) (b : ℝ)
-  have hscale : ContDiffOn ℝ (s + 1) (N⁻¹ * ·) interval := by fun_prop
-  have hFscale : ContDiffOn ℝ (s + 1) (fun x ↦ F (N⁻¹ * x)) interval := by
-    change ContDiffOn ℝ (s + 1) (F ∘ fun x ↦ N⁻¹ * x) interval
+private theorem contDiffOn_oscillatory
+    {F : ℝ → ℝ} {s : Set ℝ} {T N : ℝ} {n : ℕ}
+    (hF : ContDiffOn ℝ n F phaseInterval)
+    (hmap : Set.MapsTo (N⁻¹ * ·) s phaseInterval) :
+    ContDiffOn ℝ n (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) s := by
+  have hscale : ContDiffOn ℝ n (N⁻¹ * ·) s := by fun_prop
+  have hFscale : ContDiffOn ℝ n (fun x ↦ F (N⁻¹ * x)) s := by
+    change ContDiffOn ℝ n (F ∘ fun x ↦ N⁻¹ * x) s
     exact hF.comp hscale hmap
-  have hinner : ContDiffOn ℝ (s + 1) (fun x ↦ T * F (N⁻¹ * x)) interval :=
+  have hinner : ContDiffOn ℝ n (fun x ↦ T * F (N⁻¹ * x)) s :=
     contDiffOn_const.mul hFscale
-  have hf : ContDiffOn ℝ (s + 1) f interval := by
-    have heq : f = (𝐞 · : ℝ → ℂ) ∘ fun x ↦ T * F (N⁻¹ * x) := by
-      funext x
-      simp only [f, Function.comp_apply, div_eq_mul_inv]
-      rw [mul_comm x N⁻¹]
-    rw [heq]
-    simpa only [Nat.cast_add, Nat.cast_one] using
-      (contDiff_fourierChar.of_le
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1))).comp_contDiffOn hinner
-  have hendNat : a + (b - a) = b := Nat.add_sub_of_le hab.le
-  have hendInt : (a : ℤ) + (b - a : ℕ) = (b : ℤ) := by exact_mod_cast hendNat
-  have hendReal : ((a : ℤ) : ℝ) + (b - a : ℕ) = ((b : ℤ) : ℝ) := by
-    exact_mod_cast hendNat
-  have hEM := EulerMaclaurin.sum_Icc_eq_integral_add
-    (s := s) (a := (a : ℤ)) (n := b - a) (f := f) (t := interval)
-    hf (uniqueDiffOn_Icc (by exact_mod_cast hab)) (by
-      rw [hendReal]
-      exact Set.Subset.rfl)
-  rw [hendInt, hendReal, sum_Icc_int_eq_sum_Icc_nat] at hEM
-  simpa only [f, interval, Int.cast_natCast, div_eq_mul_inv, mul_comm N⁻¹] using hEM
+  have heq : (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) =
+      (𝐞 · : ℝ → ℂ) ∘ fun x ↦ T * F (N⁻¹ * x) := by
+    funext x
+    simp only [Function.comp_apply, div_eq_mul_inv]
+    rw [mul_comm x N⁻¹]
+  rw [heq]
+  exact (contDiff_fourierChar.of_le
+    (ENat.natCast_le_of_coe_top_le_withTop le_rfl n)).comp_contDiffOn hinner
 
-private theorem eventually_model_phase_deriv_bounds
-    {F : VariableFunction (VariableObject.fixed ℝ) ℝ}
-    (hF : IsModelPhaseFunction F) (P : ℕ) :
-    ∃ c K : ℝ, 0 < c ∧ 1 ≤ K ∧
-      ∀ᶠ i in atTop, ∀ u : phaseInterval,
-        c ≤ iteratedDerivWithin 1 (F i) phaseInterval u ∧
-          ∀ k : ℕ, 1 ≤ k → k ≤ P + 1 →
-            ‖iteratedDerivWithin k (F i) phaseInterval u‖ ≤ K := by
-  rcases hF with ⟨hphase, σ, hσ, herror⟩
+private theorem approximate_model_phase_deriv_bounds
+    {σ : ℝ} (hσ : 0 < σ) (P : ℕ) :
+    ∃ K : ℝ, 1 ≤ K ∧
+      ∀ {δ : ℝ} {F : ℝ → ℝ},
+        δ ≤ min ((2 : ℝ) ^ (-σ) / 2) 1 →
+        IsApproximateModelPhaseFunction F σ P δ →
+        (∀ u ∈ phaseInterval,
+          (2 : ℝ) ^ (-σ) / 2 ≤ iteratedDerivWithin 1 F phaseInterval u) ∧
+        (∀ k : ℕ, 1 ≤ k → k ≤ P + 1 → ∀ u ∈ phaseInterval,
+          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) := by
   have href : ContDiffOn ℝ ∞ (fun u : ℝ ↦ u ^ (-σ)) phaseInterval := by
     intro u hu
     exact (Real.contDiffAt_rpow_const_of_ne (by
@@ -255,69 +201,143 @@ private theorem eventually_model_phase_deriv_bounds
     have hcont : ContinuousOn
         (iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval) phaseInterval :=
       href.continuousOn_iteratedDerivWithin
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl p) (uniqueDiffOn_Icc (by
-        norm_num [phaseInterval]))
-    obtain ⟨B, hB⟩ := bddAbove_def.mp
-      (isCompact_Icc.bddAbove_image hcont.norm)
-    refine ⟨max B 0, le_max_right _ _, ?_⟩
-    intro u
+        (ENat.natCast_le_of_coe_top_le_withTop le_rfl p)
+        (uniqueDiffOn_Icc (by norm_num [phaseInterval]))
+    obtain ⟨B, hB⟩ := bddAbove_def.mp (isCompact_Icc.bddAbove_image hcont.norm)
+    refine ⟨max B 0, le_max_right _ _, fun u ↦ ?_⟩
     exact (hB _ ⟨u, u.property, rfl⟩).trans (le_max_left _ _)
   choose B hBnonneg hB using hreference
   let K : ℝ := 1 + ∑ p ∈ Finset.range (P + 1), B p
   have hK : 1 ≤ K := by
     dsimp [K]
     exact le_add_of_nonneg_right (Finset.sum_nonneg fun p _ ↦ hBnonneg p)
-  let c : ℝ := (2 : ℝ) ^ (-σ) / 2
-  have hc : 0 < c := by dsimp [c]; positivity
-  have herr (p : ℕ) (hp : p ≤ P) :
-      ∀ᶠ i in atTop, ∀ u : phaseInterval,
-        ‖modelPhaseError F σ p i u‖ < c :=
-    (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
-      (VariableObject.fixed phaseInterval)
-      (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
-      (modelPhaseError F σ p)).1 (herror p) c hc
-  have hall : ∀ᶠ i in atTop, ∀ p ∈ Finset.range (P + 1),
-      ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < c :=
-    (Finset.range (P + 1)).eventually_all.mpr fun p hp ↦
-      herr p (Nat.le_of_lt_succ (Finset.mem_range.mp hp))
-  refine ⟨c, K, hc, hK, hall.mono ?_⟩
-  intro i hi u
-  have huPos : 0 < (u : ℝ) := zero_lt_one.trans_le u.property.1
-  have huLower : (2 : ℝ) ^ (-σ) ≤ (u : ℝ) ^ (-σ) :=
-    Real.rpow_le_rpow_of_nonpos huPos u.property.2 (neg_nonpos.mpr hσ.le)
-  have herror0 := hi 0 (Finset.mem_range.mpr (Nat.zero_lt_succ P)) u
-  have hfirst : c ≤ iteratedDerivWithin 1 (F i) phaseInterval u := by
-    rw [Real.norm_eq_abs, abs_lt] at herror0
-    simp only [modelPhaseError, zero_add, iteratedDerivWithin_zero] at herror0
-    dsimp [c] at herror0 ⊢
+  refine ⟨K, hK, ?_⟩
+  intro δ F hδ hF
+  have hδc : δ ≤ (2 : ℝ) ^ (-σ) / 2 := hδ.trans (min_le_left _ _)
+  have hδone : δ ≤ 1 := hδ.trans (min_le_right _ _)
+  constructor
+  · intro u hu
+    have huPos : 0 < (u : ℝ) := zero_lt_one.trans_le hu.1
+    have huLower : (2 : ℝ) ^ (-σ) ≤ (u : ℝ) ^ (-σ) :=
+      Real.rpow_le_rpow_of_nonpos huPos hu.2 (neg_nonpos.mpr hσ.le)
+    have he := hF.2 0 (Nat.zero_le P) ⟨u, hu⟩
+    rw [Real.norm_eq_abs, abs_le] at he
+    simp only [zero_add, iteratedDerivWithin_zero] at he
     linarith
-  refine ⟨hfirst, ?_⟩
-  intro k hk hkP
-  obtain ⟨p, rfl⟩ := Nat.exists_eq_add_of_le hk
-  have hpP : p ≤ P := by omega
-  have hpMem : p ∈ Finset.range (P + 1) := Finset.mem_range.mpr (by omega)
-  have he := hi p hpMem u
-  have htriangle :
-      ‖iteratedDerivWithin (p + 1) (F i) phaseInterval u‖ ≤
-        ‖modelPhaseError F σ p i u‖ +
-          ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ := by
-    rw [modelPhaseError] at he ⊢
-    exact norm_le_norm_sub_add _ _
-  calc
-    ‖iteratedDerivWithin (1 + p) (F i) phaseInterval u‖ ≤ c + B p := by
-      simpa [Nat.add_comm] using htriangle.trans (add_le_add he.le (hB p u))
-    _ ≤ K := by
-      dsimp [c, K]
-      have hcOne : (2 : ℝ) ^ (-σ) / 2 ≤ 1 := by
-        have hp : (2 : ℝ) ^ (-σ) ≤ 1 := by
-          simpa using Real.rpow_le_one_of_one_le_of_nonpos (by norm_num : (1 : ℝ) ≤ 2)
-            (neg_nonpos.mpr hσ.le)
-        linarith [Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2) (-σ)]
+  · intro k hk hkP u hu
+    obtain ⟨p, rfl⟩ := Nat.exists_eq_add_of_le hk
+    have hpP : p ≤ P := by omega
+    have hpMem : p ∈ Finset.range (P + 1) := Finset.mem_range.mpr (by omega)
+    have he := hF.2 p hpP ⟨u, hu⟩
+    have htriangle :
+        ‖iteratedDerivWithin (p + 1) F phaseInterval u‖ ≤
+          ‖iteratedDerivWithin (p + 1) F phaseInterval u -
+            iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ +
+          ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ :=
+      norm_le_norm_sub_add _ _
+    calc
+      ‖iteratedDerivWithin (1 + p) F phaseInterval u‖ ≤ 1 + B p := by
+        simpa [Nat.add_comm] using htriangle.trans (add_le_add (he.trans hδone) (hB p ⟨u, hu⟩))
+      _ ≤ K := by
+        dsimp [K]
+        gcongr
+        exact Finset.single_le_sum (fun q _ ↦ hBnonneg q) hpMem
+
+private theorem isApproximateModelPhaseFunction_log (P : ℕ) :
+    IsApproximateModelPhaseFunction Real.log 1 P 0 := by
+  refine ⟨isModelPhaseFunction_log.1 0, ?_⟩
+  intro p _ u
+  have huPos : 0 < (u : ℝ) := zero_lt_one.trans_le u.property.1
+  have hunique : UniqueDiffOn ℝ phaseInterval :=
+    uniqueDiffOn_Icc (by norm_num [phaseInterval])
+  have heq : iteratedDerivWithin (p + 1) Real.log phaseInterval u =
+      iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-(1 : ℝ))) phaseInterval u := by
+    rw [iteratedDerivWithin_eq_iteratedDeriv hunique
+        (Real.contDiffAt_log.2 huPos.ne') u.property,
+      iteratedDerivWithin_eq_iteratedDeriv hunique
+        (Real.contDiffAt_rpow_const_of_ne huPos.ne') u.property,
+      iteratedDeriv_succ', Real.deriv_log']
+    congr 1
+    funext v
+    exact (Real.rpow_neg_one v).symm
+  rw [heq, sub_self, norm_zero]
+
+private theorem exists_oscillatory_scale_parameters
+    {δ : ℝ} (hδ : 0 < δ) :
+    ∃ s : ℕ, ∃ q : ℝ,
+      1 ≤ s ∧ 0 < q ∧ q ≤ δ ∧
+      q * (s + 1 : ℕ) = δ / 2 ∧
+      1 + δ / 2 ≤ (s : ℝ) * δ := by
+  obtain ⟨s, hs⟩ := exists_nat_ge ((1 + δ / 2) / δ)
+  have hsone : 1 ≤ s := by
+    by_contra hs0
+    have : s = 0 := by omega
+    subst s
+    norm_num at hs
+    have : 0 < (1 + δ / 2) / δ := by positivity
+    linarith
+  let q : ℝ := δ / (2 * (s + 1 : ℕ))
+  have hq : 0 < q := by dsimp [q]; positivity
+  have hqδ : q ≤ δ := by
+    dsimp [q]
+    push_cast
+    apply (div_le_iff₀ (by positivity : 0 < (2 : ℝ) * ((s : ℝ) + 1))).2
+    have hs0 : (0 : ℝ) ≤ s := Nat.cast_nonneg s
+    nlinarith
+  have hqmul : q * (s + 1 : ℕ) = δ / 2 := by
+    dsimp [q]
+    field_simp
+  have hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ :=
+    (div_le_iff₀ hδ).1 (by simpa [mul_comm] using hs)
+  exact ⟨s, q, hsone, hq, hqδ, hqmul, hsδ⟩
+
+private theorem oscillatory_scale_bounds
+    {s : ℕ} {δ q K T N : ℝ}
+    (hT : 1 ≤ T) (hN : 1 ≤ N) (hK : 1 ≤ K)
+    (hqδ : q ≤ δ)
+    (hqmul : q * (s + 1 : ℕ) = δ / 2)
+    (hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ)
+    (hKpower : K ≤ T ^ q) (hNlower : T ^ (δ + 1) ≤ N) :
+    K * T / N ≤ 1 ∧ N * (K * T / N) ^ (s + 1) ≤ 1 := by
+  have hTpos : 0 < T := zero_lt_one.trans_le hT
+  have hNpos : 0 < N := zero_lt_one.trans_le hN
+  have hKpow : K ^ (s + 1) ≤ T ^ (δ / 2) := by
+    calc
+      K ^ (s + 1) ≤ (T ^ q) ^ (s + 1) :=
+        pow_le_pow_left₀ (zero_le_one.trans hK) hKpower _
+      _ = T ^ (q * (s + 1 : ℕ)) :=
+        (Real.rpow_mul_natCast hTpos.le q (s + 1)).symm
+      _ = T ^ (δ / 2) := by rw [hqmul]
+  constructor
+  · apply (div_le_one hNpos).2
+    calc
+      K * T ≤ T ^ q * T := mul_le_mul_of_nonneg_right hKpower hTpos.le
+      _ = T ^ (q + 1) := by
+        simpa only [Real.rpow_one] using (Real.rpow_add hTpos q 1).symm
+      _ ≤ T ^ (δ + 1) := Real.rpow_le_rpow_of_exponent_le hT (by linarith)
+      _ ≤ N := hNlower
+  · have hNpow : T ^ ((δ + 1) * s) ≤ N ^ s := by
       calc
-        (2 : ℝ) ^ (-σ) / 2 + B p ≤ 1 + B p := by linarith
-        _ ≤ 1 + ∑ q ∈ Finset.range (P + 1), B q := by
-          gcongr
-          exact Finset.single_le_sum (fun q _ ↦ hBnonneg q) hpMem
+        T ^ ((δ + 1) * s) = (T ^ (δ + 1)) ^ s :=
+          Real.rpow_mul_natCast hTpos.le (δ + 1) s
+        _ ≤ N ^ s := pow_le_pow_left₀ (Real.rpow_nonneg hTpos.le _) hNlower _
+    have hexponent : δ / 2 + (s + 1 : ℕ) ≤ (δ + 1) * s := by
+      push_cast
+      linarith
+    have hnum : K ^ (s + 1) * T ^ (s + 1) ≤ N ^ s := by
+      calc
+        K ^ (s + 1) * T ^ (s + 1) ≤ T ^ (δ / 2) * T ^ (s + 1 : ℕ) := by gcongr
+        _ = T ^ (δ / 2 + (s + 1 : ℕ)) := by
+          rw [← Real.rpow_natCast]
+          exact (Real.rpow_add hTpos (δ / 2) (s + 1 : ℕ)).symm
+        _ ≤ T ^ ((δ + 1) * s) := Real.rpow_le_rpow_of_exponent_le hT hexponent
+        _ ≤ N ^ s := hNpow
+    rw [show N * (K * T / N) ^ (s + 1) =
+        (K ^ (s + 1) * T ^ (s + 1)) / N ^ s by
+      rw [div_pow, mul_pow, pow_succ]
+      field_simp [hNpos.ne', pow_ne_zero _ hNpos.ne']
+      ring]
+    exact (div_le_one (pow_pos hNpos _)).2 hnum
 
 private theorem norm_integral_oscillatory_le
     {F : ℝ → ℝ} {A B T c K : ℝ}
@@ -518,380 +538,23 @@ private theorem norm_integral_oscillatory_le
       field_simp
       nlinarith
 
-private def oscillatorySumConstant (s : ℕ) (K c : ℝ) : ℝ :=
-  1 +
-    (∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
-      (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1)))) +
-    EulerMaclaurin.sawBound (s + 1) *
-      (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1)) +
-    (2 / c + K / c ^ 2)
-
-private lemma oscillatorySumConstant_nonneg
-    (s : ℕ) {K c : ℝ} (hK : 0 ≤ K) (hc : 0 < c) :
-    0 ≤ oscillatorySumConstant s K c := by
-  have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
-      (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
-    Finset.sum_nonneg fun m _ ↦ by positivity
-  have hrem : 0 ≤ EulerMaclaurin.sawBound (s + 1) *
-      (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1)) :=
-    mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
-  have hD : 0 ≤ 2 / c + K / c ^ 2 := by positivity
-  dsimp only [oscillatorySumConstant]
-  linarith
-
-private theorem norm_oscillatory_sum_le
-    (s : ℕ) {F : ℝ → ℝ} {T N K c : ℝ} {a b : ℕ}
-    (hs : 1 ≤ s) (hab : a ≤ b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K) (hc : 0 < c)
-    (hF : ContDiffOn ℝ ∞ F phaseInterval)
-    (hfirst : ∀ u ∈ phaseInterval,
-      c ≤ iteratedDerivWithin 1 F phaseInterval u)
-    (hderiv : ∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
-      ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K)
-    (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N)
-    (hratio : K * T / N ≤ 1)
-    (hremainder : N * (K * T / N) ^ (s + 1) ≤ 1) :
-    ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
-      oscillatorySumConstant s K c * (1 + N / T) := by
-  have hNpos : 0 < N := zero_lt_one.trans_le hN
-  have hTpos : 0 < T := zero_lt_one.trans_le hT
-  have hKpos : 0 < K := zero_lt_one.trans_le hK
-  have hrnonneg : 0 ≤ K * T / N := by positivity
-  let interval : Set ℝ := Set.Icc (a : ℝ) (b : ℝ)
-  have hmap : Set.MapsTo (N⁻¹ * ·) interval phaseInterval := by
-    intro x hx
-    simp only [interval, phaseInterval, Set.mem_Icc] at hx ⊢
-    constructor
-    · rw [inv_mul_eq_div, le_div_iff₀ hNpos]
-      simpa using ha.trans hx.1
-    · rw [inv_mul_eq_div, div_le_iff₀ hNpos]
-      exact hx.2.trans hb
-  by_cases heq : a = b
-  · subst b
-    simp only [Finset.Icc_self, Finset.sum_singleton]
-    rw [show ‖(𝐞 (T * F ((a : ℝ) / N)) : ℂ)‖ = 1 by simp]
-    have : 0 ≤ N / T := by positivity
-    have hconst : 1 ≤ oscillatorySumConstant s K c := by
-      have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
-          (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
-        Finset.sum_nonneg fun m _ ↦ by positivity
-      have hrem : 0 ≤ EulerMaclaurin.sawBound (s + 1) *
-          (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1)) := by
-        exact mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
-      have hD : 0 ≤ 2 / c + K / c ^ 2 := by positivity
-      dsimp only [oscillatorySumConstant]
-      linarith
-    nlinarith
-  have hablt : a < b := hab.lt_of_ne heq
-  have hunique : UniqueDiffOn ℝ interval := uniqueDiffOn_Icc (by exact_mod_cast hablt)
-  let A : ℕ → ℝ := fun k ↦ (k.factorial : ℝ) * (2 * Real.pi + 1) ^ k
-  have hosc (k : ℕ) (hk : 1 ≤ k) (hkS : k ≤ s + 1) (x : ℝ) (hx : x ∈ interval) :
-      ‖iteratedDerivWithin k (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤
-        A k * (K * T / N) ^ k := by
-    simpa only [A] using norm_iteratedDerivWithin_oscillatory_le
-      (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl k)) hunique hx hmap hT hN hK
-      (fun q hq hqk u hu ↦ hderiv q hq (hqk.trans hkS) u hu)
-  have hoscConst (k : ℕ) (hk : 1 ≤ k) (hkS : k ≤ s + 1)
-      (x : ℝ) (hx : x ∈ interval) :
-      ‖iteratedDerivWithin k (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤ A k := by
-    exact (hosc k hk hkS x hx).trans <| by
-      have hA0 : 0 ≤ A k := by dsimp [A]; positivity
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left
-        (pow_le_one₀ hrnonneg hratio) hA0
-  have hIntegral :
-      ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤
-        N * ((2 / c + K / c ^ 2) / T) := by
-    have hAB : (a : ℝ) / N ≤ (b : ℝ) / N := div_le_div_of_nonneg_right
-      (by exact_mod_cast hab) hNpos.le
-    have hsub : Set.Icc ((a : ℝ) / N) ((b : ℝ) / N) ⊆ phaseInterval := by
-      intro x hx
-      constructor
-      · exact ((le_div_iff₀ hNpos).2 (by simpa using ha)).trans hx.1
-      · exact hx.2.trans ((div_le_iff₀ hNpos).2 (by simpa using hb))
-    have hy := norm_integral_oscillatory_le hAB hsub
-      (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hTpos hc
-      (fun x hx ↦ hfirst x (hsub hx))
-      (fun x hx ↦ hderiv 2 (by norm_num) (by omega) x (hsub hx))
-    have hscale := intervalIntegral.integral_comp_div
-      (fun y : ℝ ↦ (𝐞 (T * F y) : ℂ)) (a := (a : ℝ)) (b := (b : ℝ)) hNpos.ne'
-    rw [hscale, norm_smul, Real.norm_eq_abs, abs_of_pos hNpos]
-    exact mul_le_mul_of_nonneg_left hy hNpos.le
-  have hEM := oscillatory_sum_eq_eulerMaclaurin (T := T) (N := N) hab
-    (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1))) hmap
-  let Ccorr : ℝ := ∑ m ∈ Finset.range s,
-    |EulerMaclaurin.saw (m + 2) 0| * (2 * A (m + 1))
-  let Crem : ℝ := EulerMaclaurin.sawBound (s + 1) * A (s + 1)
-  let D : ℝ := 2 / c + K / c ^ 2
-  let C : ℝ := 1 + Ccorr + Crem + D
-  have hA_nonneg (k : ℕ) : 0 ≤ A k := by
-    dsimp [A]
-    positivity
-  have hCcorr : 0 ≤ Ccorr := Finset.sum_nonneg fun m _ ↦ by
-    positivity
-  have hCrem : 0 ≤ Crem := mul_nonneg EulerMaclaurin.sawBound_nonneg (hA_nonneg _)
-  have hD : 0 < D := by
-    dsimp [D]
-    positivity
-  have hC : 0 < C := by dsimp [C]; positivity
-  have hendpoint :
-      ‖(2⁻¹ : ℝ) •
-        ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) + (𝐞 (T * F ((b : ℝ) / N)) : ℂ))‖ ≤ 1 := by
-    calc
-      _ ≤ |(2⁻¹ : ℝ)| *
-          (‖(𝐞 (T * F ((a : ℝ) / N)) : ℂ)‖ +
-            ‖(𝐞 (T * F ((b : ℝ) / N)) : ℂ)‖) := by
-        rw [norm_smul, Real.norm_eq_abs]
-        gcongr
-        exact norm_add_le _ _
-      _ = 1 := by norm_num
-  have hcorr :
-      ‖∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-        (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-          iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)‖ ≤
-        Ccorr := by
-    calc
-      _ ≤ ∑ m ∈ Finset.range s,
-          ‖(-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-            (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-              iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)‖ :=
-        norm_sum_le _ _
-      _ ≤ Ccorr := by
-        apply Finset.sum_le_sum
-        intro m hm
-        have hmS : m < s := Finset.mem_range.mp hm
-        have haI : (a : ℝ) ∈ interval := ⟨le_rfl, by exact_mod_cast hab⟩
-        have hbI : (b : ℝ) ∈ interval := ⟨by exact_mod_cast hab, le_rfl⟩
-        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
-          abs_pow, abs_neg, abs_one, one_pow, one_mul]
-        calc
-          |EulerMaclaurin.saw (m + 2) 0| * ‖_ - _‖ ≤
-              |EulerMaclaurin.saw (m + 2) 0| * (A (m + 1) + A (m + 1)) := by
-            gcongr
-            exact (norm_sub_le _ _).trans (add_le_add
-              (hoscConst (m + 1) (by omega) (by omega) b hbI)
-              (hoscConst (m + 1) (by omega) (by omega) a haI))
-          _ = |EulerMaclaurin.saw (m + 2) 0| * (2 * A (m + 1)) := by ring
-  have hrem :
-      ‖∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-        iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤
-        Crem := by
-    have hend : ((a : ℤ) : ℝ) + (b - a : ℕ) = (b : ℝ) := by
-      exact_mod_cast Nat.add_sub_of_le hab
-    have hraw := EulerMaclaurin.norm_integral_saw_smul_iteratedDerivWithin_le
-      (a := (a : ℤ)) (n := b - a) (s := s)
-      (f := fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) (t := interval)
-      (C := A (s + 1) * (K * T / N) ^ (s + 1)) (fun x hx ↦ by
-        apply hosc (s + 1) (by omega) le_rfl x
-        rw [hend] at hx
-        simpa only [interval, Int.cast_natCast] using hx)
-    rw [hend] at hraw
-    calc
-      _ ≤ EulerMaclaurin.sawBound (s + 1) *
-          (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) := hraw
-      _ ≤ Crem := by
-        have hlen : (b - a : ℝ) ≤ N := by
-          linarith
-        dsimp [Crem]
-        have hprod : (b - a : ℝ) * (K * T / N) ^ (s + 1) ≤ 1 := by
-          exact (mul_le_mul_of_nonneg_right hlen (pow_nonneg hrnonneg _)).trans hremainder
-        calc
-          EulerMaclaurin.sawBound (s + 1) *
-              (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) =
-              Crem * ((b - a : ℝ) * (K * T / N) ^ (s + 1)) := by
-            dsimp [Crem]
-            rw [Nat.cast_sub hab]
-            ring
-          _ ≤ Crem * 1 := mul_le_mul_of_nonneg_left hprod hCrem
-          _ = Crem := mul_one _
-  change _ ≤ C * (1 + N / T)
-  rw [hEM]
-  have hsum : ‖(∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)) +
-      (2⁻¹ : ℝ) • ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) +
-        (𝐞 (T * F ((b : ℝ) / N)) : ℂ)) +
-      (∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-        (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-          iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)) +
-      (-1 : ℝ) ^ s • (∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-        iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x)‖ ≤
-      D * (N / T) + 1 + Ccorr + Crem := by
-    calc
-      _ ≤ ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ +
-          ‖(2⁻¹ : ℝ) • ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) +
-            (𝐞 (T * F ((b : ℝ) / N)) : ℂ))‖ +
-          ‖∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-            (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-              iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)‖ +
-          ‖(-1 : ℝ) ^ s • (∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-            iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x)‖ := by
-        calc
-          _ ≤ ‖_ + _ + _‖ + ‖_‖ := norm_add_le _ _
-          _ ≤ (‖_ + _‖ + ‖_‖) + ‖_‖ := by
-            gcongr
-            exact norm_add_le _ _
-          _ ≤ ((‖_‖ + ‖_‖) + ‖_‖) + ‖_‖ := by gcongr; exact norm_add_le _ _
-      _ ≤ D * (N / T) + 1 + Ccorr + Crem := by
-        have hI : ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤ D * (N / T) := by
-          calc
-            _ ≤ N * (D / T) := by simpa only [D] using hIntegral
-            _ = D * (N / T) := by ring
-        have hremSmul :
-            ‖(-1 : ℝ) ^ s • (∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-              iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x)‖ ≤
-              Crem := by
-          rw [norm_smul, Real.norm_eq_abs, abs_pow, abs_neg, abs_one, one_pow, one_mul]
-          exact hrem
-        linarith
-  calc
-    _ ≤ D * (N / T) + 1 + Ccorr + Crem := hsum
-    _ ≤ C * (1 + N / T) := by
-      have hNT : 0 ≤ N / T := by positivity
-      dsimp [C]
-      nlinarith
-
-private theorem isExponentSumBound_sub_one
-    {α : ℝ≥0} (hα : 1 < α) :
-    IsExponentSumBound α ((α : ℝ) - 1) := by
-  intro N T F a b hN hT hTunbounded hNT hF hab
-  apply (isPowerBounded_iff_forall_pos
-    (exponentialSum F T N a b) T ((α : ℝ) - 1) hT hTunbounded).2
-  intro ε hε
-  have hαR : (1 : ℝ) < α := by exact_mod_cast hα
-  let η : ℝ := min (((α : ℝ) - 1) / 4) (ε / 4)
-  have hη : 0 < η := lt_min (by linarith) (by linarith)
-  have hηε : η < ε := lt_of_le_of_lt (min_le_right _ _) (by linarith)
-  let δ : ℝ := (α : ℝ) - η - 1
-  have hδ : 0 < δ := by
-    dsimp [δ, η]
-    have := min_le_left (((α : ℝ) - 1) / 4) (ε / 4)
-    linarith
-  obtain ⟨s, hs⟩ := exists_nat_ge ((1 + δ / 2) / δ)
-  have hsone : 1 ≤ s := by
-    by_contra hs0
-    have : s = 0 := by omega
-    subst s
-    norm_num at hs
-    have : 0 < (1 + δ / 2) / δ := by positivity
-    linarith
-  have hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ := by
-    exact (div_le_iff₀ hδ).1 (by simpa [mul_comm] using hs)
-  let q : ℝ := δ / (2 * (s + 1 : ℕ))
-  have hq : 0 < q := by dsimp [q]; positivity
-  have hqδ : q ≤ δ := by
-    dsimp [q]
-    push_cast
-    apply (div_le_iff₀ (by positivity : 0 < (2 : ℝ) * ((s : ℝ) + 1))).2
-    have hs0 : (0 : ℝ) ≤ s := Nat.cast_nonneg s
-    calc
-      δ = δ * 1 := by ring
-      _ ≤ δ * (2 * ((s : ℝ) + 1)) := by
-        gcongr
-        nlinarith
-  obtain ⟨c, K, hc, hK, hderivEventually⟩ :=
-    eventually_model_phase_deriv_bounds hF s
-  have hTtop : Tendsto T atTop atTop := by
-    rw [VariableObject.IsUnbounded] at hTunbounded
-    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
-      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
-  have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ q := by
-    have h := tendsto_atTop.1 ((tendsto_rpow_atTop hq).comp hTtop) K
-    exact h
-  have hNTbounds := hNT.eventually_between
-    (Filter.Eventually.of_forall hT) hη
-  let C := oscillatorySumConstant s K c
-  have hC : 0 ≤ C := oscillatorySumConstant_nonneg s (zero_le_one.trans hK) hc
-  refine Asymptotics.IsBigO.of_bound (2 * C) ?_
-  filter_upwards [hderivEventually, hKpower, hNTbounds] with i hiDeriv hiK hiNT
-  have hTi : 0 < T i := zero_lt_one.trans_le (hT i)
-  have hNi : 0 < N i := zero_lt_one.trans_le (hN i)
-  have hqmul : q * (s + 1 : ℕ) = δ / 2 := by
-    dsimp [q]
-    field_simp
-  have hKpow : K ^ (s + 1) ≤ T i ^ (δ / 2) := by
-    calc
-      K ^ (s + 1) ≤ (T i ^ q) ^ (s + 1) :=
-        pow_le_pow_left₀ (zero_le_one.trans hK) hiK _
-      _ = T i ^ (q * (s + 1 : ℕ)) :=
-        (Real.rpow_mul_natCast hTi.le q (s + 1)).symm
-      _ = T i ^ (δ / 2) := by rw [hqmul]
-  have hratio : K * T i / N i ≤ 1 := by
-    apply (div_le_one hNi).2
-    calc
-      K * T i ≤ T i ^ q * T i := mul_le_mul_of_nonneg_right hiK hTi.le
-      _ = T i ^ (q + 1) := by
-        simpa only [Real.rpow_one] using (Real.rpow_add hTi q 1).symm
-      _ ≤ T i ^ (δ + 1) :=
-        Real.rpow_le_rpow_of_exponent_le (hT i) (by linarith)
-      _ = T i ^ ((α : ℝ) - η) := by
-        congr 1
-        dsimp [δ]
-        ring
-      _ ≤ N i := hiNT.1
-  have hremainder : N i * (K * T i / N i) ^ (s + 1) ≤ 1 := by
-    have hbase : T i ^ ((α : ℝ) - η) ≤ N i := hiNT.1
-    have hNpow : T i ^ (((α : ℝ) - η) * s) ≤ N i ^ s := by
-      calc
-        T i ^ (((α : ℝ) - η) * s) = (T i ^ ((α : ℝ) - η)) ^ s :=
-          Real.rpow_mul_natCast hTi.le ((α : ℝ) - η) s
-        _ ≤ N i ^ s := pow_le_pow_left₀ (Real.rpow_nonneg hTi.le _) hbase _
-    have hexponent : δ / 2 + (s + 1 : ℕ) ≤ ((α : ℝ) - η) * s := by
-      dsimp [δ] at hsδ ⊢
-      push_cast
-      linarith
-    have hnum : K ^ (s + 1) * T i ^ (s + 1) ≤ N i ^ s := by
-      calc
-        K ^ (s + 1) * T i ^ (s + 1) ≤
-            T i ^ (δ / 2) * T i ^ (s + 1 : ℕ) := by
-          gcongr
-        _ = T i ^ (δ / 2 + (s + 1 : ℕ)) := by
-          rw [← Real.rpow_natCast]
-          exact (Real.rpow_add hTi (δ / 2) (s + 1 : ℕ)).symm
-        _ ≤ T i ^ (((α : ℝ) - η) * s) :=
-          Real.rpow_le_rpow_of_exponent_le (hT i) hexponent
-        _ ≤ N i ^ s := hNpow
-    rw [show N i * (K * T i / N i) ^ (s + 1) =
-        (K ^ (s + 1) * T i ^ (s + 1)) / N i ^ s by
-      rw [div_pow, mul_pow, pow_succ]
-      field_simp [hNi.ne', pow_ne_zero _ hNi.ne']
-      ring]
-    exact (div_le_one (pow_pos hNi _)).2 hnum
-  have hsum : ‖exponentialSum F T N a b i‖ ≤ C * (1 + N i / T i) := by
-    change ‖∑ n ∈ Finset.Icc (a i) (b i),
-      (𝐞 (T i * F i ((n : ℝ) / N i)) : ℂ)‖ ≤ C * (1 + N i / T i)
-    by_cases habi : a i ≤ b i
-    · exact norm_oscillatory_sum_le s hsone habi
-        (hN i) (hT i) hK hc (hF.1 i)
-        (fun u hu ↦ (hiDeriv ⟨u, hu⟩).1)
-        (fun k hk hkS u hu ↦ (hiDeriv ⟨u, hu⟩).2 k hk hkS)
-        (hab i).1 (hab i).2 hratio hremainder
-    · rw [Finset.Icc_eq_empty habi, Finset.sum_empty, norm_zero]
-      exact mul_nonneg hC (by positivity)
-  have hTargetNonneg : 0 ≤ (α : ℝ) - 1 + ε := by linarith
-  have hNTdiv : N i / T i ≤ T i ^ ((α : ℝ) - 1 + ε) := by
-    calc
-      N i / T i ≤ T i ^ ((α : ℝ) + η) / T i :=
-        div_le_div_of_nonneg_right hiNT.2 hTi.le
-      _ = T i ^ ((α : ℝ) + η - 1) := by
-        simpa only [Real.rpow_one] using
-          (Real.rpow_sub hTi ((α : ℝ) + η) 1).symm
-      _ ≤ T i ^ ((α : ℝ) - 1 + ε) :=
-        Real.rpow_le_rpow_of_exponent_le (hT i) (by linarith)
-  have hone : 1 ≤ T i ^ ((α : ℝ) - 1 + ε) := by
-    simpa using Real.one_le_rpow (hT i) hTargetNonneg
-  change ‖exponentialSum F T N a b i‖ ≤
-    2 * C * ‖T i ^ ((α : ℝ) - 1 + ε)‖
-  rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hTi.le _)]
-  calc
-    ‖exponentialSum F T N a b i‖ ≤ C * (1 + N i / T i) := hsum
-    _ ≤ C * (2 * T i ^ ((α : ℝ) - 1 + ε)) := by
-      gcongr
-      linarith
-    _ = 2 * C * T i ^ ((α : ℝ) - 1 + ε) := by ring
-
 private def oscillatoryErrorConstant (s : ℕ) : ℝ :=
   1 +
     (∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
       (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1)))) +
     EulerMaclaurin.sawBound (s + 1) *
       (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1))
+
+private lemma one_le_oscillatoryErrorConstant (s : ℕ) :
+    1 ≤ oscillatoryErrorConstant s := by
+  have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
+      (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
+    Finset.sum_nonneg fun _ _ ↦ by positivity
+  have hrem : 0 ≤ EulerMaclaurin.sawBound (s + 1) *
+      (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1)) :=
+    mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
+  dsimp only [oscillatoryErrorConstant]
+  linarith
 
 private theorem norm_oscillatory_sum_sub_integral_le
     (s : ℕ) {F : ℝ → ℝ} {T N K : ℝ} {a b : ℕ}
@@ -920,85 +583,52 @@ private theorem norm_oscillatory_sum_sub_integral_le
   let A : ℕ → ℝ := fun k ↦ (k.factorial : ℝ) * (2 * Real.pi + 1) ^ k
   have hosc (k : ℕ) (hk : 1 ≤ k) (hkS : k ≤ s + 1)
       (x : ℝ) (hx : x ∈ interval) :
-      ‖iteratedDerivWithin k (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤ A k := by
-    have h := norm_iteratedDerivWithin_oscillatory_le
+      ‖iteratedDerivWithin k (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤
+        A k * (K * T / N) ^ k := by
+    simpa only [A] using norm_iteratedDerivWithin_oscillatory_le
       (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl k))
       hunique hx hmap hT hN hK
       (fun q hq hqk u hu ↦ hderiv q hq (hqk.trans hkS) u hu)
-    exact h.trans <| by
-      have hA0 : 0 ≤ A k := by dsimp [A]; positivity
-      change A k * (K * T / N) ^ k ≤ A k
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left
-        (pow_le_one₀ hrnonneg hratio) hA0
-  have hEM := oscillatory_sum_eq_eulerMaclaurin
-    (T := T) (N := N) hab.le
-    (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1))) hmap
+  have hraw := EulerMaclaurin.norm_sum_Icc_nat_sub_integral_le
+    (f := fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) (t := interval)
+    hab.le
+    (contDiffOn_oscillatory
+      (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1))) hmap)
+    hunique Set.Subset.rfl
+    (C₀ := 1) (fun _ _ ↦ by simp)
+    (fun k ↦ A k * (K * T / N) ^ k) hosc
   let Ccorr : ℝ := ∑ m ∈ Finset.range s,
     |EulerMaclaurin.saw (m + 2) 0| * (2 * A (m + 1))
   let Crem : ℝ := EulerMaclaurin.sawBound (s + 1) * A (s + 1)
-  have hendpoint :
-      ‖(2⁻¹ : ℝ) •
-        ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) + (𝐞 (T * F ((b : ℝ) / N)) : ℂ))‖ ≤ 1 := by
-    calc
-      _ ≤ |(2⁻¹ : ℝ)| *
-          (‖(𝐞 (T * F ((a : ℝ) / N)) : ℂ)‖ +
-            ‖(𝐞 (T * F ((b : ℝ) / N)) : ℂ)‖) := by
-        rw [norm_smul, Real.norm_eq_abs]
-        gcongr
-        exact norm_add_le _ _
-      _ = 1 := by norm_num
-  have hcorr :
-      ‖∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-        (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-          iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)‖ ≤
-        Ccorr := by
-    calc
-      _ ≤ ∑ m ∈ Finset.range s,
-          ‖(-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-            (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-              iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)‖ :=
-        norm_sum_le _ _
-      _ ≤ Ccorr := by
+  have hCrem : 0 ≤ Crem := by
+    dsimp [Crem, A]
+    exact mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
+  change _ ≤ 1 + Ccorr + Crem
+  calc
+    _ ≤ 1 +
+        (∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
+          (2 * (A (m + 1) * (K * T / N) ^ (m + 1)))) +
+        EulerMaclaurin.sawBound (s + 1) *
+          (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) := hraw
+    _ ≤ 1 + Ccorr + Crem := by
+      have hcorr :
+          (∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
+            (2 * (A (m + 1) * (K * T / N) ^ (m + 1)))) ≤ Ccorr := by
+        dsimp [Ccorr]
         apply Finset.sum_le_sum
         intro m hm
-        have hmS := Finset.mem_range.mp hm
-        have haI : (a : ℝ) ∈ interval := ⟨le_rfl, by exact_mod_cast hab.le⟩
-        have hbI : (b : ℝ) ∈ interval := ⟨by exact_mod_cast hab.le, le_rfl⟩
-        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
-          abs_pow, abs_neg, abs_one, one_pow, one_mul]
-        calc
-          |EulerMaclaurin.saw (m + 2) 0| * ‖_ - _‖ ≤
-              |EulerMaclaurin.saw (m + 2) 0| * (A (m + 1) + A (m + 1)) := by
-            gcongr
-            exact (norm_sub_le _ _).trans (add_le_add
-              (hosc (m + 1) (by omega) (by omega) b hbI)
-              (hosc (m + 1) (by omega) (by omega) a haI))
-          _ = |EulerMaclaurin.saw (m + 2) 0| * (2 * A (m + 1)) := by ring
-  have hrem :
-      ‖∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-        iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤
-        Crem := by
-    have hend : ((a : ℤ) : ℝ) + (b - a : ℕ) = (b : ℝ) := by
-      exact_mod_cast Nat.add_sub_of_le hab.le
-    have hraw := EulerMaclaurin.norm_integral_saw_smul_iteratedDerivWithin_le
-      (a := (a : ℤ)) (n := b - a) (s := s)
-      (f := fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) (t := interval)
-      (C := A (s + 1) * (K * T / N) ^ (s + 1)) (fun x hx ↦ by
-        apply (norm_iteratedDerivWithin_oscillatory_le
-          (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1)))
-          hunique _ hmap hT hN hK
-          (fun q hq hqS u hu ↦ hderiv q hq hqS u hu))
-        rw [hend] at hx
-        simpa only [interval, Int.cast_natCast] using hx)
-    rw [hend] at hraw
-    calc
-      _ ≤ EulerMaclaurin.sawBound (s + 1) *
-          (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) := hraw
-      _ ≤ Crem := by
-        have hlen : (b - a : ℝ) ≤ N := by linarith
-        have hprod : (b - a : ℝ) * (K * T / N) ^ (s + 1) ≤ 1 :=
-          (mul_le_mul_of_nonneg_right hlen (pow_nonneg hrnonneg _)).trans hremainder
-        dsimp [Crem]
+        have hA0 : 0 ≤ A (m + 1) := by dsimp [A]; positivity
+        have hp : (K * T / N) ^ (m + 1) ≤ 1 :=
+          pow_le_one₀ hrnonneg hratio
+        gcongr
+        simpa only [mul_one] using mul_le_mul_of_nonneg_left hp hA0
+      have hlen : (b - a : ℝ) ≤ N := by
+        linarith
+      have hprod : (b - a : ℝ) * (K * T / N) ^ (s + 1) ≤ 1 :=
+        (mul_le_mul_of_nonneg_right hlen (pow_nonneg hrnonneg _)).trans hremainder
+      have hrem :
+          EulerMaclaurin.sawBound (s + 1) *
+              (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) ≤ Crem := by
         calc
           EulerMaclaurin.sawBound (s + 1) *
               (A (s + 1) * (K * T / N) ^ (s + 1)) * (b - a : ℕ) =
@@ -1007,41 +637,159 @@ private theorem norm_oscillatory_sum_sub_integral_le
             rw [Nat.cast_sub hab.le]
             ring
           _ ≤ Crem := by
-            have hCrem : 0 ≤ Crem := by
-              dsimp [Crem, A]
-              exact mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
             simpa only [mul_one] using mul_le_mul_of_nonneg_left hprod hCrem
-  let I : ℂ := ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)
-  let E : ℂ := (2⁻¹ : ℝ) •
-    ((𝐞 (T * F ((a : ℝ) / N)) : ℂ) + (𝐞 (T * F ((b : ℝ) / N)) : ℂ))
-  let Q : ℂ := ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • EulerMaclaurin.saw (m + 2) 0 •
-    (iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval b -
-      iteratedDerivWithin (m + 1) (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) interval a)
-  let R : ℂ := (-1 : ℝ) ^ s •
-    (∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-      iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x)
-  have hEM' : (∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) =
-      I + E + Q + R := by
-    simpa only [I, E, Q, R, interval] using hEM
-  rw [hEM']
-  change ‖(I + E + Q + R) - I‖ ≤ oscillatoryErrorConstant s
-  rw [show (I + E + Q + R) - I = E + Q + R by abel]
-  have hE : ‖E‖ ≤ 1 := by simpa only [E] using hendpoint
-  have hQ : ‖Q‖ ≤ Ccorr := by simpa only [Q] using hcorr
-  have hremSmul :
-      ‖(-1 : ℝ) ^ s • (∫ x in (a : ℝ)..b, EulerMaclaurin.saw (s + 1) x •
-        iteratedDerivWithin (s + 1) (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x)‖ ≤
-        Crem := by
-    rw [norm_smul, Real.norm_eq_abs, abs_pow, abs_neg, abs_one, one_pow, one_mul]
-    exact hrem
-  have hR : ‖R‖ ≤ Crem := by simpa only [R] using hremSmul
+      linarith
+
+private def oscillatorySumConstant (s : ℕ) (K c : ℝ) : ℝ :=
+  oscillatoryErrorConstant s + (2 / c + K / c ^ 2)
+
+private lemma oscillatorySumConstant_nonneg
+    (s : ℕ) {K c : ℝ} (hK : 0 ≤ K) (hc : 0 < c) :
+    0 ≤ oscillatorySumConstant s K c := by
+  dsimp only [oscillatorySumConstant]
+  positivity [one_le_oscillatoryErrorConstant s]
+
+private theorem norm_oscillatory_sum_le
+    (s : ℕ) {F : ℝ → ℝ} {T N K c : ℝ} {a b : ℕ}
+    (hs : 1 ≤ s) (hab : a ≤ b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K) (hc : 0 < c)
+    (hF : ContDiffOn ℝ ∞ F phaseInterval)
+    (hfirst : ∀ u ∈ phaseInterval,
+      c ≤ iteratedDerivWithin 1 F phaseInterval u)
+    (hderiv : ∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
+      ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K)
+    (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N)
+    (hratio : K * T / N ≤ 1)
+    (hremainder : N * (K * T / N) ^ (s + 1) ≤ 1) :
+    ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
+      oscillatorySumConstant s K c * (1 + N / T) := by
+  have hNpos : 0 < N := zero_lt_one.trans_le hN
+  have hTpos : 0 < T := zero_lt_one.trans_le hT
+  by_cases heq : a = b
+  · subst b
+    simp only [Finset.Icc_self, Finset.sum_singleton]
+    rw [show ‖(𝐞 (T * F ((a : ℝ) / N)) : ℂ)‖ = 1 by simp]
+    have hconst : 1 ≤ oscillatorySumConstant s K c := by
+      dsimp only [oscillatorySumConstant]
+      have hE := one_le_oscillatoryErrorConstant s
+      have hD : 0 ≤ 2 / c + K / c ^ 2 := by positivity
+      linarith
+    have hNT : 0 ≤ N / T := div_nonneg hNpos.le hTpos.le
+    nlinarith
+  have hablt : a < b := hab.lt_of_ne heq
+  have herr := norm_oscillatory_sum_sub_integral_le s hablt hN hT hK hF hderiv
+    ha hb hratio hremainder
+  have hAB : (a : ℝ) / N ≤ (b : ℝ) / N :=
+    div_le_div_of_nonneg_right (by exact_mod_cast hab) hNpos.le
+  have hsub : Set.Icc ((a : ℝ) / N) ((b : ℝ) / N) ⊆ phaseInterval := by
+    intro x hx
+    constructor
+    · exact ((le_div_iff₀ hNpos).2 (by simpa using ha)).trans hx.1
+    · exact hx.2.trans ((div_le_iff₀ hNpos).2 (by simpa using hb))
+  have hy := norm_integral_oscillatory_le hAB hsub
+    (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hTpos hc
+    (fun x hx ↦ hfirst x (hsub hx))
+    (fun x hx ↦ hderiv 2 (by norm_num) (by omega) x (hsub hx))
+  have hscale := intervalIntegral.integral_comp_div
+    (fun y : ℝ ↦ (𝐞 (T * F y) : ℂ)) (a := (a : ℝ)) (b := (b : ℝ)) hNpos.ne'
+  have hint :
+      ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤
+        (2 / c + K / c ^ 2) * (N / T) := by
+    rw [hscale, norm_smul, Real.norm_eq_abs, abs_of_pos hNpos]
+    calc
+      N * ‖∫ x in (a : ℝ) / N..(b : ℝ) / N, (𝐞 (T * F x) : ℂ)‖ ≤
+          N * ((2 / c + K / c ^ 2) / T) := by gcongr
+      _ = (2 / c + K / c ^ 2) * (N / T) := by ring
   calc
-    ‖E + Q + R‖ ≤ ‖E + Q‖ + ‖R‖ := norm_add_le _ _
-    _ ≤ ‖E‖ + ‖Q‖ + ‖R‖ := by
+    ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
+        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) -
+          ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ +
+        ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ :=
+      norm_le_norm_sub_add _ _
+    _ ≤ oscillatoryErrorConstant s + (2 / c + K / c ^ 2) * (N / T) := by
       gcongr
-      exact norm_add_le _ _
-    _ ≤ 1 + Ccorr + Crem := add_le_add (add_le_add hE hQ) hR
-    _ = oscillatoryErrorConstant s := by rfl
+    _ ≤ oscillatorySumConstant s K c * (1 + N / T) := by
+      have hE := one_le_oscillatoryErrorConstant s
+      have hD : 0 ≤ 2 / c + K / c ^ 2 := by positivity
+      have hNT : 0 ≤ N / T := by positivity
+      dsimp only [oscillatorySumConstant]
+      nlinarith
+
+private theorem exponentSumGrowthExponent_le_sub_one
+    {α : ℝ≥0} (hα : 1 < α) :
+    exponentSumGrowthExponent α ≤ (α : ℝ) - 1 := by
+  rw [exponentSumGrowthExponent_le_iff_nonAsymptotic]
+  intro ε hε σ hσ
+  have hαR : (1 : ℝ) < α := by exact_mod_cast hα
+  let c : ℝ := (2 : ℝ) ^ (-σ) / 2
+  have hc : 0 < c := by dsimp [c]; positivity
+  let η : ℝ := min (((α : ℝ) - 1) / 4) (min (ε / 4) (min c 1))
+  have hη : 0 < η := by
+    dsimp [η]
+    exact lt_min (by linarith) (lt_min (by linarith) (lt_min hc zero_lt_one))
+  have hηα : η ≤ ((α : ℝ) - 1) / 4 := min_le_left _ _
+  have hηε : η ≤ ε / 4 := (min_le_right _ _).trans (min_le_left _ _)
+  have hηc : η ≤ min c 1 := (min_le_right _ _).trans (min_le_right _ _)
+  let δ : ℝ := (α : ℝ) - η - 1
+  have hδ : 0 < δ := by dsimp [δ]; linarith
+  obtain ⟨s, q, hs, hq, hqδ, hqmul, hsδ⟩ :=
+    exists_oscillatory_scale_parameters hδ
+  obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds hσ s
+  let M : ℝ := oscillatorySumConstant s K c
+  have hM : 0 ≤ M := by
+    dsimp [M]
+    exact oscillatorySumConstant_nonneg s (zero_le_one.trans hK) hc
+  let C : ℝ := max 1 (max (2 * M) (K ^ q⁻¹))
+  have hC : 1 ≤ C := le_max_left _ _
+  refine ⟨η, hη, s, hs, C, hC, ?_⟩
+  intro T N F a b hTC hNlower hNupper hF ha hb
+  have hTone : 1 ≤ T := hC.trans hTC
+  have hTpos : 0 < T := zero_lt_one.trans_le hTone
+  have hNone : 1 ≤ N := by
+    calc
+      1 ≤ T ^ ((α : ℝ) - η) := Real.one_le_rpow hTone (by linarith)
+      _ ≤ N := hNlower
+  have hKbase : K ^ q⁻¹ ≤ T := by
+    calc
+      K ^ q⁻¹ ≤ max (2 * M) (K ^ q⁻¹) := le_max_right _ _
+      _ ≤ C := le_max_right _ _
+      _ ≤ T := hTC
+  have hKpower : K ≤ T ^ q := by
+    calc
+      K = (K ^ q⁻¹) ^ q := by
+        rw [← Real.rpow_mul (zero_le_one.trans hK), inv_mul_cancel₀ hq.ne', Real.rpow_one]
+      _ ≤ T ^ q := Real.rpow_le_rpow (Real.rpow_nonneg (zero_le_one.trans hK) _)
+        hKbase hq.le
+  have hNscale : T ^ (δ + 1) ≤ N := by
+    simpa only [δ, sub_add_cancel] using hNlower
+  obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
+    hTone hNone hK hqδ hqmul hsδ hKpower hNscale
+  obtain ⟨hfirst, hderiv⟩ := hphaseBounds hηc hF
+  have htargetNonneg : 0 ≤ (α : ℝ) - 1 + ε := by linarith
+  have hNTdiv : N / T ≤ T ^ ((α : ℝ) - 1 + ε) := by
+    calc
+      N / T ≤ T ^ ((α : ℝ) + η) / T :=
+        div_le_div_of_nonneg_right hNupper hTpos.le
+      _ = T ^ ((α : ℝ) + η - 1) := by
+        simpa only [Real.rpow_one] using
+          (Real.rpow_sub hTpos ((α : ℝ) + η) 1).symm
+      _ ≤ T ^ ((α : ℝ) - 1 + ε) :=
+        Real.rpow_le_rpow_of_exponent_le hTone (by linarith)
+  have hone : 1 ≤ T ^ ((α : ℝ) - 1 + ε) := Real.one_le_rpow hTone htargetNonneg
+  have hCM : 2 * M ≤ C := (le_max_left _ _).trans (le_max_right _ _)
+  by_cases hab : a ≤ b
+  · have hsum := norm_oscillatory_sum_le s hs hab hNone hTone hK hc hF.1
+      (fun u hu ↦ hfirst u hu) hderiv ha hb hratio hremainder
+    change ‖exponentialSumAt F T N a b‖ ≤ C * T ^ ((α : ℝ) - 1 + ε)
+    calc
+      ‖exponentialSumAt F T N a b‖ ≤ M * (1 + N / T) := by
+        simpa only [M, exponentialSumAt] using hsum
+      _ ≤ M * (2 * T ^ ((α : ℝ) - 1 + ε)) := by
+        gcongr
+        linarith
+      _ = (2 * M) * T ^ ((α : ℝ) - 1 + ε) := by ring
+      _ ≤ C * T ^ ((α : ℝ) - 1 + ε) := by gcongr
+  · rw [exponentialSumAt, Finset.Icc_eq_empty hab, Finset.sum_empty, norm_zero]
+    exact mul_nonneg (zero_le_one.trans hC) (Real.rpow_nonneg hTpos.le _)
 
 private theorem norm_log_phase_integral_ge
     {N T : ℝ} (hN : 0 < N) (hT : 1 ≤ T) :
@@ -1249,28 +997,8 @@ private theorem sub_one_le_exponentSumGrowthExponent
   have hαR : (1 : ℝ) < α := by exact_mod_cast hα
   let δ : ℝ := (α : ℝ) - 1
   have hδ : 0 < δ := by dsimp [δ]; linarith
-  obtain ⟨s, hs⟩ := exists_nat_ge ((1 + δ / 2) / δ)
-  have hsone : 1 ≤ s := by
-    by_contra hs0
-    have : s = 0 := by omega
-    subst s
-    norm_num at hs
-    have : 0 < (1 + δ / 2) / δ := by positivity
-    linarith
-  have hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ :=
-    (div_le_iff₀ hδ).1 (by simpa [mul_comm] using hs)
-  let q : ℝ := δ / (2 * (s + 1 : ℕ))
-  have hq : 0 < q := by dsimp [q]; positivity
-  have hqδ : q ≤ δ := by
-    dsimp [q]
-    push_cast
-    apply (div_le_iff₀ (by positivity : 0 < (2 : ℝ) * ((s : ℝ) + 1))).2
-    have hs0 : (0 : ℝ) ≤ s := Nat.cast_nonneg s
-    calc
-      δ = δ * 1 := by ring
-      _ ≤ δ * (2 * ((s : ℝ) + 1)) := by
-        gcongr
-        nlinarith
+  obtain ⟨s, q, hsone, hq, hqδ, hqmul, hsδ⟩ :=
+    exists_oscillatory_scale_parameters hδ
   let N : VariableObject ℝ := fun i ↦ (i : ℝ) + 1
   let T : VariableObject ℝ := fun i ↦ N i ^ ((α : ℝ)⁻¹)
   let a : VariableObject ℕ := fun i ↦ i + 1
@@ -1306,77 +1034,37 @@ private theorem sub_one_le_exponentSumGrowthExponent
     push_cast
     exact ⟨le_rfl, le_rfl⟩
   have hbound := isPowerBounded_logPhase α hN hT hTunbounded hNT hab
-  obtain ⟨c, K, hc, hK, hderivEventually⟩ :=
-    eventually_model_phase_deriv_bounds isModelPhaseFunction_log s
+  obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds zero_lt_one s
+  obtain ⟨_, hderiv⟩ := hphaseBounds (δ := 0) (F := Real.log) (by norm_num)
+    (isApproximateModelPhaseFunction_log s)
   have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ q :=
     tendsto_atTop.1 ((tendsto_rpow_atTop hq).comp hTtop) K
   let d : ℝ := 1 / (1 + 2 * Real.pi)
   have hd : 0 < d := by dsimp [d]; positivity
   let E : ℝ := oscillatoryErrorConstant s
   have hE : 0 ≤ E := by
-    dsimp [E, oscillatoryErrorConstant]
-    have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
-        (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
-      Finset.sum_nonneg fun m _ ↦ by positivity
-    have hrem : 0 ≤ EulerMaclaurin.sawBound (s + 1) *
-        (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1)) :=
-      mul_nonneg EulerMaclaurin.sawBound_nonneg (by positivity)
-    linarith
+    exact zero_le_one.trans (by simpa only [E] using one_le_oscillatoryErrorConstant s)
   have herrorSmall : ∀ᶠ i in atTop, 2 * E / d ≤ T i ^ ((α : ℝ) - 1) :=
     tendsto_atTop.1 ((tendsto_rpow_atTop (by linarith : 0 < (α : ℝ) - 1)).comp hTtop)
       (2 * E / d)
   have hlower : ∀ᶠ i in atTop,
       (d / 2) * T i ^ ((α : ℝ) - 1) ≤
         ‖exponentialSum logPhase T N a b i‖ := by
-    filter_upwards [hderivEventually, hKpower, herrorSmall] with i hiDeriv hiK hiSmall
+    filter_upwards [hKpower, herrorSmall] with i hiK hiSmall
     have hTi : 0 < T i := zero_lt_one.trans_le (hT i)
     have hNi : 0 < N i := zero_lt_one.trans_le (hN i)
-    have hqmul : q * (s + 1 : ℕ) = δ / 2 := by
-      dsimp [q]
-      field_simp
-    have hKpow : K ^ (s + 1) ≤ T i ^ (δ / 2) := by
-      calc
-        K ^ (s + 1) ≤ (T i ^ q) ^ (s + 1) :=
-          pow_le_pow_left₀ (zero_le_one.trans hK) hiK _
-        _ = T i ^ (q * (s + 1 : ℕ)) :=
-          (Real.rpow_mul_natCast hTi.le q (s + 1)).symm
-        _ = T i ^ (δ / 2) := by rw [hqmul]
-    have hratio : K * T i / N i ≤ 1 := by
-      apply (div_le_one hNi).2
+    have hNscale : T i ^ (δ + 1) ≤ N i := by
       rw [hNTexact]
-      calc
-        K * T i ≤ T i ^ q * T i := mul_le_mul_of_nonneg_right hiK hTi.le
-        _ = T i ^ (q + 1) := by
-          simpa only [Real.rpow_one] using (Real.rpow_add hTi q 1).symm
-        _ ≤ T i ^ (δ + 1) :=
-          Real.rpow_le_rpow_of_exponent_le (hT i) (by linarith)
-        _ = T i ^ (α : ℝ) := by dsimp [δ]; congr 1; ring
-    have hremainder : N i * (K * T i / N i) ^ (s + 1) ≤ 1 := by
-      have hexponent : δ / 2 + (s + 1 : ℕ) ≤ (α : ℝ) * s := by
-        dsimp [δ] at hsδ ⊢
-        push_cast
-        linarith
-      have hnum : K ^ (s + 1) * T i ^ (s + 1) ≤ N i ^ s := by
-        rw [hNTexact]
-        calc
-          K ^ (s + 1) * T i ^ (s + 1) ≤
-              T i ^ (δ / 2) * T i ^ (s + 1 : ℕ) := by gcongr
-          _ = T i ^ (δ / 2 + (s + 1 : ℕ)) := by
-            rw [← Real.rpow_natCast]
-            exact (Real.rpow_add hTi (δ / 2) (s + 1 : ℕ)).symm
-          _ ≤ T i ^ ((α : ℝ) * s) :=
-            Real.rpow_le_rpow_of_exponent_le (hT i) hexponent
-          _ = (T i ^ (α : ℝ)) ^ s := Real.rpow_mul_natCast hTi.le (α : ℝ) s
-      rw [show N i * (K * T i / N i) ^ (s + 1) =
-          (K ^ (s + 1) * T i ^ (s + 1)) / N i ^ s by
-        rw [div_pow, mul_pow, pow_succ]
-        field_simp [hNi.ne', pow_ne_zero _ hNi.ne']
-        ring]
-      exact (div_le_one (pow_pos hNi _)).2 hnum
+      apply le_of_eq
+      congr 1
+      dsimp [δ]
+      ring
+    obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
+      (hT i) (hN i) hK hqδ hqmul hsδ hiK hNscale
     have hablt : a i < b i := by dsimp [a, b]; omega
     have herr := norm_oscillatory_sum_sub_integral_le s hablt
       (hN i) (hT i) hK (isModelPhaseFunction_log.1 i)
-      (fun k hk hkS u hu ↦ (hiDeriv ⟨u, hu⟩).2 k hk hkS)
+      hderiv
       (hab i).1 (hab i).2 hratio hremainder
     have hInt := norm_log_phase_integral_ge hNi (hT i)
     have hpower : N i / T i = T i ^ ((α : ℝ) - 1) := by
@@ -1666,7 +1354,7 @@ theorem exponentSumGrowthExponent_eq_sub_one
     {α : ℝ≥0} (hα : 1 < α) :
     exponentSumGrowthExponent α = (α : ℝ) - 1 := by
   exact le_antisymm
-    (exponentSumGrowthExponent_le_iff.mpr (isExponentSumBound_sub_one hα))
+    (exponentSumGrowthExponent_le_sub_one hα)
     (sub_one_le_exponentSumGrowthExponent hα)
 
 /-- For `0 ≤ α ≤ 1`, the exponential sum growth exponent lies in
