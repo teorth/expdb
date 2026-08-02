@@ -112,31 +112,6 @@ private theorem isExponentSumBound_of_nonAsymptotic
 
 /-! ## Building asymptotic counterexamples -/
 
-private theorem isPowerAsymptotic_of_between
-    {N T δ : VariableObject ℝ} {α : ℝ}
-    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
-    (hδnonneg : ∀ i, 0 ≤ δ i) (hδ : δ.IsInfinitesimal)
-    (hbetween : ∀ i,
-      T i ^ (α - δ i) ≤ N i ∧ N i ≤ T i ^ (α + δ i)) :
-    IsPowerAsymptotic N T α := by
-  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
-  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
-  · apply (isEqUpToInfinitesimal_iff_forall_pos
-    exponent (VariableObject.fixed α)).2
-    intro ε hε
-    have hδsmall :=
-      (VariableObject.isInfinitesimal_iff_forall_pos δ).1 hδ ε hε
-    filter_upwards [hδsmall] with i hi
-    have hlower : α - δ i ≤ exponent i :=
-      (Real.le_logb_iff_rpow_le (hT i) (hN i)).2 (hbetween i).1
-    have hupper : exponent i ≤ α + δ i :=
-      (Real.logb_le_iff_le_rpow (hT i) (hN i)).2 (hbetween i).2
-    rw [Real.norm_eq_abs, abs_lt]
-    rw [Real.norm_eq_abs, abs_of_nonneg (hδnonneg i)] at hi
-    constructor <;> dsimp [exponent, VariableObject.fixed] at * <;> linarith
-  · exact (Real.rpow_logb (lt_trans zero_lt_one (hT i))
-      (hT i).ne' (hN i)).symm
-
 private theorem isModelPhaseFunction_of_approximations
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ}
     {σ : ℝ} {P : VariableObject ℕ} {δ : VariableObject ℝ}

@@ -6,6 +6,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Order.Interval.Finset.Nat
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.Asymptotics.Lemmas
 
 /-!
 # Exponential sum growth exponents
@@ -114,9 +115,35 @@ theorem isPowerAsymptotic_of_logb_tendsto
       simp [Function.comp_def, exponent, VariableObject.fixed]
   · exact (Real.rpow_logb (zero_lt_one.trans (hT i)) (hT i).ne' (hN i)).symm
 
+/-- A variable power sandwich with an infinitesimal error determines a power asymptotic. -/
+theorem isPowerAsymptotic_of_between
+    {N T δ : VariableObject ℝ} {α : ℝ}
+    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
+    (hδnonneg : ∀ i, 0 ≤ δ i) (hδ : δ.IsInfinitesimal)
+    (hbetween : ∀ i,
+      T i ^ (α - δ i) ≤ N i ∧ N i ≤ T i ^ (α + δ i)) :
+    IsPowerAsymptotic N T α := by
+  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
+  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
+  · apply (isEqUpToInfinitesimal_iff_forall_pos
+    exponent (VariableObject.fixed α)).2
+    intro ε hε
+    have hδsmall :=
+      (VariableObject.isInfinitesimal_iff_forall_pos δ).1 hδ ε hε
+    filter_upwards [hδsmall] with i hi
+    have hlower : α - δ i ≤ exponent i :=
+      (Real.le_logb_iff_rpow_le (hT i) (hN i)).2 (hbetween i).1
+    have hupper : exponent i ≤ α + δ i :=
+      (Real.logb_le_iff_le_rpow (hT i) (hN i)).2 (hbetween i).2
+    rw [Real.norm_eq_abs, abs_lt]
+    rw [Real.norm_eq_abs, abs_of_nonneg (hδnonneg i)] at hi
+    constructor <;> dsimp [exponent, VariableObject.fixed] at * <;> linarith
+  · exact (Real.rpow_logb (lt_trans zero_lt_one (hT i))
+      (hT i).ne' (hN i)).symm
+
 /-- If `T` lies between fixed positive multiples of `N ^ α⁻¹`, then the logarithm of `N` to
 base `T` tends to `α`. -/
-theorem tendsto_logb_of_between_const_rpow
+private theorem tendsto_logb_of_between_const_rpow
     {N T : VariableObject ℝ} {α D : ℝ}
     (hα : 0 < α) (hD : 1 ≤ D)
     (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
@@ -167,7 +194,40 @@ theorem tendsto_logb_of_between_const_rpow
       field_simp [(hlogNpos i).ne', (Real.log_pos (hTgt i)).ne']
   simpa using hinv'
 
+/-- Fixed positive multiplicative uncertainty in `T = N ^ α⁻¹` does not affect the
+power asymptotic `N = T ^ (α + o(1))`. -/
+theorem isPowerAsymptotic_of_between_const_rpow
+    {N T : VariableObject ℝ} {α D : ℝ}
+    (hα : 0 < α) (hD : 1 ≤ D)
+    (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
+    (hT : ∀ i, D * N i ^ α⁻¹ ≤ T i ∧ T i ≤ 2 * (D * N i ^ α⁻¹)) :
+    IsPowerAsymptotic N T α := by
+  have hTgt (i : ℕ) : 1 < T i := by
+    have hbase : 1 < N i := one_lt_two.trans_le (hN i)
+    have hrpow : 1 < N i ^ α⁻¹ := Real.one_lt_rpow hbase (inv_pos.mpr hα)
+    exact hrpow.trans_le <| (le_mul_of_one_le_left
+      (Real.rpow_nonneg (zero_le_one.trans hbase.le) _) hD).trans (hT i).1
+  exact isPowerAsymptotic_of_logb_tendsto hTgt
+    (fun i ↦ zero_lt_two.trans_le (hN i))
+    (tendsto_logb_of_between_const_rpow hα hD hNtop hN hT)
+
 /-! ## Power bounds -/
+
+private theorem isLittleO_rpow_comp_tendsto_of_lt
+    {T : VariableObject ℝ} {β γ : ℝ}
+    (hT : Tendsto T atTop atTop) (hβγ : β < γ) :
+    (fun i ↦ T i ^ β) =o[atTop] (fun i ↦ T i ^ γ) := by
+  have hzero : ∀ᶠ i in atTop, T i ^ γ = 0 → T i ^ β = 0 := by
+    filter_upwards [hT.eventually (eventually_gt_atTop 0)] with i hi
+    exact fun hzero ↦ ((Real.rpow_pos_of_pos hi γ).ne' hzero).elim
+  rw [Asymptotics.isLittleO_iff_tendsto' hzero]
+  have hlimit := (tendsto_rpow_neg_atTop (sub_pos.mpr hβγ)).comp hT
+  apply hlimit.congr'
+  filter_upwards [hT.eventually (eventually_gt_atTop 0)] with i hi
+  change T i ^ (-(γ - β)) = T i ^ β / T i ^ γ
+  rw [← Real.rpow_sub hi]
+  congr 1
+  ring
 
 /-- If `T` is at least one and unbounded, then `X ≪ T ^ (β + o(1))` iff
 `X = O(T ^ (β + ε))` for every fixed `ε > 0`. -/
@@ -281,38 +341,25 @@ theorem exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
   have hβγ : β < γ := lt_of_not_ge hγβ
   let ε := (γ - β) / 2
   have hε : 0 < ε := by dsimp [ε]; linarith
-  have hδ : β + ε + ε = γ := by dsimp [ε]; ring
   have hO := (isPowerBounded_iff_forall_pos X T β hT hTunbounded).1 hbound ε hε
-  obtain ⟨C, hC⟩ := hO.bound
   have hTtop : Tendsto T atTop atTop := by
     rw [VariableObject.IsUnbounded] at hTunbounded
     exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
       rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
-  have hpowtop : Tendsto (fun i ↦ T i ^ ε) atTop atTop :=
-    (tendsto_rpow_atTop hε).comp hTtop
-  have hlarge : ∀ᶠ i in atTop, C < c * T i ^ ε := by
-    have h := tendsto_atTop.1 hpowtop (C / c + 1)
-    filter_upwards [h] with i hi
-    have hc' : C < c * (C / c + 1) := by
-      field_simp
-      linarith
-    exact lt_of_lt_of_le hc' (mul_le_mul_of_nonneg_left hi hc.le)
-  obtain ⟨i, hiLower, hiUpper, hiLarge⟩ :=
-    (hlower.and (hC.and hlarge)).exists
-  have hTi : 0 < T i := lt_of_lt_of_le zero_lt_one (hT i)
-  have hApos : 0 < T i ^ (β + ε) := Real.rpow_pos_of_pos hTi _
-  have hpower : T i ^ γ = T i ^ (β + ε) * T i ^ ε := by
-    rw [← Real.rpow_add hTi, hδ]
-  have hsmall : c * T i ^ ε ≤ C := by
-    apply (mul_le_mul_iff_right₀ hApos).mp
+  have hpowO : (fun i ↦ T i ^ γ) =O[atTop] X := by
+    apply Asymptotics.IsBigO.of_bound (1 / c)
+    filter_upwards [hlower] with i hi
+    rw [Real.norm_eq_abs, abs_of_nonneg
+      (Real.rpow_nonneg (zero_le_one.trans (hT i)) _)]
     calc
-      T i ^ (β + ε) * (c * T i ^ ε) = c * T i ^ γ := by rw [hpower]; ring
-      _ ≤ ‖X i‖ := hiLower
-      _ ≤ C * ‖T i ^ (β + ε)‖ := hiUpper
-      _ = T i ^ (β + ε) * C := by
-        rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hTi.le _)]
-        ring
-  exact (not_lt_of_ge hsmall) hiLarge
+      T i ^ γ ≤ ‖X i‖ / c := (le_div_iff₀ hc).2 (by simpa [mul_comm] using hi)
+      _ = 1 / c * ‖X i‖ := by ring
+  have hsmall : (fun i ↦ T i ^ (β + ε)) =o[atTop] (fun i ↦ T i ^ γ) :=
+    isLittleO_rpow_comp_tendsto_of_lt hTtop (by dsimp [ε]; linarith)
+  have hnonzero : ∃ᶠ i in atTop, T i ^ (β + ε) ≠ 0 :=
+    (Filter.Eventually.of_forall fun i ↦
+      (Real.rpow_pos_of_pos (zero_lt_one.trans_le (hT i)) _).ne').frequently
+  exact hsmall.not_isBigO hnonzero (hpowO.trans hO)
 
 /-! ## Admissible exponents
 
