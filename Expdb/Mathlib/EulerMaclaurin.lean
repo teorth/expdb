@@ -363,6 +363,120 @@ theorem norm_integral_saw_smul_iteratedDerivWithin_le
     have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     rw [abs_of_nonneg hn]
 
+private lemma map_Icc_natCast_int (a b : ℕ) :
+    (Finset.Icc a b).map
+      ⟨(fun n : ℕ ↦ (n : ℤ)), fun _ _ h ↦ Int.ofNat_inj.mp h⟩ =
+      Finset.Icc (a : ℤ) (b : ℤ) := by
+  ext z
+  simp only [Finset.mem_map, Finset.mem_Icc]
+  constructor
+  · rintro ⟨n, hn, rfl⟩
+    change (a : ℤ) ≤ (n : ℤ) ∧ (n : ℤ) ≤ (b : ℤ)
+    exact_mod_cast hn
+  · intro hz
+    have hz0 : 0 ≤ z := le_trans (Int.natCast_nonneg a) hz.1
+    have hzt : (z.toNat : ℤ) = z := Int.toNat_of_nonneg hz0
+    refine ⟨z.toNat, ?_, hzt⟩
+    constructor
+    · exact_mod_cast (show (a : ℤ) ≤ (z.toNat : ℤ) by simpa [hzt] using hz.1)
+    · exact_mod_cast (show (z.toNat : ℤ) ≤ (b : ℤ) by simpa [hzt] using hz.2)
+
+omit [NormedSpace ℝ E] in
+private lemma sum_Icc_int_eq_sum_Icc_nat
+    (f : ℝ → E) (a b : ℕ) :
+    ∑ z ∈ Finset.Icc (a : ℤ) (b : ℤ), f z =
+      ∑ n ∈ Finset.Icc a b, f n := by
+  rw [← map_Icc_natCast_int]
+  simp
+
+/-- A convenient norm form of Euler--Maclaurin for natural endpoints. Uniform bounds on the
+function and its derivatives control the difference between the inclusive sum and its integral. -/
+theorem norm_sum_Icc_nat_sub_integral_le [CompleteSpace E]
+    {a b s : ℕ} (hab : a ≤ b)
+    (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
+    (abt : Icc (a : ℝ) (b : ℝ) ⊆ t)
+    {C₀ : ℝ} (hendpoint : ∀ x ∈ Icc (a : ℝ) (b : ℝ), ‖f x‖ ≤ C₀)
+    (C : ℕ → ℝ)
+    (hderiv : ∀ k, 1 ≤ k → k ≤ s + 1 →
+      ∀ x ∈ Icc (a : ℝ) (b : ℝ), ‖iteratedDerivWithin k f t x‖ ≤ C k) :
+    ‖(∑ n ∈ Finset.Icc a b, f n) - ∫ x in (a : ℝ)..b, f x‖ ≤
+      C₀ +
+        (∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1))) +
+        sawBound (s + 1) * C (s + 1) * (b - a : ℕ) := by
+  have hendNat : a + (b - a) = b := Nat.add_sub_of_le hab
+  have hendInt : (a : ℤ) + (b - a : ℕ) = (b : ℤ) := by exact_mod_cast hendNat
+  have hendReal : ((a : ℤ) : ℝ) + (b - a : ℕ) = ((b : ℤ) : ℝ) := by
+    exact_mod_cast hendNat
+  have hendRealNat : (a : ℝ) + (b - a : ℕ) = (b : ℝ) := by
+    exact_mod_cast hendNat
+  have habt' : Icc ((a : ℤ) : ℝ) (((a : ℤ) : ℝ) + (b - a : ℕ)) ⊆ t := by
+    simpa only [Int.cast_natCast, hendRealNat] using abt
+  have hEM := sum_Icc_eq_integral_add
+    (s := s) (a := (a : ℤ)) (n := b - a) (f := f) (t := t)
+    fc u habt'
+  rw [hendInt, hendReal, sum_Icc_int_eq_sum_Icc_nat] at hEM
+  let endpoint : E := (2⁻¹ : ℝ) • (f a + f b)
+  let correction : E := ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • saw (m + 2) 0 •
+    (iteratedDerivWithin (m + 1) f t b - iteratedDerivWithin (m + 1) f t a)
+  let remainder : E := (-1 : ℝ) ^ s •
+    ∫ x in (a : ℝ)..b, saw (s + 1) x • iteratedDerivWithin (s + 1) f t x
+  have hformula : (∑ n ∈ Finset.Icc a b, f n) =
+      (∫ x in (a : ℝ)..b, f x) + endpoint + correction + remainder := by
+    simpa only [endpoint, correction, remainder, Int.cast_natCast] using hEM
+  have ha : (a : ℝ) ∈ Icc (a : ℝ) (b : ℝ) := ⟨le_rfl, by exact_mod_cast hab⟩
+  have hb : (b : ℝ) ∈ Icc (a : ℝ) (b : ℝ) := ⟨by exact_mod_cast hab, le_rfl⟩
+  have hendpoint' : ‖endpoint‖ ≤ C₀ := by
+    calc
+      ‖endpoint‖ ≤ |(2⁻¹ : ℝ)| * (‖f a‖ + ‖f b‖) := by
+        dsimp only [endpoint]
+        rw [norm_smul, Real.norm_eq_abs]
+        gcongr
+        exact norm_add_le _ _
+      _ ≤ |(2⁻¹ : ℝ)| * (C₀ + C₀) := by gcongr <;> apply hendpoint <;> assumption
+      _ = C₀ := by ring_nf
+  have hcorrection : ‖correction‖ ≤
+      ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
+    calc
+      ‖correction‖ ≤ ∑ m ∈ Finset.range s,
+          ‖(-1 : ℝ) ^ m • saw (m + 2) 0 •
+            (iteratedDerivWithin (m + 1) f t b -
+              iteratedDerivWithin (m + 1) f t a)‖ := by
+        exact norm_sum_le _ _
+      _ ≤ ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
+        apply Finset.sum_le_sum
+        intro m hm
+        have hmS : m < s := Finset.mem_range.mp hm
+        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
+          abs_pow, abs_neg, abs_one, one_pow, one_mul]
+        calc
+          |saw (m + 2) 0| * ‖_ - _‖ ≤
+              |saw (m + 2) 0| * (C (m + 1) + C (m + 1)) := by
+            gcongr
+            exact (norm_sub_le _ _).trans (add_le_add
+              (hderiv (m + 1) (by omega) (by omega) b hb)
+              (hderiv (m + 1) (by omega) (by omega) a ha))
+          _ = |saw (m + 2) 0| * (2 * C (m + 1)) := by ring
+  have hremainder : ‖remainder‖ ≤ sawBound (s + 1) * C (s + 1) * (b - a : ℕ) := by
+    rw [show ‖remainder‖ =
+        ‖∫ x in (a : ℝ)..b, saw (s + 1) x • iteratedDerivWithin (s + 1) f t x‖ by
+      dsimp only [remainder]
+      rw [norm_smul, Real.norm_eq_abs, abs_pow, abs_neg, abs_one, one_pow, one_mul]]
+    have hraw := norm_integral_saw_smul_iteratedDerivWithin_le
+      (s := s) (a := (a : ℤ)) (n := b - a) (f := f) (t := t)
+      (C := C (s + 1)) (fun x hx ↦ by
+        apply hderiv (s + 1) (by omega) le_rfl x
+        simpa only [Int.cast_natCast, hendRealNat] using hx)
+    simpa only [Int.cast_natCast, hendRealNat] using hraw
+  rw [hformula]
+  rw [show ((∫ x in (a : ℝ)..b, f x) + endpoint + correction + remainder) -
+      (∫ x in (a : ℝ)..b, f x) = endpoint + correction + remainder by abel]
+  calc
+    ‖endpoint + correction + remainder‖ ≤ ‖endpoint‖ + ‖correction‖ + ‖remainder‖ := by
+      exact (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl)
+    _ ≤ C₀ + (∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1))) +
+        sawBound (s + 1) * C (s + 1) * (b - a : ℕ) :=
+      add_le_add (add_le_add hendpoint' hcorrection) hremainder
+
 end
 end
 end Expdb.EulerMaclaurin
