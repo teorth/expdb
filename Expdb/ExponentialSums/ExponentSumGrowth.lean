@@ -10,10 +10,11 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Exponential sum growth exponents
 
-This module formalizes Definition 4.2 of the ANTEDB blueprint. It defines admissible
+This module formalizes the asymptotic definition of the exponential sum growth exponent
+from Chapter 4 of the ANTEDB blueprint. It defines admissible
 model-phase bounds at a fixed scale and defines `β(α)` as the least such exponent.
 
-## Definition 4.2 at a glance
+## Overview
 
 For `α : ℝ≥0`, an exponent `β` is admissible if every model-phase exponential sum at scale
 `N = T ^ (α + o(1))` is bounded by `T ^ (β + o(1))`. We show that the admissible exponents
@@ -29,7 +30,7 @@ noncomputable section
 
 namespace Expdb
 
-/-! ## Definition 4.2 -/
+/-! ## Asymptotic definition -/
 
 /-- `N = T ^ (α + o(1))`, expressed using a variable exponent that is equal to `α` up to an
 infinitesimal. -/

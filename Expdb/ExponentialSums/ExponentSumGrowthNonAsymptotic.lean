@@ -8,7 +8,8 @@ import Mathlib.Analysis.SpecialFunctions.Log.Base
 /-!
 # Non-asymptotic exponential sum growth bounds
 
-This module formalizes Lemma 4.3 of the ANTEDB blueprint. It gives a fixed-parameter,
+This module formalizes the non-asymptotic definition of exponential sum exponent from Chapter 4
+of the ANTEDB blueprint. It gives a fixed-parameter,
 epsilon--delta characterization of the exponential sum growth exponent.
 -/
 
@@ -318,7 +319,7 @@ private theorem nonAsymptotic_of_isExponentSumBound
           (le_trans zero_le_one (hCone i))
   exact (not_lt_of_ge hdominated) (hviolate i)
 
-/-! ## Lemma 4.3 -/
+/-! ## Equivalence with the asymptotic definition -/
 
 /-- The non-asymptotic characterization of the exponential sum growth exponent. -/
 theorem exponentSumGrowthExponent_le_iff_nonAsymptotic

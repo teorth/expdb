@@ -5,8 +5,9 @@ public import Expdb.Basic.Asymptotics
 /-!
 # Automatic uniformity
 
-This module formalizes Proposition 2.1 of the ANTEDB blueprint: pointwise boundedness or
-infinitesimality along every variable sequence can be made uniform after passing to a subsequence.
+This module formalizes the automatic uniformity results of Chapter 2 of the ANTEDB blueprint:
+pointwise boundedness or infinitesimality along every variable sequence can be made uniform
+after passing to a subsequence.
 -/
 
 @[expose] public section

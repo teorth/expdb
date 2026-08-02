@@ -11,8 +11,9 @@ import Mathlib.Analysis.PSeries
 /-!
 # L² integral estimate
 
-This module formalizes Lemma 3.1 from Chapter 3 of the ANTEDB blueprint. It proves both the
-blueprint's equality with a bounded error coefficient and the corresponding absolute-error bound.
+This module formalizes the `L^2` integral estimate from Chapter 3 of the ANTEDB blueprint.
+It proves both the blueprint's equality with a bounded error coefficient
+and the corresponding absolute-error bound.
 -/
 
 @[expose] public section
