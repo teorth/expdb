@@ -1,6 +1,7 @@
 module
 
 public import Expdb.Basic.Definitions
+public import Mathlib.Analysis.Asymptotics.Theta
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Order.Filter.Basic
 public import Mathlib.Topology.MetricSpace.Sequences
@@ -10,7 +11,8 @@ public import Mathlib.Topology.MetricSpace.Sequences
 
 This module formalizes the infinitesimal equality and comparison relations and the underspill
 principle from Chapter 2 of the ANTEDB blueprint. The notations `X =o Y` and `X ≤o Y` are
-available after `open scoped Expdb`.
+available after `open scoped Expdb`. The blueprint notation `X \asymp Y` is represented by
+Mathlib's `X =Θ[atTop] Y`.
 
 The blueprint also uses non-standard objects indexed by an ambient natural-number parameter.
 These are represented by `VariableObject`. Their asymptotic properties are encoded in the
