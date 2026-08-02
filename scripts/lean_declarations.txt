@@ -66,4 +66,4 @@ Expdb.EulerMaclaurin.saw
 Expdb.EulerMaclaurin.sawBound
 Expdb.EulerMaclaurin.sawBound_nonneg
 Expdb.EulerMaclaurin.sum_Icc_eq_integral_add
-Expdb.EulerMaclaurin.norm_integral_saw_smul_iteratedDerivWithin_le
+Expdb.EulerMaclaurin.norm_sum_Icc_nat_sub_integral_le

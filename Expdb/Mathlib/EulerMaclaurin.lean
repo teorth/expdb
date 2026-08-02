@@ -343,8 +343,7 @@ theorem sum_Icc_eq_integral_add [CompleteSpace E]
   rw [h]
   module
 
-/-- A uniform derivative bound controls the arbitrary-order Euler--Maclaurin remainder. -/
-theorem norm_integral_saw_smul_iteratedDerivWithin_le
+private theorem norm_integral_saw_smul_iteratedDerivWithin_le
     {C : ℝ}
     (hderiv : ∀ x ∈ Icc (a : ℝ) (a + n),
       ‖iteratedDerivWithin (s + 1) f t x‖ ≤ C) :
@@ -360,8 +359,66 @@ theorem norm_integral_saw_smul_iteratedDerivWithin_le
     exact mul_le_mul (abs_saw_le _ _) (hderiv x hxIcc) (norm_nonneg _)
       sawBound_nonneg
   · simp only [add_sub_cancel_left]
-    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
-    rw [abs_of_nonneg hn]
+    rw [abs_of_nonneg (Nat.cast_nonneg n)]
+
+private theorem norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
+    (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
+    (abt : Icc (a : ℝ) (a + n) ⊆ t)
+    {C₀ : ℝ} (ha : ‖f a‖ ≤ C₀) (hb : ‖f (a + n)‖ ≤ C₀)
+    (C : ℕ → ℝ)
+    (hderiv : ∀ k, 1 ≤ k → k ≤ s + 1 →
+      ∀ x ∈ Icc (a : ℝ) (a + n), ‖iteratedDerivWithin k f t x‖ ≤ C k) :
+    ‖(∑ k ∈ Finset.Icc a (a + n), f k) - ∫ x in a..a + n, f x‖ ≤ C₀ +
+        (∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1))) +
+        sawBound (s + 1) * C (s + 1) * n := by
+  let endpoint : E := (2⁻¹ : ℝ) • (f a + f (a + n))
+  let correction : E := ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • saw (m + 2) 0 •
+    (iteratedDerivWithin (m + 1) f t (a + n) - iteratedDerivWithin (m + 1) f t a)
+  let remainder : E := (-1 : ℝ) ^ s • ∫ x in a..a + n,
+    saw (s + 1) x • iteratedDerivWithin (s + 1) f t x
+  have hformula : (∑ k ∈ Finset.Icc a (a + n), f k) = (∫ x in a..a + n, f x) +
+      endpoint + correction + remainder := by
+    simpa only [endpoint, correction, remainder] using sum_Icc_eq_integral_add fc u abt
+  have hendpoint : ‖endpoint‖ ≤ C₀ := by
+    calc
+      ‖endpoint‖ ≤ |(2⁻¹ : ℝ)| * (‖f a‖ + ‖f (a + n)‖) := by
+        simpa only [endpoint, norm_smul, Real.norm_eq_abs] using
+          mul_le_mul_of_nonneg_left (norm_add_le (f a) (f (a + n))) (abs_nonneg _)
+      _ ≤ |(2⁻¹ : ℝ)| * (C₀ + C₀) := by gcongr
+      _ = C₀ := by ring_nf
+  have hcorrection : ‖correction‖ ≤
+      ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
+    calc
+      ‖correction‖ ≤ ∑ m ∈ Finset.range s,
+          ‖(-1 : ℝ) ^ m • saw (m + 2) 0 •
+            (iteratedDerivWithin (m + 1) f t (a + n) -
+              iteratedDerivWithin (m + 1) f t a)‖ := norm_sum_le _ _
+      _ ≤ ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
+        apply Finset.sum_le_sum
+        intro m hm
+        have hmS : m < s := Finset.mem_range.mp hm
+        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
+          abs_pow, abs_neg, abs_one, one_pow, one_mul]
+        calc
+          |saw (m + 2) 0| * ‖_ - _‖ ≤
+              |saw (m + 2) 0| * (C (m + 1) + C (m + 1)) := by
+            gcongr
+            exact (norm_sub_le _ _).trans (add_le_add
+              (hderiv (m + 1) (by omega) (by omega) (a + n) (by simp))
+              (hderiv (m + 1) (by omega) (by omega) a (by simp)))
+          _ = |saw (m + 2) 0| * (2 * C (m + 1)) := by ring
+  have hremainder : ‖remainder‖ ≤ sawBound (s + 1) * C (s + 1) * n := by
+    rw [show ‖remainder‖ =
+        ‖∫ x in a..a + n, saw (s + 1) x • iteratedDerivWithin (s + 1) f t x‖ by
+      dsimp only [remainder]
+      rw [norm_smul, Real.norm_eq_abs, abs_pow, abs_neg, abs_one, one_pow, one_mul]]
+    exact norm_integral_saw_smul_iteratedDerivWithin_le
+      (fun x hx ↦ hderiv (s + 1) (by omega) le_rfl x hx)
+  rw [hformula]
+  rw [show ((∫ x in a..a + n, f x) + endpoint + correction + remainder) -
+      (∫ x in a..a + n, f x) = endpoint + correction + remainder by abel]
+  exact (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl) |>.trans <|
+    add_le_add (add_le_add hendpoint hcorrection) hremainder
 
 private lemma map_Icc_natCast_int (a b : ℕ) :
     (Finset.Icc a b).map
@@ -409,73 +466,16 @@ theorem norm_sum_Icc_nat_sub_integral_le [CompleteSpace E]
     exact_mod_cast hendNat
   have hendRealNat : (a : ℝ) + (b - a : ℕ) = (b : ℝ) := by
     exact_mod_cast hendNat
-  have habt' : Icc ((a : ℤ) : ℝ) (((a : ℤ) : ℝ) + (b - a : ℕ)) ⊆ t := by
-    simpa only [Int.cast_natCast, hendRealNat] using abt
-  have hEM := sum_Icc_eq_integral_add
+  have hraw := norm_sum_Icc_int_sub_integral_le
     (s := s) (a := (a : ℤ)) (n := b - a) (f := f) (t := t)
-    fc u habt'
-  rw [hendInt, hendReal, sum_Icc_int_eq_sum_Icc_nat] at hEM
-  let endpoint : E := (2⁻¹ : ℝ) • (f a + f b)
-  let correction : E := ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • saw (m + 2) 0 •
-    (iteratedDerivWithin (m + 1) f t b - iteratedDerivWithin (m + 1) f t a)
-  let remainder : E := (-1 : ℝ) ^ s •
-    ∫ x in (a : ℝ)..b, saw (s + 1) x • iteratedDerivWithin (s + 1) f t x
-  have hformula : (∑ n ∈ Finset.Icc a b, f n) =
-      (∫ x in (a : ℝ)..b, f x) + endpoint + correction + remainder := by
-    simpa only [endpoint, correction, remainder, Int.cast_natCast] using hEM
-  have ha : (a : ℝ) ∈ Icc (a : ℝ) (b : ℝ) := ⟨le_rfl, by exact_mod_cast hab⟩
-  have hb : (b : ℝ) ∈ Icc (a : ℝ) (b : ℝ) := ⟨by exact_mod_cast hab, le_rfl⟩
-  have hendpoint' : ‖endpoint‖ ≤ C₀ := by
-    calc
-      ‖endpoint‖ ≤ |(2⁻¹ : ℝ)| * (‖f a‖ + ‖f b‖) := by
-        dsimp only [endpoint]
-        rw [norm_smul, Real.norm_eq_abs]
-        gcongr
-        exact norm_add_le _ _
-      _ ≤ |(2⁻¹ : ℝ)| * (C₀ + C₀) := by gcongr <;> apply hendpoint <;> assumption
-      _ = C₀ := by ring_nf
-  have hcorrection : ‖correction‖ ≤
-      ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
-    calc
-      ‖correction‖ ≤ ∑ m ∈ Finset.range s,
-          ‖(-1 : ℝ) ^ m • saw (m + 2) 0 •
-            (iteratedDerivWithin (m + 1) f t b -
-              iteratedDerivWithin (m + 1) f t a)‖ := by
-        exact norm_sum_le _ _
-      _ ≤ ∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1)) := by
-        apply Finset.sum_le_sum
-        intro m hm
-        have hmS : m < s := Finset.mem_range.mp hm
-        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
-          abs_pow, abs_neg, abs_one, one_pow, one_mul]
-        calc
-          |saw (m + 2) 0| * ‖_ - _‖ ≤
-              |saw (m + 2) 0| * (C (m + 1) + C (m + 1)) := by
-            gcongr
-            exact (norm_sub_le _ _).trans (add_le_add
-              (hderiv (m + 1) (by omega) (by omega) b hb)
-              (hderiv (m + 1) (by omega) (by omega) a ha))
-          _ = |saw (m + 2) 0| * (2 * C (m + 1)) := by ring
-  have hremainder : ‖remainder‖ ≤ sawBound (s + 1) * C (s + 1) * (b - a : ℕ) := by
-    rw [show ‖remainder‖ =
-        ‖∫ x in (a : ℝ)..b, saw (s + 1) x • iteratedDerivWithin (s + 1) f t x‖ by
-      dsimp only [remainder]
-      rw [norm_smul, Real.norm_eq_abs, abs_pow, abs_neg, abs_one, one_pow, one_mul]]
-    have hraw := norm_integral_saw_smul_iteratedDerivWithin_le
-      (s := s) (a := (a : ℤ)) (n := b - a) (f := f) (t := t)
-      (C := C (s + 1)) (fun x hx ↦ by
-        apply hderiv (s + 1) (by omega) le_rfl x
-        simpa only [Int.cast_natCast, hendRealNat] using hx)
-    simpa only [Int.cast_natCast, hendRealNat] using hraw
-  rw [hformula]
-  rw [show ((∫ x in (a : ℝ)..b, f x) + endpoint + correction + remainder) -
-      (∫ x in (a : ℝ)..b, f x) = endpoint + correction + remainder by abel]
-  calc
-    ‖endpoint + correction + remainder‖ ≤ ‖endpoint‖ + ‖correction‖ + ‖remainder‖ := by
-      exact (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl)
-    _ ≤ C₀ + (∑ m ∈ Finset.range s, |saw (m + 2) 0| * (2 * C (m + 1))) +
-        sawBound (s + 1) * C (s + 1) * (b - a : ℕ) :=
-      add_le_add (add_le_add hendpoint' hcorrection) hremainder
+    fc u (by simpa only [Int.cast_natCast, hendRealNat] using abt)
+    (hendpoint a ⟨le_rfl, by exact_mod_cast hab⟩)
+    (by simpa only [Int.cast_natCast, hendRealNat] using
+      hendpoint b ⟨by exact_mod_cast hab, le_rfl⟩)
+    C (fun k hk hks x hx ↦ hderiv k hk hks x (by
+      simpa only [Int.cast_natCast, hendRealNat] using hx))
+  rw [hendInt, hendReal, sum_Icc_int_eq_sum_Icc_nat] at hraw
+  simpa only [Int.cast_natCast] using hraw
 
 end
 end
