@@ -3,6 +3,7 @@ module
 public import Expdb.Basic.Asymptotics
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Order.Interval.Finset.Nat
 
 import Expdb.Basic.AutomaticUniformity
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -85,6 +86,50 @@ theorem isModelPhaseFunction_log : IsModelPhaseFunction logPhase := by
     simp only [modelPhaseError, logPhase, iteratedDerivWithin_log_eq_rpow_neg_one, sub_self,
       norm_zero]
     exact tendsto_const_nhds
+
+/-- On a dyadic interval, `log (n / N)` is `1 / (2 * N)`-separated. -/
+theorem log_div_separated
+    {N : ℝ} {a b : ℕ} (hN : 0 < N) (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N) :
+    IsSeparatedFamily (1 / (2 * N))
+      (fun n : ↥(Finset.Icc a b) ↦ Real.log ((n : ℝ) / N)) := by
+  have hordered (m n : ↥(Finset.Icc a b)) (hmn : (m : ℕ) < n) :
+      1 / (2 * N) ≤ Real.log ((n : ℝ) / N) - Real.log ((m : ℝ) / N) := by
+    have hm_mem := Finset.mem_Icc.mp m.property
+    have hmpos : 0 < (m : ℝ) := lt_of_lt_of_le hN (ha.trans (by exact_mod_cast hm_mem.1))
+    have hnpos : 0 < (n : ℝ) := lt_trans hmpos (by exact_mod_cast hmn)
+    have hlog : 1 - (m : ℝ) / n ≤ Real.log ((n : ℝ) / m) := by
+      simpa [inv_div] using Real.one_sub_inv_le_log_of_pos (div_pos hnpos hmpos)
+    have hdiff : 1 / (2 * N) ≤ 1 - (m : ℝ) / n := by
+      have hgapNat : (m : ℕ) + 1 ≤ (n : ℕ) := Nat.add_one_le_iff.mpr hmn
+      have hgapCast : ((m : ℕ) : ℝ) + 1 ≤ ((n : ℕ) : ℝ) := by exact_mod_cast hgapNat
+      have hgap : (1 : ℝ) ≤ (n : ℝ) - m := by linarith
+      have hn_mem := Finset.mem_Icc.mp n.property
+      have hnle : (n : ℝ) ≤ 2 * N := le_trans (by exact_mod_cast hn_mem.2) hb
+      rw [one_sub_div hnpos.ne']
+      calc
+        1 / (2 * N) ≤ 1 / (n : ℝ) := one_div_le_one_div_of_le hnpos hnle
+        _ ≤ ((n : ℝ) - m) / n := (div_le_div_iff_of_pos_right hnpos).2 hgap
+    calc
+      1 / (2 * N) ≤ Real.log ((n : ℝ) / m) := hdiff.trans hlog
+      _ = Real.log ((n : ℝ) / N) - Real.log ((m : ℝ) / N) := by
+        rw [Real.log_div (ne_of_gt hnpos) hN.ne', Real.log_div (ne_of_gt hmpos) hN.ne',
+          Real.log_div (ne_of_gt hnpos) (ne_of_gt hmpos)]
+        ring
+  intro m n hmn
+  rw [Real.dist_eq]
+  rcases lt_or_gt_of_ne (Subtype.coe_ne_coe.mpr hmn) with hmn' | hnm'
+  · have hbound := hordered m n hmn'
+    have hsign : Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) ≤ 0 := by
+      have : 0 < 1 / (2 * N) := by positivity
+      linarith
+    rw [abs_of_nonpos hsign, neg_sub]
+    exact hbound
+  · have hbound := hordered n m hnm'
+    have hsign : 0 ≤ Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) := by
+      have : 0 < 1 / (2 * N) := by positivity
+      linarith
+    rw [abs_of_nonneg hsign]
+    exact hbound
 
 private lemma modelPhaseError_sum_isPointwiseInfinitesimal
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
