@@ -53,7 +53,9 @@ def IsModelPhaseFunction (F : VariableFunction (VariableObject.fixed ℝ) ℝ) :
 def logPhase : VariableFunction (VariableObject.fixed ℝ) ℝ :=
   fun _ ↦ Real.log
 
-private lemma iteratedDerivWithin_log_eq_rpow_neg_one
+/-- The derivatives of `log` on the phase interval agree with the reference derivatives for
+model exponent one. -/
+theorem iteratedDerivWithin_log_eq_rpow_neg_one
     (p : ℕ) (u : phaseInterval) :
     iteratedDerivWithin (p + 1) Real.log phaseInterval u =
       iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-(1 : ℝ))) phaseInterval u := by
