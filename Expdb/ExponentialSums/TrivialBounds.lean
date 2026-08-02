@@ -15,11 +15,20 @@ import Mathlib.MeasureTheory.Integral.IntervalAverage
 /-!
 # Trivial bounds for exponential sum growth exponents
 
-This module formalizes Lemma 4.4 of the ANTEDB blueprint.
+This module formalizes the trivial bounds on `β` in Chapter 4 of the ANTEDB blueprint.
 
-The upper bound uses Euler–Maclaurin uniformly for every model phase. For the lower bound,
-we use the logarithmic model phase; this suffices because an admissible exponent must bound
-the exponential sums of every model phase.
+For `α > 1`, a uniform Euler–Maclaurin estimate compares the exponential sum
+of an arbitrary approximate model phase with its oscillatory integral. The
+derivative bounds for model phases then give the upper bound `β(α) ≤ α - 1`.
+For the reverse inequality, it suffices to use the logarithmic model phase,
+since an admissible exponent must bound every model phase.
+Its sum is essentially `∑ n ^ (iT)` and its integral has size comparable to `N / T`,
+while Euler–Maclaurin contributes only a bounded error, giving `β(α) ≥ α - 1`.
+
+For `0 ≤ α ≤ 1`, the triangle inequality gives `β(α) ≤ α`. The `L^2` integral estimate
+lemma is applied to the separated values `log(n/N)` to find a parameter for
+which the logarithmic-phase sum has size comparable to `N ^ (1 / 2)`, yielding
+the lower bound `β(α) ≥ α / 2`.
 -/
 
 @[expose] public section
