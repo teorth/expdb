@@ -41,7 +41,8 @@ Expdb.IsModelPhaseFunction.exists_subsequence_uniform_error
 Expdb.IsPowerAsymptotic
 Expdb.IsPowerAsymptotic.eventually_between
 Expdb.isPowerAsymptotic_of_logb_tendsto
-Expdb.tendsto_logb_of_between_const_rpow
+Expdb.isPowerAsymptotic_of_between
+Expdb.isPowerAsymptotic_of_between_const_rpow
 Expdb.IsPowerBounded
 Expdb.isPowerBounded_iff_forall_pos
 Expdb.exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
@@ -66,6 +67,16 @@ Expdb.exponentSumGrowthExponent_mem_Icc
 Expdb.exponentSumGrowthExponent_zero
 Expdb.l2_integral_estimate
 Expdb.l2_integral_estimate_error
+Expdb.l2_integral_estimate_exists_norm_sq_ge
+Expdb.log_div_separated
+Expdb.approximate_model_phase_deriv_bounds
+Expdb.norm_integral_oscillatory_le
+Expdb.exists_norm_oscillatory_sum_sub_integral_le
+Expdb.exists_norm_oscillatory_sum_le
+Expdb.logPhaseMainTerm
+Expdb.logPhase_integral_eq_mainTerm
+Expdb.norm_logPhaseMainTerm_ge
+Expdb.exists_norm_logPhase_sum_sub_mainTerm_le
 Expdb.EulerMaclaurin.saw
 Expdb.EulerMaclaurin.sawBound
 Expdb.EulerMaclaurin.sawBound_nonneg

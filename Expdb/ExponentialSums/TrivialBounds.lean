@@ -1,16 +1,16 @@
 module
 
 public import Expdb.ExponentialSums.ExponentSumGrowth
+public import Expdb.ExponentialSums.ExponentSumGrowthNonAsymptotic
+public import Expdb.Mathlib.EulerMaclaurin
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
-import Expdb.ExponentialSums.ExponentSumGrowthNonAsymptotic
 import Expdb.Fourier.L2Integral
-import Expdb.Mathlib.EulerMaclaurin
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Fourier.FourierTransformDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-import Mathlib.MeasureTheory.Integral.IntervalAverage
 
 /-!
 # Trivial bounds for exponential sum growth exponents
@@ -190,7 +190,7 @@ private theorem contDiffOn_oscillatory
 
 /-! ## Uniform bounds for approximate model phases -/
 
-private theorem approximate_model_phase_deriv_bounds
+theorem approximate_model_phase_deriv_bounds
     {σ : ℝ} (hσ : 0 < σ) (P : ℕ) :
     ∃ K : ℝ, 1 ≤ K ∧
       ∀ {δ : ℝ} {F : ℝ → ℝ},
@@ -339,7 +339,7 @@ private theorem oscillatory_scale_bounds
 
 /-! ## A first-derivative estimate for the phase integral -/
 
-private theorem norm_integral_oscillatory_le
+theorem norm_integral_oscillatory_le
     {F : ℝ → ℝ} {A B T c K : ℝ}
     (hAB : A ≤ B) (hsub : Set.Icc A B ⊆ phaseInterval)
     (hF : ContDiffOn ℝ 2 F phaseInterval) (hT : 0 < T) (hc : 0 < c)
@@ -547,7 +547,7 @@ private def oscillatoryErrorConstant (s : ℕ) : ℝ :=
     EulerMaclaurin.sawBound (s + 1) *
       (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1))
 
-private lemma one_le_oscillatoryErrorConstant (s : ℕ) :
+private theorem one_le_oscillatoryErrorConstant (s : ℕ) :
     1 ≤ oscillatoryErrorConstant s := by
   have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
       (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
@@ -642,10 +642,28 @@ private theorem norm_oscillatory_sum_sub_integral_le
             simpa only [mul_one] using mul_le_mul_of_nonneg_left hprod hCrem
       linarith
 
+/-- A uniform Euler–Maclaurin comparison between an oscillatory sum and its integral. The
+constant depends only on the differentiation order. -/
+theorem exists_norm_oscillatory_sum_sub_integral_le (s : ℕ) :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {F : ℝ → ℝ} {T N K : ℝ} {a b : ℕ},
+        a < b → 1 ≤ N → 1 ≤ T → 1 ≤ K →
+        ContDiffOn ℝ ∞ F phaseInterval →
+        (∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
+          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) →
+        N ≤ a → (b : ℝ) ≤ 2 * N →
+        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
+        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) -
+          ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤ C := by
+  refine ⟨oscillatoryErrorConstant s, one_le_oscillatoryErrorConstant s, ?_⟩
+  intro F T N K a b hab hN hT hK hF hderiv ha hb hratio hremainder
+  exact norm_oscillatory_sum_sub_integral_le s hab hN hT hK hF hderiv
+    ha hb hratio hremainder
+
 private def oscillatorySumConstant (s : ℕ) (K c : ℝ) : ℝ :=
   oscillatoryErrorConstant s + (2 / c + K / c ^ 2)
 
-private lemma oscillatorySumConstant_nonneg
+private theorem oscillatorySumConstant_nonneg
     (s : ℕ) {K c : ℝ} (hK : 0 ≤ K) (hc : 0 < c) :
     0 ≤ oscillatorySumConstant s K c := by
   dsimp only [oscillatorySumConstant]
@@ -715,6 +733,27 @@ private theorem norm_oscillatory_sum_le
       have hNT : 0 ≤ N / T := by positivity
       dsimp only [oscillatorySumConstant]
       nlinarith
+
+/-- A first-derivative bound for an oscillatory sum, uniform at scales where the
+Euler–Maclaurin remainder is bounded. -/
+theorem exists_norm_oscillatory_sum_le
+    (s : ℕ) (hs : 1 ≤ s) {K c : ℝ} (hK : 1 ≤ K) (hc : 0 < c) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ {F : ℝ → ℝ} {T N : ℝ} {a b : ℕ},
+        a ≤ b → 1 ≤ N → 1 ≤ T →
+        ContDiffOn ℝ ∞ F phaseInterval →
+        (∀ u ∈ phaseInterval, c ≤ iteratedDerivWithin 1 F phaseInterval u) →
+        (∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
+          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) →
+        N ≤ a → (b : ℝ) ≤ 2 * N →
+        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
+        ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
+          C * (1 + N / T) := by
+  refine ⟨oscillatorySumConstant s K c,
+    oscillatorySumConstant_nonneg s (zero_le_one.trans hK) hc, ?_⟩
+  intro F T N a b hab hN hT hF hfirst hderiv ha hb hratio hremainder
+  exact norm_oscillatory_sum_le s hs hab hN hT hK hc hF hfirst hderiv
+    ha hb hratio hremainder
 
 /-! ## The upper bound for `α > 1` -/
 
@@ -797,10 +836,17 @@ private theorem exponentSumGrowthExponent_le_sub_one
 
 /-! ## The matching logarithmic lower bound for `α > 1` -/
 
-private theorem norm_log_phase_integral_ge
-    {N T : ℝ} (hN : 0 < N) (hT : 1 ≤ T) :
-    (1 / (1 + 2 * Real.pi)) * (N / T) ≤
-      ‖∫ x in N..2 * N, (𝐞 (T * Real.log (x / N)) : ℂ)‖ := by
+/-- The explicit main term for the logarithmic phase. With Lean's Fourier-character
+normalization, the corresponding sum is a norm-one multiple of `∑ n ^ (2π i T)`. -/
+def logPhaseMainTerm (N T : ℝ) : ℂ :=
+  (N : ℂ) * (2 * 𝐞 (T * Real.log 2) - 1) /
+    (1 + (2 * Real.pi : ℂ) * Complex.I * T)
+
+/-- The logarithmic oscillatory integral is exactly `logPhaseMainTerm`. -/
+theorem logPhase_integral_eq_mainTerm
+    {N T : ℝ} (hN : 0 < N) :
+    (∫ x in N..2 * N, (𝐞 (T * Real.log (x / N)) : ℂ)) =
+      logPhaseMainTerm N T := by
   let τ : ℂ := (2 * Real.pi : ℂ) * Complex.I
   let v : ℝ → ℂ := fun x ↦ 𝐞 (T * Real.log (x / N))
   let denom : ℂ := 1 + τ * T
@@ -858,9 +904,21 @@ private theorem norm_log_phase_integral_ge
     rw [show (𝐞 (0 : ℝ) : ℂ) = 1 by norm_num]
     push_cast
     field_simp [hdenom]
-  rw [show (∫ x in N..2 * N, (𝐞 (T * Real.log (x / N)) : ℂ)) =
-      ∫ x in N..2 * N, v x by rfl, hformula, norm_div, norm_mul,
-      Complex.norm_real, Real.norm_eq_abs, abs_of_pos hN]
+  simpa only [v, logPhaseMainTerm, denom, τ, mul_assoc] using hformula
+
+/-- The logarithmic main term has size bounded below by a fixed multiple of `N / T`. -/
+theorem norm_logPhaseMainTerm_ge
+    {N T : ℝ} (hN : 0 < N) (hT : 1 ≤ T) :
+    (1 / (1 + 2 * Real.pi)) * (N / T) ≤ ‖logPhaseMainTerm N T‖ := by
+  let τ : ℂ := (2 * Real.pi : ℂ) * Complex.I
+  let denom : ℂ := 1 + τ * T
+  have hdenom : denom ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [denom, τ] at hre
+  rw [logPhaseMainTerm, show (1 + (2 * Real.pi : ℂ) * Complex.I * T) = denom by
+    simp only [denom, τ, mul_assoc], norm_div, norm_mul,
+    Complex.norm_real, Real.norm_eq_abs, abs_of_pos hN]
   have hnum : 1 ≤ ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
     calc
       1 = ‖(2 : ℂ) * 𝐞 (T * Real.log 2)‖ - ‖(1 : ℂ)‖ := by norm_num
@@ -886,6 +944,34 @@ private theorem norm_log_phase_integral_ge
     _ = N := by field_simp [hcoefpos.ne', (zero_lt_one.trans_le hT).ne']
     _ ≤ N * ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
       simpa only [mul_one] using mul_le_mul_of_nonneg_left hnum hN.le
+
+/-- For each Euler–Maclaurin order, the logarithmic exponential sum differs from its
+explicit main term by a uniformly bounded amount once the scale conditions hold. This is
+the formal counterpart of the blueprint's estimate for `∑ n ^ (iT)`, with the factor `2π`
+absorbed into Lean's Fourier character. -/
+theorem exists_norm_logPhase_sum_sub_mainTerm_le (s : ℕ) :
+    ∃ K C : ℝ, 1 ≤ K ∧ 1 ≤ C ∧
+      ∀ {N T : ℝ} {a b : ℕ},
+        a < b → 1 ≤ N → 1 ≤ T →
+        (a : ℝ) = N → (b : ℝ) = 2 * N →
+        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
+        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * Real.log ((n : ℝ) / N)) : ℂ)) -
+          logPhaseMainTerm N T‖ ≤ C := by
+  obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds zero_lt_one s
+  obtain ⟨_, hderiv⟩ := hphaseBounds (δ := 0) (F := Real.log) (by norm_num)
+    (isApproximateModelPhaseFunction_log s)
+  refine ⟨K, oscillatoryErrorConstant s, hK, one_le_oscillatoryErrorConstant s, ?_⟩
+  intro N T a b hab hN hT ha hb hratio hremainder
+  have herr := norm_oscillatory_sum_sub_integral_le s hab hN hT hK
+    (isModelPhaseFunction_log.1 0) hderiv (by exact_mod_cast ha.ge)
+    (by exact_mod_cast hb.le) hratio hremainder
+  have hint : (∫ x in (a : ℝ)..b,
+      (𝐞 (T * Real.log (x / N)) : ℂ)) = logPhaseMainTerm N T := by
+    rw [ha, hb]
+    exact logPhase_integral_eq_mainTerm (zero_lt_one.trans_le hN)
+  simp only [logPhase] at herr
+  rw [hint] at herr
+  exact herr
 
 private theorem sub_one_le_exponentSumGrowthExponent
     {α : ℝ≥0} (hα : 1 < α) :
@@ -930,16 +1016,13 @@ private theorem sub_one_le_exponentSumGrowthExponent
     push_cast
     exact ⟨le_rfl, le_rfl⟩
   have hbound := isPowerBounded_logPhase α hN hT hTunbounded hNT hab
-  obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds zero_lt_one s
-  obtain ⟨_, hderiv⟩ := hphaseBounds (δ := 0) (F := Real.log) (by norm_num)
-    (isApproximateModelPhaseFunction_log s)
+  obtain ⟨K, E, hK, hEone, hlogEstimate⟩ :=
+    exists_norm_logPhase_sum_sub_mainTerm_le s
   have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ q :=
     tendsto_atTop.1 ((tendsto_rpow_atTop hq).comp hTtop) K
   let d : ℝ := 1 / (1 + 2 * Real.pi)
   have hd : 0 < d := by dsimp [d]; positivity
-  let E : ℝ := oscillatoryErrorConstant s
-  have hE : 0 ≤ E := by
-    exact zero_le_one.trans (by simpa only [E] using one_le_oscillatoryErrorConstant s)
+  have hE : 0 ≤ E := zero_le_one.trans hEone
   have herrorSmall : ∀ᶠ i in atTop, 2 * E / d ≤ T i ^ ((α : ℝ) - 1) :=
     tendsto_atTop.1 ((tendsto_rpow_atTop (by linarith : 0 < (α : ℝ) - 1)).comp hTtop)
       (2 * E / d)
@@ -958,35 +1041,25 @@ private theorem sub_one_le_exponentSumGrowthExponent
     obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
       (hT i) (hN i) hK hqδ hqmul hsδ hiK hNscale
     have hablt : a i < b i := by dsimp [a, b]; omega
-    have herr := norm_oscillatory_sum_sub_integral_le s hablt
-      (hN i) (hT i) hK (isModelPhaseFunction_log.1 i)
-      hderiv
-      (hab i).1 (hab i).2 hratio hremainder
-    have hInt := norm_log_phase_integral_ge hNi (hT i)
+    have haeq : (a i : ℝ) = N i := by dsimp [N, a]; push_cast; ring
+    have hbeq : (b i : ℝ) = 2 * N i := by dsimp [N, b]; push_cast; ring
+    have herr := hlogEstimate hablt (hN i) (hT i) haeq hbeq hratio hremainder
+    have hInt := norm_logPhaseMainTerm_ge hNi (hT i)
     have hpower : N i / T i = T i ^ ((α : ℝ) - 1) := by
       rw [hNTexact]
       simpa only [Real.rpow_one] using (Real.rpow_sub hTi (α : ℝ) 1).symm
     rw [hpower] at hInt
     have htriangle :
-        ‖∫ x in (a i : ℝ)..b i,
-          (𝐞 (T i * Real.log (x / N i)) : ℂ)‖ ≤
+        ‖logPhaseMainTerm (N i) (T i)‖ ≤
           ‖exponentialSum logPhase T N a b i‖ + E := by
       calc
         _ ≤ ‖exponentialSum logPhase T N a b i‖ +
             ‖exponentialSum logPhase T N a b i -
-              (∫ x in (a i : ℝ)..b i,
-                (𝐞 (T i * Real.log (x / N i)) : ℂ))‖ :=
+              logPhaseMainTerm (N i) (T i)‖ :=
           norm_le_norm_add_norm_sub _ _
         _ ≤ ‖exponentialSum logPhase T N a b i‖ + E := by
           gcongr
-          simpa only [E, exponentialSum, logPhase] using herr
-    have hIntEndpoints :
-        (∫ x in (a i : ℝ)..b i,
-          (𝐞 (T i * Real.log (x / N i)) : ℂ)) =
-        ∫ x in N i..2 * N i,
-          (𝐞 (T i * Real.log (x / N i)) : ℂ) := by
-      congr 1 <;> dsimp [N, a, b] <;> push_cast <;> ring
-    rw [hIntEndpoints] at htriangle
+          simpa only [exponentialSum, logPhase] using herr
     have hEsmall : E ≤ d / 2 * T i ^ ((α : ℝ) - 1) := by
       calc
         E = d / 2 * (2 * E / d) := by field_simp [hd.ne']
@@ -998,49 +1071,6 @@ private theorem sub_one_le_exponentSumGrowthExponent
 
 /-! ## The `L²` lower bound for `0 < α ≤ 1` -/
 
-private lemma log_div_separated
-    {N : ℝ} {a b : ℕ} (hN : 0 < N) (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N) :
-    IsSeparatedFamily (1 / (2 * N))
-      (fun n : ↥(Finset.Icc a b) ↦ Real.log ((n : ℝ) / N)) := by
-  have hordered (m n : ↥(Finset.Icc a b)) (hmn : (m : ℕ) < n) :
-      1 / (2 * N) ≤ Real.log ((n : ℝ) / N) - Real.log ((m : ℝ) / N) := by
-    have hm_mem := Finset.mem_Icc.mp m.property
-    have hmpos : 0 < (m : ℝ) := lt_of_lt_of_le hN (ha.trans (by exact_mod_cast hm_mem.1))
-    have hnpos : 0 < (n : ℝ) := lt_trans hmpos (by exact_mod_cast hmn)
-    have hlog : 1 - (m : ℝ) / n ≤ Real.log ((n : ℝ) / m) := by
-      simpa [inv_div] using Real.one_sub_inv_le_log_of_pos (div_pos hnpos hmpos)
-    have hdiff : 1 / (2 * N) ≤ 1 - (m : ℝ) / n := by
-      have hgapNat : (m : ℕ) + 1 ≤ (n : ℕ) := Nat.add_one_le_iff.mpr hmn
-      have hgapCast : ((m : ℕ) : ℝ) + 1 ≤ ((n : ℕ) : ℝ) := by exact_mod_cast hgapNat
-      have hgap : (1 : ℝ) ≤ (n : ℝ) - m := by linarith
-      have hn_mem := Finset.mem_Icc.mp n.property
-      have hnle : (n : ℝ) ≤ 2 * N := le_trans (by exact_mod_cast hn_mem.2) hb
-      rw [one_sub_div hnpos.ne']
-      calc
-        1 / (2 * N) ≤ 1 / (n : ℝ) := one_div_le_one_div_of_le hnpos hnle
-        _ ≤ ((n : ℝ) - m) / n := (div_le_div_iff_of_pos_right hnpos).2 hgap
-    calc
-      1 / (2 * N) ≤ Real.log ((n : ℝ) / m) := hdiff.trans hlog
-      _ = Real.log ((n : ℝ) / N) - Real.log ((m : ℝ) / N) := by
-        rw [Real.log_div (ne_of_gt hnpos) hN.ne', Real.log_div (ne_of_gt hmpos) hN.ne',
-          Real.log_div (ne_of_gt hnpos) (ne_of_gt hmpos)]
-        ring
-  intro m n hmn
-  rw [Real.dist_eq]
-  rcases lt_or_gt_of_ne (Subtype.coe_ne_coe.mpr hmn) with hmn' | hnm'
-  · have hbound := hordered m n hmn'
-    have hsign : Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) ≤ 0 := by
-      have : 0 < 1 / (2 * N) := by positivity
-      linarith
-    rw [abs_of_nonpos hsign, neg_sub]
-    exact hbound
-  · have hbound := hordered n m hnm'
-    have hsign : 0 ≤ Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) := by
-      have : 0 < 1 / (2 * N) := by positivity
-      linarith
-    rw [abs_of_nonneg hsign]
-    exact hbound
-
 private theorem exists_logPhase_sum_norm_sq_ge :
     ∃ C : ℝ, 0 < C ∧
       ∀ {R N : ℝ} {a b : ℕ},
@@ -1049,55 +1079,25 @@ private theorem exists_logPhase_sum_norm_sq_ge :
           ((Finset.Icc a b).card : ℝ) / 2 ≤
             ‖∑ n ∈ Finset.Icc a b,
               (𝐞 (t * Real.log ((n : ℝ) / N)) : ℂ)‖ ^ 2 := by
-  obtain ⟨C₀, hC₀, hestimate⟩ := l2_integral_estimate
+  obtain ⟨C₀, hC₀, hlarge⟩ := l2_integral_estimate_exists_norm_sq_ge
   refine ⟨C₀, hC₀, ?_⟩
   intro R N a b hR hN ha hb hNR
   let ξ : ↥(Finset.Icc a b) → ℝ := fun n ↦ Real.log ((n : ℝ) / N)
   let coeff : ↥(Finset.Icc a b) → ℂ := fun _ ↦ 1
   have hsep : IsSeparatedFamily (1 / (2 * N)) ξ :=
     log_div_separated hN ha hb
-  obtain ⟨θ, hθ, hint⟩ := hestimate coeff ξ (2 * N) (by positivity) hsep
-    R (2 * R) R (by ring) (by linarith)
-  let g : ℝ → ℝ := fun t ↦ ‖∑ n, coeff n * 𝐞 (ξ n * t)‖ ^ 2
-  have hg : Continuous g := by
-    dsimp [g, coeff, ξ]
-    fun_prop
-  have hcard : ∑ n, ‖coeff n‖ ^ 2 = ((Finset.Icc a b).card : ℝ) := by
-    simp [coeff]
-  have hfactor : R / 2 ≤ R + θ * (2 * N) := by
-    have hθlower : -C₀ ≤ θ := (neg_le_of_abs_le hθ)
-    have hCN : 2 * C₀ * N ≤ R / 2 := by
-      apply (le_div_iff₀ (by positivity : 0 < (2 : ℝ))).2
-      calc
-        2 * C₀ * N * 2 = N * (4 * C₀) := by ring
-        _ ≤ R := (le_div_iff₀ (by positivity : 0 < 4 * C₀)).1 hNR
+  have hlength : 2 * C₀ * (2 * N) ≤ 2 * R - R := by
+    have hCN : N * (4 * C₀) ≤ R :=
+      (le_div_iff₀ (by positivity : 0 < 4 * C₀)).1 hNR
     nlinarith
-  have hint_lower : R / 2 * ((Finset.Icc a b).card : ℝ) ≤
-      ∫ t in Set.Icc R (2 * R), g t := by
-    rw [show (∫ t in Set.Icc R (2 * R), g t) =
-        (R + θ * (2 * N)) * ((Finset.Icc a b).card : ℝ) by
-      simpa only [g, hcard] using hint]
-    exact mul_le_mul_of_nonneg_right hfactor (Nat.cast_nonneg _)
-  obtain ⟨t, ht, htavg⟩ := exists_eq_interval_average
-    (by linarith : R ≠ 2 * R) hg.continuousOn
-  have ht' : t ∈ Set.Ioo R (2 * R) := by
-    simpa [Set.uIoo_of_le (by linarith : R ≤ 2 * R)] using ht
-  refine ⟨t, ⟨ht'.1.le, ht'.2.le⟩, ?_⟩
-  have havg : ((Finset.Icc a b).card : ℝ) / 2 ≤ g t := by
-    rw [htavg]
-    rw [interval_average_eq_div]
-    have hset_interval : (∫ x in R..2 * R, g x) =
-        ∫ x in Set.Icc R (2 * R), g x := by
-      rw [intervalIntegral.integral_of_le (by linarith),
-        MeasureTheory.integral_Icc_eq_integral_Ioc]
-    rw [hset_interval]
-    rw [show 2 * R - R = R by ring]
-    apply (le_div_iff₀ hR).2
-    nlinarith [hint_lower]
-  change ((Finset.Icc a b).card : ℝ) / 2 ≤
-    ‖∑ n ∈ Finset.Icc a b, (𝐞 (t * Real.log ((n : ℝ) / N)) : ℂ)‖ ^ 2
+  obtain ⟨t, ht, htlarge⟩ := hlarge coeff ξ (2 * N) (by positivity) hsep
+    R (2 * R) hlength
+  have hmass : ∑ n, ‖coeff n‖ ^ 2 = ((Finset.Icc a b).card : ℝ) := by
+    simp [coeff]
+  rw [hmass] at htlarge
+  refine ⟨t, ht, ?_⟩
   rw [Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
-  simpa only [g, coeff, ξ, one_mul, mul_comm] using havg
+  simpa only [coeff, ξ, one_mul, mul_comm] using htlarge
 
 private theorem half_le_exponentSumGrowthExponent
     {α : ℝ≥0} (hα : 0 < α) (hαone : α ≤ 1) :
@@ -1168,10 +1168,8 @@ private theorem half_le_exponentSumGrowthExponent
     convert hTtop using 1
     ext i
     rw [Real.norm_eq_abs, abs_of_nonneg (zero_le_one.trans (hT i))]
-  have hlogb : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds (α : ℝ)) :=
-    tendsto_logb_of_between_const_rpow hαR hD hNtop hN hTbounds
   have hNT : IsPowerAsymptotic N T (α : ℝ) :=
-    isPowerAsymptotic_of_logb_tendsto hTgt hNpos hlogb
+    isPowerAsymptotic_of_between_const_rpow hαR hD hNtop hN hTbounds
   have hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i := by
     intro i
     dsimp [N, a, b, n]
@@ -1226,7 +1224,7 @@ private theorem half_le_exponentSumGrowthExponent
   exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
     hT hTunbounded hbound (by positivity) hlower
 
-/-! ## Lemma 4.4 -/
+/-! ## Trivial bounds -/
 
 private theorem exponentSumGrowthExponent_nonneg (α : ℝ≥0) :
     0 ≤ exponentSumGrowthExponent α :=
