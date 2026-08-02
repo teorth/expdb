@@ -7,11 +7,7 @@ import Expdb.Fourier.L2Integral
 import Expdb.Mathlib.EulerMaclaurin
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Fourier.FourierTransformDeriv
-import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 import Mathlib.MeasureTheory.Integral.IntervalAverage
@@ -34,6 +30,8 @@ open scoped ContDiff Expdb FourierTransform NNReal
 noncomputable section
 
 namespace Expdb
+
+/-! ## Derivative bounds for oscillatory phases -/
 
 private theorem contDiff_fourierChar : ContDiff ℝ ∞ (𝐞 · : ℝ → ℂ) := by
   rw [show (𝐞 · : ℝ → ℂ) = fun x : ℝ ↦
@@ -181,6 +179,8 @@ private theorem contDiffOn_oscillatory
   exact (contDiff_fourierChar.of_le
     (ENat.natCast_le_of_coe_top_le_withTop le_rfl n)).comp_contDiffOn hinner
 
+/-! ## Uniform bounds for approximate model phases -/
+
 private theorem approximate_model_phase_deriv_bounds
     {σ : ℝ} (hσ : 0 < σ) (P : ℕ) :
     ∃ K : ℝ, 1 ≤ K ∧
@@ -247,20 +247,9 @@ private theorem isApproximateModelPhaseFunction_log (P : ℕ) :
     IsApproximateModelPhaseFunction Real.log 1 P 0 := by
   refine ⟨isModelPhaseFunction_log.1 0, ?_⟩
   intro p _ u
-  have huPos : 0 < (u : ℝ) := zero_lt_one.trans_le u.property.1
-  have hunique : UniqueDiffOn ℝ phaseInterval :=
-    uniqueDiffOn_Icc (by norm_num [phaseInterval])
-  have heq : iteratedDerivWithin (p + 1) Real.log phaseInterval u =
-      iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-(1 : ℝ))) phaseInterval u := by
-    rw [iteratedDerivWithin_eq_iteratedDeriv hunique
-        (Real.contDiffAt_log.2 huPos.ne') u.property,
-      iteratedDerivWithin_eq_iteratedDeriv hunique
-        (Real.contDiffAt_rpow_const_of_ne huPos.ne') u.property,
-      iteratedDeriv_succ', Real.deriv_log']
-    congr 1
-    funext v
-    exact (Real.rpow_neg_one v).symm
-  rw [heq, sub_self, norm_zero]
+  rw [iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
+
+/-! ## Choosing the Euler–Maclaurin order -/
 
 private theorem exists_oscillatory_scale_parameters
     {δ : ℝ} (hδ : 0 < δ) :
@@ -338,6 +327,8 @@ private theorem oscillatory_scale_bounds
       field_simp [hNpos.ne', pow_ne_zero _ hNpos.ne']
       ring]
     exact (div_le_one (pow_pos hNpos _)).2 hnum
+
+/-! ## A first-derivative estimate for the phase integral -/
 
 private theorem norm_integral_oscillatory_le
     {F : ℝ → ℝ} {A B T c K : ℝ}
@@ -538,6 +529,8 @@ private theorem norm_integral_oscillatory_le
       field_simp
       nlinarith
 
+/-! ## Euler–Maclaurin bounds for oscillatory sums -/
+
 private def oscillatoryErrorConstant (s : ℕ) : ℝ :=
   1 +
     (∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
@@ -714,6 +707,8 @@ private theorem norm_oscillatory_sum_le
       dsimp only [oscillatorySumConstant]
       nlinarith
 
+/-! ## The upper bound for `α > 1` -/
+
 private theorem exponentSumGrowthExponent_le_sub_one
     {α : ℝ≥0} (hα : 1 < α) :
     exponentSumGrowthExponent α ≤ (α : ℝ) - 1 := by
@@ -790,6 +785,8 @@ private theorem exponentSumGrowthExponent_le_sub_one
       _ ≤ C * T ^ ((α : ℝ) - 1 + ε) := by gcongr
   · rw [exponentialSumAt, Finset.Icc_eq_empty hab, Finset.sum_empty, norm_zero]
     exact mul_nonneg (zero_le_one.trans hC) (Real.rpow_nonneg hTpos.le _)
+
+/-! ## The matching logarithmic lower bound for `α > 1` -/
 
 private theorem norm_log_phase_integral_ge
     {N T : ℝ} (hN : 0 < N) (hT : 1 ≤ T) :
@@ -880,116 +877,6 @@ private theorem norm_log_phase_integral_ge
     _ = N := by field_simp [hcoefpos.ne', (zero_lt_one.trans_le hT).ne']
     _ ≤ N * ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
       simpa only [mul_one] using mul_le_mul_of_nonneg_left hnum hN.le
-
-private theorem exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
-    {E : Type*} [SeminormedAddCommGroup E]
-    {X : VariableObject E} {T : VariableObject ℝ} {β γ c : ℝ}
-    (hT : ∀ i, 1 ≤ T i) (hTunbounded : T.IsUnbounded)
-    (hbound : IsPowerBounded X T β) (hc : 0 < c)
-    (hlower : ∀ᶠ i in atTop, c * T i ^ γ ≤ ‖X i‖) :
-    γ ≤ β := by
-  by_contra hγβ
-  have hβγ : β < γ := lt_of_not_ge hγβ
-  let ε := (γ - β) / 2
-  have hε : 0 < ε := by dsimp [ε]; linarith
-  have hδ : β + ε + ε = γ := by dsimp [ε]; ring
-  have hO := (isPowerBounded_iff_forall_pos X T β hT hTunbounded).1 hbound ε hε
-  obtain ⟨C, hC⟩ := hO.bound
-  have hTtop : Tendsto T atTop atTop := by
-    rw [VariableObject.IsUnbounded] at hTunbounded
-    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
-      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
-  have hpowtop : Tendsto (fun i ↦ T i ^ ε) atTop atTop :=
-    (tendsto_rpow_atTop hε).comp hTtop
-  have hlarge : ∀ᶠ i in atTop, C < c * T i ^ ε := by
-    have h := (tendsto_atTop.1 hpowtop (C / c + 1))
-    filter_upwards [h] with i hi
-    have hc' : C < c * (C / c + 1) := by
-      field_simp
-      linarith
-    exact lt_of_lt_of_le hc' (mul_le_mul_of_nonneg_left hi hc.le)
-  obtain ⟨i, hiLower, hiUpper, hiLarge⟩ :=
-    (hlower.and (hC.and hlarge)).exists
-  have hTi : 0 < T i := lt_of_lt_of_le zero_lt_one (hT i)
-  have hApos : 0 < T i ^ (β + ε) := Real.rpow_pos_of_pos hTi _
-  have hpower : T i ^ γ = T i ^ (β + ε) * T i ^ ε := by
-    rw [← Real.rpow_add hTi, hδ]
-  have hsmall : c * T i ^ ε ≤ C := by
-    apply (mul_le_mul_iff_right₀ hApos).mp
-    calc
-      T i ^ (β + ε) * (c * T i ^ ε) = c * T i ^ γ := by rw [hpower]; ring
-      _ ≤ ‖X i‖ := hiLower
-      _ ≤ C * ‖T i ^ (β + ε)‖ := hiUpper
-      _ = T i ^ (β + ε) * C := by
-        rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hTi.le _)]
-        ring
-  exact (not_lt_of_ge hsmall) hiLarge
-
-private theorem isPowerAsymptotic_of_logb_tendsto
-    {N T : VariableObject ℝ} {α : ℝ}
-    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
-    (hexponent : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α)) :
-    IsPowerAsymptotic N T α := by
-  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
-  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
-  · rw [IsEqUpToInfinitesimal, VariableObject.IsInfinitesimal]
-    have hsub : Tendsto (fun i ↦ Real.logb (T i) (N i) - α) atTop (nhds 0) := by
-      simpa using hexponent.sub
-        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α) atTop (nhds α))
-    convert (continuous_norm.tendsto 0).comp hsub using 1 <;>
-      simp [Function.comp_def, exponent, VariableObject.fixed]
-  · exact (Real.rpow_logb (zero_lt_one.trans (hT i)) (hT i).ne' (hN i)).symm
-
-private theorem tendsto_logb_of_between_const_rpow
-    {N T : VariableObject ℝ} {α D : ℝ}
-    (hα : 0 < α) (hD : 1 ≤ D)
-    (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
-    (hT : ∀ i, D * N i ^ α⁻¹ ≤ T i ∧ T i ≤ 2 * (D * N i ^ α⁻¹)) :
-    Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α) := by
-  have hlogNtop : Tendsto (fun i ↦ Real.log (N i)) atTop atTop :=
-    Real.tendsto_log_atTop.comp hNtop
-  have hlogNpos (i : ℕ) : 0 < Real.log (N i) := Real.log_pos (lt_of_lt_of_le one_lt_two (hN i))
-  have hDpos : 0 < D := zero_lt_one.trans_le hD
-  have hratio : Tendsto (fun i ↦ Real.log (T i) / Real.log (N i)) atTop (nhds α⁻¹) := by
-    have hlowerLimit : Tendsto
-        (fun i ↦ Real.log D / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
-      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
-        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
-    have hupperLimit : Tendsto
-        (fun i ↦ Real.log (2 * D) / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
-      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
-        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
-    apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlowerLimit hupperLimit
-    · exact Filter.Eventually.of_forall fun i ↦ by
-        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
-        have hlower := Real.log_le_log (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1
-        rw [Real.log_mul hDpos.ne' (Real.rpow_pos_of_pos hbase _).ne',
-          Real.log_rpow hbase] at hlower
-        apply (le_div_iff₀ (hlogNpos i)).2
-        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
-        simpa [mul_comm] using hlower
-    · exact Filter.Eventually.of_forall fun i ↦ by
-        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
-        have htwoD : 0 < 2 * D := mul_pos (by norm_num) hDpos
-        have hupper := Real.log_le_log (lt_of_lt_of_le
-          (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1) (hT i).2
-        rw [show 2 * (D * N i ^ α⁻¹) = (2 * D) * N i ^ α⁻¹ by ring,
-          Real.log_mul htwoD.ne' (Real.rpow_pos_of_pos hbase _).ne',
-          Real.log_rpow hbase] at hupper
-        apply (div_le_iff₀ (hlogNpos i)).2
-        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
-        simpa [mul_comm] using hupper
-  have hinv := hratio.inv₀ (inv_ne_zero hα.ne')
-  have hTgt (i : ℕ) : 1 < T i := by
-    have hbase : 1 < N i := one_lt_two.trans_le (hN i)
-    have hrpow : 1 < N i ^ α⁻¹ := Real.one_lt_rpow hbase (inv_pos.mpr hα)
-    exact hrpow.trans_le <| (le_mul_of_one_le_left
-      (Real.rpow_nonneg (zero_le_one.trans hbase.le) _) hD).trans (hT i).1
-  have hinv' : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α⁻¹⁻¹) :=
-    hinv.congr' <| Filter.Eventually.of_forall fun i ↦ by
-      dsimp [Real.logb]
-      field_simp [(hlogNpos i).ne', (Real.log_pos (hTgt i)).ne']
-  simpa using hinv'
 
 private theorem sub_one_le_exponentSumGrowthExponent
     {α : ℝ≥0} (hα : 1 < α) :
@@ -1100,23 +987,21 @@ private theorem sub_one_le_exponentSumGrowthExponent
   exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
     hT hTunbounded hbound (half_pos hd) (by simpa [d] using hlower)
 
+/-! ## The `L²` lower bound for `0 < α ≤ 1` -/
+
 private lemma log_div_separated
     {N : ℝ} {a b : ℕ} (hN : 0 < N) (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N) :
     IsSeparatedFamily (1 / (2 * N))
       (fun n : ↥(Finset.Icc a b) ↦ Real.log ((n : ℝ) / N)) := by
-  intro m n hmn
-  rw [Real.dist_eq]
-  rcases lt_or_gt_of_ne (Subtype.coe_ne_coe.mpr hmn) with hmn' | hnm'
-  · have hmnR : (m : ℝ) ≤ (n : ℝ) := by exact_mod_cast hmn'.le
+  have hordered (m n : ↥(Finset.Icc a b)) (hmn : (m : ℕ) < n) :
+      1 / (2 * N) ≤ Real.log ((n : ℝ) / N) - Real.log ((m : ℝ) / N) := by
     have hm_mem := Finset.mem_Icc.mp m.property
     have hmpos : 0 < (m : ℝ) := lt_of_lt_of_le hN (ha.trans (by exact_mod_cast hm_mem.1))
-    have hnpos : 0 < (n : ℝ) := lt_trans hmpos (by exact_mod_cast hmn')
-    rw [abs_of_nonpos (sub_nonpos.mpr (Real.log_le_log (by positivity)
-      (div_le_div_of_nonneg_right hmnR hN.le))), neg_sub]
+    have hnpos : 0 < (n : ℝ) := lt_trans hmpos (by exact_mod_cast hmn)
     have hlog : 1 - (m : ℝ) / n ≤ Real.log ((n : ℝ) / m) := by
       simpa [inv_div] using Real.one_sub_inv_le_log_of_pos (div_pos hnpos hmpos)
     have hdiff : 1 / (2 * N) ≤ 1 - (m : ℝ) / n := by
-      have hgapNat : (m : ℕ) + 1 ≤ (n : ℕ) := Nat.add_one_le_iff.mpr hmn'
+      have hgapNat : (m : ℕ) + 1 ≤ (n : ℕ) := Nat.add_one_le_iff.mpr hmn
       have hgapCast : ((m : ℕ) : ℝ) + 1 ≤ ((n : ℕ) : ℝ) := by exact_mod_cast hgapNat
       have hgap : (1 : ℝ) ≤ (n : ℝ) - m := by linarith
       have hn_mem := Finset.mem_Icc.mp n.property
@@ -1131,30 +1016,21 @@ private lemma log_div_separated
         rw [Real.log_div (ne_of_gt hnpos) hN.ne', Real.log_div (ne_of_gt hmpos) hN.ne',
           Real.log_div (ne_of_gt hnpos) (ne_of_gt hmpos)]
         ring
-  · have hnmR : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnm'.le
-    have hn_mem := Finset.mem_Icc.mp n.property
-    have hnpos : 0 < (n : ℝ) := lt_of_lt_of_le hN (ha.trans (by exact_mod_cast hn_mem.1))
-    have hmpos : 0 < (m : ℝ) := lt_trans hnpos (by exact_mod_cast hnm')
-    rw [abs_of_nonneg (sub_nonneg.mpr (Real.log_le_log (by positivity)
-      (div_le_div_of_nonneg_right hnmR hN.le)))]
-    have hlog : 1 - (n : ℝ) / m ≤ Real.log ((m : ℝ) / n) := by
-      simpa [inv_div] using Real.one_sub_inv_le_log_of_pos (div_pos hmpos hnpos)
-    have hdiff : 1 / (2 * N) ≤ 1 - (n : ℝ) / m := by
-      have hgapNat : (n : ℕ) + 1 ≤ (m : ℕ) := Nat.add_one_le_iff.mpr hnm'
-      have hgapCast : ((n : ℕ) : ℝ) + 1 ≤ ((m : ℕ) : ℝ) := by exact_mod_cast hgapNat
-      have hgap : (1 : ℝ) ≤ (m : ℝ) - n := by linarith
-      have hm_mem := Finset.mem_Icc.mp m.property
-      have hmle : (m : ℝ) ≤ 2 * N := le_trans (by exact_mod_cast hm_mem.2) hb
-      rw [one_sub_div hmpos.ne']
-      calc
-        1 / (2 * N) ≤ 1 / (m : ℝ) := one_div_le_one_div_of_le hmpos hmle
-        _ ≤ ((m : ℝ) - n) / m := (div_le_div_iff_of_pos_right hmpos).2 hgap
-    calc
-      1 / (2 * N) ≤ Real.log ((m : ℝ) / n) := hdiff.trans hlog
-      _ = Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) := by
-        rw [Real.log_div (ne_of_gt hmpos) hN.ne', Real.log_div (ne_of_gt hnpos) hN.ne',
-          Real.log_div (ne_of_gt hmpos) (ne_of_gt hnpos)]
-        ring
+  intro m n hmn
+  rw [Real.dist_eq]
+  rcases lt_or_gt_of_ne (Subtype.coe_ne_coe.mpr hmn) with hmn' | hnm'
+  · have hbound := hordered m n hmn'
+    have hsign : Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) ≤ 0 := by
+      have : 0 < 1 / (2 * N) := by positivity
+      linarith
+    rw [abs_of_nonpos hsign, neg_sub]
+    exact hbound
+  · have hbound := hordered n m hnm'
+    have hsign : 0 ≤ Real.log ((m : ℝ) / N) - Real.log ((n : ℝ) / N) := by
+      have : 0 < 1 / (2 * N) := by positivity
+      linarith
+    rw [abs_of_nonneg hsign]
+    exact hbound
 
 private theorem exists_logPhase_sum_norm_sq_ge :
     ∃ C : ℝ, 0 < C ∧
@@ -1340,6 +1216,8 @@ private theorem half_le_exponentSumGrowthExponent
         _ ≤ ‖exponentialSum logPhase T N a b i‖ := hroot
   exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
     hT hTunbounded hbound (by positivity) hlower
+
+/-! ## Lemma 4.4 -/
 
 private theorem exponentSumGrowthExponent_nonneg (α : ℝ≥0) :
     0 ≤ exponentSumGrowthExponent α :=

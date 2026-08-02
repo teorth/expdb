@@ -2,6 +2,7 @@ module
 
 public import Expdb.ExponentialSums.PhaseFunctions
 public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Order.Interval.Finset.Nat
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -95,6 +96,75 @@ theorem IsPowerAsymptotic.eventually_between
   exact
     ⟨Real.rpow_le_rpow_of_exponent_le hiT (by linarith),
       Real.rpow_le_rpow_of_exponent_le hiT (by linarith)⟩
+
+/-- Convergence of the logarithmic exponent gives a power asymptotic. -/
+theorem isPowerAsymptotic_of_logb_tendsto
+    {N T : VariableObject ℝ} {α : ℝ}
+    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
+    (hexponent : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α)) :
+    IsPowerAsymptotic N T α := by
+  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
+  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
+  · rw [IsEqUpToInfinitesimal, VariableObject.IsInfinitesimal]
+    have hsub : Tendsto (fun i ↦ Real.logb (T i) (N i) - α) atTop (nhds 0) := by
+      simpa using hexponent.sub
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α) atTop (nhds α))
+    convert (continuous_norm.tendsto 0).comp hsub using 1 <;>
+      simp [Function.comp_def, exponent, VariableObject.fixed]
+  · exact (Real.rpow_logb (zero_lt_one.trans (hT i)) (hT i).ne' (hN i)).symm
+
+/-- If `T` lies between fixed positive multiples of `N ^ α⁻¹`, then the logarithm of `N` to
+base `T` tends to `α`. -/
+theorem tendsto_logb_of_between_const_rpow
+    {N T : VariableObject ℝ} {α D : ℝ}
+    (hα : 0 < α) (hD : 1 ≤ D)
+    (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
+    (hT : ∀ i, D * N i ^ α⁻¹ ≤ T i ∧ T i ≤ 2 * (D * N i ^ α⁻¹)) :
+    Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α) := by
+  have hlogNtop : Tendsto (fun i ↦ Real.log (N i)) atTop atTop :=
+    Real.tendsto_log_atTop.comp hNtop
+  have hlogNpos (i : ℕ) : 0 < Real.log (N i) := Real.log_pos (lt_of_lt_of_le one_lt_two (hN i))
+  have hDpos : 0 < D := zero_lt_one.trans_le hD
+  have hratio : Tendsto (fun i ↦ Real.log (T i) / Real.log (N i)) atTop (nhds α⁻¹) := by
+    have hlowerLimit : Tendsto
+        (fun i ↦ Real.log D / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
+    have hupperLimit : Tendsto
+        (fun i ↦ Real.log (2 * D) / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlowerLimit hupperLimit
+    · exact Filter.Eventually.of_forall fun i ↦ by
+        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
+        have hlower := Real.log_le_log (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1
+        rw [Real.log_mul hDpos.ne' (Real.rpow_pos_of_pos hbase _).ne',
+          Real.log_rpow hbase] at hlower
+        apply (le_div_iff₀ (hlogNpos i)).2
+        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
+        simpa [mul_comm] using hlower
+    · exact Filter.Eventually.of_forall fun i ↦ by
+        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
+        have htwoD : 0 < 2 * D := mul_pos (by norm_num) hDpos
+        have hupper := Real.log_le_log (lt_of_lt_of_le
+          (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1) (hT i).2
+        rw [show 2 * (D * N i ^ α⁻¹) = (2 * D) * N i ^ α⁻¹ by ring,
+          Real.log_mul htwoD.ne' (Real.rpow_pos_of_pos hbase _).ne',
+          Real.log_rpow hbase] at hupper
+        apply (div_le_iff₀ (hlogNpos i)).2
+        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
+        simpa [mul_comm] using hupper
+  have hinv := hratio.inv₀ (inv_ne_zero hα.ne')
+  have hTgt (i : ℕ) : 1 < T i := by
+    have hbase : 1 < N i := one_lt_two.trans_le (hN i)
+    have hrpow : 1 < N i ^ α⁻¹ := Real.one_lt_rpow hbase (inv_pos.mpr hα)
+    exact hrpow.trans_le <| (le_mul_of_one_le_left
+      (Real.rpow_nonneg (zero_le_one.trans hbase.le) _) hD).trans (hT i).1
+  have hinv' : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α⁻¹⁻¹) :=
+    hinv.congr' <| Filter.Eventually.of_forall fun i ↦ by
+      dsimp [Real.logb]
+      field_simp [(hlogNpos i).ne', (Real.log_pos (hTgt i)).ne']
+  simpa using hinv'
 
 /-! ## Power bounds -/
 
@@ -196,6 +266,52 @@ theorem isPowerBounded_iff_forall_pos
         apply (div_le_iff₀ (Real.log_pos hiT)).1
         simp only [exponent, hXi, ↓reduceIte]
         exact le_max_right β (Real.log ‖X i‖ / Real.log (T i))
+
+/-- A power lower bound for an unbounded object forces its exponent to be no larger than any
+admissible power-bound exponent. -/
+theorem exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
+    {E : Type*} [SeminormedAddCommGroup E]
+    {X : VariableObject E} {T : VariableObject ℝ} {β γ c : ℝ}
+    (hT : ∀ i, 1 ≤ T i) (hTunbounded : T.IsUnbounded)
+    (hbound : IsPowerBounded X T β) (hc : 0 < c)
+    (hlower : ∀ᶠ i in atTop, c * T i ^ γ ≤ ‖X i‖) :
+    γ ≤ β := by
+  by_contra hγβ
+  have hβγ : β < γ := lt_of_not_ge hγβ
+  let ε := (γ - β) / 2
+  have hε : 0 < ε := by dsimp [ε]; linarith
+  have hδ : β + ε + ε = γ := by dsimp [ε]; ring
+  have hO := (isPowerBounded_iff_forall_pos X T β hT hTunbounded).1 hbound ε hε
+  obtain ⟨C, hC⟩ := hO.bound
+  have hTtop : Tendsto T atTop atTop := by
+    rw [VariableObject.IsUnbounded] at hTunbounded
+    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
+      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hpowtop : Tendsto (fun i ↦ T i ^ ε) atTop atTop :=
+    (tendsto_rpow_atTop hε).comp hTtop
+  have hlarge : ∀ᶠ i in atTop, C < c * T i ^ ε := by
+    have h := tendsto_atTop.1 hpowtop (C / c + 1)
+    filter_upwards [h] with i hi
+    have hc' : C < c * (C / c + 1) := by
+      field_simp
+      linarith
+    exact lt_of_lt_of_le hc' (mul_le_mul_of_nonneg_left hi hc.le)
+  obtain ⟨i, hiLower, hiUpper, hiLarge⟩ :=
+    (hlower.and (hC.and hlarge)).exists
+  have hTi : 0 < T i := lt_of_lt_of_le zero_lt_one (hT i)
+  have hApos : 0 < T i ^ (β + ε) := Real.rpow_pos_of_pos hTi _
+  have hpower : T i ^ γ = T i ^ (β + ε) * T i ^ ε := by
+    rw [← Real.rpow_add hTi, hδ]
+  have hsmall : c * T i ^ ε ≤ C := by
+    apply (mul_le_mul_iff_right₀ hApos).mp
+    calc
+      T i ^ (β + ε) * (c * T i ^ ε) = c * T i ^ γ := by rw [hpower]; ring
+      _ ≤ ‖X i‖ := hiLower
+      _ ≤ C * ‖T i ^ (β + ε)‖ := hiUpper
+      _ = T i ^ (β + ε) * C := by
+        rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hTi.le _)]
+        ring
+  exact (not_lt_of_ge hsmall) hiLarge
 
 /-! ## Admissible exponents
 
