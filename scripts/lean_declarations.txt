@@ -35,12 +35,16 @@ Expdb.IsPhaseFunction
 Expdb.modelPhaseError
 Expdb.IsModelPhaseFunction
 Expdb.logPhase
+Expdb.iteratedDerivWithin_log_eq_rpow_neg_one
 Expdb.isModelPhaseFunction_log
 Expdb.IsModelPhaseFunction.exists_subsequence_uniform_error
 Expdb.IsPowerAsymptotic
 Expdb.IsPowerAsymptotic.eventually_between
+Expdb.isPowerAsymptotic_of_logb_tendsto
+Expdb.tendsto_logb_of_between_const_rpow
 Expdb.IsPowerBounded
 Expdb.isPowerBounded_iff_forall_pos
+Expdb.exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
 Expdb.exponentialSum
 Expdb.IsExponentSumBound
 Expdb.exponentSumGrowthExponent
