@@ -20,6 +20,10 @@ import Mathlib.MeasureTheory.Integral.IntervalAverage
 # Trivial bounds for exponential sum growth exponents
 
 This module formalizes Lemma 4.4 of the ANTEDB blueprint.
+
+The upper bound uses Euler–Maclaurin uniformly for every model phase. For the lower bound,
+we use the logarithmic model phase; this suffices because an admissible exponent must bound
+the exponential sums of every model phase.
 -/
 
 @[expose] public section
@@ -1657,7 +1661,7 @@ private theorem exponentSumGrowthExponent_le_self (α : ℝ≥0) :
     exponentSumGrowthExponent α ≤ (α : ℝ) :=
   exponentSumGrowthExponent_le_iff.mpr (isExponentSumBound_self α)
 
-/-- Above the transition point, the exponential sum growth exponent is `α - 1`. -/
+/-- For `α > 1`, the exponential sum growth exponent is `α - 1`. -/
 theorem exponentSumGrowthExponent_eq_sub_one
     {α : ℝ≥0} (hα : 1 < α) :
     exponentSumGrowthExponent α = (α : ℝ) - 1 := by
@@ -1665,7 +1669,7 @@ theorem exponentSumGrowthExponent_eq_sub_one
     (exponentSumGrowthExponent_le_iff.mpr (isExponentSumBound_sub_one hα))
     (sub_one_le_exponentSumGrowthExponent hα)
 
-/-- Up to the transition point, the exponential sum growth exponent lies in
+/-- For `0 ≤ α ≤ 1`, the exponential sum growth exponent lies in
 the interval `[α / 2, α]`. -/
 theorem exponentSumGrowthExponent_mem_Icc
     {α : ℝ≥0} (hα : α ≤ 1) :
