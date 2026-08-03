@@ -3,7 +3,9 @@ module
 public import Expdb.ExponentialSums.ExponentSumGrowth
 
 import Expdb.Basic.AutomaticUniformity
+import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
 # Non-asymptotic exponential sum growth bounds
@@ -109,6 +111,77 @@ private theorem isExponentSumBound_of_nonAsymptotic
     abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)] using
       hfixed (T i) (N i) (F i) (a i) (b i)
         hiT hiNT.1 hiNT.2 hiF (hab i).1 (hab i).2
+
+/-! ## Uniform bounds for approximate model phases -/
+
+theorem approximate_model_phase_deriv_bounds
+    {σ : ℝ} (hσ : 0 < σ) (P : ℕ) :
+    ∃ K : ℝ, 1 ≤ K ∧
+      ∀ {δ : ℝ} {F : ℝ → ℝ},
+        δ ≤ min ((2 : ℝ) ^ (-σ) / 2) 1 →
+        IsApproximateModelPhaseFunction F σ P δ →
+        (∀ u ∈ phaseInterval,
+          (2 : ℝ) ^ (-σ) / 2 ≤ iteratedDerivWithin 1 F phaseInterval u) ∧
+        (∀ k : ℕ, 1 ≤ k → k ≤ P + 1 → ∀ u ∈ phaseInterval,
+          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) := by
+  have href : ContDiffOn ℝ ∞ (fun u : ℝ ↦ u ^ (-σ)) phaseInterval := by
+    intro u hu
+    exact (Real.contDiffAt_rpow_const_of_ne (by
+      exact ne_of_gt (lt_of_lt_of_le zero_lt_one hu.1))).contDiffWithinAt
+  have hreference (p : ℕ) :
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ u : phaseInterval,
+        ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ ≤ B := by
+    have hcont : ContinuousOn
+        (iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval) phaseInterval :=
+      href.continuousOn_iteratedDerivWithin
+        (ENat.natCast_le_of_coe_top_le_withTop le_rfl p)
+        (uniqueDiffOn_Icc (by norm_num [phaseInterval]))
+    obtain ⟨B, hB⟩ := bddAbove_def.mp (isCompact_Icc.bddAbove_image hcont.norm)
+    refine ⟨max B 0, le_max_right _ _, fun u ↦ ?_⟩
+    exact (hB _ ⟨u, u.property, rfl⟩).trans (le_max_left _ _)
+  choose B hBnonneg hB using hreference
+  let K : ℝ := 1 + ∑ p ∈ Finset.range (P + 1), B p
+  have hK : 1 ≤ K := by
+    dsimp [K]
+    exact le_add_of_nonneg_right (Finset.sum_nonneg fun p _ ↦ hBnonneg p)
+  refine ⟨K, hK, ?_⟩
+  intro δ F hδ hF
+  have hδc : δ ≤ (2 : ℝ) ^ (-σ) / 2 := hδ.trans (min_le_left _ _)
+  have hδone : δ ≤ 1 := hδ.trans (min_le_right _ _)
+  constructor
+  · intro u hu
+    have huPos : 0 < (u : ℝ) := zero_lt_one.trans_le hu.1
+    have huLower : (2 : ℝ) ^ (-σ) ≤ (u : ℝ) ^ (-σ) :=
+      Real.rpow_le_rpow_of_nonpos huPos hu.2 (neg_nonpos.mpr hσ.le)
+    have he := hF.2 0 (Nat.zero_le P) ⟨u, hu⟩
+    rw [Real.norm_eq_abs, abs_le] at he
+    simp only [zero_add, iteratedDerivWithin_zero] at he
+    linarith
+  · intro k hk hkP u hu
+    obtain ⟨p, rfl⟩ := Nat.exists_eq_add_of_le hk
+    have hpP : p ≤ P := by omega
+    have hpMem : p ∈ Finset.range (P + 1) := Finset.mem_range.mpr (by omega)
+    have he := hF.2 p hpP ⟨u, hu⟩
+    have htriangle :
+        ‖iteratedDerivWithin (p + 1) F phaseInterval u‖ ≤
+          ‖iteratedDerivWithin (p + 1) F phaseInterval u -
+            iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ +
+          ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ :=
+      norm_le_norm_sub_add _ _
+    calc
+      ‖iteratedDerivWithin (1 + p) F phaseInterval u‖ ≤ 1 + B p := by
+        simpa [Nat.add_comm] using htriangle.trans (add_le_add (he.trans hδone) (hB p ⟨u, hu⟩))
+      _ ≤ K := by
+        dsimp [K]
+        gcongr
+        exact Finset.single_le_sum (fun q _ ↦ hBnonneg q) hpMem
+
+/-- The logarithm is an exact approximate model phase at every finite order. -/
+theorem isApproximateModelPhaseFunction_log (P : ℕ) :
+    IsApproximateModelPhaseFunction Real.log 1 P 0 := by
+  refine ⟨isModelPhaseFunction_log.1 0, ?_⟩
+  intro p _ u
+  rw [iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
 
 /-! ## Building asymptotic counterexamples -/
 

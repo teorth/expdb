@@ -1,6 +1,6 @@
 module
 
-public import Expdb.ExponentialSums.PhaseFunctions
+public import Expdb.ExponentialSums.LogPhase
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Order.Interval.Finset.Nat
@@ -102,18 +102,19 @@ theorem IsPowerAsymptotic.eventually_between
 /-- Convergence of the logarithmic exponent gives a power asymptotic. -/
 theorem isPowerAsymptotic_of_logb_tendsto
     {N T : VariableObject ℝ} {α : ℝ}
-    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
+    (hT : ∀ᶠ i in atTop, 1 < T i) (hN : ∀ᶠ i in atTop, 0 < N i)
     (hexponent : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α)) :
     IsPowerAsymptotic N T α := by
   let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
-  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
+  refine ⟨exponent, ?_, ?_⟩
   · rw [IsEqUpToInfinitesimal, VariableObject.IsInfinitesimal]
     have hsub : Tendsto (fun i ↦ Real.logb (T i) (N i) - α) atTop (nhds 0) := by
       simpa using hexponent.sub
         (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α) atTop (nhds α))
     convert (continuous_norm.tendsto 0).comp hsub using 1 <;>
       simp [Function.comp_def, exponent, VariableObject.fixed]
-  · exact (Real.rpow_logb (zero_lt_one.trans (hT i)) (hT i).ne' (hN i)).symm
+  · filter_upwards [hT, hN] with i hiT hiN
+    exact (Real.rpow_logb (zero_lt_one.trans hiT) hiT.ne' hiN).symm
 
 /-- A variable power sandwich with an infinitesimal error determines a power asymptotic. -/
 theorem isPowerAsymptotic_of_between
@@ -144,72 +145,82 @@ theorem isPowerAsymptotic_of_between
 /-- If `T` lies between fixed positive multiples of `N ^ α⁻¹`, then the logarithm of `N` to
 base `T` tends to `α`. -/
 private theorem tendsto_logb_of_between_const_rpow
-    {N T : VariableObject ℝ} {α D : ℝ}
-    (hα : 0 < α) (hD : 1 ≤ D)
-    (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
-    (hT : ∀ i, D * N i ^ α⁻¹ ≤ T i ∧ T i ≤ 2 * (D * N i ^ α⁻¹)) :
+    {N T : VariableObject ℝ} {α A B : ℝ}
+    (hα : 0 < α) (hA : 0 < A) (hB : 0 < B)
+    (hNtop : Tendsto N atTop atTop)
+    (hT : ∀ᶠ i in atTop, A * N i ^ α⁻¹ ≤ T i ∧ T i ≤ B * N i ^ α⁻¹) :
     Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α) := by
   have hlogNtop : Tendsto (fun i ↦ Real.log (N i)) atTop atTop :=
     Real.tendsto_log_atTop.comp hNtop
-  have hlogNpos (i : ℕ) : 0 < Real.log (N i) := Real.log_pos (lt_of_lt_of_le one_lt_two (hN i))
-  have hDpos : 0 < D := zero_lt_one.trans_le hD
+  have hNgt : ∀ᶠ i in atTop, 1 < N i := hNtop.eventually (eventually_gt_atTop 1)
+  have hlogNpos : ∀ᶠ i in atTop, 0 < Real.log (N i) := by
+    filter_upwards [hNgt] with i hi
+    exact Real.log_pos hi
+  have hpowtop : Tendsto (fun i ↦ N i ^ α⁻¹) atTop atTop :=
+    (tendsto_rpow_atTop (inv_pos.mpr hα)).comp hNtop
+  have hpowlarge : ∀ᶠ i in atTop, 1 / A < N i ^ α⁻¹ :=
+    hpowtop.eventually (eventually_gt_atTop (1 / A))
+  have hTgt : ∀ᶠ i in atTop, 1 < T i := by
+    filter_upwards [hpowlarge, hT] with i hi hTi
+    have : 1 < A * N i ^ α⁻¹ := by
+      simpa [mul_comm] using (div_lt_iff₀ hA).1 hi
+    exact this.trans_le hTi.1
   have hratio : Tendsto (fun i ↦ Real.log (T i) / Real.log (N i)) atTop (nhds α⁻¹) := by
     have hlowerLimit : Tendsto
-        (fun i ↦ Real.log D / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+        (fun i ↦ Real.log A / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
       simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
         (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
     have hupperLimit : Tendsto
-        (fun i ↦ Real.log (2 * D) / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+        (fun i ↦ Real.log B / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
       simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
         (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
     apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlowerLimit hupperLimit
-    · exact Filter.Eventually.of_forall fun i ↦ by
-        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
-        have hlower := Real.log_le_log (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1
-        rw [Real.log_mul hDpos.ne' (Real.rpow_pos_of_pos hbase _).ne',
+    · filter_upwards [hNgt, hlogNpos, hT] with i hNi hlogNi hTi
+      have hbase : 0 < N i := zero_lt_one.trans hNi
+      have hlower := Real.log_le_log (mul_pos hA (Real.rpow_pos_of_pos hbase _)) hTi.1
+      rw [Real.log_mul hA.ne' (Real.rpow_pos_of_pos hbase _).ne',
           Real.log_rpow hbase] at hlower
-        apply (le_div_iff₀ (hlogNpos i)).2
-        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
-        simpa [mul_comm] using hlower
-    · exact Filter.Eventually.of_forall fun i ↦ by
-        have hbase : 0 < N i := zero_lt_two.trans_le (hN i)
-        have htwoD : 0 < 2 * D := mul_pos (by norm_num) hDpos
-        have hupper := Real.log_le_log (lt_of_lt_of_le
-          (mul_pos hDpos (Real.rpow_pos_of_pos hbase _)) (hT i).1) (hT i).2
-        rw [show 2 * (D * N i ^ α⁻¹) = (2 * D) * N i ^ α⁻¹ by ring,
-          Real.log_mul htwoD.ne' (Real.rpow_pos_of_pos hbase _).ne',
+      apply (le_div_iff₀ hlogNi).2
+      rw [add_mul, div_mul_cancel₀ _ hlogNi.ne']
+      simpa [mul_comm] using hlower
+    · filter_upwards [hNgt, hlogNpos, hT] with i hNi hlogNi hTi
+      have hbase : 0 < N i := zero_lt_one.trans hNi
+      have hupper := Real.log_le_log (lt_of_lt_of_le
+        (mul_pos hA (Real.rpow_pos_of_pos hbase _)) hTi.1) hTi.2
+      rw [Real.log_mul hB.ne' (Real.rpow_pos_of_pos hbase _).ne',
           Real.log_rpow hbase] at hupper
-        apply (div_le_iff₀ (hlogNpos i)).2
-        rw [add_mul, div_mul_cancel₀ _ (hlogNpos i).ne']
-        simpa [mul_comm] using hupper
+      apply (div_le_iff₀ hlogNi).2
+      rw [add_mul, div_mul_cancel₀ _ hlogNi.ne']
+      simpa [mul_comm] using hupper
   have hinv := hratio.inv₀ (inv_ne_zero hα.ne')
-  have hTgt (i : ℕ) : 1 < T i := by
-    have hbase : 1 < N i := one_lt_two.trans_le (hN i)
-    have hrpow : 1 < N i ^ α⁻¹ := Real.one_lt_rpow hbase (inv_pos.mpr hα)
-    exact hrpow.trans_le <| (le_mul_of_one_le_left
-      (Real.rpow_nonneg (zero_le_one.trans hbase.le) _) hD).trans (hT i).1
   have hinv' : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α⁻¹⁻¹) :=
-    hinv.congr' <| Filter.Eventually.of_forall fun i ↦ by
+    hinv.congr' <| by
+      filter_upwards [hlogNpos, hTgt] with i hlogNi hTi
       dsimp [Real.logb]
-      field_simp [(hlogNpos i).ne', (Real.log_pos (hTgt i)).ne']
+      field_simp [hlogNi.ne', (Real.log_pos hTi).ne']
   simpa using hinv'
 
 /-- Fixed positive multiplicative uncertainty in `T = N ^ α⁻¹` does not affect the
 power asymptotic `N = T ^ (α + o(1))`. -/
 theorem isPowerAsymptotic_of_between_const_rpow
-    {N T : VariableObject ℝ} {α D : ℝ}
-    (hα : 0 < α) (hD : 1 ≤ D)
-    (hNtop : Tendsto N atTop atTop) (hN : ∀ i, 2 ≤ N i)
-    (hT : ∀ i, D * N i ^ α⁻¹ ≤ T i ∧ T i ≤ 2 * (D * N i ^ α⁻¹)) :
+    {N T : VariableObject ℝ} {α A B : ℝ}
+    (hα : 0 < α) (hA : 0 < A) (hB : 0 < B)
+    (hNtop : Tendsto N atTop atTop)
+    (hT : ∀ᶠ i in atTop, A * N i ^ α⁻¹ ≤ T i ∧ T i ≤ B * N i ^ α⁻¹) :
     IsPowerAsymptotic N T α := by
-  have hTgt (i : ℕ) : 1 < T i := by
-    have hbase : 1 < N i := one_lt_two.trans_le (hN i)
-    have hrpow : 1 < N i ^ α⁻¹ := Real.one_lt_rpow hbase (inv_pos.mpr hα)
-    exact hrpow.trans_le <| (le_mul_of_one_le_left
-      (Real.rpow_nonneg (zero_le_one.trans hbase.le) _) hD).trans (hT i).1
+  have hNpos : ∀ᶠ i in atTop, 0 < N i :=
+    hNtop.eventually (eventually_gt_atTop 0)
+  have hpowtop : Tendsto (fun i ↦ N i ^ α⁻¹) atTop atTop :=
+    (tendsto_rpow_atTop (inv_pos.mpr hα)).comp hNtop
+  have hpowlarge : ∀ᶠ i in atTop, 1 / A < N i ^ α⁻¹ :=
+    hpowtop.eventually (eventually_gt_atTop (1 / A))
+  have hTgt : ∀ᶠ i in atTop, 1 < T i := by
+    filter_upwards [hpowlarge, hT] with i hi hTi
+    have : 1 < A * N i ^ α⁻¹ := by
+      simpa [mul_comm] using (div_lt_iff₀ hA).1 hi
+    exact this.trans_le hTi.1
   exact isPowerAsymptotic_of_logb_tendsto hTgt
-    (fun i ↦ zero_lt_two.trans_le (hN i))
-    (tendsto_logb_of_between_const_rpow hα hD hNtop hN hT)
+    hNpos (tendsto_logb_of_between_const_rpow hα hA hB hNtop hT)
 
 /-! ## Power bounds -/
 
