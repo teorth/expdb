@@ -1,18 +1,21 @@
 module
 
-public import Expdb.ExponentialSums.PhaseFunctions
+public import Expdb.ExponentialSums.LogPhase
 public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Order.Interval.Finset.Nat
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.Asymptotics.Lemmas
 
 /-!
 # Exponential sum growth exponents
 
-This module formalizes Definition 4.2 of the ANTEDB blueprint. It defines admissible
+This module formalizes the asymptotic definition of the exponential sum growth exponent from the
+blueprint's Exponential sum growth exponents chapter (`beta-chapter`). It defines admissible
 model-phase bounds at a fixed scale and defines `β(α)` as the least such exponent.
 
-## Definition 4.2 at a glance
+## Overview
 
 For `α : ℝ≥0`, an exponent `β` is admissible if every model-phase exponential sum at scale
 `N = T ^ (α + o(1))` is bounded by `T ^ (β + o(1))`. We show that the admissible exponents
@@ -28,7 +31,7 @@ noncomputable section
 
 namespace Expdb
 
-/-! ## Definition 4.2 -/
+/-! ## Asymptotic definition -/
 
 /-- `N = T ^ (α + o(1))`, expressed using a variable exponent that is equal to `α` up to an
 infinitesimal. -/
@@ -68,7 +71,7 @@ def IsExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
     (∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i) →
     IsPowerBounded (exponentialSum F T N a b) T β
 
-/-- The exponential sum growth exponent `β(α)` from Definition 4.2 of the blueprint. -/
+/-- The exponential sum growth exponent `β(α)` from the blueprint definition `beta-def`. -/
 def exponentSumGrowthExponent (α : ℝ≥0) : ℝ :=
   sInf {β : ℝ | IsExponentSumBound α β}
 
@@ -96,7 +99,146 @@ theorem IsPowerAsymptotic.eventually_between
     ⟨Real.rpow_le_rpow_of_exponent_le hiT (by linarith),
       Real.rpow_le_rpow_of_exponent_le hiT (by linarith)⟩
 
+/-- Convergence of the logarithmic exponent gives a power asymptotic. -/
+theorem isPowerAsymptotic_of_logb_tendsto
+    {N T : VariableObject ℝ} {α : ℝ}
+    (hT : ∀ᶠ i in atTop, 1 < T i) (hN : ∀ᶠ i in atTop, 0 < N i)
+    (hexponent : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α)) :
+    IsPowerAsymptotic N T α := by
+  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
+  refine ⟨exponent, ?_, ?_⟩
+  · rw [IsEqUpToInfinitesimal, VariableObject.IsInfinitesimal]
+    have hsub : Tendsto (fun i ↦ Real.logb (T i) (N i) - α) atTop (nhds 0) := by
+      simpa using hexponent.sub
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α) atTop (nhds α))
+    convert (continuous_norm.tendsto 0).comp hsub using 1 <;>
+      simp [Function.comp_def, exponent, VariableObject.fixed]
+  · filter_upwards [hT, hN] with i hiT hiN
+    exact (Real.rpow_logb (zero_lt_one.trans hiT) hiT.ne' hiN).symm
+
+/-- A variable power sandwich with an infinitesimal error determines a power asymptotic. -/
+theorem isPowerAsymptotic_of_between
+    {N T δ : VariableObject ℝ} {α : ℝ}
+    (hT : ∀ i, 1 < T i) (hN : ∀ i, 0 < N i)
+    (hδnonneg : ∀ i, 0 ≤ δ i) (hδ : δ.IsInfinitesimal)
+    (hbetween : ∀ i,
+      T i ^ (α - δ i) ≤ N i ∧ N i ≤ T i ^ (α + δ i)) :
+    IsPowerAsymptotic N T α := by
+  let exponent : VariableObject ℝ := fun i ↦ Real.logb (T i) (N i)
+  refine ⟨exponent, ?_, Filter.Eventually.of_forall fun i ↦ ?_⟩
+  · apply (isEqUpToInfinitesimal_iff_forall_pos
+    exponent (VariableObject.fixed α)).2
+    intro ε hε
+    have hδsmall :=
+      (VariableObject.isInfinitesimal_iff_forall_pos δ).1 hδ ε hε
+    filter_upwards [hδsmall] with i hi
+    have hlower : α - δ i ≤ exponent i :=
+      (Real.le_logb_iff_rpow_le (hT i) (hN i)).2 (hbetween i).1
+    have hupper : exponent i ≤ α + δ i :=
+      (Real.logb_le_iff_le_rpow (hT i) (hN i)).2 (hbetween i).2
+    rw [Real.norm_eq_abs, abs_lt]
+    rw [Real.norm_eq_abs, abs_of_nonneg (hδnonneg i)] at hi
+    constructor <;> dsimp [exponent, VariableObject.fixed] at * <;> linarith
+  · exact (Real.rpow_logb (lt_trans zero_lt_one (hT i))
+      (hT i).ne' (hN i)).symm
+
+/-- If `T` lies between fixed positive multiples of `N ^ α⁻¹`, then the logarithm of `N` to
+base `T` tends to `α`. -/
+private lemma tendsto_logb_of_between_const_rpow
+    {N T : VariableObject ℝ} {α A B : ℝ}
+    (hα : 0 < α) (hA : 0 < A) (hB : 0 < B)
+    (hNtop : Tendsto N atTop atTop)
+    (hT : ∀ᶠ i in atTop, A * N i ^ α⁻¹ ≤ T i ∧ T i ≤ B * N i ^ α⁻¹) :
+    Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α) := by
+  have hlogNtop : Tendsto (fun i ↦ Real.log (N i)) atTop atTop :=
+    Real.tendsto_log_atTop.comp hNtop
+  have hNgt : ∀ᶠ i in atTop, 1 < N i := hNtop.eventually (eventually_gt_atTop 1)
+  have hlogNpos : ∀ᶠ i in atTop, 0 < Real.log (N i) := by
+    filter_upwards [hNgt] with i hi
+    exact Real.log_pos hi
+  have hpowtop : Tendsto (fun i ↦ N i ^ α⁻¹) atTop atTop :=
+    (tendsto_rpow_atTop (inv_pos.mpr hα)).comp hNtop
+  have hpowlarge : ∀ᶠ i in atTop, 1 / A < N i ^ α⁻¹ :=
+    hpowtop.eventually (eventually_gt_atTop (1 / A))
+  have hTgt : ∀ᶠ i in atTop, 1 < T i := by
+    filter_upwards [hpowlarge, hT] with i hi hTi
+    have : 1 < A * N i ^ α⁻¹ := by
+      simpa [mul_comm] using (div_lt_iff₀ hA).1 hi
+    exact this.trans_le hTi.1
+  have hratio : Tendsto (fun i ↦ Real.log (T i) / Real.log (N i)) atTop (nhds α⁻¹) := by
+    have hlowerLimit : Tendsto
+        (fun i ↦ Real.log A / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
+    have hupperLimit : Tendsto
+        (fun i ↦ Real.log B / Real.log (N i) + α⁻¹) atTop (nhds α⁻¹) := by
+      simpa using (tendsto_const_nhds.div_atTop hlogNtop).add
+        (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ α⁻¹) atTop (nhds α⁻¹))
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlowerLimit hupperLimit
+    · filter_upwards [hNgt, hlogNpos, hT] with i hNi hlogNi hTi
+      have hbase : 0 < N i := zero_lt_one.trans hNi
+      have hlower := Real.log_le_log (mul_pos hA (Real.rpow_pos_of_pos hbase _)) hTi.1
+      rw [Real.log_mul hA.ne' (Real.rpow_pos_of_pos hbase _).ne',
+          Real.log_rpow hbase] at hlower
+      apply (le_div_iff₀ hlogNi).2
+      rw [add_mul, div_mul_cancel₀ _ hlogNi.ne']
+      simpa [mul_comm] using hlower
+    · filter_upwards [hNgt, hlogNpos, hT] with i hNi hlogNi hTi
+      have hbase : 0 < N i := zero_lt_one.trans hNi
+      have hupper := Real.log_le_log (lt_of_lt_of_le
+        (mul_pos hA (Real.rpow_pos_of_pos hbase _)) hTi.1) hTi.2
+      rw [Real.log_mul hB.ne' (Real.rpow_pos_of_pos hbase _).ne',
+          Real.log_rpow hbase] at hupper
+      apply (div_le_iff₀ hlogNi).2
+      rw [add_mul, div_mul_cancel₀ _ hlogNi.ne']
+      simpa [mul_comm] using hupper
+  have hinv := hratio.inv₀ (inv_ne_zero hα.ne')
+  have hinv' : Tendsto (fun i ↦ Real.logb (T i) (N i)) atTop (nhds α⁻¹⁻¹) :=
+    hinv.congr' <| by
+      filter_upwards [hlogNpos, hTgt] with i hlogNi hTi
+      dsimp [Real.logb]
+      field_simp [hlogNi.ne', (Real.log_pos hTi).ne']
+  simpa using hinv'
+
+/-- Fixed positive multiplicative uncertainty in `T = N ^ α⁻¹` does not affect the
+power asymptotic `N = T ^ (α + o(1))`. -/
+theorem isPowerAsymptotic_of_between_const_rpow
+    {N T : VariableObject ℝ} {α A B : ℝ}
+    (hα : 0 < α) (hA : 0 < A) (hB : 0 < B)
+    (hNtop : Tendsto N atTop atTop)
+    (hT : ∀ᶠ i in atTop, A * N i ^ α⁻¹ ≤ T i ∧ T i ≤ B * N i ^ α⁻¹) :
+    IsPowerAsymptotic N T α := by
+  have hNpos : ∀ᶠ i in atTop, 0 < N i :=
+    hNtop.eventually (eventually_gt_atTop 0)
+  have hpowtop : Tendsto (fun i ↦ N i ^ α⁻¹) atTop atTop :=
+    (tendsto_rpow_atTop (inv_pos.mpr hα)).comp hNtop
+  have hpowlarge : ∀ᶠ i in atTop, 1 / A < N i ^ α⁻¹ :=
+    hpowtop.eventually (eventually_gt_atTop (1 / A))
+  have hTgt : ∀ᶠ i in atTop, 1 < T i := by
+    filter_upwards [hpowlarge, hT] with i hi hTi
+    have : 1 < A * N i ^ α⁻¹ := by
+      simpa [mul_comm] using (div_lt_iff₀ hA).1 hi
+    exact this.trans_le hTi.1
+  exact isPowerAsymptotic_of_logb_tendsto hTgt
+    hNpos (tendsto_logb_of_between_const_rpow hα hA hB hNtop hT)
+
 /-! ## Power bounds -/
+
+private lemma isLittleO_rpow_comp_tendsto_of_lt
+    {T : VariableObject ℝ} {β γ : ℝ}
+    (hT : Tendsto T atTop atTop) (hβγ : β < γ) :
+    (fun i ↦ T i ^ β) =o[atTop] (fun i ↦ T i ^ γ) := by
+  have hzero : ∀ᶠ i in atTop, T i ^ γ = 0 → T i ^ β = 0 := by
+    filter_upwards [hT.eventually (eventually_gt_atTop 0)] with i hi
+    exact fun hzero ↦ ((Real.rpow_pos_of_pos hi γ).ne' hzero).elim
+  rw [Asymptotics.isLittleO_iff_tendsto' hzero]
+  have hlimit := (tendsto_rpow_neg_atTop (sub_pos.mpr hβγ)).comp hT
+  apply hlimit.congr'
+  filter_upwards [hT.eventually (eventually_gt_atTop 0)] with i hi
+  change T i ^ (-(γ - β)) = T i ^ β / T i ^ γ
+  rw [← Real.rpow_sub hi]
+  congr 1
+  ring
 
 /-- If `T` is at least one and unbounded, then `X ≪ T ^ (β + o(1))` iff
 `X = O(T ^ (β + ε))` for every fixed `ε > 0`. -/
@@ -197,6 +339,39 @@ theorem isPowerBounded_iff_forall_pos
         simp only [exponent, hXi, ↓reduceIte]
         exact le_max_right β (Real.log ‖X i‖ / Real.log (T i))
 
+/-- A power lower bound for an unbounded object forces its exponent to be no larger than any
+admissible power-bound exponent. -/
+theorem exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
+    {E : Type*} [SeminormedAddCommGroup E]
+    {X : VariableObject E} {T : VariableObject ℝ} {β γ c : ℝ}
+    (hT : ∀ i, 1 ≤ T i) (hTunbounded : T.IsUnbounded)
+    (hbound : IsPowerBounded X T β) (hc : 0 < c)
+    (hlower : ∀ᶠ i in atTop, c * T i ^ γ ≤ ‖X i‖) :
+    γ ≤ β := by
+  by_contra hγβ
+  have hβγ : β < γ := lt_of_not_ge hγβ
+  let ε := (γ - β) / 2
+  have hε : 0 < ε := by dsimp [ε]; linarith
+  have hO := (isPowerBounded_iff_forall_pos X T β hT hTunbounded).1 hbound ε hε
+  have hTtop : Tendsto T atTop atTop := by
+    rw [VariableObject.IsUnbounded] at hTunbounded
+    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
+      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hpowO : (fun i ↦ T i ^ γ) =O[atTop] X := by
+    apply Asymptotics.IsBigO.of_bound (1 / c)
+    filter_upwards [hlower] with i hi
+    rw [Real.norm_eq_abs, abs_of_nonneg
+      (Real.rpow_nonneg (zero_le_one.trans (hT i)) _)]
+    calc
+      T i ^ γ ≤ ‖X i‖ / c := (le_div_iff₀ hc).2 (by simpa [mul_comm] using hi)
+      _ = 1 / c * ‖X i‖ := by ring
+  have hsmall : (fun i ↦ T i ^ (β + ε)) =o[atTop] (fun i ↦ T i ^ γ) :=
+    isLittleO_rpow_comp_tendsto_of_lt hTtop (by dsimp [ε]; linarith)
+  have hnonzero : ∃ᶠ i in atTop, T i ^ (β + ε) ≠ 0 :=
+    (Filter.Eventually.of_forall fun i ↦
+      (Real.rpow_pos_of_pos (zero_lt_one.trans_le (hT i)) _).ne').frequently
+  exact hsmall.not_isBigO hnonzero (hpowO.trans hO)
+
 /-! ## Admissible exponents
 
 The candidate set is upward closed, nonempty, and bounded below.
@@ -270,7 +445,7 @@ theorem isExponentSumBound_self (α : ℝ≥0) :
       rw [Real.norm_eq_abs,
         abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)]
 
-private theorem exponentSumBounds_nonempty (α : ℝ≥0) :
+private lemma exponentSumBounds_nonempty (α : ℝ≥0) :
     {β : ℝ | IsExponentSumBound α β}.Nonempty :=
   ⟨α, isExponentSumBound_self α⟩
 
@@ -329,13 +504,13 @@ theorem IsExponentSumBound.nonneg
   rw [dist_zero_right, hnorm] at hi
   norm_num at hi
 
-private theorem exponentSumBounds_bddBelow {α : ℝ≥0} :
+private lemma exponentSumBounds_bddBelow {α : ℝ≥0} :
     BddBelow {β : ℝ | IsExponentSumBound α β} :=
   ⟨0, fun _ hβ ↦ hβ.nonneg⟩
 
 /-! ## The least admissible exponent -/
 
-private theorem exists_isExponentSumBound_lt_add
+private lemma exists_isExponentSumBound_lt_add
     (α : ℝ≥0) {ε : ℝ} (hε : 0 < ε) :
     ∃ β : ℝ, IsExponentSumBound α β ∧
       β < exponentSumGrowthExponent α + ε := by
@@ -400,7 +575,8 @@ theorem isClosed_exponentSumBounds (α : ℝ≥0) :
 
 /-! ## Logarithmic model phase -/
 
-/-- The least admissible exponent bounds the logarithmic model-phase sum. -/
+/-- Logarithmic-phase sums at scale `α` are power-bounded by the least admissible exponent.
+This specializes `isExponentSumBound_exponentSumGrowthExponent` to `logPhase`. -/
 theorem isPowerBounded_logPhase
     (α : ℝ≥0)
     {N T : VariableObject ℝ} {a b : VariableObject ℕ}

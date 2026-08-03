@@ -5,8 +5,10 @@ public import Expdb.Basic.Asymptotics
 /-!
 # Automatic uniformity
 
-This module formalizes Proposition 2.1 of the ANTEDB blueprint: pointwise boundedness or
-infinitesimality along every variable sequence can be made uniform after passing to a subsequence.
+This module formalizes the automatic uniformity results of the blueprint's Basic notation chapter
+(`notation-chapter`):
+pointwise boundedness or infinitesimality along every variable sequence can be made uniform
+after passing to a subsequence.
 -/
 
 @[expose] public section
@@ -33,7 +35,8 @@ private lemma extract_strictMono_subseq {P : ℕ → Prop}
                              (fun _ => (step (φ _)).choose_spec.2)⟩
 
 /-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
-    with |f(φ n)(x n)| > n.  Used in the proof of Proposition 2.1(i). -/
+    with |f(φ n)(x n)| > n. Used in the proof of the Automatic uniformity result (`auto`),
+    case (i). -/
 private lemma extract_bad_seq_i
     (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j : ℝ) < ‖f i x‖) :
@@ -54,7 +57,8 @@ private lemma extract_bad_seq_i
                              (fun _ => (step _ _).choose_spec.2.choose_spec)⟩
 
 /-- For a fixed threshold ε, extract a strictly increasing φ and bad elements
-    x(n) ∈ E(φ n) with |f(φ n)(x n)| > ε. Used in Proposition 2.1(ii). -/
+    x(n) ∈ E(φ n) with |f(φ n)(x n)| > ε. Used in the Automatic uniformity result (`auto`),
+    case (ii). -/
 private lemma extract_bad_seq_ii
     (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
     {ε : ℝ}
@@ -87,7 +91,7 @@ private lemma build_increasing_thresholds
   have hb := hi_seq n (φ n) hge x
   rwa [Nat.cast_add, Nat.cast_one] at hb
 
-/-! ### Proposition 2.1: automatic uniformity -/
+/-! ### Automatic uniformity (`auto`) -/
 
 open Classical in
 private noncomputable def extend_subsequence
@@ -114,7 +118,7 @@ private lemma norm_extend_subsequence_apply
     exact rec_heq_of_heq _ hx
   · exact absurd ⟨m, rfl⟩ h
 
-/-- **Proposition 2.1(i) — Automatic uniform bound.**
+/-- **Automatic uniform bound (blueprint `auto`, case (i)).**
     If f(x) = O(1) for every variable x ∈ E, then after passing to a
     subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_bounded
@@ -160,7 +164,7 @@ theorem automatic_uniformity_of_pointwise_bounded
   · intro n x
     exact hN (n + N) (by omega) x
 
-/-- **Proposition 2.1(ii) — Automatic uniform infinitesimal.**
+/-- **Automatic uniform infinitesimal (blueprint `auto`, case (ii)).**
     If f(x) = o(1) for every variable x ∈ E, then after passing to a
     subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
 theorem automatic_uniformity_of_pointwise_infinitesimal

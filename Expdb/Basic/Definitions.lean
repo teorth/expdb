@@ -7,7 +7,8 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 /-!
 # Basic definitions
 
-This module contains the definitions mentioned in Chapter 2 of the ANTEDB blueprint.
+This module contains the definitions mentioned in the blueprint's Basic notation chapter
+(`notation-chapter`).
 
 When a blueprint convention already has a standard Mathlib representation,
 prefer using that representation directly, for example:

@@ -7,12 +7,15 @@ import Mathlib.Algebra.Order.Interval.Set.Group
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 import Mathlib.Analysis.PSeries
+import Mathlib.MeasureTheory.Integral.IntervalAverage
 
 /-!
-# L² integral estimate
+# `L²` integral estimate
 
-This module formalizes Lemma 3.1 from Chapter 3 of the ANTEDB blueprint. It proves both the
-blueprint's equality with a bounded error coefficient and the corresponding absolute-error bound.
+This module formalizes the `L²` integral estimate from the blueprint's Basic Fourier estimates
+chapter (`l2-chapter`).
+It proves both the blueprint's equality with a bounded error coefficient
+and the corresponding absolute-error bound.
 -/
 
 @[expose] public section
@@ -119,19 +122,7 @@ private lemma bump_integral_pos : 0 < ∫ x : ℝ, bump x := by
   exact integral_pos_of_integrable_nonneg_nonzero
     bump_smooth.continuous bump_integrable bump_nonneg hx
 
-/-! ### Normalization and the exponential sum -/
-
-private lemma normalize_coefficients {ι : Type*} [Fintype ι] (a : ι → ℂ) (M : ℝ)
-    (hM : M = ∑ r, ‖a r‖ ^ 2)
-    (hpos : 0 < M) :
-    ∑ r, ‖(fun r => a r / (Real.sqrt M : ℂ)) r‖ ^ 2 = 1 := by
-  simp_rw [norm_div]
-  simp only [norm_real, Real.norm_eq_abs,
-    abs_of_nonneg (Real.sqrt_nonneg M)]
-  simp_rw [div_pow]
-  rw [← Finset.sum_div]
-  rw [← hM, Real.sq_sqrt hpos.le]
-  exact div_self (ne_of_gt hpos)
+/-! ### The exponential sum -/
 
 private def expSum {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℂ :=
   ∑ r, a r * 𝐞 (ξ r * t)
@@ -143,6 +134,16 @@ private lemma expSumSq_nonneg {ι : Type*} [Fintype ι]
     (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) :
     0 ≤ expSumSq a ξ t :=
   sq_nonneg _
+
+private lemma coeff_eq_zero_of_sum_norm_sq_eq_zero
+    {ι : Type*} [Fintype ι] {a : ι → ℂ}
+    (h : ∑ r, ‖a r‖ ^ 2 = 0) : ∀ r, a r = 0 := by
+  intro r
+  apply norm_eq_zero.mp
+  have hr : ‖a r‖ ^ 2 = 0 :=
+    ((Finset.sum_eq_zero_iff_of_nonneg
+      (fun i (_ : i ∈ Finset.univ) ↦ sq_nonneg ‖a i‖)).1 h) r (Finset.mem_univ r)
+  nlinarith [norm_nonneg (a r)]
 
 private lemma expSumSq_continuous {ι : Type*} [Fintype ι]
     (a : ι → ℂ) (ξ : ι → ℝ) :
@@ -347,11 +348,11 @@ private lemma bumpShift_orthonormal {ι : Type*} [Finite ι]
       1 = N * (1 / N) := by field_simp
       _ ≤ N * |ξ r - ξ s| := mul_le_mul_of_nonneg_left (hsep hrs) hN.le
 
-private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private lemma weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N) (t₀ : ℝ)
-    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
     (hsep : IsSeparatedFamily (1 / N) ξ) :
-    ∫ t : ℝ, expSumSq a ξ t * ‖bumpFourier ((t - t₀) / N)‖ ^ 2 = N := by
+    ∫ t : ℝ, expSumSq a ξ t * ‖bumpFourier ((t - t₀) / N)‖ ^ 2 =
+      N * ∑ r, ‖a r‖ ^ 2 := by
   classical
   let c : ι → ℂ := fun r => a r * 𝐞 (ξ r * t₀)
   let G : 𝓢(ℝ, ℂ) := ∑ r, c r • bumpShift (N * ξ r)
@@ -399,10 +400,10 @@ private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) 
       G.toLp 2 = ∑ r, c r • (bumpShift (N * ξ r)).toLp 2 := by
     change SchwartzMap.toLpCLM ℂ ℂ 2 volume G = _
     simp [G]
-  have hG_norm : ‖G.toLp 2‖ ^ 2 = 1 := by
+  have hG_norm : ‖G.toLp 2‖ ^ 2 = ∑ r, ‖a r‖ ^ 2 := by
     have horth := (bumpShift_orthonormal ξ N hN hsep).inner_sum c c Finset.univ
-    have hc_norm : ∑ r, ‖c r‖ ^ 2 = 1 := by
-      simpa only [c, norm_mul, Circle.norm_coe, mul_one] using hnorm
+    have hc_norm : ∑ r, ‖c r‖ ^ 2 = ∑ r, ‖a r‖ ^ 2 := by
+      simp only [c, norm_mul, Circle.norm_coe, mul_one]
     have hsum_norm :
         ‖∑ r, c r • (bumpShift (N * ξ r)).toLp 2‖ ^ 2 = ∑ r, ‖c r‖ ^ 2 := by
       calc
@@ -420,12 +421,14 @@ private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) 
           rw [Complex.conj_mul']
           rw [← Complex.ofReal_pow, Complex.ofReal_re]
     rw [hG_toLp, hsum_norm, hc_norm]
-  have hG_inner : inner ℂ (G.toLp 2) (G.toLp 2) = 1 := by
+  have hG_inner : inner ℂ (G.toLp 2) (G.toLp 2) =
+      ((∑ r, ‖a r‖ ^ 2 : ℝ) : ℂ) := by
     rw [inner_self_eq_norm_sq_to_K]
     rw [← RCLike.ofReal_pow]
     exact congrArg (RCLike.ofReal : ℝ → ℂ) hG_norm
-  have hG_l2 : ∫ x : ℝ, ‖G x‖ ^ 2 = 1 := by
-    have hinner_integral : ∫ x : ℝ, inner ℂ (G x) (G x) = 1 := by
+  have hG_l2 : ∫ x : ℝ, ‖G x‖ ^ 2 = ∑ r, ‖a r‖ ^ 2 := by
+    have hinner_integral : ∫ x : ℝ, inner ℂ (G x) (G x) =
+        ((∑ r, ‖a r‖ ^ 2 : ℝ) : ℂ) := by
       rw [← SchwartzMap.inner_toL2_toL2_eq G G volume]
       exact hG_inner
     apply Complex.ofRealLI.injective
@@ -444,27 +447,32 @@ private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) 
     simp only [H, hfourier, hu, expSumSq, norm_mul, mul_pow]
   rw [hrewrite]
   let K : ℝ → ℝ := fun x => H (x + (-t₀ / N))
-  change ∫ t : ℝ, K ((1 / N) * t) = N
+  change ∫ t : ℝ, K ((1 / N) * t) = N * ∑ r, ‖a r‖ ^ 2
   rw [Measure.integral_comp_mul_left K (1 / N)]
   rw [show (∫ y : ℝ, K y) = ∫ y : ℝ, H y by
     exact integral_add_right_eq_self H (-t₀ / N)]
-  rw [show (∫ y : ℝ, H y) = 1 by
+  rw [show (∫ y : ℝ, H y) = ∑ r, ‖a r‖ ^ 2 by
     simpa only [H] using (SchwartzMap.integral_norm_sq_fourier G).trans hG_l2]
   simp [abs_of_pos hN]
 
-/-! ### Local L² bound -/
+/-! ### Local `L²` bound -/
 
-private theorem local_l2_bound :
+private lemma local_l2_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →
-    (∑ r, ‖a r‖ ^ 2 = 1) →
     IsSeparatedFamily (1 / N) ξ →
     ∀ j₀ : ℝ,
-    ∫ t in Set.Icc j₀ (j₀ + N), expSumSq a ξ t ≤ C * N := by
+    ∫ t in Set.Icc j₀ (j₀ + N), expSumSq a ξ t ≤
+      C * N * ∑ r, ‖a r‖ ^ 2 := by
   obtain ⟨c, δ, hc, hδ, hlb⟩ := bumpFourier_lower_bound
   refine ⟨(1 + 1 / δ) / c, by positivity, ?_⟩
-  intro ι _ a ξ N hN hnorm hsep j₀
+  intro ι _ a ξ N hN hsep j₀
+  by_cases hmass : ∑ r, ‖a r‖ ^ 2 = 0
+  · have hzero := coeff_eq_zero_of_sum_norm_sq_eq_zero hmass
+    simp [expSumSq, expSum, hzero]
+  have hmasspos : 0 < ∑ r, ‖a r‖ ^ 2 :=
+    lt_of_le_of_ne (Finset.sum_nonneg fun r _ ↦ sq_nonneg ‖a r‖) (Ne.symm hmass)
   -- Enlarge the smoothing scale so that the whole interval lies in the
   -- neighbourhood on which `bumpFourier_lower_bound` applies.
   set M := N * (1 + 1 / δ)
@@ -481,7 +489,7 @@ private theorem local_l2_bound :
     apply (div_le_div_iff₀ hM hN).2
     simpa using hNM
   set t₀ := j₀ + N / 2
-  have h2 := weighted_l2_identity a ξ M hM t₀ hnorm hsepM
+  have h2 := weighted_l2_identity a ξ M hM t₀ hsepM
   have hlb_J : ∀ t ∈ Set.Icc j₀ (j₀ + N),
       c ≤ ‖bumpFourier ((t - t₀) / M)‖ ^ 2 := by
     intro t ht
@@ -502,8 +510,9 @@ private theorem local_l2_bound :
       expSumSq a ξ t * ‖bumpFourier ((t - t₀) / M)‖ ^ 2) := by
     by_contra h
     rw [integral_undef h] at h2
-    linarith
-  have hFub : c * ∫ t in Set.Icc j₀ (j₀ + N), expSumSq a ξ t ≤ M := by
+    nlinarith
+  have hFub : c * ∫ t in Set.Icc j₀ (j₀ + N), expSumSq a ξ t ≤
+      M * ∑ r, ‖a r‖ ^ 2 := by
     calc c * ∫ t in Set.Icc j₀ (j₀ + N), expSumSq a ξ t
         = ∫ t in Set.Icc j₀ (j₀ + N), c * expSumSq a ξ t :=
             (integral_const_mul _ _).symm
@@ -521,8 +530,9 @@ private theorem local_l2_bound :
       _ ≤ ∫ t : ℝ, expSumSq a ξ t * ‖bumpFourier ((t - t₀) / M)‖ ^ 2 :=
           setIntegral_le_integral hweighted (ae_of_all _ fun t =>
             mul_nonneg (sq_nonneg _) (sq_nonneg _))
-      _ = M := h2
-  rw [show (1 + 1 / δ) / c * N = M / c by
+      _ = M * ∑ r, ‖a r‖ ^ 2 := h2
+  rw [show (1 + 1 / δ) / c * N * ∑ r, ‖a r‖ ^ 2 =
+      (M * ∑ r, ‖a r‖ ^ 2) / c by
     dsimp [M]
     ring]
   apply (le_div_iff₀ hc).2
@@ -550,13 +560,18 @@ private lemma smoothingKernelAverage_eq_intervalIntegral (N : ℝ) (hN : 0 < N)
       (f := fun u : ℝ => ‖bumpFourier u‖ ^ 2) (a := left) (b := right) N (t / N)).trans (by
         congr 1 <;> field_simp)
 
-private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private lemma smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N)
-    (hnorm : ∑ r, ‖a r‖ ^ 2 = 1)
     (hsep : IsSeparatedFamily (1 / N) ξ)
     (left right : ℝ) (T : ℝ) (hT : T = right - left) (hleft_right : left ≤ right) :
     ∫ t in Set.Icc left right, expSumSq a ξ t =
-    T - ∫ t : ℝ, expSumSq a ξ t * smoothingKernel N left right t := by
+    T * ∑ r, ‖a r‖ ^ 2 -
+      ∫ t : ℝ, expSumSq a ξ t * smoothingKernel N left right t := by
+  by_cases hmass : ∑ r, ‖a r‖ ^ 2 = 0
+  · have hzero := coeff_eq_zero_of_sum_norm_sq_eq_zero hmass
+    simp [expSumSq, expSum, hzero]
+  have hmasspos : 0 < ∑ r, ‖a r‖ ^ 2 :=
+    lt_of_le_of_ne (Finset.sum_nonneg fun r _ ↦ sq_nonneg ‖a r‖) (Ne.symm hmass)
   let F : ℝ → ℝ := expSumSq a ξ
   let K : ℝ → ℝ → ℝ := fun t₀ t => ‖bumpFourier ((t - t₀) / N)‖ ^ 2
   let H : ℝ × ℝ → ℝ := fun p => F p.2 * K p.1 p.2
@@ -571,23 +586,25 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
       ((continuous_snd.sub continuous_fst).div_const N)).norm.pow 2)
   have hH_cont : Continuous H :=
     (hF_cont.comp continuous_snd).mul hK_cont
-  -- From (3.1): ∫_ℝ F(t)|bump̂((t-t₀)/N)|² dt = N for each t₀.
+  -- From the blueprint's normalized L² identity (`art`):
+  -- ∫_ℝ F(t)|bump̂((t-t₀)/N)|² dt = N for each t₀.
   have h31 : ∀ t₀ : ℝ,
-      ∫ t : ℝ, H (t₀, t) = N := by
+      ∫ t : ℝ, H (t₀, t) = N * ∑ r, ‖a r‖ ^ 2 := by
     intro t₀
-    simpa only [H, F, K] using weighted_l2_identity a ξ N hN t₀ hnorm hsep
+    simpa only [H, F, K] using weighted_l2_identity a ξ N hN t₀ hsep
   have hslice : ∀ t₀ : ℝ, Integrable (fun t => H (t₀, t)) := by
     intro t₀
     by_contra h
     have hzero := h31 t₀
     rw [integral_undef h] at hzero
-    linarith
+    nlinarith
   -- The product-space integrability follows from the already evaluated slices.
   have hH_int : Integrable H ((volume.restrict (Set.Icc left right)).prod volume) := by
     apply (integrable_prod_iff hH_cont.aestronglyMeasurable).2
     constructor
     · exact ae_of_all _ hslice
-    · have hmarginal : (fun t₀ : ℝ => ∫ t : ℝ, ‖H (t₀, t)‖) = fun _ => N := by
+    · have hmarginal : (fun t₀ : ℝ => ∫ t : ℝ, ‖H (t₀, t)‖) =
+          fun _ => N * ∑ r, ‖a r‖ ^ 2 := by
         funext t₀
         rw [show (fun t : ℝ => ‖H (t₀, t)‖) = fun t => H (t₀, t) by
           funext t
@@ -596,7 +613,8 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
       rw [hmarginal]
       exact integrableOn_const measure_Icc_lt_top.ne
   -- Integrate the constant marginal over t₀ ∈ I.
-  have hNT : ∫ _ in Set.Icc left right, N = N * T := by
+  have hNT : ∫ _ in Set.Icc left right, N * ∑ r, ‖a r‖ ^ 2 =
+      N * T * ∑ r, ‖a r‖ ^ 2 := by
     rw [setIntegral_const, Real.volume_real_Icc_of_le hleft_right, smul_eq_mul, hT]
     ring
   -- Fubini, with the interval restriction built into the first measure.
@@ -604,7 +622,8 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
       (∫ t₀ in Set.Icc left right, ∫ t : ℝ, H (t₀, t)) =
       ∫ t : ℝ, ∫ t₀ in Set.Icc left right, H (t₀, t) := by
     exact integral_integral_swap hH_int
-  have hFubini : ∫ t : ℝ, F t * (∫ t₀ in Set.Icc left right, K t₀ t) = N * T := by
+  have hFubini : ∫ t : ℝ, F t * (∫ t₀ in Set.Icc left right, K t₀ t) =
+      N * T * ∑ r, ‖a r‖ ^ 2 := by
     calc
       ∫ t : ℝ, F t * (∫ t₀ in Set.Icc left right, K t₀ t) =
           ∫ t : ℝ, ∫ t₀ in Set.Icc left right, H (t₀, t) := by
@@ -614,11 +633,11 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
               ∫ t₀ in Set.Icc left right, F t * K t₀ t
             rw [integral_const_mul]
       _ = ∫ t₀ in Set.Icc left right, ∫ t : ℝ, H (t₀, t) := hswap.symm
-      _ = ∫ _ in Set.Icc left right, N := by
+      _ = ∫ _ in Set.Icc left right, N * ∑ r, ‖a r‖ ^ 2 := by
         apply setIntegral_congr_fun measurableSet_Icc
         intro t₀ _
         exact h31 t₀
-      _ = N * T := hNT
+      _ = N * T * ∑ r, ‖a r‖ ^ 2 := hNT
   have hFK_int : Integrable (fun t : ℝ => F t *
       (∫ t₀ in Set.Icc left right, K t₀ t)) := by
     have hmarginal := hH_int.integral_prod_right
@@ -647,7 +666,7 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
 
 /-! ### Decay of the smoothing error -/
 
-private theorem smoothing_kernel_decay :
+private lemma smoothing_kernel_decay :
     ∃ C : ℝ, 0 < C ∧
     ∀ N : ℝ, 0 < N →
     ∀ left right : ℝ, left ≤ right →
@@ -833,14 +852,14 @@ private lemma smoothingKernel_aestronglyMeasurable (N : ℝ) (hN : 0 < N)
 
 /-! ### Integrated smoothing-error bound -/
 
-private theorem smoothing_error_bound :
+private lemma smoothing_error_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →
-    (∑ r, ‖a r‖ ^ 2 = 1) →
     IsSeparatedFamily (1 / N) ξ →
     ∀ left right : ℝ, left ≤ right →
-    |∫ t : ℝ, expSumSq a ξ t * smoothingKernel N left right t| ≤ C * N := by
+    |∫ t : ℝ, expSumSq a ξ t * smoothingKernel N left right t| ≤
+      C * N * ∑ r, ‖a r‖ ^ 2 := by
   obtain ⟨C₃, hC₃, hlocal_bound⟩ := local_l2_bound
   obtain ⟨C₅, hC₅, hkernel_bound⟩ := smoothing_kernel_decay
   let b : ℤ → ℝ := fun k => |(k : ℝ) + 1 / 2| ^ (-(10 : ℝ))
@@ -856,11 +875,11 @@ private theorem smoothing_error_bound :
   let B := ∑' k : ℤ, b k
   have hB : 0 ≤ B := tsum_nonneg hb_nonneg
   refine ⟨2 * C₅ * C₃ * (B + 1), by positivity, ?_⟩
-  intro ι _ a ξ N hN hnorm hsep left right hleft_right
+  intro ι _ a ξ N hN hsep left right hleft_right
   let F : ℝ → ℝ := expSumSq a ξ
   have hF_nonneg : ∀ t, 0 ≤ F t := expSumSq_nonneg a ξ
   have hF_cont : Continuous F := expSumSq_continuous a ξ
-  have hlocal := hlocal_bound a ξ N hN hnorm hsep
+  have hlocal := hlocal_bound a ξ N hN hsep
   have hE := hkernel_bound N hN left right hleft_right
   let weight : ℝ → ℝ → ℝ :=
     fun c t => (1 + |t - c| / N) ^ (-(10 : ℝ))
@@ -922,7 +941,8 @@ private theorem smoothing_error_bound :
       rw [abs_div, abs_of_pos hN]
     simpa only [weight, b, hxabs] using hrpow
   have hcell_bound : ∀ c k,
-      ∫ t in cell c k, W c t ≤ b k * (C₃ * N) := by
+      ∫ t in cell c k, W c t ≤
+        b k * (C₃ * N * ∑ r, ‖a r‖ ^ 2) := by
     intro c k
     let cellLeft := c + k • N
     have hend : c + (k + 1) • N = cellLeft + N := by
@@ -959,18 +979,21 @@ private theorem smoothing_error_bound :
       _ = b k * ∫ t in cell c k, F t := integral_const_mul _ _
       _ ≤ b k * ∫ t in Set.Icc cellLeft (cellLeft + N), F t :=
         mul_le_mul_of_nonneg_left hFcell (hb_nonneg k)
-      _ ≤ b k * (C₃ * N) :=
+      _ ≤ b k * (C₃ * N * ∑ r, ‖a r‖ ^ 2) :=
         mul_le_mul_of_nonneg_left (hlocal cellLeft) (hb_nonneg k)
-  have hW : ∀ c, Integrable (W c) ∧ ∫ t : ℝ, W c t ≤ B * (C₃ * N) := by
+  have hW : ∀ c, Integrable (W c) ∧ ∫ t : ℝ, W c t ≤
+      B * (C₃ * N * ∑ r, ‖a r‖ ^ 2) := by
     intro c
     have hcell_int : ∀ k, IntegrableOn (W c) (cell c k) := by
       intro k
       exact (hW_cont c).integrableOn_Icc.mono_set Set.Ico_subset_Icc_self
-    have hmajor_summable : Summable (fun k => b k * (C₃ * N)) :=
-      hb_summable.mul_right (C₃ * N)
+    have hmajor_summable : Summable
+        (fun k => b k * (C₃ * N * ∑ r, ‖a r‖ ^ 2)) :=
+      hb_summable.mul_right (C₃ * N * ∑ r, ‖a r‖ ^ 2)
     have hsum_norm : Summable (fun k => ∫ t in cell c k, ‖W c t‖) := by
       refine Summable.of_nonneg_of_le
-        (f := fun k => b k * (C₃ * N)) (g := fun k => ∫ t in cell c k, ‖W c t‖) ?_ ?_
+        (f := fun k => b k * (C₃ * N * ∑ r, ‖a r‖ ^ 2))
+        (g := fun k => ∫ t in cell c k, ‖W c t‖) ?_ ?_
         hmajor_summable
       · intro k
         exact setIntegral_nonneg (hcell_meas c k) fun t _ => norm_nonneg _
@@ -996,10 +1019,11 @@ private theorem smoothing_error_bound :
       exact integral_iUnion (hcell_meas c) (hcell_pairwise c) hW_int.integrableOn
     rw [hpartition]
     calc
-      ∑' k : ℤ, ∫ t in cell c k, W c t ≤ ∑' k : ℤ, b k * (C₃ * N) :=
+      ∑' k : ℤ, ∫ t in cell c k, W c t ≤
+          ∑' k : ℤ, b k * (C₃ * N * ∑ r, ‖a r‖ ^ 2) :=
         hsum.tsum_le_tsum (hcell_bound c) hmajor_summable
-      _ = B * (C₃ * N) := by
-        exact hb_summable.tsum_mul_right (C₃ * N)
+      _ = B * (C₃ * N * ∑ r, ‖a r‖ ^ 2) := by
+        exact hb_summable.tsum_mul_right (C₃ * N * ∑ r, ‖a r‖ ^ 2)
   have hmin_split : ∀ t,
       (1 + min (|t - left| / N) (|t - right| / N)) ^ (-(10 : ℝ)) ≤
       weight left t + weight right t := by
@@ -1059,20 +1083,23 @@ private theorem smoothing_error_bound :
       integral_mono hFEabs hmajor_int hmajor
     _ = C₅ * ((∫ t : ℝ, W left t) + ∫ t : ℝ, W right t) := by
       rw [integral_const_mul, integral_add hWLeft.1 hWRight.1]
-    _ ≤ C₅ * (B * (C₃ * N) + B * (C₃ * N)) := by
+    _ ≤ C₅ * (B * (C₃ * N * ∑ r, ‖a r‖ ^ 2) +
+        B * (C₃ * N * ∑ r, ‖a r‖ ^ 2)) := by
       gcongr
       · exact hWLeft.2
       · exact hWRight.2
-    _ ≤ 2 * C₅ * C₃ * (B + 1) * N := by
+    _ ≤ 2 * C₅ * C₃ * (B + 1) * N * ∑ r, ‖a r‖ ^ 2 := by
       calc
-        C₅ * (B * (C₃ * N) + B * (C₃ * N)) = (2 * C₅ * C₃ * N) * B := by ring
-        _ ≤ (2 * C₅ * C₃ * N) * (B + 1) :=
+        C₅ * (B * (C₃ * N * ∑ r, ‖a r‖ ^ 2) +
+            B * (C₃ * N * ∑ r, ‖a r‖ ^ 2)) =
+            (2 * C₅ * C₃ * N * ∑ r, ‖a r‖ ^ 2) * B := by ring
+        _ ≤ (2 * C₅ * C₃ * N * ∑ r, ‖a r‖ ^ 2) * (B + 1) :=
           mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) (by positivity)
-        _ = 2 * C₅ * C₃ * (B + 1) * N := by ring
+        _ = 2 * C₅ * C₃ * (B + 1) * N * ∑ r, ‖a r‖ ^ 2 := by ring
 
-/-! ### Lemma 3.1 -/
+/-! ### `L²` integral estimate lemma -/
 
-/-- **Lemma 3.1 (L² integral estimate).** If `ξ` is a finite `1 / N`-separated
+/-- If `ξ` is a finite `1 / N`-separated
   family of real numbers, then over any interval of length `T`,
   `∫ |∑ r, a r * 𝐞 (ξ r * t)|² dt =
     (T + O(N)) * ∑ r, ‖a r‖²`.
@@ -1099,65 +1126,28 @@ theorem l2_integral_estimate :
   set M := ∑ r, ‖a r‖ ^ 2
   by_cases hM0 : M = 0
   · refine ⟨0, by simpa using hC.le, ?_⟩
-    have hsum_zero : ∑ r, ‖a r‖ ^ 2 = 0 := by
-      simpa only [M] using hM0
-    have hterm_zero : ∀ r, ‖a r‖ ^ 2 = 0 := by
-      intro r
-      exact ((Finset.sum_eq_zero_iff_of_nonneg
-        (s := Finset.univ) (f := fun i => ‖a i‖ ^ 2)
-        (fun i _ => sq_nonneg _)).1 hsum_zero) r (Finset.mem_univ r)
-    have hzero : ∀ r, a r = 0 := by
-      intro r
-      apply norm_eq_zero.mp
-      nlinarith [hterm_zero r, norm_nonneg (a r)]
+    have hzero := coeff_eq_zero_of_sum_norm_sq_eq_zero (by simpa only [M] using hM0)
     simp [expSumSq, expSum, hzero, hM0]
   · have hMpos : 0 < M :=
       lt_of_le_of_ne (Finset.sum_nonneg fun r _ => sq_nonneg _) (Ne.symm hM0)
-    set A : ι → ℂ := fun r => a r / (Real.sqrt M : ℂ)
-    have hAnorm : ∑ r, ‖A r‖ ^ 2 = 1 := normalize_coefficients a M rfl hMpos
-    have hsqrt_ne : (Real.sqrt M : ℂ) ≠ 0 :=
-      Complex.ofReal_ne_zero.mpr (Real.sqrt_ne_zero'.mpr hMpos)
-    have hsqrt_mul_A : ∀ r, (Real.sqrt M : ℂ) * A r = a r := by
-      intro r
-      dsimp [A]
-      rw [mul_comm]
-      exact div_mul_cancel₀ _ hsqrt_ne
-    have hsum_scale : ∀ t,
-        expSum a ξ t = (Real.sqrt M : ℂ) * expSum A ξ t := by
-      intro t
-      simp only [expSum]
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro r _
-      rw [← mul_assoc, hsqrt_mul_A r]
-    have hrescale : ∀ t, expSumSq a ξ t = M * expSumSq A ξ t := by
-      intro t
-      simp only [expSumSq]
-      rw [hsum_scale t, norm_mul, Complex.norm_real,
-        Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg M), mul_pow,
-        Real.sq_sqrt hMpos.le]
-    have h4 := smoothing_identity A ξ N hN hAnorm hsep left right T hT hleft_right
-    have h6 := herror A ξ N hN hAnorm hsep left right hleft_right
-    set err := ∫ t : ℝ, expSumSq A ξ t * smoothingKernel N left right t
-    have hA_eq : ∫ t in Set.Icc left right, expSumSq A ξ t = T - err := by
-      simpa only [err] using h4
-    have herr_bd : |err| ≤ C * N := by
-      simpa only [err] using h6
-    refine ⟨-err / N, ?_, ?_⟩
-    · rw [abs_div, abs_neg, abs_of_pos hN, div_le_iff₀ hN]
-      exact herr_bd
-    · calc
-        ∫ t in Set.Icc left right, expSumSq a ξ t =
-            ∫ t in Set.Icc left right, M * expSumSq A ξ t :=
-          setIntegral_congr_fun measurableSet_Icc (fun t _ => hrescale t)
-        _ = M * ∫ t in Set.Icc left right, expSumSq A ξ t :=
-          integral_const_mul _ _
-        _ = M * (T - err) := by rw [hA_eq]
-        _ = (T + (-err / N) * N) * M := by
-          rw [div_mul_cancel₀ (-err) hN.ne']
-          ring
+    have h4 := smoothing_identity a ξ N hN hsep left right T hT hleft_right
+    have h6 := herror a ξ N hN hsep left right hleft_right
+    set err := ∫ t : ℝ, expSumSq a ξ t * smoothingKernel N left right t
+    have hA_eq : ∫ t in Set.Icc left right, expSumSq a ξ t = T * M - err := by
+      simpa only [err, M] using h4
+    have herr_bd : |err| ≤ C * N * M := by
+      simpa only [err, M] using h6
+    have hNM : 0 < N * M := mul_pos hN hMpos
+    refine ⟨-err / (N * M), ?_, ?_⟩
+    · rw [abs_div, abs_neg, abs_of_pos hNM, div_le_iff₀ hNM]
+      simpa only [mul_assoc] using herr_bd
+    · rw [hA_eq]
+      field_simp [hN.ne', hMpos.ne']
+      ring
 
-/-- Absolute-error form of the $L^2$ integral estimate. -/
+/-- Absolute-error form of the `L²` integral estimate: for a `1 / N`-separated family,
+    the integral differs from `T * ∑ r, ‖a r‖²` by at most a universal constant times
+    `N * ∑ r, ‖a r‖²`. -/
 theorem l2_integral_estimate_error :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
@@ -1182,6 +1172,52 @@ theorem l2_integral_estimate_error :
       rw [show (T + θ * N) * S - T * S = θ * N * S by ring,
         abs_mul, abs_mul, abs_of_pos hN, abs_of_nonneg hS]
     _ ≤ C * N * S := by gcongr
+
+/-- A long enough interval contains a point where a separated exponential sum has at least
+half of its mean-square mass. -/
+theorem l2_integral_estimate_exists_norm_sq_ge :
+    ∃ C : ℝ, 0 < C ∧
+    ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
+    0 < N →
+    IsSeparatedFamily (1 / N) ξ →
+    ∀ left right : ℝ,
+    2 * C * N ≤ right - left →
+    ∃ t ∈ Set.Icc left right,
+      (∑ r, ‖a r‖ ^ 2) / 2 ≤ ‖∑ r, a r * 𝐞 (ξ r * t)‖ ^ 2 := by
+  obtain ⟨C, hC, hestimate⟩ := l2_integral_estimate
+  refine ⟨C, hC, ?_⟩
+  intro ι _ a ξ N hN hsep left right hlength
+  have hlr : left < right := by nlinarith
+  obtain ⟨θ, hθ, hint⟩ := hestimate a ξ N hN hsep
+    left right (right - left) rfl hlr.le
+  let g : ℝ → ℝ := fun t ↦ ‖∑ r, a r * 𝐞 (ξ r * t)‖ ^ 2
+  let S : ℝ := ∑ r, ‖a r‖ ^ 2
+  have hg : Continuous g := by
+    dsimp [g]
+    fun_prop
+  have hS : 0 ≤ S := Finset.sum_nonneg fun r _ ↦ sq_nonneg ‖a r‖
+  have hfactor : (right - left) / 2 ≤ right - left + θ * N := by
+    have hθlower : -C ≤ θ := neg_le_of_abs_le hθ
+    nlinarith
+  have hint_lower : (right - left) / 2 * S ≤
+      ∫ t in Set.Icc left right, g t := by
+    rw [show (∫ t in Set.Icc left right, g t) =
+        (right - left + θ * N) * S by
+      simpa only [g, S] using hint]
+    exact mul_le_mul_of_nonneg_right hfactor hS
+  obtain ⟨t, ht, htavg⟩ := exists_eq_interval_average hlr.ne hg.continuousOn
+  have ht' : t ∈ Set.Ioo left right := by
+    simpa [Set.uIoo_of_le hlr.le] using ht
+  refine ⟨t, ⟨ht'.1.le, ht'.2.le⟩, ?_⟩
+  rw [show ‖∑ r, a r * 𝐞 (ξ r * t)‖ ^ 2 = g t by rfl, htavg,
+    interval_average_eq_div]
+  have hset_interval : (∫ x in left..right, g x) =
+      ∫ x in Set.Icc left right, g x := by
+    rw [intervalIntegral.integral_of_le hlr.le,
+      MeasureTheory.integral_Icc_eq_integral_Ioc]
+  rw [hset_interval]
+  apply (le_div_iff₀ (sub_pos.mpr hlr)).2
+  nlinarith [hint_lower]
 
 end Expdb
 

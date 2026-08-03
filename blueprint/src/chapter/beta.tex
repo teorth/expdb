@@ -54,7 +54,7 @@ $$ |\sum_{n \in I} e(T F(n/N))| \leq C T^{\overline{\beta}+\eps}.$$
 \end{itemize}
 \end{lemma}
 
-\begin{proof}\uses{auto}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\ii$, one can find real numbers $T = T_{\ii} \geq \ii$, $T^{\alpha-1/\ii} \leq N = N_{\ii} \leq T^{\alpha+1/\ii}$, an interval $I = I_{\ii} \subset [N_\ii, 2N_\ii]$, and a phase function $F = F_{\ii}$ such that
+\begin{proof}\uses{auto}\leanok  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\ii$, one can find real numbers $T = T_{\ii} \geq \ii$, $T^{\alpha-1/\ii} \leq N = N_{\ii} \leq T^{\alpha+1/\ii}$, an interval $I = I_{\ii} \subset [N_\ii, 2N_\ii]$, and a phase function $F = F_{\ii}$ such that
 $$ |F_\ii^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq 1/\ii$$
 for all (fixed) $0 \leq p \leq \ii$ and $u \in [1,2]$, but that
 $$ |\sum_{n \in I} e(T F(n/N))| \geq \ii T^{\overline{\beta}+\eps}.$$
@@ -65,7 +65,10 @@ We will however work with the asymptotic formulation of $\beta$ throughout this 
 
 We record the trivial bounds on $\beta$:
 
-\begin{lemma}[Trivial bounds on $\beta$]\label{beta-triv}\uses{beta-def}  For any fixed $\alpha > 1$, we have
+\begin{lemma}[Trivial bounds on $\beta$]\label{beta-triv}\uses{beta-def}
+\lean{Expdb.exponentSumGrowthExponent_eq_sub_one, Expdb.exponentSumGrowthExponent_mem_Icc, Expdb.exponentSumGrowthExponent_zero}
+\leanok
+For any fixed $\alpha > 1$, we have
     $$ \beta(\alpha) = \alpha-1.$$
     For fixed $0 \leq \alpha \leq 1$, we have
     $$ \frac{\alpha}{2} \leq \beta(\alpha) \leq \alpha.$$
@@ -79,7 +82,7 @@ We record the trivial bounds on $\beta$:
 \code{trivial_beta_bound_1}
 \code{trivial_beta_bound_2}
 
-    \begin{proof}\uses{l2-int}  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
+    \begin{proof}\uses{l2-int}\leanok  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
 
         For $\alpha > 1$, the Euler--Maclaurin formula (see e.g. \cite[(2.1.2)]{titchmarsh_theory_1986}) gives
         \begin{equation}\label{nit}
@@ -90,9 +93,9 @@ We record the trivial bounds on $\beta$:
         The triangle inequality bound
         $$ \sum_{n \in I} e(T F(n/N)) \ll N$$
         gives the upper bound $\beta(\alpha) \leq \alpha$.  Next, if $0 \leq \alpha \leq 1$, then from Lemma \ref{l2-int} (and the $\gg 1/N$-separated nature of the $F(n/N)$ for model phase functions $F$, after passing to a subsequence if necessary) that
-        $$ \int_{T^{2T}} \left|\sum_{n \in [N,2N]} e(t F(n/N)) \right|^2\ dt \asymp T N$$
+        $$ \int_T^{2T} \left|\sum_{n \in [N,2N]} e(t F(n/N)) \right|^2\, dt \asymp T N$$
     for $N = cT^\alpha$ for $c$ a fixed small enough constant, which by the pigeonhole principle implies that
-    $$\left| \sum_{n \in [N,2N]}e(t F(n/N)) \right|^2\ dt \gg N^{1/2} = T^{\alpha/2}$$
+    $$\left| \sum_{n \in [N,2N]}e(t F(n/N)) \right| \gg N^{1/2} = T^{\alpha/2}$$
     for at least one $t \asymp T$, giving the claim.
 \end{proof}
 
