@@ -38,7 +38,7 @@ namespace Expdb
 
 /-! ## Choosing the Euler–Maclaurin order -/
 
-private theorem exists_oscillatory_scale_parameters
+private lemma exists_oscillatory_scale_parameters
     {δ : ℝ} (hδ : 0 < δ) :
     ∃ s : ℕ, ∃ q : ℝ,
       1 ≤ s ∧ 0 < q ∧ q ≤ δ ∧
