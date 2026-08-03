@@ -144,7 +144,7 @@ theorem isPowerAsymptotic_of_between
 
 /-- If `T` lies between fixed positive multiples of `N ^ α⁻¹`, then the logarithm of `N` to
 base `T` tends to `α`. -/
-private theorem tendsto_logb_of_between_const_rpow
+private lemma tendsto_logb_of_between_const_rpow
     {N T : VariableObject ℝ} {α A B : ℝ}
     (hα : 0 < α) (hA : 0 < A) (hB : 0 < B)
     (hNtop : Tendsto N atTop atTop)
@@ -224,7 +224,7 @@ theorem isPowerAsymptotic_of_between_const_rpow
 
 /-! ## Power bounds -/
 
-private theorem isLittleO_rpow_comp_tendsto_of_lt
+private lemma isLittleO_rpow_comp_tendsto_of_lt
     {T : VariableObject ℝ} {β γ : ℝ}
     (hT : Tendsto T atTop atTop) (hβγ : β < γ) :
     (fun i ↦ T i ^ β) =o[atTop] (fun i ↦ T i ^ γ) := by
@@ -445,7 +445,7 @@ theorem isExponentSumBound_self (α : ℝ≥0) :
       rw [Real.norm_eq_abs,
         abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)]
 
-private theorem exponentSumBounds_nonempty (α : ℝ≥0) :
+private lemma exponentSumBounds_nonempty (α : ℝ≥0) :
     {β : ℝ | IsExponentSumBound α β}.Nonempty :=
   ⟨α, isExponentSumBound_self α⟩
 
@@ -504,13 +504,13 @@ theorem IsExponentSumBound.nonneg
   rw [dist_zero_right, hnorm] at hi
   norm_num at hi
 
-private theorem exponentSumBounds_bddBelow {α : ℝ≥0} :
+private lemma exponentSumBounds_bddBelow {α : ℝ≥0} :
     BddBelow {β : ℝ | IsExponentSumBound α β} :=
   ⟨0, fun _ hβ ↦ hβ.nonneg⟩
 
 /-! ## The least admissible exponent -/
 
-private theorem exists_isExponentSumBound_lt_add
+private lemma exists_isExponentSumBound_lt_add
     (α : ℝ≥0) {ε : ℝ} (hε : 0 < ε) :
     ∃ β : ℝ, IsExponentSumBound α β ∧
       β < exponentSumGrowthExponent α + ε := by

@@ -347,7 +347,7 @@ private lemma bumpShift_orthonormal {ι : Type*} [Finite ι]
       1 = N * (1 / N) := by field_simp
       _ ≤ N * |ξ r - ξ s| := mul_le_mul_of_nonneg_left (hsep hrs) hN.le
 
-private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private lemma weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N) (t₀ : ℝ)
     (hsep : IsSeparatedFamily (1 / N) ξ) :
     ∫ t : ℝ, expSumSq a ξ t * ‖bumpFourier ((t - t₀) / N)‖ ^ 2 =
@@ -456,7 +456,7 @@ private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) 
 
 /-! ### Local L² bound -/
 
-private theorem local_l2_bound :
+private lemma local_l2_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →
@@ -559,7 +559,7 @@ private lemma smoothingKernelAverage_eq_intervalIntegral (N : ℝ) (hN : 0 < N)
       (f := fun u : ℝ => ‖bumpFourier u‖ ^ 2) (a := left) (b := right) N (t / N)).trans (by
         congr 1 <;> field_simp)
 
-private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private lemma smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N)
     (hsep : IsSeparatedFamily (1 / N) ξ)
     (left right : ℝ) (T : ℝ) (hT : T = right - left) (hleft_right : left ≤ right) :
@@ -664,7 +664,7 @@ private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
 
 /-! ### Decay of the smoothing error -/
 
-private theorem smoothing_kernel_decay :
+private lemma smoothing_kernel_decay :
     ∃ C : ℝ, 0 < C ∧
     ∀ N : ℝ, 0 < N →
     ∀ left right : ℝ, left ≤ right →
@@ -850,7 +850,7 @@ private lemma smoothingKernel_aestronglyMeasurable (N : ℝ) (hN : 0 < N)
 
 /-! ### Integrated smoothing-error bound -/
 
-private theorem smoothing_error_bound :
+private lemma smoothing_error_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →

@@ -59,7 +59,7 @@ def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
 
 /-! ## Uniform approximation by fixed phases -/
 
-private theorem eventually_isApproximate_of_modelError
+private lemma eventually_isApproximate_of_modelError
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
     (hphase : IsPhaseFunction F)
     (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal)
@@ -83,7 +83,7 @@ private theorem eventually_isApproximate_of_modelError
 
 /-! ## From fixed bounds to asymptotic bounds -/
 
-private theorem isExponentSumBound_of_nonAsymptotic
+private lemma isExponentSumBound_of_nonAsymptotic
     {α : ℝ≥0} {β : ℝ}
     (hbound : IsExponentSumBoundNonAsymptotic α β) :
     IsExponentSumBound α β := by
@@ -185,7 +185,7 @@ theorem isApproximateModelPhaseFunction_log (P : ℕ) :
 
 /-! ## Building asymptotic counterexamples -/
 
-private theorem isModelPhaseFunction_of_approximations
+private lemma isModelPhaseFunction_of_approximations
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ}
     {σ : ℝ} {P : VariableObject ℕ} {δ : VariableObject ℝ}
     (hσ : 0 < σ)
@@ -220,7 +220,7 @@ private lemma norm_exponentialSumAt_le_add_one
       rw [Nat.card_Icc]
       exact_mod_cast Nat.sub_le _ _
 
-private theorem nonAsymptotic_of_isExponentSumBound
+private lemma nonAsymptotic_of_isExponentSumBound
     {α : ℝ≥0} {β : ℝ} (hbound : IsExponentSumBound α β) :
     IsExponentSumBoundNonAsymptotic α β := by
   intro ε hε σ hσ

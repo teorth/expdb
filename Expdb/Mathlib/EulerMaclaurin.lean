@@ -294,7 +294,7 @@ private lemma intervalIntegrable_saw_smul
     exact ⟨m.1.le, Ne.lt_of_le ne m.2⟩
 
 /-- The arbitrary-order Euler--Maclaurin formula. -/
-private theorem trapezoid_sum_eq_integral_add [CompleteSpace E]
+private lemma trapezoid_sum_eq_integral_add [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t) :
     trapezoid_sum f a n = (∫ x in a..a + n, f x) +
@@ -343,7 +343,7 @@ theorem sum_Icc_eq_integral_add [CompleteSpace E]
   rw [h]
   module
 
-private theorem norm_integral_saw_smul_iteratedDerivWithin_le
+private lemma norm_integral_saw_smul_iteratedDerivWithin_le
     {C : ℝ}
     (hderiv : ∀ x ∈ Icc (a : ℝ) (a + n),
       ‖iteratedDerivWithin (s + 1) f t x‖ ≤ C) :
@@ -361,7 +361,7 @@ private theorem norm_integral_saw_smul_iteratedDerivWithin_le
   · simp only [add_sub_cancel_left]
     rw [abs_of_nonneg (Nat.cast_nonneg n)]
 
-private theorem norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
+private lemma norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t)
     {C₀ : ℝ} (ha : ‖f a‖ ≤ C₀) (hb : ‖f (a + n)‖ ≤ C₀)

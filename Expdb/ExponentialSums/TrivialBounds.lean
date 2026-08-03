@@ -66,7 +66,7 @@ private theorem exists_oscillatory_scale_parameters
     (div_le_iff₀ hδ).1 (by simpa [mul_comm] using hs)
   exact ⟨s, q, hsone, hq, hqδ, hqmul, hsδ⟩
 
-private theorem oscillatory_scale_bounds
+private lemma oscillatory_scale_bounds
     {s : ℕ} {δ q K T N : ℝ}
     (hT : 1 ≤ T) (hN : 1 ≤ N) (hK : 1 ≤ K)
     (hqδ : q ≤ δ)
