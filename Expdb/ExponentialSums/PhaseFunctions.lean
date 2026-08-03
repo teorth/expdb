@@ -9,7 +9,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Phase functions
 
-This module formalizes the phase function definitions from Chapter 4 of the ANTEDB blueprint.
+This module formalizes the phase function definitions from the blueprint's Exponential sum growth
+exponents chapter (`beta-chapter`).
 A phase function is smooth on `[1, 2]`. A model phase function is a variable family
 of phase functions whose successive derivatives asymptotically agree with those of
 `u ↦ u ^ (-σ)` for some fixed positive exponent `σ`.

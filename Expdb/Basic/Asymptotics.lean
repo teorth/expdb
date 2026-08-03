@@ -10,7 +10,8 @@ public import Mathlib.Topology.MetricSpace.Sequences
 # Project-specific asymptotic notation
 
 This module formalizes the infinitesimal equality and comparison relations and the underspill
-principle from Chapter 2 of the ANTEDB blueprint. The notations `X =o Y` and `X ≤o Y` are
+principle from the blueprint's Basic notation chapter (`notation-chapter`). The notations
+`X =o Y` and `X ≤o Y` are
 available after `open scoped Expdb`. The blueprint notation `X \asymp Y` is represented by
 Mathlib's `X =Θ[atTop] Y`.
 

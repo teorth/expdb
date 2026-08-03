@@ -11,8 +11,8 @@ import Mathlib.Analysis.Asymptotics.Lemmas
 /-!
 # Exponential sum growth exponents
 
-This module formalizes the asymptotic definition of the exponential sum growth exponent
-from Chapter 4 of the ANTEDB blueprint. It defines admissible
+This module formalizes the asymptotic definition of the exponential sum growth exponent from the
+blueprint's Exponential sum growth exponents chapter (`beta-chapter`). It defines admissible
 model-phase bounds at a fixed scale and defines `β(α)` as the least such exponent.
 
 ## Overview
@@ -71,7 +71,7 @@ def IsExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
     (∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i) →
     IsPowerBounded (exponentialSum F T N a b) T β
 
-/-- The exponential sum growth exponent `β(α)` from Definition 4.2 of the blueprint. -/
+/-- The exponential sum growth exponent `β(α)` from the blueprint definition `beta-def`. -/
 def exponentSumGrowthExponent (α : ℝ≥0) : ℝ :=
   sInf {β : ℝ | IsExponentSumBound α β}
 

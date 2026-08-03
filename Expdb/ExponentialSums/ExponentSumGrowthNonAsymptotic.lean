@@ -10,8 +10,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Non-asymptotic exponential sum growth bounds
 
-This module formalizes the non-asymptotic definition of exponential sum exponent from Chapter 4
-of the ANTEDB blueprint. It gives a fixed-parameter,
+This module formalizes the non-asymptotic definition of exponential sum exponent from the
+blueprint's Exponential sum growth exponents chapter (`beta-chapter`). It gives a fixed-parameter,
 epsilon--delta characterization of the exponential sum growth exponent.
 -/
 
@@ -41,7 +41,8 @@ def IsApproximateModelPhaseFunction
         ‖iteratedDerivWithin (p + 1) F phaseInterval u -
           iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ ≤ δ
 
-/-- The fixed-parameter epsilon--delta bound from Lemma 4.3 of the blueprint. -/
+/-- The fixed-parameter epsilon--delta bound from the blueprint lemma `beta-asymp`
+    (Non-asymptotic definition of `β`). -/
 def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε →
     ∀ σ : ℝ, 0 < σ →

@@ -10,9 +10,10 @@ import Mathlib.Analysis.PSeries
 import Mathlib.MeasureTheory.Integral.IntervalAverage
 
 /-!
-# L² integral estimate
+# `L²` integral estimate
 
-This module formalizes the `L^2` integral estimate from Chapter 3 of the ANTEDB blueprint.
+This module formalizes the `L²` integral estimate from the blueprint's Basic Fourier estimates
+chapter (`l2-chapter`).
 It proves both the blueprint's equality with a bounded error coefficient
 and the corresponding absolute-error bound.
 -/
@@ -454,7 +455,7 @@ private lemma weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
     simpa only [H] using (SchwartzMap.integral_norm_sq_fourier G).trans hG_l2]
   simp [abs_of_pos hN]
 
-/-! ### Local L² bound -/
+/-! ### Local `L²` bound -/
 
 private lemma local_l2_bound :
     ∃ C : ℝ, 0 < C ∧
@@ -585,7 +586,8 @@ private lemma smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ 
       ((continuous_snd.sub continuous_fst).div_const N)).norm.pow 2)
   have hH_cont : Continuous H :=
     (hF_cont.comp continuous_snd).mul hK_cont
-  -- From (3.1): ∫_ℝ F(t)|bump̂((t-t₀)/N)|² dt = N for each t₀.
+  -- From the blueprint's normalized L² identity (`art`):
+  -- ∫_ℝ F(t)|bump̂((t-t₀)/N)|² dt = N for each t₀.
   have h31 : ∀ t₀ : ℝ,
       ∫ t : ℝ, H (t₀, t) = N * ∑ r, ‖a r‖ ^ 2 := by
     intro t₀
@@ -1095,7 +1097,7 @@ private lemma smoothing_error_bound :
           mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) (by positivity)
         _ = 2 * C₅ * C₃ * (B + 1) * N * ∑ r, ‖a r‖ ^ 2 := by ring
 
-/-! ### L² integral estimate lemma -/
+/-! ### `L²` integral estimate lemma -/
 
 /-- If `ξ` is a finite `1 / N`-separated
   family of real numbers, then over any interval of length `T`,

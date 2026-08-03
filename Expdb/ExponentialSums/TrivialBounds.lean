@@ -10,7 +10,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Trivial bounds for exponential sum growth exponents
 
-This module formalizes the trivial bounds on `β` in Chapter 4 of the ANTEDB blueprint.
+This module formalizes the trivial bounds on `β` in the blueprint's Exponential sum growth
+exponents chapter (`beta-chapter`).
 
 For `α > 1`, a uniform Euler–Maclaurin estimate compares the exponential sum
 of an arbitrary approximate model phase with its oscillatory integral. The
