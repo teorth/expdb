@@ -106,8 +106,8 @@ theorem log_div_separated
     rw [abs_of_nonneg hsign]
     exact hbound
 
-/-- The explicit main term for the logarithmic phase. With Lean's Fourier-character
-normalization, the corresponding sum is a norm-one multiple of `∑ n ^ (2π i T)`. -/
+/-- The explicit main term for the logarithmic oscillatory integral, equal to that integral when
+`N > 0`. The `2π` factor in the normalization comes from Lean's Fourier character `𝐞`. -/
 def logPhaseMainTerm (N T : ℝ) : ℂ :=
   (N : ℂ) * (2 * 𝐞 (T * Real.log 2) - 1) /
     (1 + (2 * Real.pi : ℂ) * Complex.I * T)

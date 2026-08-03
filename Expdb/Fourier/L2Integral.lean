@@ -1145,7 +1145,9 @@ theorem l2_integral_estimate :
       field_simp [hN.ne', hMpos.ne']
       ring
 
-/-- Absolute-error form of the $L^2$ integral estimate. -/
+/-- Absolute-error form of the `L²` integral estimate: for a `1 / N`-separated family,
+    the integral differs from `T * ∑ r, ‖a r‖²` by at most a universal constant times
+    `N * ∑ r, ‖a r‖²`. -/
 theorem l2_integral_estimate_error :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),

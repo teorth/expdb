@@ -184,6 +184,8 @@ theorem contDiffOn_oscillatory
 
 /-! ## A first-derivative estimate for the phase integral -/
 
+/-- A phase with first derivative at least `c` and second derivative bounded by `K` has an
+    oscillatory integral bounded by `(2 / c + K / c ^ 2) / T`. -/
 theorem norm_integral_oscillatory_le
     {F : ℝ → ℝ} {A B T c K : ℝ}
     (hAB : A ≤ B) (hsub : Set.Icc A B ⊆ phaseInterval)

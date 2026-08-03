@@ -115,6 +115,9 @@ private lemma isExponentSumBound_of_nonAsymptotic
 
 /-! ## Uniform bounds for approximate model phases -/
 
+/-- An approximate model phase with sufficiently small error has a uniform positive first
+derivative and uniform bounds on all derivatives through order `P + 1`, with constants depending
+only on `σ` and `P`. -/
 theorem approximate_model_phase_deriv_bounds
     {σ : ℝ} (hσ : 0 < σ) (P : ℕ) :
     ∃ K : ℝ, 1 ≤ K ∧

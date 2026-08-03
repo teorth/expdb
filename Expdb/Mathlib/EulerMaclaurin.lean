@@ -447,7 +447,8 @@ private lemma sum_Icc_int_eq_sum_Icc_nat
   simp
 
 /-- A convenient norm form of Euler--Maclaurin for natural endpoints. Uniform bounds on the
-function and its derivatives control the difference between the inclusive sum and its integral. -/
+function and its derivatives control the difference between the inclusive sum and its integral;
+the right-hand side records the endpoint, correction-term, and remainder contributions. -/
 theorem norm_sum_Icc_nat_sub_integral_le [CompleteSpace E]
     {a b s : ℕ} (hab : a ≤ b)
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)

@@ -575,7 +575,8 @@ theorem isClosed_exponentSumBounds (α : ℝ≥0) :
 
 /-! ## Logarithmic model phase -/
 
-/-- The least admissible exponent bounds the logarithmic model-phase sum. -/
+/-- Logarithmic-phase sums at scale `α` are power-bounded by the least admissible exponent.
+This specializes `isExponentSumBound_exponentSumGrowthExponent` to `logPhase`. -/
 theorem isPowerBounded_logPhase
     (α : ℝ≥0)
     {N T : VariableObject ℝ} {a b : VariableObject ℕ}
