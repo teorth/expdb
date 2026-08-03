@@ -176,24 +176,27 @@ theorem logPhase_integral_eq_mainTerm
     field_simp [hdenom]
   simpa only [v, logPhaseMainTerm, denom, τ, mul_assoc] using hformula
 
-/-- The logarithmic main term has size bounded below by a fixed multiple of `N / T`. -/
-theorem norm_logPhaseMainTerm_ge
+/-- The logarithmic main term has size comparable to `N / T`. -/
+theorem norm_logPhaseMainTerm_bounds
     {N T : ℝ} (hN : 0 < N) (hT : 1 ≤ T) :
-    (1 / (1 + 2 * Real.pi)) * (N / T) ≤ ‖logPhaseMainTerm N T‖ := by
+    (1 / (1 + 2 * Real.pi)) * (N / T) ≤ ‖logPhaseMainTerm N T‖ ∧
+      ‖logPhaseMainTerm N T‖ ≤ (3 / (2 * Real.pi)) * (N / T) := by
   let τ : ℂ := (2 * Real.pi : ℂ) * Complex.I
   let denom : ℂ := 1 + τ * T
   have hdenom : denom ≠ 0 := by
     intro h
     have hre := congrArg Complex.re h
     simp [denom, τ] at hre
-  rw [logPhaseMainTerm, show (1 + (2 * Real.pi : ℂ) * Complex.I * T) = denom by
-    simp only [denom, τ, mul_assoc], norm_div, norm_mul,
-    Complex.norm_real, Real.norm_eq_abs, abs_of_pos hN]
-  have hnum : 1 ≤ ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
+  have hnumLower : 1 ≤ ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
     calc
       1 = ‖(2 : ℂ) * 𝐞 (T * Real.log 2)‖ - ‖(1 : ℂ)‖ := by norm_num
       _ ≤ ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := norm_sub_norm_le _ _
-  have hden : ‖denom‖ ≤ (1 + 2 * Real.pi) * T := by
+  have hnumUpper : ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ ≤ 3 := by
+    calc
+      ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ ≤
+          ‖(2 : ℂ) * 𝐞 (T * Real.log 2)‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
+      _ = 3 := by norm_num
+  have hdenUpper : ‖denom‖ ≤ (1 + 2 * Real.pi) * T := by
     calc
       ‖denom‖ ≤ ‖(1 : ℂ)‖ + ‖τ * T‖ := by
         dsimp [denom]
@@ -204,19 +207,37 @@ theorem norm_logPhaseMainTerm_ge
           abs_of_nonneg (le_trans zero_le_one hT)]
       _ ≤ (1 + 2 * Real.pi) * T := by
         nlinarith [Real.pi_pos]
+  have hTpos : 0 < T := zero_lt_one.trans_le hT
+  have hdenLower : 2 * Real.pi * T ≤ ‖denom‖ := by
+    have him := Complex.abs_im_le_norm denom
+    simpa [denom, τ, abs_of_pos Real.pi_pos, abs_of_pos hTpos] using him
   have hdenpos : 0 < ‖denom‖ := norm_pos_iff.mpr hdenom
   have hcoefpos : 0 < 1 + 2 * Real.pi := by positivity
-  apply (le_div_iff₀ hdenpos).2
-  calc
-    (1 / (1 + 2 * Real.pi)) * (N / T) * ‖denom‖ ≤
-        (1 / (1 + 2 * Real.pi)) * (N / T) * ((1 + 2 * Real.pi) * T) := by
-      gcongr
-    _ = N := by field_simp [hcoefpos.ne', (zero_lt_one.trans_le hT).ne']
-    _ ≤ N * ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left hnum hN.le
+  constructor
+  · rw [logPhaseMainTerm, show (1 + (2 * Real.pi : ℂ) * Complex.I * T) = denom by
+      simp only [denom, τ, mul_assoc], norm_div, norm_mul,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_pos hN]
+    apply (le_div_iff₀ hdenpos).2
+    calc
+      (1 / (1 + 2 * Real.pi)) * (N / T) * ‖denom‖ ≤
+          (1 / (1 + 2 * Real.pi)) * (N / T) * ((1 + 2 * Real.pi) * T) := by
+        gcongr
+      _ = N := by field_simp [hcoefpos.ne', hTpos.ne']
+      _ ≤ N * ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ := by
+        simpa only [mul_one] using mul_le_mul_of_nonneg_left hnumLower hN.le
+  · rw [logPhaseMainTerm, show (1 + (2 * Real.pi : ℂ) * Complex.I * T) = denom by
+      simp only [denom, τ, mul_assoc], norm_div, norm_mul,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_pos hN]
+    apply (div_le_iff₀ hdenpos).2
+    calc
+      N * ‖(2 : ℂ) * 𝐞 (T * Real.log 2) - 1‖ ≤ N * 3 :=
+        mul_le_mul_of_nonneg_left hnumUpper hN.le
+      _ = (3 / (2 * Real.pi) * (N / T)) * (2 * Real.pi * T) := by
+        field_simp [Real.pi_ne_zero, hTpos.ne']
+      _ ≤ (3 / (2 * Real.pi) * (N / T)) * ‖denom‖ := by
+        exact mul_le_mul_of_nonneg_left hdenLower (by positivity)
 
 
 end Expdb
 
 end
-
