@@ -34,8 +34,9 @@ model exponent one. -/
 theorem iteratedDerivWithin_log_eq_rpow_neg_one
     (p : ℕ) (u : phaseInterval) :
     iteratedDerivWithin (p + 1) Real.log phaseInterval u =
-      iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-(1 : ℝ))) phaseInterval u := by
+      iteratedDerivWithin p (modelPhase 1) phaseInterval u := by
   have hu_pos : 0 < (u : ℝ) := lt_of_lt_of_le zero_lt_one u.property.1
+  rw [show modelPhase 1 = fun v : ℝ ↦ v ^ (-(1 : ℝ)) from rfl]
   have hunique : UniqueDiffOn ℝ phaseInterval :=
     uniqueDiffOn_Icc (by norm_num [phaseInterval])
   rw [iteratedDerivWithin_eq_iteratedDeriv hunique
@@ -58,8 +59,8 @@ theorem isModelPhaseFunction_log : IsModelPhaseFunction logPhase := by
       exact ne_of_gt (lt_of_lt_of_le zero_lt_one hu.1)
   · intro p u
     rw [VariableObject.IsInfinitesimal]
-    simp only [modelPhaseError, logPhase, iteratedDerivWithin_log_eq_rpow_neg_one, sub_self,
-      norm_zero]
+    simp only [modelPhaseError_apply, modelPhaseErrorAt, logPhase,
+      iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
     exact tendsto_const_nhds
 
 /-- On a dyadic interval, `log (n / N)` is `1 / (2 * N)`-separated. -/

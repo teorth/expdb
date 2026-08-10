@@ -26,20 +26,12 @@ namespace Expdb
 
 /-! ## Fixed-parameter formulation -/
 
-/-- The exponential sum at fixed parameters. -/
-def exponentialSumAt
-    (F : ℝ → ℝ) (T N : ℝ) (a b : ℕ) : ℂ :=
-  ∑ n ∈ Finset.Icc a b,
-    (𝐞 (T * F ((n : ℝ) / N)) : ℂ)
-
 /-- A fixed phase function whose model-phase errors through order `P` are at most `δ`. -/
 def IsApproximateModelPhaseFunction
     (F : ℝ → ℝ) (σ : ℝ) (P : ℕ) (δ : ℝ) : Prop :=
   ContDiffOn ℝ ∞ F phaseInterval ∧
-    ∀ p : ℕ, p ≤ P →
-      ∀ u : phaseInterval,
-        ‖iteratedDerivWithin (p + 1) F phaseInterval u -
-          iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ ≤ δ
+    ∀ p : ℕ, p ≤ P → ∀ u : phaseInterval,
+      ‖modelPhaseErrorAt F σ p u‖ ≤ δ
 
 /-- The fixed-parameter epsilon--delta bound from the blueprint lemma `beta-asymp`
     (Non-asymptotic definition of `β`). -/
@@ -108,7 +100,7 @@ private lemma isExponentSumBound_of_nonAsymptotic
     eventually_isApproximate_of_modelError hphase herror P hδ
   refine Asymptotics.IsBigO.of_bound C ?_
   filter_upwards [hTC, hNT', happrox] with i hiT hiNT hiF
-  simpa only [exponentialSum, exponentialSumAt, Real.norm_eq_abs,
+  simpa only [exponentialSum_apply, Real.norm_eq_abs,
     abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)] using
       hfixed (T i) (N i) (F i) (a i) (b i)
         hiT hiNT.1 hiNT.2 hiF (hab i).1 (hab i).2
@@ -124,19 +116,17 @@ theorem approximate_model_phase_deriv_bounds
       ∀ {δ : ℝ} {F : ℝ → ℝ},
         δ ≤ min ((2 : ℝ) ^ (-σ) / 2) 1 →
         IsApproximateModelPhaseFunction F σ P δ →
-        (∀ u ∈ phaseInterval,
-          (2 : ℝ) ^ (-σ) / 2 ≤ iteratedDerivWithin 1 F phaseInterval u) ∧
-        (∀ k : ℕ, 1 ≤ k → k ≤ P + 1 → ∀ u ∈ phaseInterval,
-          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) := by
-  have href : ContDiffOn ℝ ∞ (fun u : ℝ ↦ u ^ (-σ)) phaseInterval := by
+        HasPhaseFirstDerivLowerBound F ((2 : ℝ) ^ (-σ) / 2) ∧
+        HasPhaseDerivBound F (P + 1) K := by
+  have href : ContDiffOn ℝ ∞ (modelPhase σ) phaseInterval := by
     intro u hu
     exact (Real.contDiffAt_rpow_const_of_ne (by
       exact ne_of_gt (lt_of_lt_of_le zero_lt_one hu.1))).contDiffWithinAt
   have hreference (p : ℕ) :
       ∃ B : ℝ, 0 ≤ B ∧ ∀ u : phaseInterval,
-        ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ ≤ B := by
+        ‖iteratedDerivWithin p (modelPhase σ) phaseInterval u‖ ≤ B := by
     have hcont : ContinuousOn
-        (iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval) phaseInterval :=
+        (iteratedDerivWithin p (modelPhase σ) phaseInterval) phaseInterval :=
       href.continuousOn_iteratedDerivWithin
         (ENat.natCast_le_of_coe_top_le_withTop le_rfl p)
         (uniqueDiffOn_Icc (by norm_num [phaseInterval]))
@@ -159,18 +149,19 @@ theorem approximate_model_phase_deriv_bounds
       Real.rpow_le_rpow_of_nonpos huPos hu.2 (neg_nonpos.mpr hσ.le)
     have he := hF.2 0 (Nat.zero_le P) ⟨u, hu⟩
     rw [Real.norm_eq_abs, abs_le] at he
-    simp only [zero_add, iteratedDerivWithin_zero] at he
+    simp only [modelPhaseErrorAt, modelPhase, zero_add, iteratedDerivWithin_zero] at he
     linarith
   · intro k hk hkP u hu
     obtain ⟨p, rfl⟩ := Nat.exists_eq_add_of_le hk
     have hpP : p ≤ P := by omega
     have hpMem : p ∈ Finset.range (P + 1) := Finset.mem_range.mpr (by omega)
     have he := hF.2 p hpP ⟨u, hu⟩
+    rw [modelPhaseErrorAt] at he
     have htriangle :
         ‖iteratedDerivWithin (p + 1) F phaseInterval u‖ ≤
           ‖iteratedDerivWithin (p + 1) F phaseInterval u -
-            iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ +
-          ‖iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-σ)) phaseInterval u‖ :=
+            iteratedDerivWithin p (modelPhase σ) phaseInterval u‖ +
+          ‖iteratedDerivWithin p (modelPhase σ) phaseInterval u‖ :=
       norm_le_norm_sub_add _ _
     calc
       ‖iteratedDerivWithin (1 + p) F phaseInterval u‖ ≤ 1 + B p := by
@@ -185,7 +176,7 @@ theorem isApproximateModelPhaseFunction_log (P : ℕ) :
     IsApproximateModelPhaseFunction Real.log 1 P 0 := by
   refine ⟨isModelPhaseFunction_log.1 0, ?_⟩
   intro p _ u
-  rw [iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
+  rw [modelPhaseErrorAt, iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
 
 /-! ## Building asymptotic counterexamples -/
 
@@ -216,10 +207,8 @@ private lemma norm_exponentialSumAt_le_add_one
     (F : ℝ → ℝ) (T N : ℝ) (a b : ℕ) :
     ‖exponentialSumAt F T N a b‖ ≤ (b : ℝ) + 1 := by
   calc
-    ‖exponentialSumAt F T N a b‖ ≤
-        ∑ n ∈ Finset.Icc a b,
-          ‖(𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ := norm_sum_le _ _
-    _ = ((Finset.Icc a b).card : ℝ) := by simp
+    ‖exponentialSumAt F T N a b‖ ≤ ((Finset.Icc a b).card : ℝ) :=
+      norm_exponentialSumAt_le_card _ _ _ _ _
     _ ≤ (b : ℝ) + 1 := by
       rw [Nat.card_Icc]
       exact_mod_cast Nat.sub_le _ _
@@ -354,7 +343,7 @@ private lemma nonAsymptotic_of_isExponentSumBound
   have hnorm :
       ‖exponentialSumAt (F i) (T i) (N i) (a i) (b i)‖ ≤
         K * T i ^ (β + ε / 2) := by
-    simpa only [exponentialSum, exponentialSumAt, Real.norm_eq_abs,
+    simpa only [exponentialSum_apply, Real.norm_eq_abs,
       abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hTone i)) _)] using hiK
   have hdominated :
       ‖exponentialSumAt (F i) (T i) (N i) (a i) (b i)‖ ≤

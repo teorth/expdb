@@ -33,13 +33,25 @@ ambient index. -/
 def IsPhaseFunction (F : VariableFunction (VariableObject.fixed ℝ) ℝ) : Prop :=
   ∀ i : ℕ, ContDiffOn ℝ ∞ (F i) phaseInterval
 
+/-- The reference phase `u ↦ u ^ (-σ)` whose derivatives a model phase follows. -/
+def modelPhase (σ : ℝ) : ℝ → ℝ := fun u ↦ u ^ (-σ)
+
+/-- The fixed-data model-phase error at derivative order `p`. -/
+def modelPhaseErrorAt (F : ℝ → ℝ) (σ : ℝ) (p : ℕ) (u : ℝ) : ℝ :=
+  iteratedDerivWithin (p + 1) F phaseInterval u -
+    iteratedDerivWithin p (modelPhase σ) phaseInterval u
+
 /-- The variable error function in the model phase condition at derivative order `p`. -/
 def modelPhaseError
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ) (σ : ℝ) (p : ℕ) :
     VariableFunction (VariableObject.fixed phaseInterval) ℝ :=
-  fun i u ↦
-    iteratedDerivWithin (p + 1) (F i) phaseInterval u -
-      iteratedDerivWithin p (fun v : ℝ => v ^ (-σ)) phaseInterval u
+  fun i u ↦ modelPhaseErrorAt (F i) σ p u
+
+@[simp] theorem modelPhaseError_apply
+    (F : VariableFunction (VariableObject.fixed ℝ) ℝ) (σ : ℝ) (p i : ℕ)
+    (u : phaseInterval) :
+    modelPhaseError F σ p i u = modelPhaseErrorAt (F i) σ p u :=
+  rfl
 
 /-- A variable phase function is a model phase function when, for some fixed `σ > 0`,
 the error between its `(p + 1)`st derivative and the `p`th derivative of `u ↦ u ^ (-σ)` is

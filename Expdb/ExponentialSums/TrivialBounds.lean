@@ -74,7 +74,7 @@ private lemma oscillatory_scale_bounds
     (hqmul : q * (s + 1 : ℕ) = δ / 2)
     (hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ)
     (hKpower : K ≤ T ^ q) (hNlower : T ^ (δ + 1) ≤ N) :
-    K * T / N ≤ 1 ∧ N * (K * T / N) ^ (s + 1) ≤ 1 := by
+    HasSmallEulerMaclaurinRemainder s T N K := by
   have hTpos : 0 < T := zero_lt_one.trans_le hT
   have hNpos : 0 < N := zero_lt_one.trans_le hN
   have hKpow : K ^ (s + 1) ≤ T ^ (δ / 2) := by
@@ -162,7 +162,7 @@ private theorem exponentSumGrowthExponent_le_sub_one
         hKbase hq.le
   have hNscale : T ^ (δ + 1) ≤ N := by
     simpa only [δ, sub_add_cancel] using hNlower
-  obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
+  have hscale := oscillatory_scale_bounds
     hTone hNone hK hqδ hqmul hsδ hKpower hNscale
   obtain ⟨hfirst, hderiv⟩ := hphaseBounds hηc hF
   have htargetNonneg : 0 ≤ (α : ℝ) - 1 + ε := by linarith
@@ -178,18 +178,17 @@ private theorem exponentSumGrowthExponent_le_sub_one
   have hone : 1 ≤ T ^ ((α : ℝ) - 1 + ε) := Real.one_le_rpow hTone htargetNonneg
   have hCM : 2 * M ≤ C := (le_max_left _ _).trans (le_max_right _ _)
   by_cases hab : a ≤ b
-  · have hsum := hsumBound hab hNone hTone hF.1
-      (fun u hu ↦ hfirst u hu) hderiv ha hb hratio hremainder
+  · have hsum := hsumBound hab hNone hTone hF.1 hfirst hderiv ha hb hscale
     change ‖exponentialSumAt F T N a b‖ ≤ C * T ^ ((α : ℝ) - 1 + ε)
     calc
       ‖exponentialSumAt F T N a b‖ ≤ M * (1 + N / T) := by
-        simpa only [exponentialSumAt] using hsum
+        exact hsum
       _ ≤ M * (2 * T ^ ((α : ℝ) - 1 + ε)) := by
         gcongr
         linarith
       _ = (2 * M) * T ^ ((α : ℝ) - 1 + ε) := by ring
       _ ≤ C * T ^ ((α : ℝ) - 1 + ε) := by gcongr
-  · rw [exponentialSumAt, Finset.Icc_eq_empty hab, Finset.sum_empty, norm_zero]
+  · rw [exponentialSumAt_of_lt (lt_of_not_ge hab), norm_zero]
     exact mul_nonneg (zero_le_one.trans hC) (Real.rpow_nonneg hTpos.le _)
 
 /-! ## The matching logarithmic lower bound for `α > 1` -/
@@ -203,21 +202,21 @@ theorem exists_norm_logPhase_sum_sub_mainTerm_le (s : ℕ) :
       ∀ {N T : ℝ} {a b : ℕ},
         a < b → 1 ≤ N → 1 ≤ T →
         (a : ℝ) = N → (b : ℝ) = 2 * N →
-        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
-        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * Real.log ((n : ℝ) / N)) : ℂ)) -
-          logPhaseMainTerm N T‖ ≤ C := by
+        HasSmallEulerMaclaurinRemainder s T N K →
+        ‖exponentialSumAt Real.log T N a b - logPhaseMainTerm N T‖ ≤ C := by
   obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds zero_lt_one s
   obtain ⟨_, hderiv⟩ := hphaseBounds (δ := 0) (F := Real.log) (by norm_num)
     (isApproximateModelPhaseFunction_log s)
   obtain ⟨C, hC, herror⟩ := exists_norm_oscillatory_sum_sub_integral_le s
   refine ⟨K, C, hK, hC, ?_⟩
-  intro N T a b hab hN hT ha hb hratio hremainder
+  intro N T a b hab hN hT ha hb hscale
   have herr := herror hab hN hT hK
     (isModelPhaseFunction_log.1 0) hderiv (by exact_mod_cast ha.ge)
-    (by exact_mod_cast hb.le) hratio hremainder
-  have hint : (∫ x in (a : ℝ)..b,
-      (𝐞 (T * Real.log (x / N)) : ℂ)) = logPhaseMainTerm N T := by
-    rw [ha, hb]
+    (by exact_mod_cast hb.le) hscale
+  have hint : (∫ x in (a : ℝ)..b, oscillatory Real.log T N x) =
+      logPhaseMainTerm N T := by
+    rw [show (fun x ↦ oscillatory Real.log T N x) =
+      fun x ↦ (𝐞 (T * Real.log (x / N)) : ℂ) from rfl, ha, hb]
     exact logPhase_integral_eq_mainTerm (zero_lt_one.trans_le hN)
   simp only [logPhase] at herr
   rw [hint] at herr
@@ -247,11 +246,9 @@ private theorem sub_one_le_exponentSumGrowthExponent
     exact tendsto_atTop_add_const_right atTop 1 tendsto_natCast_atTop_atTop
   have hTtop : Tendsto T atTop atTop :=
     (tendsto_rpow_atTop (inv_pos.mpr (zero_lt_one.trans hαR))).comp hNtop
-  have hTunbounded : T.IsUnbounded := by
-    rw [VariableObject.IsUnbounded]
-    convert hTtop using 1
-    ext i
-    rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hTunbounded : T.IsUnbounded :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).2 hTtop
   have hNTexact (i : ℕ) : N i = T i ^ (α : ℝ) := by
     dsimp [T]
     rw [← Real.rpow_mul (le_trans zero_le_one (hN i)),
@@ -265,7 +262,6 @@ private theorem sub_one_le_exponentSumGrowthExponent
     dsimp [N, a, b]
     push_cast
     exact ⟨le_rfl, le_rfl⟩
-  have hbound := isPowerBounded_logPhase α hN hT hTunbounded hNT hab
   obtain ⟨K, E, hK, hEone, hlogEstimate⟩ :=
     exists_norm_logPhase_sum_sub_mainTerm_le s
   have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ q :=
@@ -288,12 +284,12 @@ private theorem sub_one_le_exponentSumGrowthExponent
       congr 1
       dsimp [δ]
       ring
-    obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
+    have hscale := oscillatory_scale_bounds
       (hT i) (hN i) hK hqδ hqmul hsδ hiK hNscale
     have hablt : a i < b i := by dsimp [a, b]; omega
     have haeq : (a i : ℝ) = N i := by dsimp [N, a]; push_cast; ring
     have hbeq : (b i : ℝ) = 2 * N i := by dsimp [N, b]; push_cast; ring
-    have herr := hlogEstimate hablt (hN i) (hT i) haeq hbeq hratio hremainder
+    have herr := hlogEstimate hablt (hN i) (hT i) haeq hbeq hscale
     have hInt := (norm_logPhaseMainTerm_bounds hNi (hT i)).1
     have hpower : N i / T i = T i ^ ((α : ℝ) - 1) := by
       rw [hNTexact]
@@ -309,15 +305,15 @@ private theorem sub_one_le_exponentSumGrowthExponent
           norm_le_norm_add_norm_sub _ _
         _ ≤ ‖exponentialSum logPhase T N a b i‖ + E := by
           gcongr
-          simpa only [exponentialSum, logPhase] using herr
+          simpa only [exponentialSum_apply, logPhase] using herr
     have hEsmall : E ≤ d / 2 * T i ^ ((α : ℝ) - 1) := by
       calc
         E = d / 2 * (2 * E / d) := by field_simp [hd.ne']
         _ ≤ d / 2 * T i ^ ((α : ℝ) - 1) :=
           mul_le_mul_of_nonneg_left hiSmall (by positivity)
     linarith
-  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
-    hT hTunbounded hbound (half_pos hd) (by simpa [d] using hlower)
+  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α hN hT hTunbounded hNT hab
+    (half_pos hd) (by simpa [d] using hlower)
 
 /-! ## The `L²` lower bound for `0 < α ≤ 1` -/
 
@@ -327,8 +323,7 @@ private theorem exists_logPhase_sum_norm_sq_ge :
         0 < R → 0 < N → N ≤ a → (b : ℝ) ≤ 2 * N → N ≤ R / (4 * C) →
         ∃ t ∈ Set.Icc R (2 * R),
           ((Finset.Icc a b).card : ℝ) / 2 ≤
-            ‖∑ n ∈ Finset.Icc a b,
-              (𝐞 (t * Real.log ((n : ℝ) / N)) : ℂ)‖ ^ 2 := by
+            ‖exponentialSumAt Real.log t N a b‖ ^ 2 := by
   obtain ⟨C₀, hC₀, hlarge⟩ := l2_integral_estimate_exists_norm_sq_ge
   refine ⟨C₀, hC₀, ?_⟩
   intro R N a b hR hN ha hb hNR
@@ -346,8 +341,8 @@ private theorem exists_logPhase_sum_norm_sq_ge :
     simp [coeff]
   rw [hmass] at htlarge
   refine ⟨t, ht, ?_⟩
-  rw [Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
-  simpa only [coeff, ξ, one_mul, mul_comm] using htlarge
+  rw [exponentialSumAt, Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
+  simpa only [expSum, oscillatory, coeff, ξ, one_mul, mul_comm] using htlarge
 
 private theorem half_le_exponentSumGrowthExponent
     {α : ℝ≥0} (hα : 0 < α) (hαone : α ≤ 1) :
@@ -385,8 +380,7 @@ private theorem half_le_exponentSumGrowthExponent
       _ ≤ D * N i ^ (α : ℝ)⁻¹ := mul_le_mul_of_nonneg_left hpow hDpos.le
   have hgood (i : ℕ) : ∃ t ∈ Set.Icc (R i) (2 * R i),
       ((Finset.Icc (a i) (b i)).card : ℝ) / 2 ≤
-        ‖∑ m ∈ Finset.Icc (a i) (b i),
-          (𝐞 (t * Real.log ((m : ℝ) / N i)) : ℂ)‖ ^ 2 := by
+        ‖exponentialSumAt Real.log t (N i) (a i) (b i)‖ ^ 2 := by
     apply hlarge (mul_pos hDpos (Real.rpow_pos_of_pos (hNpos i) _)) (hNpos i)
     · dsimp [N, a, n]
       norm_num
@@ -397,8 +391,7 @@ private theorem half_le_exponentSumGrowthExponent
   let T : VariableObject ℝ := fun i ↦ (hgood i).choose
   have hTmem (i : ℕ) : T i ∈ Set.Icc (R i) (2 * R i) := (hgood i).choose_spec.1
   have hTsquare (i : ℕ) : ((Finset.Icc (a i) (b i)).card : ℝ) / 2 ≤
-      ‖∑ m ∈ Finset.Icc (a i) (b i),
-        (𝐞 (T i * Real.log ((m : ℝ) / N i)) : ℂ)‖ ^ 2 :=
+      ‖exponentialSumAt Real.log (T i) (N i) (a i) (b i)‖ ^ 2 :=
     (hgood i).choose_spec.2
   have hTbounds (i : ℕ) : D * N i ^ (α : ℝ)⁻¹ ≤ T i ∧
       T i ≤ 2 * (D * N i ^ (α : ℝ)⁻¹) := by
@@ -413,11 +406,9 @@ private theorem half_le_exponentSumGrowthExponent
     exact (tendsto_rpow_atTop (inv_pos.mpr hαR)).comp hNtop |>.const_mul_atTop hDpos
   have hTtop : Tendsto T atTop atTop :=
     tendsto_atTop_mono' atTop (Filter.Eventually.of_forall fun i ↦ (hTmem i).1) hRtop
-  have hTunbounded : T.IsUnbounded := by
-    rw [VariableObject.IsUnbounded]
-    convert hTtop using 1
-    ext i
-    rw [Real.norm_eq_abs, abs_of_nonneg (zero_le_one.trans (hT i))]
+  have hTunbounded : T.IsUnbounded :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).2 hTtop
   have hNT : IsPowerAsymptotic N T (α : ℝ) :=
     isPowerAsymptotic_of_between_const_rpow (A := D) (B := 2 * D) hαR
       (zero_lt_one.trans_le hD) (mul_pos (by norm_num) (zero_lt_one.trans_le hD)) hNtop
@@ -428,8 +419,6 @@ private theorem half_le_exponentSumGrowthExponent
     dsimp [N, a, b, n]
     push_cast
     exact ⟨le_rfl, le_rfl⟩
-  have hbound := isPowerBounded_logPhase α (fun i ↦ (hN i).trans' one_le_two)
-    hT hTunbounded hNT hab
   let L : ℝ := (2 * D) ^ ((α : ℝ) / 2)
   have hL : 0 < L := Real.rpow_pos_of_pos (mul_pos (by norm_num) hDpos) _
   have hlower : ∀ᶠ i in atTop,
@@ -447,7 +436,7 @@ private theorem half_le_exponentSumGrowthExponent
         calc
           N i / 2 ≤ ((Finset.Icc (a i) (b i)).card : ℝ) / 2 := by gcongr
           _ ≤ ‖exponentialSum logPhase T N a b i‖ ^ 2 := by
-            simpa only [exponentialSum, logPhase] using hTsquare i
+            simpa only [exponentialSum_apply, logPhase] using hTsquare i
       have hrootSquare : (N i ^ (1 / 2 : ℝ)) ^ 2 = N i := by
         rw [← Real.rpow_natCast]
         rw [← Real.rpow_mul (hNpos i).le]
@@ -474,8 +463,8 @@ private theorem half_le_exponentSumGrowthExponent
             (1 / (2 * L)) * (L * N i ^ (1 / 2 : ℝ)) := by gcongr
         _ = N i ^ (1 / 2 : ℝ) / 2 := by field_simp [hL.ne']
         _ ≤ ‖exponentialSum logPhase T N a b i‖ := hroot
-  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
-    hT hTunbounded hbound (by positivity) hlower
+  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α
+    (fun i ↦ (hN i).trans' one_le_two) hT hTunbounded hNT hab (by positivity) hlower
 
 /-! ## Trivial bounds -/
 

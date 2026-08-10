@@ -124,7 +124,8 @@ private lemma bump_integral_pos : 0 < ∫ x : ℝ, bump x := by
 
 /-! ### The exponential sum -/
 
-private def expSum {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℂ :=
+/-- The exponential sum with coefficients `a` and frequencies `ξ`, evaluated at `t`. -/
+def expSum {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℂ :=
   ∑ r, a r * 𝐞 (ξ r * t)
 
 private def expSumSq {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℝ :=
@@ -145,10 +146,17 @@ private lemma coeff_eq_zero_of_sum_norm_sq_eq_zero
       (fun i (_ : i ∈ Finset.univ) ↦ sq_nonneg ‖a i‖)).1 h) r (Finset.mem_univ r)
   nlinarith [norm_nonneg (a r)]
 
+/-- An exponential sum is continuous in its evaluation point. -/
+@[fun_prop]
+lemma expSum_continuous {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) :
+    Continuous (expSum a ξ) := by
+  unfold expSum
+  fun_prop
+
 private lemma expSumSq_continuous {ι : Type*} [Fintype ι]
     (a : ι → ℂ) (ξ : ι → ℝ) :
     Continuous (expSumSq a ξ) := by
-  unfold expSumSq expSum
+  unfold expSumSq
   fun_prop
 
 /-! ### Plancherel and decay of the bump's Fourier transform -/

@@ -1,6 +1,7 @@
 module
 
 public import Expdb.ExponentialSums.LogPhase
+public import Expdb.ExponentialSums.Oscillatory
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Order.Interval.Finset.Nat
@@ -54,9 +55,13 @@ def exponentialSum
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ)
     (T N : VariableObject ℝ) (a b : VariableObject ℕ) :
     VariableObject ℂ :=
-  fun i ↦
-    ∑ n ∈ Finset.Icc (a i) (b i),
-      (𝐞 (T i * F i ((n : ℝ) / N i)) : ℂ)
+  fun i ↦ exponentialSumAt (F i) (T i) (N i) (a i) (b i)
+
+@[simp] theorem exponentialSum_apply
+    (F : VariableFunction (VariableObject.fixed ℝ) ℝ)
+    (T N : VariableObject ℝ) (a b : VariableObject ℕ) (i : ℕ) :
+    exponentialSum F T N a b i = exponentialSumAt (F i) (T i) (N i) (a i) (b i) :=
+  rfl
 
 /-- The assertion that `β` is an admissible exponential-sum growth exponent at scale `α`. -/
 def IsExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
@@ -71,9 +76,17 @@ def IsExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
     (∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i) →
     IsPowerBounded (exponentialSum F T N a b) T β
 
+/-- The set of admissible exponential-sum growth exponents at scale `α`. -/
+def exponentSumBounds (α : ℝ≥0) : Set ℝ :=
+  {β : ℝ | IsExponentSumBound α β}
+
+@[simp] theorem mem_exponentSumBounds {α : ℝ≥0} {β : ℝ} :
+    β ∈ exponentSumBounds α ↔ IsExponentSumBound α β :=
+  Iff.rfl
+
 /-- The exponential sum growth exponent `β(α)` from the blueprint definition `beta-def`. -/
 def exponentSumGrowthExponent (α : ℝ≥0) : ℝ :=
-  sInf {β : ℝ | IsExponentSumBound α β}
+  sInf (exponentSumBounds α)
 
 /-! ## Power asymptotics -/
 
@@ -250,10 +263,9 @@ theorem isPowerBounded_iff_forall_pos
       ∀ ε : ℝ, 0 < ε →
         Asymptotics.IsBigO atTop X (fun i ↦ T i ^ (β + ε)) := by
   -- Positivity and unboundedness make powers of `T` eventually monotone in the exponent.
-  have hTtop : Tendsto T atTop atTop := by
-    rw [VariableObject.IsUnbounded] at hTunbounded
-    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
-      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hTtop : Tendsto T atTop atTop :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).1 hTunbounded
   have hTgt : ∀ᶠ i in atTop, 1 < T i :=
     (tendsto_atTop.1 hTtop 2).mono fun _ hi ↦ by linarith
   constructor
@@ -353,10 +365,9 @@ theorem exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
   let ε := (γ - β) / 2
   have hε : 0 < ε := by dsimp [ε]; linarith
   have hO := (isPowerBounded_iff_forall_pos X T β hT hTunbounded).1 hbound ε hε
-  have hTtop : Tendsto T atTop atTop := by
-    rw [VariableObject.IsUnbounded] at hTunbounded
-    exact hTunbounded.congr' <| Filter.Eventually.of_forall fun i ↦ by
-      rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hTtop : Tendsto T atTop atTop :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).1 hTunbounded
   have hpowO : (fun i ↦ T i ^ γ) =O[atTop] X := by
     apply Asymptotics.IsBigO.of_bound (1 / c)
     filter_upwards [hlower] with i hi
@@ -421,10 +432,8 @@ private lemma norm_exponentialSum_le_three_mul
     (i : ℕ) :
     ‖exponentialSum F T N a b i‖ ≤ 3 * N i := by
   calc
-    ‖exponentialSum F T N a b i‖ ≤
-        ∑ n ∈ Finset.Icc (a i) (b i),
-          ‖(𝐞 (T i * F i ((n : ℝ) / N i)) : ℂ)‖ := norm_sum_le _ _
-    _ = ((Finset.Icc (a i) (b i)).card : ℝ) := by simp
+    ‖exponentialSum F T N a b i‖ ≤ ((Finset.Icc (a i) (b i)).card : ℝ) :=
+      norm_exponentialSumAt_le_card _ _ _ _ _
     _ ≤ (b i : ℝ) + 1 := by
       rw [Nat.card_Icc]
       exact_mod_cast Nat.sub_le _ _
@@ -446,7 +455,7 @@ theorem isExponentSumBound_self (α : ℝ≥0) :
         abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)]
 
 private lemma exponentSumBounds_nonempty (α : ℝ≥0) :
-    {β : ℝ | IsExponentSumBound α β}.Nonempty :=
+    (exponentSumBounds α).Nonempty :=
   ⟨α, isExponentSumBound_self α⟩
 
 /-- Every admissible exponent at a nonnegative scale is nonnegative. -/
@@ -465,11 +474,9 @@ theorem IsExponentSumBound.nonneg
     linarith
   have hTtendsto : Tendsto T atTop atTop := by
     exact tendsto_atTop_add_const_right atTop 2 tendsto_natCast_atTop_atTop
-  have hTunbounded : T.IsUnbounded := by
-    rw [VariableObject.IsUnbounded]
-    convert hTtendsto using 1
-    ext i
-    rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hTunbounded : T.IsUnbounded :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).2 hTtendsto
   have hN : ∀ i, 1 ≤ N i := fun i ↦ Real.one_le_rpow (hT i) α.property
   have hNT : IsPowerAsymptotic N T (α : ℝ) := by
     refine ⟨VariableObject.fixed (α : ℝ), IsEqUpToInfinitesimal.refl _, ?_⟩
@@ -500,12 +507,12 @@ theorem IsExponentSumBound.nonneg
   obtain ⟨i, hi⟩ := hsmall.exists
   have hnorm :
       ‖exponentialSum logPhase T N a a i‖ = 1 := by
-    simp [exponentialSum]
+    simp
   rw [dist_zero_right, hnorm] at hi
   norm_num at hi
 
 private lemma exponentSumBounds_bddBelow {α : ℝ≥0} :
-    BddBelow {β : ℝ | IsExponentSumBound α β} :=
+    BddBelow (exponentSumBounds α) :=
   ⟨0, fun _ hβ ↦ hβ.nonneg⟩
 
 /-! ## The least admissible exponent -/
@@ -514,7 +521,7 @@ private lemma exists_isExponentSumBound_lt_add
     (α : ℝ≥0) {ε : ℝ} (hε : 0 < ε) :
     ∃ β : ℝ, IsExponentSumBound α β ∧
       β < exponentSumGrowthExponent α + ε := by
-  let S : Set ℝ := {β : ℝ | IsExponentSumBound α β}
+  let S : Set ℝ := exponentSumBounds α
   have hS : S.Nonempty := exponentSumBounds_nonempty α
   have hinf_lt : sInf S < sInf S + ε := by linarith
   obtain ⟨β, hβ, hβlt⟩ := exists_lt_of_csInf_lt hS hinf_lt
@@ -555,21 +562,20 @@ theorem exponentSumGrowthExponent_le_iff {α : ℝ≥0} {β : ℝ} :
 
 /-- The exponent sum growth exponent is the least admissible exponent. -/
 theorem isLeast_exponentSumGrowthExponent (α : ℝ≥0) :
-    IsLeast {β : ℝ | IsExponentSumBound α β}
+    IsLeast (exponentSumBounds α)
       (exponentSumGrowthExponent α) :=
   ⟨isExponentSumBound_exponentSumGrowthExponent α,
     fun _ hβ ↦ exponentSumGrowthExponent_le_iff.mpr hβ⟩
 
 /-- At scale `α`, the admissible exponents form the interval `[β(α), ∞)`. -/
 theorem exponentSumBounds_eq_Ici (α : ℝ≥0) :
-    {β : ℝ | IsExponentSumBound α β} =
-      Set.Ici (exponentSumGrowthExponent α) := by
+    exponentSumBounds α = Set.Ici (exponentSumGrowthExponent α) := by
   ext β
   exact exponentSumGrowthExponent_le_iff.symm
 
 /-- The set of admissible exponential-sum exponents at scale `α` is closed. -/
 theorem isClosed_exponentSumBounds (α : ℝ≥0) :
-    IsClosed {β : ℝ | IsExponentSumBound α β} := by
+    IsClosed (exponentSumBounds α) := by
   rw [exponentSumBounds_eq_Ici]
   exact isClosed_Ici
 
@@ -589,5 +595,21 @@ theorem isPowerBounded_logPhase
       (exponentSumGrowthExponent α) :=
   isExponentSumBound_exponentSumGrowthExponent α
     N T logPhase a b hN hT hTunbounded hNT isModelPhaseFunction_log hab
+
+/-- A lower bound of size `T ^ γ` for logarithmic-phase sums along an admissible family of
+scales forces `γ ≤ β(α)`. -/
+theorem le_exponentSumGrowthExponent_of_logPhase_lower_bound
+    (α : ℝ≥0)
+    {N T : VariableObject ℝ} {a b : VariableObject ℕ} {c γ : ℝ}
+    (hN : ∀ i, 1 ≤ N i)
+    (hT : ∀ i, 1 ≤ T i)
+    (hTunbounded : T.IsUnbounded)
+    (hNT : IsPowerAsymptotic N T (α : ℝ))
+    (hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i)
+    (hc : 0 < c)
+    (hlower : ∀ᶠ i in atTop, c * T i ^ γ ≤ ‖exponentialSum logPhase T N a b i‖) :
+    γ ≤ exponentSumGrowthExponent α :=
+  exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow hT hTunbounded
+    (isPowerBounded_logPhase α hN hT hTunbounded hNT hab) hc hlower
 
 end Expdb

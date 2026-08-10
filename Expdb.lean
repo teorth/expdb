@@ -3,6 +3,7 @@ module
 public import Expdb.Basic.AutomaticUniformity
 public import Expdb.ExponentialSums.ExponentSumGrowthNonAsymptotic
 public import Expdb.ExponentialSums.LogPhase
+public import Expdb.ExponentialSums.Oscillatory
 public import Expdb.ExponentialSums.OscillatoryBounds
 public import Expdb.ExponentialSums.TrivialBounds
 public import Expdb.ExponentialSums.CompactScaleBounds

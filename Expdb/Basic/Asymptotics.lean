@@ -59,6 +59,13 @@ theorem isUnbounded_iff_forall_eventually_norm_ge (X : VariableObject α) :
     X.IsUnbounded ↔ ∀ C : ℝ, ∀ᶠ i in atTop, C ≤ ‖X i‖ := by
   rw [IsUnbounded, tendsto_atTop]
 
+/-- For a nonnegative real variable object, being unbounded is the same as tending to
+infinity. -/
+theorem isUnbounded_iff_tendsto_atTop {X : VariableObject ℝ} (hX : ∀ i, 0 ≤ X i) :
+    X.IsUnbounded ↔ Tendsto X atTop atTop := by
+  rw [IsUnbounded]
+  exact tendsto_congr fun i ↦ by rw [Real.norm_eq_abs, abs_of_nonneg (hX i)]
+
 /-- A variable object whose norm tends to zero. -/
 def IsInfinitesimal (X : VariableObject α) : Prop :=
   Tendsto (fun i ↦ ‖X i‖) atTop (nhds 0)
