@@ -33,6 +33,22 @@ def IsApproximateModelPhaseFunction
     ∀ p : ℕ, p ≤ P → ∀ u : phaseInterval,
       ‖modelPhaseErrorAt F σ p u‖ ≤ δ
 
+/-- The fixed data satisfying the hypotheses of the non-asymptotic exponential-sum bound. -/
+structure IsModelPhaseSumSetupAt
+    (α σ δ : ℝ) (P : ℕ) (C T N : ℝ) (F : ℝ → ℝ) (a b : ℕ) : Prop where
+  /-- The phase parameter is above the uniform threshold. -/
+  threshold_le_param : C ≤ T
+  /-- The scale is at least the lower power allowed by `δ`. -/
+  rpow_sub_le_scale : T ^ (α - δ) ≤ N
+  /-- The scale is at most the upper power allowed by `δ`. -/
+  scale_le_rpow_add : N ≤ T ^ (α + δ)
+  /-- The phase approximates the model phase through order `P`. -/
+  isApproximateModelPhase : IsApproximateModelPhaseFunction F σ P δ
+  /-- The summation interval begins in the dyadic block. -/
+  scale_le_start : N ≤ (a : ℝ)
+  /-- The summation interval ends in the dyadic block. -/
+  end_le_two_mul_scale : (b : ℝ) ≤ 2 * N
+
 /-- The fixed-parameter epsilon--delta bound from the blueprint lemma `beta-asymp`
     (Non-asymptotic definition of `β`). -/
 def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
@@ -42,12 +58,7 @@ def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
         ∃ P : ℕ, 1 ≤ P ∧
           ∃ C : ℝ, 1 ≤ C ∧
             ∀ (T N : ℝ) (F : ℝ → ℝ) (a b : ℕ),
-              C ≤ T →
-              T ^ ((α : ℝ) - δ) ≤ N →
-              N ≤ T ^ ((α : ℝ) + δ) →
-              IsApproximateModelPhaseFunction F σ P δ →
-              N ≤ (a : ℝ) →
-              (b : ℝ) ≤ 2 * N →
+              IsModelPhaseSumSetupAt (α : ℝ) σ δ P C T N F a b →
               ‖exponentialSumAt F T N a b‖ ≤ C * T ^ (β + ε)
 
 /-! ## Uniform approximation by fixed phases -/
@@ -103,7 +114,7 @@ private lemma isExponentSumBound_of_nonAsymptotic
   simpa only [exponentialSum_apply, Real.norm_eq_abs,
     abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)] using
       hfixed (T i) (N i) (F i) (a i) (b i)
-        hiT hiNT.1 hiNT.2 hiF (hab i).1 (hab i).2
+        ⟨hiT, hiNT.1, hiNT.2, hiF, (hab i).1, (hab i).2⟩
 
 /-! ## Uniform bounds for approximate model phases -/
 
@@ -234,22 +245,23 @@ private lemma nonAsymptotic_of_isExponentSumBound
     linarith
   choose T N F a b hdata using fun i ↦
     hfailure (δ i) (hδpos i) (P i) (hPone i) (C i) (hCone i)
-  have hCT : ∀ i, C i ≤ T i := fun i ↦ (hdata i).1
+  have hCT : ∀ i, C i ≤ T i :=
+    fun i ↦ (hdata i).1.threshold_le_param
   have hlower : ∀ i, T i ^ ((α : ℝ) - δ i) ≤ N i :=
-    fun i ↦ (hdata i).2.1
+    fun i ↦ (hdata i).1.rpow_sub_le_scale
   have hupper : ∀ i, N i ≤ T i ^ ((α : ℝ) + δ i) :=
-    fun i ↦ (hdata i).2.2.1
+    fun i ↦ (hdata i).1.scale_le_rpow_add
   have happrox : ∀ i,
       IsApproximateModelPhaseFunction (F i) σ (P i) (δ i) :=
-    fun i ↦ (hdata i).2.2.2.1
+    fun i ↦ (hdata i).1.isApproximateModelPhase
   have ha : ∀ i, N i ≤ (a i : ℝ) :=
-    fun i ↦ (hdata i).2.2.2.2.1
+    fun i ↦ (hdata i).1.scale_le_start
   have hb : ∀ i, (b i : ℝ) ≤ 2 * N i :=
-    fun i ↦ (hdata i).2.2.2.2.2.1
+    fun i ↦ (hdata i).1.end_le_two_mul_scale
   have hviolate : ∀ i,
       C i * T i ^ (β + ε) <
         ‖exponentialSumAt (F i) (T i) (N i) (a i) (b i)‖ :=
-    fun i ↦ (hdata i).2.2.2.2.2.2
+    fun i ↦ (hdata i).2
   have hTgt : ∀ i, 1 < T i := fun i ↦ by
     have hCthree : 3 ≤ C i := by
       dsimp [C]
