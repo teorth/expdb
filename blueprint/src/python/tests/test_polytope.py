@@ -1,4 +1,4 @@
-from ..functions import *
+from functions import *
 
 def get_unit_square():
     return Polytope(

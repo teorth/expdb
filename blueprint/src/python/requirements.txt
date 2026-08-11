@@ -1,0 +1,14 @@
+# Third-party dependencies of the ANTEDB Python database.
+#
+# NOTE: pycddlib must be a 2.x release. polytope.py is written against the 2.x API
+# (cdd.Matrix, cdd.RepType, cdd.Polyhedron, cdd.LinProg), all of which pycddlib 3.x
+# renamed; installing 3.x makes every polytope-backed computation fail with
+# "TypeError: __init__() takes exactly 0 positional arguments". Note also that 2.x
+# ships no prebuilt wheel for recent Python versions, so installing it may require
+# the cddlib and GMP development headers (e.g. libcdd-dev and libgmp-dev on Debian
+# or Ubuntu).
+matplotlib
+numpy
+pycddlib<3
+scipy
+sympy

@@ -1,9 +1,9 @@
 from fractions import Fraction as frac
 
-from ..hypotheses import *
-from ..literature import *
-from .. import exponent_pair as ep
-from .. import zero_density_estimate as zd
+from hypotheses import *
+from literature import *
+import exponent_pair as ep
+import zero_density_estimate as zd
 
 
 def run_ep_to_zd_regression_tests():

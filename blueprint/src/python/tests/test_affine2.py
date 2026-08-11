@@ -1,6 +1,6 @@
 # Test cases for Affine2 implementation
 from fractions import Fraction as frac
-from ..large_values import large_values as lv
+from large_values import large_values as lv
 from polytope import *
 
 

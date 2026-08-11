@@ -1,4 +1,4 @@
-from ..functions import *
+from functions import *
 
 def run_all():
     i1 = Interval(0, 2, True, False)  # [0, 2)
