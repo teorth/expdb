@@ -108,10 +108,21 @@ As we shall see, the exponent pair conjecture is equivalent to the lower bound h
 \]
 Note the discontinuity at $1$.  Despite this, we have:
 
-\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv} $\beta$ is an upper semicontinuous function.
+\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv}
+\lean{Expdb.upperSemicontinuous_exponentSumGrowthExponent}\leanok
+$\beta$ is an upper semicontinuous function.
 \end{lemma}
 
-\begin{proof} Routine from the definition.
+\begin{proof}\leanok
+For $0 \leq \alpha \leq \gamma \leq 1$, dilation and finite Fourier inversion give
+$\beta(\alpha) \leq \beta(\gamma)$.  Conversely, decomposing an exponential sum into residue
+classes gives
+\[
+  \beta(\gamma) \leq \beta(\alpha) + \gamma-\alpha.
+\]
+Thus $\beta$ is $1$-Lipschitz, and in particular continuous, on $[0,1]$.  At $1$ the possible
+jump from the right is downward, since $\beta(\alpha)=\alpha-1$ for $\alpha>1$, while away from
+$[0,1]$ this same formula is continuous.  The result follows.
 \end{proof}
 
 We record the classical bounds on $\beta$:

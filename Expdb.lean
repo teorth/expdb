@@ -6,7 +6,7 @@ public import Expdb.ExponentialSums.LogPhase
 public import Expdb.ExponentialSums.Oscillatory
 public import Expdb.ExponentialSums.OscillatoryBounds
 public import Expdb.ExponentialSums.TrivialBounds
-public import Expdb.ExponentialSums.CompactScaleBounds
+public import Expdb.ExponentialSums.UpperSemicontinuity
 public import Expdb.Fourier.Bump
 public import Expdb.Fourier.L2Integral
 public import Expdb.Mathlib.EulerMaclaurin

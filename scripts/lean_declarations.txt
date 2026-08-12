@@ -80,11 +80,10 @@ Expdb.IsApproximateModelPhaseFunction
 Expdb.IsModelPhaseSumSetupAt
 Expdb.IsExponentSumBoundNonAsymptotic
 Expdb.exponentSumGrowthExponent_le_iff_nonAsymptotic
-Expdb.isPowerBounded_exponentialSum_of_scale_tendsto
-Expdb.isPowerBounded_exponentialSum_of_compact_scale
 Expdb.exponentSumGrowthExponent_eq_sub_one
 Expdb.exponentSumGrowthExponent_mem_Icc
 Expdb.exponentSumGrowthExponent_zero
+Expdb.upperSemicontinuous_exponentSumGrowthExponent
 Expdb.L2Bump.rawBump
 Expdb.L2Bump.rawL2
 Expdb.L2Bump.bump
