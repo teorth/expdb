@@ -5,6 +5,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 
 import Expdb.Mathlib.EulerMaclaurin
+import Expdb.Mathlib.IteratedDeriv
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Fourier.FourierTransformDeriv
 import Mathlib.Analysis.Real.Pi.Bounds
@@ -56,44 +57,18 @@ theorem iteratedDeriv_fourierChar (n : ℕ) (x : ℝ) :
           (ENat.natCast_le_of_coe_top_le_withTop le_rfl n)), ih]
       ring
 
+/-- The norm of the `n`th derivative of the real Fourier character is exactly `(2π)ⁿ`. -/
+@[simp] theorem norm_iteratedDeriv_fourierChar (n : ℕ) (x : ℝ) :
+    ‖iteratedDeriv n (𝐞 · : ℝ → ℂ) x‖ = (2 * Real.pi) ^ n := by
+  rw [iteratedDeriv_fourierChar, norm_mul, norm_pow]
+  simp [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg Real.pi_pos.le]
+
 private lemma norm_iteratedDeriv_fourierChar_le
     {n k : ℕ} (hk : k ≤ n) (x : ℝ) :
     ‖iteratedDeriv k (𝐞 · : ℝ → ℂ) x‖ ≤ (2 * Real.pi + 1) ^ n := by
-  rw [iteratedDeriv_fourierChar, norm_mul, norm_pow]
-  have hcoeff : ‖(2 * Real.pi : ℂ) * Complex.I‖ = 2 * Real.pi := by
-    simp [Complex.norm_real, Real.norm_eq_abs, Real.pi_pos.le]
-  have hchar : ‖(𝐞 x : ℂ)‖ = 1 := by simp
-  rw [hcoeff, hchar, mul_one]
+  rw [norm_iteratedDeriv_fourierChar]
   exact (pow_le_pow_left₀ (by positivity) (by linarith) k).trans
     (pow_le_pow_right₀ (by linarith [Real.pi_pos]) hk)
-
-private lemma iteratedDerivWithin_comp_const_mul_of_mapsTo
-    {f : ℝ → ℝ} {s t : Set ℝ} {x c : ℝ} {n : ℕ}
-    (hf : ContDiffOn ℝ n f t) (hs : UniqueDiffOn ℝ s) (ht : UniqueDiffOn ℝ t)
-    (hx : x ∈ s) (hst : Set.MapsTo (c * ·) s t) :
-    iteratedDerivWithin n (fun y ↦ f (c * y)) s x =
-      c ^ n * iteratedDerivWithin n f t (c * x) := by
-  induction n generalizing x with
-  | zero => simp
-  | succ n ih =>
-      have hcx : c * x ∈ t := hst hx
-      have heq : Set.EqOn
-          (iteratedDerivWithin n (fun y ↦ f (c * y)) s)
-          (fun y ↦ c ^ n * iteratedDerivWithin n f t (c * y)) s :=
-        fun y hy ↦ ih hf.of_succ hy
-      have houter : DifferentiableWithinAt ℝ (iteratedDerivWithin n f t) t (c * x) :=
-        hf.differentiableOn_iteratedDerivWithin (Nat.cast_lt.mpr n.lt_succ_self) ht _ hcx
-      have hcomp : DifferentiableWithinAt ℝ
-          (fun y ↦ iteratedDerivWithin n f t (c * y)) s x :=
-        houter.comp x (by fun_prop) hst
-      rw [iteratedDerivWithin_succ,
-        derivWithin_congr heq (ih hf.of_succ hx),
-        derivWithin_const_mul _ hcomp, iteratedDerivWithin_succ,
-        ← Function.comp_def, derivWithin.scomp x houter (by fun_prop) hst,
-        derivWithin_const_mul _ differentiableWithinAt_id,
-        derivWithin_id' _ _ (hs.uniqueDiffWithinAt hx)]
-      simp only [smul_eq_mul, mul_one, pow_succ]
-      ring
 
 /-! ## Derivative bounds for oscillatory phases -/
 
@@ -131,10 +106,13 @@ theorem norm_iteratedDerivWithin_oscillatory_le
       ‖iteratedFDerivWithin ℝ k q s x‖ ≤ (K * T / N) ^ k := by
     intro k hk hkn
     rw [norm_iteratedFDerivWithin_eq_norm_iteratedDerivWithin]
-    have hrescale := iteratedDerivWithin_comp_const_mul_of_mapsTo
-      (f := F) (c := N⁻¹) (n := k)
-      (hF.of_le (Nat.cast_le.mpr hkn)) hs
-      (uniqueDiffOn_Icc (by norm_num [phaseInterval])) hx hmap
+    have hrescale : iteratedDerivWithin k (fun y ↦ F (N⁻¹ * y)) s x =
+        N⁻¹ ^ k * iteratedDerivWithin k F phaseInterval (N⁻¹ * x) := by
+      simpa only [add_zero] using iteratedDerivWithin_comp_affine_of_mapsTo
+        (f := F) (c := N⁻¹) (d := 0) (n := k)
+        (hF.of_le (Nat.cast_le.mpr hkn)) hs
+        (uniqueDiffOn_Icc (by norm_num [phaseInterval])) hx
+        (by simpa only [add_zero] using hmap)
     have hqderiv : iteratedDerivWithin k q s x =
         T * N⁻¹ ^ k * iteratedDerivWithin k F phaseInterval (N⁻¹ * x) := by
       rw [show q = fun y ↦ T * F (N⁻¹ * y) by rfl,

@@ -3,7 +3,6 @@ module
 public import Expdb.ExponentialSums.ExponentSumGrowth
 
 import Expdb.Basic.AutomaticUniformity
-import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
@@ -25,13 +24,6 @@ noncomputable section
 namespace Expdb
 
 /-! ## Fixed-parameter formulation -/
-
-/-- A fixed phase function whose model-phase errors through order `P` are at most `δ`. -/
-def IsApproximateModelPhaseFunction
-    (F : ℝ → ℝ) (σ : ℝ) (P : ℕ) (δ : ℝ) : Prop :=
-  ContDiffOn ℝ ∞ F phaseInterval ∧
-    ∀ p : ℕ, p ≤ P → ∀ u : phaseInterval,
-      ‖modelPhaseErrorAt F σ p u‖ ≤ δ
 
 /-- The fixed data satisfying the hypotheses of the non-asymptotic exponential-sum bound. -/
 structure IsModelPhaseSumSetupAt
@@ -61,30 +53,6 @@ def IsExponentSumBoundNonAsymptotic (α : ℝ≥0) (β : ℝ) : Prop :=
               IsModelPhaseSumSetupAt (α : ℝ) σ δ P C T N F a b →
               ‖exponentialSumAt F T N a b‖ ≤ C * T ^ (β + ε)
 
-/-! ## Uniform approximation by fixed phases -/
-
-private lemma eventually_isApproximate_of_modelError
-    {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
-    (hphase : IsPhaseFunction F)
-    (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal)
-    (P : ℕ) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ i in atTop, IsApproximateModelPhaseFunction (F i) σ P δ := by
-  have hp : ∀ p ∈ Finset.range (P + 1), ∀ᶠ i in atTop,
-      ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
-    fun p _ ↦
-      (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
-        (VariableObject.fixed phaseInterval)
-        (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
-        (modelPhaseError F σ p)).1 (herror p) δ hδ
-  have hall :
-      ∀ᶠ i in atTop, ∀ p ∈ Finset.range (P + 1),
-        ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
-    (Finset.range (P + 1)).eventually_all.mpr hp
-  filter_upwards [hall] with i hi
-  refine ⟨hphase i, ?_⟩
-  intro p hp' u
-  exact (hi p (Finset.mem_range.mpr (by omega)) u).le
-
 /-! ## From fixed bounds to asymptotic bounds -/
 
 private lemma isExponentSumBound_of_nonAsymptotic
@@ -108,7 +76,7 @@ private lemma isExponentSumBound_of_nonAsymptotic
     hNT.eventually_between
       (Filter.Eventually.of_forall hT) hδ
   have happrox :=
-    eventually_isApproximate_of_modelError hphase herror P hδ
+    (IsModelPhaseFunctionWith.mk hphase herror).eventually_isApproximate P hδ
   refine Asymptotics.IsBigO.of_bound C ?_
   filter_upwards [hTC, hNT', happrox] with i hiT hiNT hiF
   simpa only [exponentialSum_apply, Real.norm_eq_abs,
@@ -129,22 +97,11 @@ theorem approximate_model_phase_deriv_bounds
         IsApproximateModelPhaseFunction F σ P δ →
         HasPhaseFirstDerivLowerBound F ((2 : ℝ) ^ (-σ) / 2) ∧
         HasPhaseDerivBound F (P + 1) K := by
-  have href : ContDiffOn ℝ ∞ (modelPhase σ) phaseInterval := by
-    intro u hu
-    exact (Real.contDiffAt_rpow_const_of_ne (by
-      exact ne_of_gt (lt_of_lt_of_le zero_lt_one hu.1))).contDiffWithinAt
-  have hreference (p : ℕ) :
-      ∃ B : ℝ, 0 ≤ B ∧ ∀ u : phaseInterval,
-        ‖iteratedDerivWithin p (modelPhase σ) phaseInterval u‖ ≤ B := by
-    have hcont : ContinuousOn
-        (iteratedDerivWithin p (modelPhase σ) phaseInterval) phaseInterval :=
-      href.continuousOn_iteratedDerivWithin
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl p)
-        (uniqueDiffOn_Icc (by norm_num [phaseInterval]))
-    obtain ⟨B, hB⟩ := bddAbove_def.mp (isCompact_Icc.bddAbove_image hcont.norm)
-    refine ⟨max B 0, le_max_right _ _, fun u ↦ ?_⟩
-    exact (hB _ ⟨u, u.property, rfl⟩).trans (le_max_left _ _)
-  choose B hBnonneg hB using hreference
+  let B : ℕ → ℝ := fun p ↦ ‖(descPochhammer ℝ p).eval (-σ)‖
+  have hBnonneg (p : ℕ) : 0 ≤ B p := norm_nonneg _
+  have hB (p : ℕ) (u : phaseInterval) :
+      ‖iteratedDerivWithin p (modelPhase σ) phaseInterval u‖ ≤ B p :=
+    norm_iteratedDerivWithin_modelPhase_le hσ.le p u.property
   let K : ℝ := 1 + ∑ p ∈ Finset.range (P + 1), B p
   have hK : 1 ≤ K := by
     dsimp [K]
@@ -196,7 +153,7 @@ private lemma isModelPhaseFunction_of_approximations
     {σ : ℝ} {P : VariableObject ℕ} {δ : VariableObject ℝ}
     (hσ : 0 < σ)
     (hP : ∀ p : ℕ, ∀ᶠ i in atTop, p ≤ P i)
-    (hδnonneg : ∀ i, 0 ≤ δ i) (hδ : δ.IsInfinitesimal)
+    (hδ : δ.IsInfinitesimal)
     (happrox : ∀ i, IsApproximateModelPhaseFunction (F i) σ (P i) (δ i)) :
     IsModelPhaseFunction F := by
   refine ⟨fun i ↦ (happrox i).1, σ, hσ, ?_⟩
@@ -211,18 +168,8 @@ private lemma isModelPhaseFunction_of_approximations
   filter_upwards [hP p, hδsmall] with i hip hiδ
   intro u
   have herror := (happrox i).2 p hip u
-  rw [Real.norm_eq_abs, abs_of_nonneg (hδnonneg i)] at hiδ
-  exact lt_of_le_of_lt herror hiδ
-
-private lemma norm_exponentialSumAt_le_add_one
-    (F : ℝ → ℝ) (T N : ℝ) (a b : ℕ) :
-    ‖exponentialSumAt F T N a b‖ ≤ (b : ℝ) + 1 := by
-  calc
-    ‖exponentialSumAt F T N a b‖ ≤ ((Finset.Icc a b).card : ℝ) :=
-      norm_exponentialSumAt_le_card _ _ _ _ _
-    _ ≤ (b : ℝ) + 1 := by
-      rw [Nat.card_Icc]
-      exact_mod_cast Nat.sub_le _ _
+  rw [Real.norm_eq_abs] at hiδ
+  exact lt_of_le_of_lt herror ((le_abs_self (δ i)).trans_lt hiδ)
 
 private lemma nonAsymptotic_of_isExponentSumBound
     {α : ℝ≥0} {β : ℝ} (hbound : IsExponentSumBound α β) :
@@ -328,12 +275,12 @@ private lemma nonAsymptotic_of_isExponentSumBound
           mul_le_mul_of_nonneg_left hpow (le_trans (by norm_num) hCthree)
     linarith [hviolate i]
   have hNT : IsPowerAsymptotic N T (α : ℝ) :=
-    isPowerAsymptotic_of_between hTgt hNpos
-      (fun i ↦ (hδpos i).le) hδinfinitesimal
+    isPowerAsymptotic_of_between_of_infinitesimal hTgt hNpos
+      hδinfinitesimal
       (fun i ↦ ⟨hlower i, hupper i⟩)
   have hF : IsModelPhaseFunction F :=
     isModelPhaseFunction_of_approximations hσ hPtop
-      (fun i ↦ (hδpos i).le) hδinfinitesimal happrox
+      hδinfinitesimal happrox
   have hasymptotic :=
     hbound N T F a b hNone hTone hTunbounded hNT hF
       (fun i ↦ ⟨ha i, hb i⟩)
