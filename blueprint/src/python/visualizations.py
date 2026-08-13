@@ -257,9 +257,12 @@ def zero_density_energy_plot():
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
 
     # List of new derived estimates so far. TODO: replace with actual derivations
+    crossover = (626 - math.sqrt(3301)) / 785
     energy_estimates = [
             (RF.parse("1000000"), Interval(frac(1,2), 1)), # default
-            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(frac(7,10), 0.7255)),
+            (RF.parse("(10 - 11 * x) / ((2 - x) * (1 - x))"), Interval(frac(2,3), frac(5,7))),
+            (RF.parse("3 * (25 - 27 * x) / (8 * (2 - x) * (1 - x))"), Interval(frac(5,7), crossover)),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(crossover, 0.7255)),
             (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, 0.73)),
             (RF.parse("(457 - 546 * x) / (2 * (61 - 58 * x) * (1 - x))"), Interval(0.73, 0.7373)),
             (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(0.7373, frac(42,55))),

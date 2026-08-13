@@ -323,7 +323,11 @@ def lver_to_energy_bound(
 
     # Take maximum
     bounds = [(f[0], f[1]) for f in fns]
-    sup = RF.max(bounds, sigma_interval)
+    sup = RF.max(
+        bounds,
+        sigma_interval,
+        track_dependencies=False
+    )
     return [
         derived_zero_density_energy_estimate(
             # Remember to divide by (1 - \\sigma)
