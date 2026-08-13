@@ -404,6 +404,43 @@ for $\tau' \ge 3\sigma - 1$, and that
 for $4\sigma - 2 \le \tau' \le 3\sigma - 1$. The treatment is analogous to before, so we omit the proof.
 \end{proof}
 
+\begin{theorem}\label{imp-energy-bound1}
+For $2/3 \le \sigma \le 3/4$, one has
+\begin{align*}
+\A^*(\sigma) &\le \frac{10 - 11\sigma}{(2 - \sigma)(1 - \sigma)}, && \frac{2}{3} \le \sigma \le \frac{5}{7},\\
+\A^*(\sigma) &\le \frac{3(25 - 27\sigma)}{8(2 - \sigma)(1 - \sigma)}, && \frac{5}{7} \le \sigma \le \frac{315}{433},\\
+\A^*(\sigma) &\le \frac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}, && \frac{315}{433} \le \sigma \le \frac{3}{4}.
+\end{align*}
+\end{theorem}
+
+\derived
+\code{prove_heath_brown_guth_maynard_energy_estimate()}
+
+\begin{proof}\uses{zeroe-large-cor-0, l2-mvt, hbt, hb-energy-simp, gm-3, power-energy}
+Take $\tau_0=2$ in Corollary \ref{zeroe-large-cor-0}. The $\LV^*_{\zeta}$ supremum is then empty, so it remains to bound $\rho^*/\tau$ for $(\sigma,\tau,\rho,\rho^*,s)\in\Energy$ with $2\leq\tau\leq4$. The relevant large-value-energy region is obtained by intersecting the $L^2$ large-value consequence from \Cref{l2-mvt}, the Heath--Brown regions \Cref{hbt,hb-energy-simp}, the third Guth--Maynard energy relation \Cref{gm-3}, and their $k=2,3,4$ power transforms from \Cref{power-energy}. Starting from the $L^2$ estimate and Heath--Brown region 2b, adding either \Cref{hbt} or \Cref{gm-3} alone is insufficient; the claimed bounds arise when both are included in the full intersection.
+
+Exact polyhedral elimination of this intersection, as implemented by \code{prove_heath_brown_guth_maynard_energy_estimate()}, gives the three bounds in the statement. The first two transition profiles can be seen explicitly. They share
+\[
+\tau=2(2-\sigma), \qquad \rho=6(1-\sigma),
+\]
+while the two $k=2$ branches of the third Guth--Maynard energy relation give respectively
+\[
+\rho^*=2(10-11\sigma), \qquad \rho^*=\frac{3(25-27\sigma)}{4}.
+\]
+Their difference is $(7\sigma-5)/4$, so they cross exactly at $\sigma=5/7$. Consequently the corresponding values of $\rho^*/\tau$ are
+\[
+\frac{10-11\sigma}{2-\sigma}
+\qquad\text{and}\qquad
+\frac{3(25-27\sigma)}{8(2-\sigma)}.
+\]
+The second and third pieces meet because
+\[
+\frac{3(25-27\sigma)}{8(2-\sigma)}
+=\frac{2(45-44\sigma)}{2\sigma+15}
+\]
+at $\sigma=315/433$. These extremal profiles explain the two transition points; the upper bounds themselves follow from the exact calculation using the full intersection described above.
+\end{proof}
+
 Using Theorem \ref{guth-maynard-lvt}, it is possible to obtain improved energy estimates near $\sigma = 3/4$, which are given by the next two theorems.
 
 \begin{theorem}\label{imp-energy-bound2}
@@ -1127,9 +1164,11 @@ Table \ref{zero-density-energy-estimates-table} records the sharpest known uncon
     \hline
     $\dfrac{10 - 11\sigma}{(2 - \sigma)(1 - \sigma)}$ & $\dfrac{1}{2} \leq \sigma \le \dfrac{2}{3} = 0.6666\ldots$ & Theorem \ref{hb-energy-bound}\\
     \hline
-    $\dfrac{18 - 19\sigma}{(4 - 2\sigma)(1 - \sigma)}$ & $\dfrac{2}{3} \leq \sigma \le \dfrac{7}{10} = 0.7$ & Theorem \ref{hb-energy-bound}\\
+    $\dfrac{10 - 11\sigma}{(2 - \sigma)(1 - \sigma)}$ & $\dfrac{2}{3} \leq \sigma \le \dfrac{5}{7} = 0.7142\ldots$ & Theorem \ref{imp-energy-bound1}\\
     \hline
-    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{7}{10} \leq \sigma \le \dfrac{539 - \sqrt{42121}}{460} = 0.7255\ldots$ & Theorem \ref{imp-energy-bound2}\\
+    $\dfrac{3(25 - 27\sigma)}{8(2 - \sigma)(1 - \sigma)}$ & $\dfrac{5}{7} \leq \sigma \le \dfrac{626 - \sqrt{3301}}{785} = 0.7242\ldots$ & Theorem \ref{imp-energy-bound1}\\
+    \hline
+    $\dfrac{5(18 - 19\sigma)}{2(5\sigma + 3)(1 - \sigma)}$ & $\dfrac{626 - \sqrt{3301}}{785} \leq \sigma \le \dfrac{539 - \sqrt{42121}}{460} = 0.7255\ldots$ & Theorem \ref{imp-energy-bound2}\\
     \hline
     $\dfrac{2(45 - 44\sigma)}{(2\sigma + 15)(1 - \sigma)}$ & $\dfrac{539 - \sqrt{42121}}{460} \leq \sigma \le \dfrac{165}{226} = 0.7300\ldots$ & Theorem \ref{imp-energy-bound2}\\
     \hline
