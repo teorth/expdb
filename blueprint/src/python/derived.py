@@ -1125,34 +1125,17 @@ def prove_heath_brown_guth_maynard_energy_estimate():
     for k in range(2, 5):
         hypotheses.add_hypothesis(ad.get_raise_to_power_hypothesis(k))
 
+    # Add classical and literature Large value estimates
     hypotheses.add_hypothesis(lv.large_value_estimate_L2)
+    hypotheses.add_hypothesis(literature.find_hypothesis(name="Heath-Brown large value energy region 2a"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(name="Heath-Brown large value energy region 2b"))
+    hypotheses.add_hypothesis(literature.find_hypothesis(name="Guth--Maynard large value energy region 3"))
 
-    literature_names = (
-        "Heath-Brown large value energy region 2a",
-        "Heath-Brown large value energy region 2b",
-        "Guth--Maynard large value energy region 3",
-    )
-    for name in literature_names:
-        matches = [h for h in literature if h.name == name]
-        if len(matches) != 1:
-            raise ValueError(
-                f"Expected exactly one literature hypothesis named {name!r}, "
-                f"found {len(matches)}"
-            )
-        hypotheses.add_hypothesis(matches[0])
-
+    # Convert all large value estimates -> large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=False))
 
-    tau0 = Affine(
-        0,
-        2,
-        Interval(frac(2, 3), frac(3, 4))
-    )
-    hs = ze.lver_to_energy_bound(
-        hypotheses,
-        tau0,
-        debug=False
-    )
+    tau0 = Affine(0, 2, Interval(frac(2,3), frac(3,4)))
+    hs = ze.lver_to_energy_bound(hypotheses, tau0, debug=False)
     for h in hs:
         print(h.data)
     return hs

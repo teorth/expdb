@@ -404,6 +404,8 @@ for $\tau' \ge 3\sigma - 1$, and that
 for $4\sigma - 2 \le \tau' \le 3\sigma - 1$. The treatment is analogous to before, so we omit the proof.
 \end{proof}
 
+Combining the Heath--Brown relations with the third Guth--Maynard relation (Lemma \ref{gm-3}) improves Theorem \ref{hb-energy-bound} in the range $2/3 \le \sigma \le 3/4$.
+
 \begin{theorem}\label{imp-energy-bound1}
 For $2/3 \le \sigma \le 3/4$, one has
 \begin{align*}
@@ -417,7 +419,7 @@ For $2/3 \le \sigma \le 3/4$, one has
 \code{prove_heath_brown_guth_maynard_energy_estimate()}
 
 \begin{proof}\uses{zeroe-large-cor-0, l2-mvt, hbt, hb-energy-simp, gm-3, power-energy}
-Take $\tau_0=2$ in Corollary \ref{zeroe-large-cor-0}. The $\LV^*_{\zeta}$ supremum is then empty, so it remains to bound $\rho^*/\tau$ for $(\sigma,\tau,\rho,\rho^*,s)\in\Energy$ with $2\leq\tau\leq4$. The relevant large-value-energy region is obtained by intersecting the $L^2$ large-value consequence from \Cref{l2-mvt}, the Heath--Brown regions \Cref{hbt,hb-energy-simp}, the third Guth--Maynard energy relation \Cref{gm-3}, and their $k=2,3,4$ power transforms from \Cref{power-energy}. Starting from the $L^2$ estimate and Heath--Brown region 2b, adding either \Cref{hbt} or \Cref{gm-3} alone is insufficient; the claimed bounds arise when both are included in the full intersection.
+Take $\tau_0=2$ in Corollary \ref{zeroe-large-cor-0}. The $\LV^*_{\zeta}$ supremum is now trivial, so it remains to bound $\rho^*/\tau$ for $(\sigma,\tau,\rho,\rho^*,s)\in\Energy$ with $2\leq\tau\leq4$. The relevant large-value-energy region is obtained by intersecting the $L^2$ large-value consequence from \Cref{l2-mvt}, the Heath--Brown regions \Cref{hbt,hb-energy-simp}, the third Guth--Maynard energy relation \Cref{gm-3}, and their $k=2,3,4$ power transforms from \Cref{power-energy}. Starting from the $L^2$ estimate and Heath--Brown region 2b, adding either \Cref{hbt} or \Cref{gm-3} alone is insufficient; the claimed bounds arise when both are included in the full intersection.
 
 Exact polyhedral elimination of this intersection, as implemented by \code{prove_heath_brown_guth_maynard_energy_estimate()}, gives the three bounds in the statement. The first two transition profiles can be seen explicitly. They share
 \[
