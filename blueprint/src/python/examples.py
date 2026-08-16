@@ -498,37 +498,13 @@ def zero_density_energy_examples():
     # Convert all zeta large value estimates -> zeta large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    # tau_0 as a piecewise affine function
+    # tau_0 as an affine function.  lver_to_energy_bound computes the
+    # LV* and LV_zeta* regions over the tau0 <= tau <= 2 tau0 and
+    # 2 <= tau <= tau0 domains itself.
     tau0 = Affine(0, 5, Interval(frac(3,4), 1))
-    sigma_interval = tau0.domain
-
-    # domain representing tau0 <= tau <= 2 tau0
-    LVER_domain = Region.from_polytope(
-        Polytope([
-            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
-            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
-            [-tau0.c, -tau0.m, 1],       # tau >= tau0 = m sigma + c
-            [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
-        ])
-    )
-
-    # Compute the feasible region for LV*(s, t) as a 3-dimensional
-    # polytope for a range of sigma
-    LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
-
-    # domain representing 2 <= tau <= tau0
-    LVER_zeta_domain = Region.from_polytope(
-        Polytope([
-            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
-            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
-            [-2, 0, 1],                  # tau0 >= 2
-            [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
-        ])
-    )
-
-    # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
-    LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
-    bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
+    bounds = ze.lver_to_energy_bound(hypotheses, tau0)
+    for b in bounds:
+        print(b.data)
 
 # example using Lemma 6.7
 def beta_to_mu_example():
