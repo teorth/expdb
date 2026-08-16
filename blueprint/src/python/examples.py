@@ -619,4 +619,3 @@ def all_examples():
     # prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 #all_examples()
-beta_bound_examples2()
