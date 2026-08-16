@@ -617,6 +617,9 @@ def add_literature_bounds_mu():
     literature.add_hypotheses(
         [
             # Bounds on the critical line
+            literature_bound_mu(
+                frac(1, 2), frac(1, 6), rm.get("hardy_littlewood_1923")
+            ),
             literature_bound_mu(frac(1, 2), frac(193, 988), rm.get("walfisz_1924")),
             literature_bound_mu(
                 frac(1, 2), frac(27, 164), rm.get("titchmarsh_van_1931")
