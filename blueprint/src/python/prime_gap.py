@@ -7,6 +7,37 @@ import zero_density_estimate as zd
 import zero_density_energy_estimate as ze
 import sympy
 
+#: Anything below this in absolute value counts as zero imaginary part.  A real
+#: root of a cubic is often returned in the casus irreducibilis form, i.e. as a
+#: sum of complex radicals, so an exactly-zero imaginary part cannot be relied on.
+_IMAG_TOL = 1e-9
+
+
+def _real_value(expr, x, p):
+    """The value of `expr` at `x = p` as a float, discarding a numerical zero
+    imaginary part.  float() alone raises on a real root written with complex
+    radicals."""
+    v = complex(sympy.N(expr.subs(x, p)))
+    if abs(v.imag) > _IMAG_TOL:
+        raise ValueError(f"expected a real value at x = {p}, got {v}")
+    return v.real
+
+
+def _critical_points(expr, x, interval):
+    """The stationary points of `expr` lying in `interval`, together with its
+    endpoints.  Roots whose realness sympy cannot decide symbolically are kept
+    when they evaluate to a real number."""
+    pts = set()
+    for p in sympy.solve(sympy.diff(expr, x), x):
+        v = complex(sympy.N(p))
+        if abs(v.imag) > _IMAG_TOL:
+            continue
+        if interval.contains(v.real):
+            pts.add(p)
+    pts.update([interval.x0, interval.x1])
+    return pts
+
+
 # Compute the best estimate of \theta_{gap, 2} using Proposition 15.9
 def compute_gap2(hypotheses, debug=False):
     if not isinstance(hypotheses, Hypothesis_Set):
@@ -47,33 +78,30 @@ def compute_gap2(hypotheses, debug=False):
         beta = 4 * x - 2 + (B * (1 - x) - 1) / A
 
         # Find all critical points and evaluate alpha at each
-        statpts = sympy.solve(sympy.diff(alpha, x))
-        statpts = set(p for p in statpts if p.is_real and interval.contains(p))
-        statpts.update([interval.x0, interval.x1])
-        sup_alpha = max(float(alpha.subs(x, p)) for p in statpts)
+        statpts = _critical_points(alpha, x, interval)
+        sup_alpha = max(_real_value(alpha, x, p) for p in statpts)
         if debug:
             print("alpha -------------------------------------------------")
             for p in statpts:
-                print(p, float(p), alpha.subs(x, p), float(alpha.subs(x, p)))
+                print(p, _real_value(x, x, p), alpha.subs(x, p), _real_value(alpha, x, p))
 
         # Do the same for beta
-        statpts = sympy.solve(sympy.diff(beta, x))
-        statpts = set(p for p in statpts if p.is_real and interval.contains(p))
-        statpts.update([interval.x0, interval.x1])
-        sup_beta = max(float(beta.subs(x, p)) for p in statpts)
+        statpts = _critical_points(beta, x, interval)
+        sup_beta = max(_real_value(beta, x, p) for p in statpts)
         if debug:
             print("beta --------------------------------------------------")
             for p in statpts:
-                print(p, float(p), beta.subs(x, p), float(beta.subs(x, p)))
+                print(p, _real_value(x, x, p), beta.subs(x, p), _real_value(beta, x, p))
 
         print(interval, max(sup_alpha, sup_beta), alpha.simplify(), beta.simplify())
 
 
-def prime_excep(hypotheses, theta, DISCRETIZATION=100):
+def prime_excep(hypotheses, DISCRETIZATION=100):
   """
   Bound the exponent mu_PNT(theta) for the number of exceptions to the prime number theorem
-  in short intervals [x,x+x^theta], using the inequality provided by Gafni-Tao.  This computation is currently
-  numerical with a discretization error; a future project would be to perform this computation symbolically.
+  in short intervals [x,x+x^theta], using the inequality provided by Gafni-Tao, and plot the
+  bound over theta.  This computation is currently numerical with a discretization error; a
+  future project would be to perform this computation symbolically.
   """
   if not isinstance(hypotheses, Hypothesis_Set):
       raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")

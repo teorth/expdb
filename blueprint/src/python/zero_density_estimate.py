@@ -638,6 +638,22 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 
         print(s, argmin, Abound)
 
+#: The exponent pairs found by the numerical optimisation in
+#: approx_bourgain_ep_to_zd.  Used when the caller supplies neither an explicit
+#: list of pairs nor a hypothesis set to compute the current hull from.
+BOURGAIN_OPTIMAL_EXP_PAIRS = [
+    (frac(11, 85), frac(59, 85)),
+    (frac(391, 4595), frac(3461, 4595)),
+    (frac(2779, 38033), frac(58699, 76066)),
+    (frac(89, 1282), frac(997, 1282)),
+    (frac(652397, 9713986), frac(7599781, 9713986)),
+    (frac(2371, 43205), frac(280013, 345640)),
+    (frac(9, 217), frac(1461, 1736)),
+    (frac(10769, 351096), frac(609317, 702192)),
+    (frac(89, 3478), frac(15327, 17390)),
+    (frac(1, 100), frac(14, 15)),
+]
+
 # Computes the zero-density estimate
 #
 # A(s) \leq 4k/(2(1 + k)s - 1 - l)   (s > s0)
@@ -649,9 +665,10 @@ def approx_bourgain_ep_to_zd(exp_pairs):
 def bourgain_ep_to_zd(hypotheses=None, exp_pairs=None):
 
     # --- Determine which pairs to use ---
+    if exp_pairs is None and hypotheses is None:
+        exp_pairs = BOURGAIN_OPTIMAL_EXP_PAIRS
+
     if exp_pairs is None:
-        if hypotheses is None:
-            raise ValueError("Must supply either hypotheses or exp_pairs.")
 
         # Dynamically compute the current exponent pair hull
         hypotheses.add_hypotheses(
