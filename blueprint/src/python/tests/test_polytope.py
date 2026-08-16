@@ -259,7 +259,10 @@ def run_union_test():
         ])
     assert Polytope.try_union([p1, p2]) == union
 
-    # Another test case - with a vertex at infinity (this fails)
+    # Another test case - with a vertex at infinity.  try_union decides
+    # containment from the vertices alone, so it cannot see extreme rays and
+    # reports an unbounded input as unmergeable rather than returning a wrong
+    # envelope.
     p1 = Polytope([
         [18, -22, 0],
         [12, -12, -1],
@@ -274,7 +277,7 @@ def run_union_test():
         [12, -12, -1],
         [3, 0, -1]
         ])
-    U = Polytope.try_union([p1, p2])
+    assert Polytope.try_union([p1, p2]) is None
 
     p1 = Polytope([
         [-3, 0, 2],
@@ -307,18 +310,14 @@ def run_union_test():
     long_line = Polytope.rect((frac(1,2), frac(1,2)), (-1, 2))
     assert Polytope.try_union([square, long_line]) is None
 
-    # Unbounded inputs must be rejected: the union algorithm only inspects
+    # Unbounded inputs are unmergeable: the union algorithm only inspects
     # vertices, so extreme rays would otherwise yield a wrong envelope.
     half_strip = Polytope([
         [0, 1, 0],   # x >= 0
         [0, 0, 1],   # y >= 0
         [-1, 0, 1],  # y <= 1
     ])
-    try:
-        Polytope.try_union([half_strip, square])
-        assert False, "expected ValueError for infinite polytope"
-    except ValueError as e:
-        assert "finite polytopes" in str(e)
+    assert Polytope.try_union([half_strip, square]) is None
 
 def run_union_3d_test():
     # Higher dimensional polytope test
