@@ -69,11 +69,12 @@ def compute_gap2(hypotheses, debug=False):
         print(interval, max(sup_alpha, sup_beta), alpha.simplify(), beta.simplify())
 
 
-def prime_excep(hypotheses, theta, DISCRETIZATION=100):
+def prime_excep(hypotheses, DISCRETIZATION=100):
   """
   Bound the exponent mu_PNT(theta) for the number of exceptions to the prime number theorem
-  in short intervals [x,x+x^theta], using the inequality provided by Gafni-Tao.  This computation is currently
-  numerical with a discretization error; a future project would be to perform this computation symbolically.
+  in short intervals [x,x+x^theta], using the inequality provided by Gafni-Tao, and plot the
+  bound over theta.  This computation is currently numerical with a discretization error; a
+  future project would be to perform this computation symbolically.
   """
   if not isinstance(hypotheses, Hypothesis_Set):
       raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
