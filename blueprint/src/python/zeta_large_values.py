@@ -13,21 +13,25 @@ from region import Region, Region_Type
 
 
 # Returns the trivial zeta large value estimates:
-# LV_zeta(s, t) \leq t for 1/2 \leq \s \leq 1, t \geq 0
+# LV_zeta(s, t) \leq t for 1/2 \leq \s \leq 1, t \geq 2
 def get_trivial_zlv():
-    # Trivial estimate
-    domain = Polytope(
-        [
-            [-frac(1, 2), 1, 0],  # \sigma > 1/2
-            [1, -1, 0],  # \sigma <= 1
-            [-2, 0, 1],  # \tau >= 2
-            [Constants.TAU_UPPER_LIMIT, 0, -1],  # \tau <= some large number
-        ]
+    # Trivial estimate, as a region of feasible (\sigma, \tau, \rho)
+    region = Region.from_polytope(
+        Polytope(
+            [
+                [0, 0, 1, -1],          # \rho <= \tau
+                [0, 0, 0, 1],           # \rho >= 0
+                [-frac(1, 2), 1, 0, 0], # \sigma > 1/2
+                [1, -1, 0, 0],          # \sigma <= 1
+                [-2, 0, 1, 0],          # \tau >= 2
+                [Constants.TAU_UPPER_LIMIT, 0, -1, 0],  # \tau <= some large number
+            ]
+        )
     )
     trivial = Hypothesis(
         "Trivial zeta large value estimate",
         "Zeta large value estimate",
-        lv.Large_Value_Estimate(Piecewise([Affine2([0, 0, 1], domain)])),
+        lv.Large_Value_Estimate(region, repr="ρ <= τ"),
         "Trivial",
         Reference.trivial(),
     )
