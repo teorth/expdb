@@ -212,7 +212,8 @@ def beta_bound_examples2():
     hs.add_hypotheses(compute_exp_pairs(hs, search_depth=1, prune=True))
     hs.add_hypotheses(exponent_pairs_to_beta_bounds(hs))
     hs.add_hypotheses(compute_best_beta_bounds(hs))
-    hs.add_hypotheses(beta_bounds_to_exponent_pairs(hs))
+    exp_pairs = beta_bounds_to_exponent_pairs(hs)
+    hs.add_hypotheses(exp_pairs)
     old_bounds = compute_best_beta_bounds(hs)
 
     # Apply Lemma 4.6
@@ -220,7 +221,6 @@ def beta_bound_examples2():
     add_beta_bound(hs, newBounds, Reference.make("ANTEDB Lemma 4.6", 2025))
 
     hs.add_hypotheses(compute_best_beta_bounds(hs))
-    new_exp_pairs = beta_bounds_to_exponent_pairs(hs)
     new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hs) if not(newPair in exp_pairs)]
 
     if len(new_exp_pairs) > 0:
@@ -239,6 +239,7 @@ def beta_bound_examples2():
     for P in Ps:
         print(P)
 
+    bounds = compute_best_beta_bounds(hs)
     #display_beta_bounds(bounds)
     display_two_sets_of_beta_bounds(old_bounds, bounds)
 
@@ -618,4 +619,3 @@ def all_examples():
     # prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 #all_examples()
-beta_bound_examples2()
