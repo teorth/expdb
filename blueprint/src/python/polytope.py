@@ -247,7 +247,8 @@ class Polytope:
     #
     # This implementation only works with finite polytopes. Extreme rays are
     # ignored by the vertex-only feasibility checks below, so unbounded inputs
-    # previously produced silently incorrect envelopes; reject them instead.
+    # would produce silently incorrect envelopes; report them as not a polytope
+    # instead, which leaves the caller with the pieces it started with.
     def try_union(polys):
         if not isinstance(polys, list) or len(polys) == 0:
             return None
@@ -259,10 +260,7 @@ class Polytope:
             if p.rays is None:
                 p.compute_V_rep()
             if p.rays:
-                raise ValueError(
-                    "Polytope.try_union only supports finite polytopes "
-                    "(an input has extreme rays)"
-                )
+                return None
 
         # Performance optimisation: see if intersection is nonempty first. This
         # is relative cheap compared to the full union operation, since it only
