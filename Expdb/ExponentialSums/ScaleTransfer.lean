@@ -1,6 +1,6 @@
 module
 
-public import Expdb.ExponentialSums.Oscillatory
+public import Expdb.ExponentialSums.FixedExponentialSum
 public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Analysis.Fourier.ZMod
 

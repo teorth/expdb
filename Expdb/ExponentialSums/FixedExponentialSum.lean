@@ -6,10 +6,12 @@ public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
-# Oscillatory factors and fixed-parameter exponential sums
+# Fixed-parameter exponential sums
 
-This module contains the fixed-parameter vocabulary shared by the asymptotic,
-non-asymptotic, and analytic exponential-sum estimates.
+Defines the oscillatory factor `e(T F(x / N))`, the corresponding finite
+exponential sum, and basic estimates used by the project's analytic and
+asymptotic results. It also packages the scale conditions required for
+Euler–Maclaurin estimates.
 -/
 
 @[expose] public section

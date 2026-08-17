@@ -2,7 +2,7 @@ module
 
 public import Expdb.Basic.PowerAsymptotics
 public import Expdb.ExponentialSums.LogPhase
-public import Expdb.ExponentialSums.Oscillatory
+public import Expdb.ExponentialSums.FixedExponentialSum
 public import Mathlib.Order.Interval.Finset.Nat
 
 /-!

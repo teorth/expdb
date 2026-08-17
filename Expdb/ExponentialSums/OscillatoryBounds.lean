@@ -1,6 +1,6 @@
 module
 
-public import Expdb.ExponentialSums.Oscillatory
+public import Expdb.ExponentialSums.FixedExponentialSum
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 

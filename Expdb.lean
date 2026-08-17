@@ -4,7 +4,7 @@ public import Expdb.Basic.AutomaticUniformity
 public import Expdb.Basic.PowerAsymptotics
 public import Expdb.ExponentialSums.ExponentSumGrowthNonAsymptotic
 public import Expdb.ExponentialSums.LogPhase
-public import Expdb.ExponentialSums.Oscillatory
+public import Expdb.ExponentialSums.FixedExponentialSum
 public import Expdb.ExponentialSums.OscillatoryBounds
 public import Expdb.ExponentialSums.ScaleTransfer
 public import Expdb.ExponentialSums.TrivialBounds
