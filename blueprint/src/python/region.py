@@ -432,7 +432,30 @@ class Region:
             return A
 
         if self.region_type == Region_Type.UNION:
-            raise NotImplementedError(self.region_type) # TODO: implement this
+            # The children may overlap, so each new piece is trimmed against the
+            # pieces already accepted: Polytope.set_minus splits A \\ B into
+            # pairwise disjoint parts, so the accumulated list stays disjoint and
+            # its union is unchanged.
+            result = []
+            for r in self.child:
+                for p in r._as_disjoint_union_poly(
+                    verbose=verbose,
+                    track_dependencies=track_dependencies
+                ):
+                    parts = [p]
+                    for q in result:
+                        trimmed = []
+                        for part in parts:
+                            pieces = part.set_minus(q)
+                            if track_dependencies:
+                                for piece in pieces:
+                                    piece.dependencies = part.dependencies
+                            trimmed.extend(pieces)
+                        parts = trimmed
+                        if not parts:
+                            break
+                    result.extend(parts)
+            return result
         if self.region_type == Region_Type.DISJOINT_UNION:
             result = []
             for r in self.child:
