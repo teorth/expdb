@@ -9,8 +9,10 @@ import Mathlib.Data.Nat.Cast.Order.Field
 /-!
 # Finite scale transfer for exponential sums
 
-Concrete finite Fourier and residue-class identities used to transfer exponential-sum estimates
-between scales.
+This module gives two ways to rewrite an exponential sum at a different length scale. Finite
+Fourier inversion dilates a sum from scale `N` to `q * N`, while decomposition into residue
+classes produces sums at scales approximately `N / q`. These identities are used to compare
+the exponential-sum growth exponent at different values of `α`.
 -/
 
 @[expose] public section
