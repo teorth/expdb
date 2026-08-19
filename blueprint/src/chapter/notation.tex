@@ -39,7 +39,7 @@ We can develop other standard asymptotic notation in the natural fashion: given 
 A convenient property of this asymptotic formalism, analogous to the property of \emph{$\omega$-saturation} in nonstandard analysis, is that certain asymptotic bounds are automatically uniform in variable parameters.
 
 \begin{proposition}[Automatic uniformity]\label{auto}
-\lean{Expdb.automatic_uniformity_of_pointwise_bounded, Expdb.automatic_uniformity_of_pointwise_infinitesimal}
+\lean{Expdb.automatic_uniformity_of_choicewise_bounded, Expdb.automatic_uniformity_of_choicewise_infinitesimal}
 \leanok
 Let $E = E_{\ii}$ be a non-empty variable set, and let $f = f_{\ii}: E \to \C$ be a variable function.  \begin{itemize}
     \item[(i)] Suppose that $f(x)=O(1)$ for all (variable) $x \in E$.  Then after passing to a subsequence if necessary, the bound is uniform, that is to say, there exists a fixed $C$ such that $|f(x)| \leq C$ for all $x \in E$.

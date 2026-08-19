@@ -7,7 +7,7 @@ public import Expdb.Basic.Asymptotics
 
 This module formalizes the automatic uniformity results of the blueprint's Basic notation chapter
 (`notation-chapter`):
-pointwise boundedness or infinitesimality along every variable sequence can be made uniform
+choicewise boundedness or infinitesimality along every variable sequence can be made uniform
 after passing to a subsequence.
 -/
 
@@ -121,10 +121,10 @@ private lemma norm_extend_subsequence_apply
 /-- **Automatic uniform bound (blueprint `auto`, case (i)).**
     If f(x) = O(1) for every variable x ∈ E, then after passing to a
     subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
-theorem automatic_uniformity_of_pointwise_bounded
+theorem automatic_uniformity_of_choicewise_bounded
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
-    (hf : f.IsPointwiseBounded) :
+    (hf : f.IsChoicewiseBounded) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ C : ℝ, ∀ i, ∀ x : E (φ i),
     ‖f (φ i) x‖ ≤ C := by
@@ -139,7 +139,7 @@ theorem automatic_uniformity_of_pointwise_bounded
       exact ⟨i, hi, x, hx⟩
     obtain ⟨φ, hφ, x_bad, hx_bad⟩ := extract_bad_seq_i E f bad
     let y : ∀ j, E j := extend_subsequence E hE φ x_bad
-    -- Apply pointwise bound to y
+    -- Apply the choicewise bound to y
     obtain ⟨C_y, hC_y⟩ := hf y
     rw [Filter.eventually_atTop] at hC_y
     obtain ⟨j₀, hj₀⟩ := hC_y
@@ -167,10 +167,10 @@ theorem automatic_uniformity_of_pointwise_bounded
 /-- **Automatic uniform infinitesimal (blueprint `auto`, case (ii)).**
     If f(x) = o(1) for every variable x ∈ E, then after passing to a
     subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
-theorem automatic_uniformity_of_pointwise_infinitesimal
+theorem automatic_uniformity_of_choicewise_infinitesimal
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
-    (hf : f.IsPointwiseInfinitesimal) :
+    (hf : f.IsChoicewiseInfinitesimal) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ c : VariableObject ℝ, c.IsInfinitesimal ∧
     ∀ i, ∀ x : E (φ i),
@@ -209,11 +209,11 @@ theorem automatic_uniformity_of_pointwise_infinitesimal
 /-! ### Full-tail uniformity -/
 
 /-- Boundedness along every variable choice is equivalent to an eventual bound uniform over
-the original variable sets. This strengthens `automatic_uniformity_of_pointwise_bounded`. -/
-theorem VariableFunction.isPointwiseBounded_iff_eventually_uniform
+the original variable sets. This strengthens `automatic_uniformity_of_choicewise_bounded`. -/
+theorem VariableFunction.isChoicewiseBounded_iff_eventually_uniform
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
-    f.IsPointwiseBounded ↔
+    f.IsChoicewiseBounded ↔
       ∃ C : ℝ, ∀ᶠ i in atTop, ∀ x : E i, ‖f i x‖ ≤ C := by
   constructor
   · intro hf
@@ -241,11 +241,11 @@ theorem VariableFunction.isPointwiseBounded_iff_eventually_uniform
 
 /-- Infinitesimality along every variable choice is equivalent to convergence that is eventually
 uniform over the original variable sets. This strengthens
-`automatic_uniformity_of_pointwise_infinitesimal`. -/
-theorem VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+`automatic_uniformity_of_choicewise_infinitesimal`. -/
+theorem VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
     (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
-    f.IsPointwiseInfinitesimal ↔
+    f.IsChoicewiseInfinitesimal ↔
       ∀ ε : ℝ, 0 < ε →
         ∀ᶠ i in atTop, ∀ x : E i, ‖f i x‖ < ε := by
   constructor

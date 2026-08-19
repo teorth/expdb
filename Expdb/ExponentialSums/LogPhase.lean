@@ -6,8 +6,8 @@ public import Mathlib.Order.Interval.Finset.Nat
 
 import Mathlib.Analysis.Fourier.FourierTransformDeriv
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
 /-!
 # The logarithmic phase
@@ -34,8 +34,9 @@ model exponent one. -/
 theorem iteratedDerivWithin_log_eq_rpow_neg_one
     (p : ℕ) (u : phaseInterval) :
     iteratedDerivWithin (p + 1) Real.log phaseInterval u =
-      iteratedDerivWithin p (fun v : ℝ ↦ v ^ (-(1 : ℝ))) phaseInterval u := by
+      iteratedDerivWithin p (modelPhase 1) phaseInterval u := by
   have hu_pos : 0 < (u : ℝ) := lt_of_lt_of_le zero_lt_one u.property.1
+  rw [show modelPhase 1 = fun v : ℝ ↦ v ^ (-(1 : ℝ)) from rfl]
   have hunique : UniqueDiffOn ℝ phaseInterval :=
     uniqueDiffOn_Icc (by norm_num [phaseInterval])
   rw [iteratedDerivWithin_eq_iteratedDeriv hunique
@@ -58,8 +59,8 @@ theorem isModelPhaseFunction_log : IsModelPhaseFunction logPhase := by
       exact ne_of_gt (lt_of_lt_of_le zero_lt_one hu.1)
   · intro p u
     rw [VariableObject.IsInfinitesimal]
-    simp only [modelPhaseError, logPhase, iteratedDerivWithin_log_eq_rpow_neg_one, sub_self,
-      norm_zero]
+    simp only [modelPhaseError_apply, modelPhaseErrorAt, logPhase,
+      iteratedDerivWithin_log_eq_rpow_neg_one, sub_self, norm_zero]
     exact tendsto_const_nhds
 
 /-- On a dyadic interval, `log (n / N)` is `1 / (2 * N)`-separated. -/
@@ -117,64 +118,43 @@ theorem logPhase_integral_eq_mainTerm
     {N T : ℝ} (hN : 0 < N) :
     (∫ x in N..2 * N, (𝐞 (T * Real.log (x / N)) : ℂ)) =
       logPhaseMainTerm N T := by
-  let τ : ℂ := (2 * Real.pi : ℂ) * Complex.I
-  let v : ℝ → ℂ := fun x ↦ 𝐞 (T * Real.log (x / N))
-  let denom : ℂ := 1 + τ * T
-  let G : ℝ → ℂ := fun x ↦ x * v x / denom
-  have hdenom : denom ≠ 0 := by
-    intro h
-    have hre := congrArg Complex.re h
-    simp [denom, τ] at hre
-  have hv (x : ℝ) (hx : 0 < x) :
-      HasDerivAt v (τ * T / x * v x) x := by
-    have hdiv : HasDerivAt (fun y : ℝ ↦ y / N) (1 / N) x := by
-      simpa using (hasDerivAt_id x).div_const N
-    have hlog := (Real.hasDerivAt_log (div_pos hx hN).ne').comp x hdiv
-    have hinner : HasDerivAt (fun y ↦ T * Real.log (y / N)) (T / x) x := by
-      convert hlog.const_mul T using 1 <;>
-        first | rfl | field_simp [hN.ne', hx.ne']
-    have hchar' := (Real.hasDerivAt_fourierChar (T * Real.log (x / N))).scomp x hinner
-    dsimp only [v]
-    change HasDerivAt ((𝐞 · : ℝ → ℂ) ∘ fun y ↦ T * Real.log (y / N))
-      (τ * T / x * (𝐞 (T * Real.log (x / N)) : ℂ)) x
-    rw [show τ * T / x * (𝐞 (T * Real.log (x / N)) : ℂ) =
-        (T / x) • ((2 * Real.pi : ℂ) * Complex.I * 𝐞 (T * Real.log (x / N))) by
-      dsimp [τ]
-      simp only [Complex.ofReal_div]
-      ring]
-    exact hchar'
-  have hG (x : ℝ) (hx : 0 < x) : HasDerivAt G (v x) x := by
-    have hprod := (hasDerivAt_id x).ofReal_comp.mul (hv x hx)
-    have hquot := hprod.div_const denom
-    have hderivEq :
-        ((1 : ℂ) * v x + x * (τ * T / x * v x)) / denom = v x := by
-      apply (div_eq_iff hdenom).2
-      dsimp [denom, τ]
-      field_simp [hx.ne']
-    rw [← hderivEq]
-    simpa only [G, Pi.mul_apply, id_eq, Complex.ofReal_one] using hquot
-  have hvCont : ContinuousOn v (Set.uIcc N (2 * N)) := by
-    intro x hx
-    have hxIcc : x ∈ Set.Icc N (2 * N) := by
-      simpa [Set.uIcc_of_le (by linarith : N ≤ 2 * N)] using hx
-    exact (hv x (hN.trans_le hxIcc.1)).continuousAt.continuousWithinAt
-  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt
-    (a := N) (b := 2 * N) (f := G) (f' := v)
-    (fun x hx ↦ by
-      have hxIcc : x ∈ Set.Icc N (2 * N) := by
-        simpa [Set.uIcc_of_le (by linarith : N ≤ 2 * N)] using hx
-      exact hG x (hN.trans_le hxIcc.1)) hvCont.intervalIntegrable
-  have hformula : (∫ x in N..2 * N, v x) =
-      (N : ℂ) * (2 * 𝐞 (T * Real.log 2) - 1) / denom := by
-    rw [hFTC]
-    dsimp [G, v]
-    rw [show (2 * N) / N = 2 by field_simp [hN.ne'],
-      show N / N = 1 by field_simp [hN.ne'], Real.log_one]
-    simp only [mul_zero]
-    rw [show (𝐞 (0 : ℝ) : ℂ) = 1 by norm_num]
+  let r : ℂ := (2 * Real.pi : ℂ) * Complex.I * T
+  have hchar (u : ℝ) (hu : 0 < u) :
+      (𝐞 (T * Real.log u) : ℂ) = (u : ℂ) ^ r := by
+    rw [Real.fourierChar_apply,
+      Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hu.ne')]
+    rw [← Complex.ofReal_log hu.le]
+    congr 1
+    dsimp [r]
     push_cast
-    field_simp [hdenom]
-  simpa only [v, logPhaseMainTerm, denom, τ, mul_assoc] using hformula
+    ring
+  have hscale :
+      (∫ x in N..2 * N, (𝐞 (T * Real.log (x / N)) : ℂ)) =
+        (N : ℂ) * ∫ u in (1 : ℝ)..2, (𝐞 (T * Real.log u) : ℂ) := by
+    have h := intervalIntegral.smul_integral_comp_mul_left
+      (f := fun x : ℝ ↦ (𝐞 (T * Real.log (x / N)) : ℂ))
+      (a := (1 : ℝ)) (b := 2) N
+    rw [show N * (1 : ℝ) = N by ring, show N * 2 = 2 * N by ring] at h
+    rw [← h, Complex.real_smul]
+    refine congrArg (fun z : ℂ ↦ (N : ℂ) * z) ?_
+    apply intervalIntegral.integral_congr
+    intro u _
+    exact congrArg (fun y : ℝ ↦ (𝐞 (T * Real.log y) : ℂ))
+      (by field_simp [hN.ne'] : N * u / N = u)
+  rw [hscale]
+  have hint :
+      (∫ u in (1 : ℝ)..2, (𝐞 (T * Real.log u) : ℂ)) =
+        ((2 : ℂ) ^ (r + 1) - (1 : ℂ) ^ (r + 1)) / (r + 1) := by
+    rw [intervalIntegral.integral_congr_Ioo_of_le (by norm_num)
+      (fun u hu ↦ hchar u (by linarith [hu.1]))]
+    exact integral_cpow (Or.inl (by simp [r]))
+  rw [hint, Complex.one_cpow]
+  rw [Complex.cpow_add _ _ (by norm_num : (2 : ℂ) ≠ 0), Complex.cpow_one]
+  have htwo : (2 : ℂ) ^ r = (𝐞 (T * Real.log 2) : ℂ) :=
+    (hchar 2 (by norm_num)).symm
+  simp only [htwo]
+  dsimp [logPhaseMainTerm, r]
+  ring
 
 /-- The logarithmic main term has size comparable to `N / T`. -/
 theorem norm_logPhaseMainTerm_bounds

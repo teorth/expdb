@@ -1,10 +1,11 @@
 module
 
-public import Expdb.ExponentialSums.PhaseFunctions
+public import Expdb.ExponentialSums.FixedExponentialSum
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 
 import Expdb.Mathlib.EulerMaclaurin
+import Expdb.Mathlib.IteratedDeriv
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Fourier.FourierTransformDeriv
 import Mathlib.Analysis.Real.Pi.Bounds
@@ -13,9 +14,9 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 /-!
 # Oscillatory integral and exponential-sum bounds
 
-Calculus for the Fourier character and uniform estimates for functions of the form
-`x ↦ 𝐞 (T * F (x / N))`, including a first-derivative integral bound and
-Euler–Maclaurin comparisons between oscillatory sums and integrals.
+Calculus for the Fourier character and uniform estimates for `oscillatory F T N`, including a
+first-derivative integral bound and Euler–Maclaurin comparisons between oscillatory sums and
+integrals.
 -/
 
 @[expose] public section
@@ -56,44 +57,18 @@ theorem iteratedDeriv_fourierChar (n : ℕ) (x : ℝ) :
           (ENat.natCast_le_of_coe_top_le_withTop le_rfl n)), ih]
       ring
 
+/-- The norm of the `n`th derivative of the real Fourier character is exactly `(2π)ⁿ`. -/
+@[simp] theorem norm_iteratedDeriv_fourierChar (n : ℕ) (x : ℝ) :
+    ‖iteratedDeriv n (𝐞 · : ℝ → ℂ) x‖ = (2 * Real.pi) ^ n := by
+  rw [iteratedDeriv_fourierChar, norm_mul, norm_pow]
+  simp [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg Real.pi_pos.le]
+
 private lemma norm_iteratedDeriv_fourierChar_le
     {n k : ℕ} (hk : k ≤ n) (x : ℝ) :
     ‖iteratedDeriv k (𝐞 · : ℝ → ℂ) x‖ ≤ (2 * Real.pi + 1) ^ n := by
-  rw [iteratedDeriv_fourierChar, norm_mul, norm_pow]
-  have hcoeff : ‖(2 * Real.pi : ℂ) * Complex.I‖ = 2 * Real.pi := by
-    simp [Complex.norm_real, Real.norm_eq_abs, Real.pi_pos.le]
-  have hchar : ‖(𝐞 x : ℂ)‖ = 1 := by simp
-  rw [hcoeff, hchar, mul_one]
+  rw [norm_iteratedDeriv_fourierChar]
   exact (pow_le_pow_left₀ (by positivity) (by linarith) k).trans
     (pow_le_pow_right₀ (by linarith [Real.pi_pos]) hk)
-
-private lemma iteratedDerivWithin_comp_const_mul_of_mapsTo
-    {f : ℝ → ℝ} {s t : Set ℝ} {x c : ℝ} {n : ℕ}
-    (hf : ContDiffOn ℝ n f t) (hs : UniqueDiffOn ℝ s) (ht : UniqueDiffOn ℝ t)
-    (hx : x ∈ s) (hst : Set.MapsTo (c * ·) s t) :
-    iteratedDerivWithin n (fun y ↦ f (c * y)) s x =
-      c ^ n * iteratedDerivWithin n f t (c * x) := by
-  induction n generalizing x with
-  | zero => simp
-  | succ n ih =>
-      have hcx : c * x ∈ t := hst hx
-      have heq : Set.EqOn
-          (iteratedDerivWithin n (fun y ↦ f (c * y)) s)
-          (fun y ↦ c ^ n * iteratedDerivWithin n f t (c * y)) s :=
-        fun y hy ↦ ih hf.of_succ hy
-      have houter : DifferentiableWithinAt ℝ (iteratedDerivWithin n f t) t (c * x) :=
-        hf.differentiableOn_iteratedDerivWithin (Nat.cast_lt.mpr n.lt_succ_self) ht _ hcx
-      have hcomp : DifferentiableWithinAt ℝ
-          (fun y ↦ iteratedDerivWithin n f t (c * y)) s x :=
-        houter.comp x (by fun_prop) hst
-      rw [iteratedDerivWithin_succ,
-        derivWithin_congr heq (ih hf.of_succ hx),
-        derivWithin_const_mul _ hcomp, iteratedDerivWithin_succ,
-        ← Function.comp_def, derivWithin.scomp x houter (by fun_prop) hst,
-        derivWithin_const_mul _ differentiableWithinAt_id,
-        derivWithin_id' _ _ (hs.uniqueDiffWithinAt hx)]
-      simp only [smul_eq_mul, mul_one, pow_succ]
-      ring
 
 /-! ## Derivative bounds for oscillatory phases -/
 
@@ -103,9 +78,8 @@ theorem norm_iteratedDerivWithin_oscillatory_le
     (hF : ContDiffOn ℝ n F phaseInterval) (hs : UniqueDiffOn ℝ s)
     (hx : x ∈ s) (hmap : Set.MapsTo (N⁻¹ * ·) s phaseInterval)
     (hT : 1 ≤ T) (hN : 1 ≤ N) (hK : 1 ≤ K)
-    (hderiv : ∀ k : ℕ, 1 ≤ k → k ≤ n →
-      ∀ u ∈ phaseInterval, ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) :
-    ‖iteratedDerivWithin n (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) s x‖ ≤
+    (hderiv : HasPhaseDerivBound F n K) :
+    ‖iteratedDerivWithin n (oscillatory F T N) s x‖ ≤
       (n.factorial : ℝ) * (2 * Real.pi + 1) ^ n * (K * T / N) ^ n := by
   let q : ℝ → ℝ := fun y ↦ T * F (N⁻¹ * y)
   have hscale : ContDiffOn ℝ n (N⁻¹ * ·) s := by fun_prop
@@ -132,10 +106,13 @@ theorem norm_iteratedDerivWithin_oscillatory_le
       ‖iteratedFDerivWithin ℝ k q s x‖ ≤ (K * T / N) ^ k := by
     intro k hk hkn
     rw [norm_iteratedFDerivWithin_eq_norm_iteratedDerivWithin]
-    have hrescale := iteratedDerivWithin_comp_const_mul_of_mapsTo
-      (f := F) (c := N⁻¹) (n := k)
-      (hF.of_le (Nat.cast_le.mpr hkn)) hs
-      (uniqueDiffOn_Icc (by norm_num [phaseInterval])) hx hmap
+    have hrescale : iteratedDerivWithin k (fun y ↦ F (N⁻¹ * y)) s x =
+        N⁻¹ ^ k * iteratedDerivWithin k F phaseInterval (N⁻¹ * x) := by
+      simpa only [add_zero] using iteratedDerivWithin_comp_affine_of_mapsTo
+        (f := F) (c := N⁻¹) (d := 0) (n := k)
+        (hF.of_le (Nat.cast_le.mpr hkn)) hs
+        (uniqueDiffOn_Icc (by norm_num [phaseInterval])) hx
+        (by simpa only [add_zero] using hmap)
     have hqderiv : iteratedDerivWithin k q s x =
         T * N⁻¹ ^ k * iteratedDerivWithin k F phaseInterval (N⁻¹ * x) := by
       rw [show q = fun y ↦ T * F (N⁻¹ * y) by rfl,
@@ -159,6 +136,7 @@ theorem norm_iteratedDerivWithin_oscillatory_le
   rw [norm_iteratedFDerivWithin_eq_norm_iteratedDerivWithin] at hcomp
   change ‖iteratedDerivWithin n (fun y ↦ (𝐞 (q y) : ℂ)) s x‖ ≤
     (n.factorial : ℝ) * (2 * Real.pi + 1) ^ n * (K * T / N) ^ n at hcomp
+  rw [show oscillatory F T N = fun y ↦ (𝐞 (T * F (y / N)) : ℂ) from rfl]
   simpa only [q, div_eq_mul_inv, mul_comm N⁻¹] using hcomp
 
 /-- A smooth phase remains smooth after rescaling and composition with the Fourier character. -/
@@ -166,17 +144,17 @@ theorem contDiffOn_oscillatory
     {F : ℝ → ℝ} {s : Set ℝ} {T N : ℝ} {n : ℕ}
     (hF : ContDiffOn ℝ n F phaseInterval)
     (hmap : Set.MapsTo (N⁻¹ * ·) s phaseInterval) :
-    ContDiffOn ℝ n (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) s := by
+    ContDiffOn ℝ n (oscillatory F T N) s := by
   have hscale : ContDiffOn ℝ n (N⁻¹ * ·) s := by fun_prop
   have hFscale : ContDiffOn ℝ n (fun x ↦ F (N⁻¹ * x)) s := by
     change ContDiffOn ℝ n (F ∘ fun x ↦ N⁻¹ * x) s
     exact hF.comp hscale hmap
   have hinner : ContDiffOn ℝ n (fun x ↦ T * F (N⁻¹ * x)) s :=
     contDiffOn_const.mul hFscale
-  have heq : (fun x ↦ (𝐞 (T * F (x / N)) : ℂ)) =
+  have heq : oscillatory F T N =
       (𝐞 · : ℝ → ℂ) ∘ fun x ↦ T * F (N⁻¹ * x) := by
     funext x
-    simp only [Function.comp_apply, div_eq_mul_inv]
+    simp only [oscillatory, Function.comp_apply, div_eq_mul_inv]
     rw [mul_comm x N⁻¹]
   rw [heq]
   exact (contDiff_fourierChar.of_le
@@ -409,14 +387,14 @@ private lemma norm_oscillatory_sum_sub_integral_le
     (s : ℕ) {F : ℝ → ℝ} {T N K : ℝ} {a b : ℕ}
     (hab : a < b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K)
     (hF : ContDiffOn ℝ ∞ F phaseInterval)
-    (hderiv : ∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
-      ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K)
+    (hderiv : HasPhaseDerivBound F (s + 1) K)
     (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N)
-    (hratio : K * T / N ≤ 1)
-    (hremainder : N * (K * T / N) ^ (s + 1) ≤ 1) :
-    ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) -
-      ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤
+    (hscale : HasSmallEulerMaclaurinRemainder s T N K) :
+    ‖exponentialSumAt F T N a b -
+      ∫ x in (a : ℝ)..b, oscillatory F T N x‖ ≤
         oscillatoryErrorConstant s := by
+  obtain ⟨hratio, hremainder⟩ := hscale
+  rw [exponentialSumAt]
   have hNpos : 0 < N := zero_lt_one.trans_le hN
   have hrnonneg : 0 ≤ K * T / N := by positivity
   let interval : Set ℝ := Set.Icc (a : ℝ) (b : ℝ)
@@ -432,14 +410,14 @@ private lemma norm_oscillatory_sum_sub_integral_le
   let A : ℕ → ℝ := fun k ↦ (k.factorial : ℝ) * (2 * Real.pi + 1) ^ k
   have hosc (k : ℕ) (hk : 1 ≤ k) (hkS : k ≤ s + 1)
       (x : ℝ) (hx : x ∈ interval) :
-      ‖iteratedDerivWithin k (fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) interval x‖ ≤
+      ‖iteratedDerivWithin k (oscillatory F T N) interval x‖ ≤
         A k * (K * T / N) ^ k := by
     simpa only [A] using norm_iteratedDerivWithin_oscillatory_le
       (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl k))
       hunique hx hmap hT hN hK
       (fun q hq hqk u hu ↦ hderiv q hq (hqk.trans hkS) u hu)
   have hraw := EulerMaclaurin.norm_sum_Icc_nat_sub_integral_le
-    (f := fun y ↦ (𝐞 (T * F (y / N)) : ℂ)) (t := interval)
+    (f := oscillatory F T N) (t := interval)
     hab.le
     (contDiffOn_oscillatory
       (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl (s + 1))) hmap)
@@ -496,16 +474,15 @@ theorem exists_norm_oscillatory_sum_sub_integral_le (s : ℕ) :
       ∀ {F : ℝ → ℝ} {T N K : ℝ} {a b : ℕ},
         a < b → 1 ≤ N → 1 ≤ T → 1 ≤ K →
         ContDiffOn ℝ ∞ F phaseInterval →
-        (∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
-          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) →
+        HasPhaseDerivBound F (s + 1) K →
         N ≤ a → (b : ℝ) ≤ 2 * N →
-        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
-        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) -
-          ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤ C := by
+        HasSmallEulerMaclaurinRemainder s T N K →
+        ‖exponentialSumAt F T N a b -
+          ∫ x in (a : ℝ)..b, oscillatory F T N x‖ ≤ C := by
   refine ⟨oscillatoryErrorConstant s, one_le_oscillatoryErrorConstant s, ?_⟩
-  intro F T N K a b hab hN hT hK hF hderiv ha hb hratio hremainder
+  intro F T N K a b hab hN hT hK hF hderiv ha hb hscale
   exact norm_oscillatory_sum_sub_integral_le s hab hN hT hK hF hderiv
-    ha hb hratio hremainder
+    ha hb hscale
 
 private def oscillatorySumConstant (s : ℕ) (K c : ℝ) : ℝ :=
   oscillatoryErrorConstant s + (2 / c + K / c ^ 2)
@@ -522,21 +499,17 @@ private lemma norm_oscillatory_sum_le
     (s : ℕ) {F : ℝ → ℝ} {T N K c : ℝ} {a b : ℕ}
     (hs : 1 ≤ s) (hab : a ≤ b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K) (hc : 0 < c)
     (hF : ContDiffOn ℝ ∞ F phaseInterval)
-    (hfirst : ∀ u ∈ phaseInterval,
-      c ≤ iteratedDerivWithin 1 F phaseInterval u)
-    (hderiv : ∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
-      ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K)
+    (hfirst : HasPhaseFirstDerivLowerBound F c)
+    (hderiv : HasPhaseDerivBound F (s + 1) K)
     (ha : N ≤ a) (hb : (b : ℝ) ≤ 2 * N)
-    (hratio : K * T / N ≤ 1)
-    (hremainder : N * (K * T / N) ^ (s + 1) ≤ 1) :
-    ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
+    (hscale : HasSmallEulerMaclaurinRemainder s T N K) :
+    ‖exponentialSumAt F T N a b‖ ≤
       oscillatorySumConstant s K c * (1 + N / T) := by
   have hNpos : 0 < N := zero_lt_one.trans_le hN
   have hTpos : 0 < T := zero_lt_one.trans_le hT
   by_cases heq : a = b
   · subst b
-    simp only [Finset.Icc_self, Finset.sum_singleton]
-    rw [show ‖(𝐞 (T * F ((a : ℝ) / N)) : ℂ)‖ = 1 by simp]
+    rw [exponentialSumAt_self, norm_oscillatory]
     have hconst : 1 ≤ oscillatorySumConstant s K c := by
       dsimp only [oscillatorySumConstant]
       have hE := one_le_oscillatoryErrorConstant s
@@ -546,7 +519,7 @@ private lemma norm_oscillatory_sum_le
     nlinarith
   have hablt : a < b := hab.lt_of_ne heq
   have herr := norm_oscillatory_sum_sub_integral_le s hablt hN hT hK hF hderiv
-    ha hb hratio hremainder
+    ha hb hscale
   have hAB : (a : ℝ) / N ≤ (b : ℝ) / N :=
     div_le_div_of_nonneg_right (by exact_mod_cast hab) hNpos.le
   have hsub : Set.Icc ((a : ℝ) / N) ((b : ℝ) / N) ⊆ phaseInterval := by
@@ -558,21 +531,23 @@ private lemma norm_oscillatory_sum_le
     (hF.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hTpos hc
     (fun x hx ↦ hfirst x (hsub hx))
     (fun x hx ↦ hderiv 2 (by norm_num) (by omega) x (hsub hx))
-  have hscale := intervalIntegral.integral_comp_div
+  have hcomp := intervalIntegral.integral_comp_div
     (fun y : ℝ ↦ (𝐞 (T * F y) : ℂ)) (a := (a : ℝ)) (b := (b : ℝ)) hNpos.ne'
   have hint :
-      ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ ≤
+      ‖∫ x in (a : ℝ)..b, oscillatory F T N x‖ ≤
         (2 / c + K / c ^ 2) * (N / T) := by
-    rw [hscale, norm_smul, Real.norm_eq_abs, abs_of_pos hNpos]
+    rw [show (fun x ↦ oscillatory F T N x) =
+      fun x ↦ (𝐞 (T * F (x / N)) : ℂ) from rfl,
+      hcomp, norm_smul, Real.norm_eq_abs, abs_of_pos hNpos]
     calc
       N * ‖∫ x in (a : ℝ) / N..(b : ℝ) / N, (𝐞 (T * F x) : ℂ)‖ ≤
           N * ((2 / c + K / c ^ 2) / T) := by gcongr
       _ = (2 / c + K / c ^ 2) * (N / T) := by ring
   calc
-    ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
-        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)) -
-          ∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ +
-        ‖∫ x in (a : ℝ)..b, (𝐞 (T * F (x / N)) : ℂ)‖ :=
+    ‖exponentialSumAt F T N a b‖ ≤
+        ‖exponentialSumAt F T N a b -
+          ∫ x in (a : ℝ)..b, oscillatory F T N x‖ +
+        ‖∫ x in (a : ℝ)..b, oscillatory F T N x‖ :=
       norm_le_norm_sub_add _ _
     _ ≤ oscillatoryErrorConstant s + (2 / c + K / c ^ 2) * (N / T) := by
       gcongr
@@ -591,18 +566,17 @@ theorem exists_norm_oscillatory_sum_le
       ∀ {F : ℝ → ℝ} {T N : ℝ} {a b : ℕ},
         a ≤ b → 1 ≤ N → 1 ≤ T →
         ContDiffOn ℝ ∞ F phaseInterval →
-        (∀ u ∈ phaseInterval, c ≤ iteratedDerivWithin 1 F phaseInterval u) →
-        (∀ k : ℕ, 1 ≤ k → k ≤ s + 1 → ∀ u ∈ phaseInterval,
-          ‖iteratedDerivWithin k F phaseInterval u‖ ≤ K) →
+        HasPhaseFirstDerivLowerBound F c →
+        HasPhaseDerivBound F (s + 1) K →
         N ≤ a → (b : ℝ) ≤ 2 * N →
-        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
-        ‖∑ n ∈ Finset.Icc a b, (𝐞 (T * F ((n : ℝ) / N)) : ℂ)‖ ≤
+        HasSmallEulerMaclaurinRemainder s T N K →
+        ‖exponentialSumAt F T N a b‖ ≤
           C * (1 + N / T) := by
   refine ⟨oscillatorySumConstant s K c,
     one_le_oscillatorySumConstant s hK hc, ?_⟩
-  intro F T N a b hab hN hT hF hfirst hderiv ha hb hratio hremainder
+  intro F T N a b hab hN hT hF hfirst hderiv ha hb hscale
   exact norm_oscillatory_sum_le s hs hab hN hT hK hc hF hfirst hderiv
-    ha hb hratio hremainder
+    ha hb hscale
 
 
 end Expdb

@@ -20,7 +20,7 @@ These are represented by `VariableObject`. Their asymptotic properties are encod
 `VariableObject` namespace.
 
 Variable functions whose domain type may depend on the ambient parameter are represented by
-`VariableFunction`. Their pointwise asymptotic properties are encoded in the
+`VariableFunction`. Their choicewise asymptotic properties are encoded in the
 `VariableFunction` namespace.
 -/
 
@@ -59,6 +59,13 @@ theorem isUnbounded_iff_forall_eventually_norm_ge (X : VariableObject α) :
     X.IsUnbounded ↔ ∀ C : ℝ, ∀ᶠ i in atTop, C ≤ ‖X i‖ := by
   rw [IsUnbounded, tendsto_atTop]
 
+/-- For a nonnegative real variable object, being unbounded is the same as tending to
+infinity. -/
+theorem isUnbounded_iff_tendsto_atTop {X : VariableObject ℝ} (hX : ∀ i, 0 ≤ X i) :
+    X.IsUnbounded ↔ Tendsto X atTop atTop := by
+  rw [IsUnbounded]
+  exact tendsto_congr fun i ↦ by rw [Real.norm_eq_abs, abs_of_nonneg (hX i)]
+
 /-- A variable object whose norm tends to zero. -/
 def IsInfinitesimal (X : VariableObject α) : Prop :=
   Tendsto (fun i ↦ ‖X i‖) atTop (nhds 0)
@@ -80,13 +87,41 @@ variable {α : Type v} [SeminormedAddCommGroup α]
 
 /-- A variable function that is bounded along every variable choice.
 The choice may vary with the ambient index; it is not a fixed point of the domain. -/
-def IsPointwiseBounded (f : VariableFunction domain α) : Prop :=
+def IsChoicewiseBounded (f : VariableFunction domain α) : Prop :=
   ∀ x : ∀ i, domain i, VariableObject.IsBounded (fun i ↦ f i (x i))
 
 /-- A variable function that is infinitesimal along every variable choice.
 The choice may vary with the ambient index; it is not a fixed point of the domain. -/
-def IsPointwiseInfinitesimal (f : VariableFunction domain α) : Prop :=
+def IsChoicewiseInfinitesimal (f : VariableFunction domain α) : Prop :=
   ∀ x : ∀ i, domain i, VariableObject.IsInfinitesimal (fun i ↦ f i (x i))
+
+/-! An example from the blueprint that shows why choices must be allowed to vary.
+For `fᵢ(x) = x / (i + 1)`, every fixed input gives an infinitesimal variable object, but the
+variable choice `xᵢ = i + 1` makes `fᵢ(xᵢ) = 1`. -/
+
+example :
+    (∀ x : ℝ, VariableObject.IsInfinitesimal
+      (fun i : ℕ ↦ x / ((i : ℝ) + 1))) ∧
+    ¬ IsChoicewiseInfinitesimal
+      ((fun i (x : ℝ) ↦ x / ((i : ℝ) + 1)) :
+        VariableFunction (VariableObject.fixed ℝ) ℝ) := by
+  constructor
+  · intro x
+    rw [VariableObject.IsInfinitesimal]
+    have h := (tendsto_const_nhds (x := x)).mul
+      (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
+    simpa [div_eq_mul_inv] using h.norm
+  · intro h
+    have hx := h (fun i : ℕ ↦ (i : ℝ) + 1)
+    have hsmall :=
+      (VariableObject.isInfinitesimal_iff_forall_pos _).1 hx 1 zero_lt_one
+    rw [Filter.eventually_atTop] at hsmall
+    obtain ⟨N, hN⟩ := hsmall
+    have hcontra := hN N le_rfl
+    have hdenom : (N : ℝ) + 1 ≠ 0 := by positivity
+    change ‖((N : ℝ) + 1) / ((N : ℝ) + 1)‖ < 1 at hcontra
+    rw [div_self hdenom, norm_one] at hcontra
+    exact (lt_irrefl (1 : ℝ)) hcontra
 
 end VariableFunction
 

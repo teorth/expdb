@@ -108,10 +108,13 @@ As we shall see, the exponent pair conjecture is equivalent to the lower bound h
 \]
 Note the discontinuity at $1$.  Despite this, we have:
 
-\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv} $\beta$ is an upper semicontinuous function.
+\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv}
+\lean{Expdb.upperSemicontinuous_exponentSumGrowthExponent}\leanok
+$\beta$ is an upper semicontinuous function.
 \end{lemma}
 
-\begin{proof} Routine from the definition.
+\begin{proof}\leanok
+Routine from the definition.
 \end{proof}
 
 We record the classical bounds on $\beta$:
