@@ -52,6 +52,14 @@ Let $E = E_{\ii}$ be a non-empty variable set, and let $f = f_{\ii}: E \to \C$ b
 Now we prove (ii).  We can assume for each fixed $n$ that there exists $\ii_n$ in the ambient sequence such that $|f_{\ii}(x_{\ii})| \leq 1/n$ for all $\ii \geq \ii_n$ and $x_{\ii} \in E_{\ii}$, since if this were not the case one can construct an $x = x_{\ii} \in E$ such that $|f_{\ii}(x_{\ii})| \geq 1/n$ for $\ii$ sufficiently large, contradicting the hypothesis.  Again, we may take the $\ii_n$ to be increasing.  Restricting to this sequence, and writing $c_{\ii_n} := 1/n$, we see that $c=o(1)$ and $|f(x)| \leq c$ for all $x \in E$, as required.
 \end{proof}
 
+\begin{remark} The proof gives slightly more as we only need to discard finitely many initial indices rather than pass to a subsequence which may omit infinitely many indices. Therefore, in (i), there is a fixed $C$ such
+that $|f_{\ii}(x)|\leq C$ for all sufficiently large $\ii$ and all
+$x\in E_{\ii}$.  Similarly, in (ii), for every fixed $\eps>0$, one has
+$|f_{\ii}(x)|\leq\eps$ for all sufficiently large $\ii$ and all
+$x\in E_{\ii}$.  Conversely, these conclusions clearly imply the corresponding
+hypotheses of Proposition \ref{auto}.
+\end{remark}
+
 \begin{remark} It is important in Proposition \ref{auto} that the hypotheses in (i), (ii) are assumed for all \emph{variable} $x \in E$, rather than merely all \emph{fixed} $x \in E$.  For instance, let $E = \R$ and consider the variable function $f_{\ii}(x) := x/\ii$.  Then $f(x) = o(1)$ for any fixed $x \in E$, but the decay rate is not uniform, and we do not have $f(x) = o(1)$ for all variable $x \in E$ (e.g., $x_\ii := \ii$ is a counterexample).
 \end{remark}
 
