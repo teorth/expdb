@@ -158,7 +158,7 @@ private lemma isModelPhaseFunction_of_approximations
     IsModelPhaseFunction F := by
   refine ⟨fun i ↦ (happrox i).1, σ, hσ, ?_⟩
   intro p
-  apply (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+  apply (VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
     (VariableObject.fixed phaseInterval)
     (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
     (modelPhaseError F σ p)).2

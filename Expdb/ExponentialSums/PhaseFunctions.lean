@@ -127,24 +127,24 @@ structure IsModelPhaseFunctionWith
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ) (σ : ℝ) : Prop where
   /-- Every member of the family is smooth on the phase interval. -/
   isPhaseFunction : IsPhaseFunction F
-  /-- Every fixed-order model-phase error is pointwise infinitesimal. -/
-  error_isPointwiseInfinitesimal :
-    ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal
+  /-- Every fixed-order model-phase error is choicewise infinitesimal. -/
+  error_isChoicewiseInfinitesimal :
+    ∀ p : ℕ, (modelPhaseError F σ p).IsChoicewiseInfinitesimal
 
 /-- A variable phase function is a model phase function when, for some fixed `σ > 0`,
 the error between its `(p + 1)`st derivative and the `p`th derivative of `u ↦ u ^ (-σ)` is
-pointwise infinitesimal for every fixed derivative order `p`. -/
+choicewise infinitesimal for every fixed derivative order `p`. -/
 def IsModelPhaseFunction (F : VariableFunction (VariableObject.fixed ℝ) ℝ) : Prop :=
   IsPhaseFunction F ∧
     ∃ σ : ℝ, 0 < σ ∧
-      ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal
+      ∀ p : ℕ, (modelPhaseError F σ p).IsChoicewiseInfinitesimal
 
 /-- Fixed model-phase data with a positive reference exponent gives a model phase function. -/
 theorem IsModelPhaseFunctionWith.isModelPhaseFunction
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
     (hF : IsModelPhaseFunctionWith F σ) (hσ : 0 < σ) :
     IsModelPhaseFunction F :=
-  ⟨hF.isPhaseFunction, σ, hσ, hF.error_isPointwiseInfinitesimal⟩
+  ⟨hF.isPhaseFunction, σ, hσ, hF.error_isChoicewiseInfinitesimal⟩
 
 /-- A model phase function admits fixed-exponent model-phase data. -/
 theorem IsModelPhaseFunction.exists_with
@@ -206,7 +206,7 @@ theorem IsModelPhaseFunctionWith.add_infinitesimal_linear
   refine ⟨fun i ↦ (hF.isPhaseFunction i).add (by fun_prop), ?_⟩
   intro p u
   rw [VariableObject.IsInfinitesimal]
-  have herr := hF.error_isPointwiseInfinitesimal p u
+  have herr := hF.error_isChoicewiseInfinitesimal p u
   rw [VariableObject.IsInfinitesimal] at herr
   have hc' : Tendsto (fun i ↦ ‖c i‖) atTop (𝓝 0) := hc
   apply squeeze_zero' (g := fun i ↦
@@ -233,7 +233,7 @@ theorem IsModelPhaseFunctionWith.comp_affine_tendsto_id
   rw [VariableObject.IsInfinitesimal]
   let v : ∀ i, phaseInterval :=
     fun i ↦ ⟨c i * (u i : ℝ) + d i, hmap i (u i).property⟩
-  have herr := hF.error_isPointwiseInfinitesimal p v
+  have herr := hF.error_isChoicewiseInfinitesimal p v
   rw [VariableObject.IsInfinitesimal] at herr
   have hcsub : Tendsto (fun i ↦ c i - 1) atTop (𝓝 0) := by
     simpa using hc.sub
@@ -341,11 +341,11 @@ theorem IsModelPhaseFunctionWith.eventually_isApproximate
   have hp : ∀ p ∈ Finset.range (P + 1), ∀ᶠ i in atTop,
       ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
     fun p _ ↦
-      (VariableFunction.isPointwiseInfinitesimal_iff_forall_pos_uniform
+      (VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
         (VariableObject.fixed phaseInterval)
         (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
         (modelPhaseError F σ p)).1
-        (hF.error_isPointwiseInfinitesimal p) δ hδ
+        (hF.error_isChoicewiseInfinitesimal p) δ hδ
   have hall :
       ∀ᶠ i in atTop, ∀ p ∈ Finset.range (P + 1),
         ∀ u : phaseInterval, ‖modelPhaseError F σ p i u‖ < δ :=
@@ -355,11 +355,11 @@ theorem IsModelPhaseFunctionWith.eventually_isApproximate
   intro p hp' u
   exact (hi p (Finset.mem_range.mpr (by omega)) u).le
 
-private lemma modelPhaseError_sum_isPointwiseInfinitesimal
+private lemma modelPhaseError_sum_isChoicewiseInfinitesimal
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
-    (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsPointwiseInfinitesimal)
+    (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsChoicewiseInfinitesimal)
     (P : ℕ) :
-    VariableFunction.IsPointwiseInfinitesimal
+    VariableFunction.IsChoicewiseInfinitesimal
       ((fun i (u : phaseInterval) ↦
         ∑ p ∈ Finset.range (P + 1), ‖modelPhaseError F σ p i u‖) :
         VariableFunction (VariableObject.fixed phaseInterval) ℝ) := by
@@ -386,10 +386,10 @@ theorem IsModelPhaseFunction.exists_subsequence_uniform_error
   rcases hF with ⟨_, σ, hσ, herror⟩
   let g : VariableFunction (VariableObject.fixed phaseInterval) ℝ :=
     fun i u ↦ ∑ p ∈ Finset.range (P + 1), ‖modelPhaseError F σ p i u‖
-  have hg : g.IsPointwiseInfinitesimal :=
-    modelPhaseError_sum_isPointwiseInfinitesimal herror P
+  have hg : g.IsChoicewiseInfinitesimal :=
+    modelPhaseError_sum_isChoicewiseInfinitesimal herror P
   obtain ⟨φ, hφ, c, hc, hbound⟩ :=
-    automatic_uniformity_of_pointwise_infinitesimal
+    automatic_uniformity_of_choicewise_infinitesimal
       (E := VariableObject.fixed phaseInterval)
       (fun _ ↦ ⟨1, by simp [phaseInterval]⟩) g hg
   refine ⟨σ, hσ, φ, hφ, c, hc, ?_⟩
