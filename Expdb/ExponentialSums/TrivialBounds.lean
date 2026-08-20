@@ -38,18 +38,27 @@ namespace Expdb
 
 /-! ## Choosing the Euler–Maclaurin order -/
 
-private lemma exists_oscillatory_scale_parameters
-    {δ : ℝ} (hδ : 0 < δ) :
-    ∃ s : ℕ, ∃ q : ℝ,
-      1 ≤ s ∧ 0 < q ∧ q ≤ δ ∧
-      q * (s + 1 : ℕ) = δ / 2 ∧
-      1 + δ / 2 ≤ (s : ℝ) * δ := by
-  obtain ⟨s, hs⟩ := exists_nat_ge ((1 + δ / 2) / δ)
+/-- Parameters making the two Euler–Maclaurin remainder terms small at a power scale. -/
+private structure OscillatoryScaleParameters (δ : ℝ) where
+  order : ℕ
+  exponent : ℝ
+  one_le_order : 1 ≤ order
+  exponent_pos : 0 < exponent
+  exponent_le : exponent ≤ δ
+  exponent_mul_order_succ : exponent * (order + 1 : ℕ) = δ / 2
+  one_add_half_le_order_mul : 1 + δ / 2 ≤ (order : ℝ) * δ
+
+private noncomputable def oscillatoryScaleParameters
+    {δ : ℝ} (hδ : 0 < δ) : OscillatoryScaleParameters δ := by
+  let hs_exists := exists_nat_ge ((1 + δ / 2) / δ)
+  let s : ℕ := Classical.choose hs_exists
+  have hs : (1 + δ / 2) / δ ≤ s :=
+    Classical.choose_spec hs_exists
   have hsone : 1 ≤ s := by
     by_contra hs0
-    have : s = 0 := by omega
-    subst s
-    norm_num at hs
+    have hs_eq : s = 0 := by omega
+    have hs_cast : (s : ℝ) = 0 := by exact_mod_cast hs_eq
+    rw [hs_cast] at hs
     have : 0 < (1 + δ / 2) / δ := by positivity
     linarith
   let q : ℝ := δ / (2 * (s + 1 : ℕ))
@@ -65,16 +74,21 @@ private lemma exists_oscillatory_scale_parameters
     field_simp
   have hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ :=
     (div_le_iff₀ hδ).1 (by simpa [mul_comm] using hs)
-  exact ⟨s, q, hsone, hq, hqδ, hqmul, hsδ⟩
+  exact
+    { order := s
+      exponent := q
+      one_le_order := hsone
+      exponent_pos := hq
+      exponent_le := hqδ
+      exponent_mul_order_succ := hqmul
+      one_add_half_le_order_mul := hsδ }
 
-private lemma oscillatory_scale_bounds
-    {s : ℕ} {δ q K T N : ℝ}
+private lemma OscillatoryScaleParameters.hasSmallEulerMaclaurinRemainder
+    {δ K T N : ℝ} (params : OscillatoryScaleParameters δ)
     (hT : 1 ≤ T) (hN : 1 ≤ N) (hK : 1 ≤ K)
-    (hqδ : q ≤ δ)
-    (hqmul : q * (s + 1 : ℕ) = δ / 2)
-    (hsδ : 1 + δ / 2 ≤ (s : ℝ) * δ)
-    (hKpower : K ≤ T ^ q) (hNlower : T ^ (δ + 1) ≤ N) :
-    K * T / N ≤ 1 ∧ N * (K * T / N) ^ (s + 1) ≤ 1 := by
+    (hKpower : K ≤ T ^ params.exponent) (hNlower : T ^ (δ + 1) ≤ N) :
+    HasSmallEulerMaclaurinRemainder params.order T N K := by
+  rcases params with ⟨s, q, hs, hq, hqδ, hqmul, hsδ⟩
   have hTpos : 0 < T := zero_lt_one.trans_le hT
   have hNpos : 0 < N := zero_lt_one.trans_le hN
   have hKpow : K ^ (s + 1) ≤ T ^ (δ / 2) := by
@@ -134,36 +148,40 @@ private theorem exponentSumGrowthExponent_le_sub_one
   have hηc : η ≤ min c 1 := (min_le_right _ _).trans (min_le_right _ _)
   let δ : ℝ := (α : ℝ) - η - 1
   have hδ : 0 < δ := by dsimp [δ]; linarith
-  obtain ⟨s, q, hs, hq, hqδ, hqmul, hsδ⟩ :=
-    exists_oscillatory_scale_parameters hδ
-  obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds hσ s
-  obtain ⟨M, hMone, hsumBound⟩ := exists_norm_oscillatory_sum_le s hs hK hc
+  let params := oscillatoryScaleParameters hδ
+  obtain ⟨K, hK, hphaseBounds⟩ :=
+    approximate_model_phase_deriv_bounds hσ params.order
+  obtain ⟨M, hMone, hsumBound⟩ :=
+    exists_norm_oscillatory_sum_le params.order params.one_le_order hK hc
   have hM : 0 ≤ M := zero_le_one.trans hMone
-  let C : ℝ := max 1 (max (2 * M) (K ^ q⁻¹))
+  let C : ℝ := max 1 (max (2 * M) (K ^ params.exponent⁻¹))
   have hC : 1 ≤ C := le_max_left _ _
-  refine ⟨η, hη, s, hs, C, hC, ?_⟩
-  intro T N F a b hTC hNlower hNupper hF ha hb
+  refine ⟨η, hη, params.order, params.one_le_order, C, hC, ?_⟩
+  intro T N F a b hsetup
+  obtain ⟨hTC, hNlower, hNupper, hF, ha, hb⟩ := hsetup
   have hTone : 1 ≤ T := hC.trans hTC
   have hTpos : 0 < T := zero_lt_one.trans_le hTone
   have hNone : 1 ≤ N := by
     calc
       1 ≤ T ^ ((α : ℝ) - η) := Real.one_le_rpow hTone (by linarith)
       _ ≤ N := hNlower
-  have hKbase : K ^ q⁻¹ ≤ T := by
+  have hKbase : K ^ params.exponent⁻¹ ≤ T := by
     calc
-      K ^ q⁻¹ ≤ max (2 * M) (K ^ q⁻¹) := le_max_right _ _
+      K ^ params.exponent⁻¹ ≤ max (2 * M) (K ^ params.exponent⁻¹) := le_max_right _ _
       _ ≤ C := le_max_right _ _
       _ ≤ T := hTC
-  have hKpower : K ≤ T ^ q := by
+  have hKpower : K ≤ T ^ params.exponent := by
     calc
-      K = (K ^ q⁻¹) ^ q := by
-        rw [← Real.rpow_mul (zero_le_one.trans hK), inv_mul_cancel₀ hq.ne', Real.rpow_one]
-      _ ≤ T ^ q := Real.rpow_le_rpow (Real.rpow_nonneg (zero_le_one.trans hK) _)
-        hKbase hq.le
+      K = (K ^ params.exponent⁻¹) ^ params.exponent := by
+        rw [← Real.rpow_mul (zero_le_one.trans hK),
+          inv_mul_cancel₀ params.exponent_pos.ne', Real.rpow_one]
+      _ ≤ T ^ params.exponent :=
+        Real.rpow_le_rpow (Real.rpow_nonneg (zero_le_one.trans hK) _)
+          hKbase params.exponent_pos.le
   have hNscale : T ^ (δ + 1) ≤ N := by
     simpa only [δ, sub_add_cancel] using hNlower
-  obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
-    hTone hNone hK hqδ hqmul hsδ hKpower hNscale
+  have hscale := params.hasSmallEulerMaclaurinRemainder
+    hTone hNone hK hKpower hNscale
   obtain ⟨hfirst, hderiv⟩ := hphaseBounds hηc hF
   have htargetNonneg : 0 ≤ (α : ℝ) - 1 + ε := by linarith
   have hNTdiv : N / T ≤ T ^ ((α : ℝ) - 1 + ε) := by
@@ -178,18 +196,17 @@ private theorem exponentSumGrowthExponent_le_sub_one
   have hone : 1 ≤ T ^ ((α : ℝ) - 1 + ε) := Real.one_le_rpow hTone htargetNonneg
   have hCM : 2 * M ≤ C := (le_max_left _ _).trans (le_max_right _ _)
   by_cases hab : a ≤ b
-  · have hsum := hsumBound hab hNone hTone hF.1
-      (fun u hu ↦ hfirst u hu) hderiv ha hb hratio hremainder
+  · have hsum := hsumBound hab hNone hTone hF.1 hfirst hderiv ha hb hscale
     change ‖exponentialSumAt F T N a b‖ ≤ C * T ^ ((α : ℝ) - 1 + ε)
     calc
       ‖exponentialSumAt F T N a b‖ ≤ M * (1 + N / T) := by
-        simpa only [exponentialSumAt] using hsum
+        exact hsum
       _ ≤ M * (2 * T ^ ((α : ℝ) - 1 + ε)) := by
         gcongr
         linarith
       _ = (2 * M) * T ^ ((α : ℝ) - 1 + ε) := by ring
       _ ≤ C * T ^ ((α : ℝ) - 1 + ε) := by gcongr
-  · rw [exponentialSumAt, Finset.Icc_eq_empty hab, Finset.sum_empty, norm_zero]
+  · rw [exponentialSumAt_of_lt (lt_of_not_ge hab), norm_zero]
     exact mul_nonneg (zero_le_one.trans hC) (Real.rpow_nonneg hTpos.le _)
 
 /-! ## The matching logarithmic lower bound for `α > 1` -/
@@ -203,21 +220,21 @@ theorem exists_norm_logPhase_sum_sub_mainTerm_le (s : ℕ) :
       ∀ {N T : ℝ} {a b : ℕ},
         a < b → 1 ≤ N → 1 ≤ T →
         (a : ℝ) = N → (b : ℝ) = 2 * N →
-        K * T / N ≤ 1 → N * (K * T / N) ^ (s + 1) ≤ 1 →
-        ‖(∑ n ∈ Finset.Icc a b, (𝐞 (T * Real.log ((n : ℝ) / N)) : ℂ)) -
-          logPhaseMainTerm N T‖ ≤ C := by
+        HasSmallEulerMaclaurinRemainder s T N K →
+        ‖exponentialSumAt Real.log T N a b - logPhaseMainTerm N T‖ ≤ C := by
   obtain ⟨K, hK, hphaseBounds⟩ := approximate_model_phase_deriv_bounds zero_lt_one s
   obtain ⟨_, hderiv⟩ := hphaseBounds (δ := 0) (F := Real.log) (by norm_num)
     (isApproximateModelPhaseFunction_log s)
   obtain ⟨C, hC, herror⟩ := exists_norm_oscillatory_sum_sub_integral_le s
   refine ⟨K, C, hK, hC, ?_⟩
-  intro N T a b hab hN hT ha hb hratio hremainder
+  intro N T a b hab hN hT ha hb hscale
   have herr := herror hab hN hT hK
     (isModelPhaseFunction_log.1 0) hderiv (by exact_mod_cast ha.ge)
-    (by exact_mod_cast hb.le) hratio hremainder
-  have hint : (∫ x in (a : ℝ)..b,
-      (𝐞 (T * Real.log (x / N)) : ℂ)) = logPhaseMainTerm N T := by
-    rw [ha, hb]
+    (by exact_mod_cast hb.le) hscale
+  have hint : (∫ x in (a : ℝ)..b, oscillatory Real.log T N x) =
+      logPhaseMainTerm N T := by
+    rw [show (fun x ↦ oscillatory Real.log T N x) =
+      fun x ↦ (𝐞 (T * Real.log (x / N)) : ℂ) from rfl, ha, hb]
     exact logPhase_integral_eq_mainTerm (zero_lt_one.trans_le hN)
   simp only [logPhase] at herr
   rw [hint] at herr
@@ -229,8 +246,7 @@ private theorem sub_one_le_exponentSumGrowthExponent
   have hαR : (1 : ℝ) < α := by exact_mod_cast hα
   let δ : ℝ := (α : ℝ) - 1
   have hδ : 0 < δ := by dsimp [δ]; linarith
-  obtain ⟨s, q, hsone, hq, hqδ, hqmul, hsδ⟩ :=
-    exists_oscillatory_scale_parameters hδ
+  let params := oscillatoryScaleParameters hδ
   let N : VariableObject ℝ := fun i ↦ (i : ℝ) + 1
   let T : VariableObject ℝ := fun i ↦ N i ^ ((α : ℝ)⁻¹)
   let a : VariableObject ℕ := fun i ↦ i + 1
@@ -247,11 +263,9 @@ private theorem sub_one_le_exponentSumGrowthExponent
     exact tendsto_atTop_add_const_right atTop 1 tendsto_natCast_atTop_atTop
   have hTtop : Tendsto T atTop atTop :=
     (tendsto_rpow_atTop (inv_pos.mpr (zero_lt_one.trans hαR))).comp hNtop
-  have hTunbounded : T.IsUnbounded := by
-    rw [VariableObject.IsUnbounded]
-    convert hTtop using 1
-    ext i
-    rw [Real.norm_eq_abs, abs_of_nonneg (le_trans zero_le_one (hT i))]
+  have hTunbounded : T.IsUnbounded :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).2 hTtop
   have hNTexact (i : ℕ) : N i = T i ^ (α : ℝ) := by
     dsimp [T]
     rw [← Real.rpow_mul (le_trans zero_le_one (hN i)),
@@ -265,11 +279,10 @@ private theorem sub_one_le_exponentSumGrowthExponent
     dsimp [N, a, b]
     push_cast
     exact ⟨le_rfl, le_rfl⟩
-  have hbound := isPowerBounded_logPhase α hN hT hTunbounded hNT hab
   obtain ⟨K, E, hK, hEone, hlogEstimate⟩ :=
-    exists_norm_logPhase_sum_sub_mainTerm_le s
-  have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ q :=
-    tendsto_atTop.1 ((tendsto_rpow_atTop hq).comp hTtop) K
+    exists_norm_logPhase_sum_sub_mainTerm_le params.order
+  have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ params.exponent :=
+    tendsto_atTop.1 ((tendsto_rpow_atTop params.exponent_pos).comp hTtop) K
   let d : ℝ := 1 / (1 + 2 * Real.pi)
   have hd : 0 < d := by dsimp [d]; positivity
   have hE : 0 ≤ E := zero_le_one.trans hEone
@@ -288,12 +301,12 @@ private theorem sub_one_le_exponentSumGrowthExponent
       congr 1
       dsimp [δ]
       ring
-    obtain ⟨hratio, hremainder⟩ := oscillatory_scale_bounds
-      (hT i) (hN i) hK hqδ hqmul hsδ hiK hNscale
+    have hscale := params.hasSmallEulerMaclaurinRemainder
+      (hT i) (hN i) hK hiK hNscale
     have hablt : a i < b i := by dsimp [a, b]; omega
     have haeq : (a i : ℝ) = N i := by dsimp [N, a]; push_cast; ring
     have hbeq : (b i : ℝ) = 2 * N i := by dsimp [N, b]; push_cast; ring
-    have herr := hlogEstimate hablt (hN i) (hT i) haeq hbeq hratio hremainder
+    have herr := hlogEstimate hablt (hN i) (hT i) haeq hbeq hscale
     have hInt := (norm_logPhaseMainTerm_bounds hNi (hT i)).1
     have hpower : N i / T i = T i ^ ((α : ℝ) - 1) := by
       rw [hNTexact]
@@ -309,15 +322,15 @@ private theorem sub_one_le_exponentSumGrowthExponent
           norm_le_norm_add_norm_sub _ _
         _ ≤ ‖exponentialSum logPhase T N a b i‖ + E := by
           gcongr
-          simpa only [exponentialSum, logPhase] using herr
+          simpa only [exponentialSum_apply, logPhase] using herr
     have hEsmall : E ≤ d / 2 * T i ^ ((α : ℝ) - 1) := by
       calc
         E = d / 2 * (2 * E / d) := by field_simp [hd.ne']
         _ ≤ d / 2 * T i ^ ((α : ℝ) - 1) :=
           mul_le_mul_of_nonneg_left hiSmall (by positivity)
     linarith
-  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
-    hT hTunbounded hbound (half_pos hd) (by simpa [d] using hlower)
+  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α hN hT hTunbounded hNT hab
+    (half_pos hd) (by simpa [d] using hlower)
 
 /-! ## The `L²` lower bound for `0 < α ≤ 1` -/
 
@@ -327,8 +340,7 @@ private theorem exists_logPhase_sum_norm_sq_ge :
         0 < R → 0 < N → N ≤ a → (b : ℝ) ≤ 2 * N → N ≤ R / (4 * C) →
         ∃ t ∈ Set.Icc R (2 * R),
           ((Finset.Icc a b).card : ℝ) / 2 ≤
-            ‖∑ n ∈ Finset.Icc a b,
-              (𝐞 (t * Real.log ((n : ℝ) / N)) : ℂ)‖ ^ 2 := by
+            ‖exponentialSumAt Real.log t N a b‖ ^ 2 := by
   obtain ⟨C₀, hC₀, hlarge⟩ := l2_integral_estimate_exists_norm_sq_ge
   refine ⟨C₀, hC₀, ?_⟩
   intro R N a b hR hN ha hb hNR
@@ -346,8 +358,8 @@ private theorem exists_logPhase_sum_norm_sq_ge :
     simp [coeff]
   rw [hmass] at htlarge
   refine ⟨t, ht, ?_⟩
-  rw [Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
-  simpa only [coeff, ξ, one_mul, mul_comm] using htlarge
+  rw [exponentialSumAt, Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
+  simpa only [expSum, oscillatory, coeff, ξ, one_mul, mul_comm] using htlarge
 
 private theorem half_le_exponentSumGrowthExponent
     {α : ℝ≥0} (hα : 0 < α) (hαone : α ≤ 1) :
@@ -385,8 +397,7 @@ private theorem half_le_exponentSumGrowthExponent
       _ ≤ D * N i ^ (α : ℝ)⁻¹ := mul_le_mul_of_nonneg_left hpow hDpos.le
   have hgood (i : ℕ) : ∃ t ∈ Set.Icc (R i) (2 * R i),
       ((Finset.Icc (a i) (b i)).card : ℝ) / 2 ≤
-        ‖∑ m ∈ Finset.Icc (a i) (b i),
-          (𝐞 (t * Real.log ((m : ℝ) / N i)) : ℂ)‖ ^ 2 := by
+        ‖exponentialSumAt Real.log t (N i) (a i) (b i)‖ ^ 2 := by
     apply hlarge (mul_pos hDpos (Real.rpow_pos_of_pos (hNpos i) _)) (hNpos i)
     · dsimp [N, a, n]
       norm_num
@@ -397,8 +408,7 @@ private theorem half_le_exponentSumGrowthExponent
   let T : VariableObject ℝ := fun i ↦ (hgood i).choose
   have hTmem (i : ℕ) : T i ∈ Set.Icc (R i) (2 * R i) := (hgood i).choose_spec.1
   have hTsquare (i : ℕ) : ((Finset.Icc (a i) (b i)).card : ℝ) / 2 ≤
-      ‖∑ m ∈ Finset.Icc (a i) (b i),
-        (𝐞 (T i * Real.log ((m : ℝ) / N i)) : ℂ)‖ ^ 2 :=
+      ‖exponentialSumAt Real.log (T i) (N i) (a i) (b i)‖ ^ 2 :=
     (hgood i).choose_spec.2
   have hTbounds (i : ℕ) : D * N i ^ (α : ℝ)⁻¹ ≤ T i ∧
       T i ≤ 2 * (D * N i ^ (α : ℝ)⁻¹) := by
@@ -413,11 +423,9 @@ private theorem half_le_exponentSumGrowthExponent
     exact (tendsto_rpow_atTop (inv_pos.mpr hαR)).comp hNtop |>.const_mul_atTop hDpos
   have hTtop : Tendsto T atTop atTop :=
     tendsto_atTop_mono' atTop (Filter.Eventually.of_forall fun i ↦ (hTmem i).1) hRtop
-  have hTunbounded : T.IsUnbounded := by
-    rw [VariableObject.IsUnbounded]
-    convert hTtop using 1
-    ext i
-    rw [Real.norm_eq_abs, abs_of_nonneg (zero_le_one.trans (hT i))]
+  have hTunbounded : T.IsUnbounded :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      fun i ↦ zero_le_one.trans (hT i)).2 hTtop
   have hNT : IsPowerAsymptotic N T (α : ℝ) :=
     isPowerAsymptotic_of_between_const_rpow (A := D) (B := 2 * D) hαR
       (zero_lt_one.trans_le hD) (mul_pos (by norm_num) (zero_lt_one.trans_le hD)) hNtop
@@ -428,8 +436,6 @@ private theorem half_le_exponentSumGrowthExponent
     dsimp [N, a, b, n]
     push_cast
     exact ⟨le_rfl, le_rfl⟩
-  have hbound := isPowerBounded_logPhase α (fun i ↦ (hN i).trans' one_le_two)
-    hT hTunbounded hNT hab
   let L : ℝ := (2 * D) ^ ((α : ℝ) / 2)
   have hL : 0 < L := Real.rpow_pos_of_pos (mul_pos (by norm_num) hDpos) _
   have hlower : ∀ᶠ i in atTop,
@@ -447,7 +453,7 @@ private theorem half_le_exponentSumGrowthExponent
         calc
           N i / 2 ≤ ((Finset.Icc (a i) (b i)).card : ℝ) / 2 := by gcongr
           _ ≤ ‖exponentialSum logPhase T N a b i‖ ^ 2 := by
-            simpa only [exponentialSum, logPhase] using hTsquare i
+            simpa only [exponentialSum_apply, logPhase] using hTsquare i
       have hrootSquare : (N i ^ (1 / 2 : ℝ)) ^ 2 = N i := by
         rw [← Real.rpow_natCast]
         rw [← Real.rpow_mul (hNpos i).le]
@@ -474,16 +480,18 @@ private theorem half_le_exponentSumGrowthExponent
             (1 / (2 * L)) * (L * N i ^ (1 / 2 : ℝ)) := by gcongr
         _ = N i ^ (1 / 2 : ℝ) / 2 := by field_simp [hL.ne']
         _ ≤ ‖exponentialSum logPhase T N a b i‖ := hroot
-  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow
-    hT hTunbounded hbound (by positivity) hlower
+  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α
+    (fun i ↦ (hN i).trans' one_le_two) hT hTunbounded hNT hab (by positivity) hlower
 
 /-! ## Trivial bounds -/
 
-private theorem exponentSumGrowthExponent_nonneg (α : ℝ≥0) :
+/-- The exponential-sum growth exponent is nonnegative. -/
+theorem exponentSumGrowthExponent_nonneg (α : ℝ≥0) :
     0 ≤ exponentSumGrowthExponent α :=
   (isExponentSumBound_exponentSumGrowthExponent α).nonneg
 
-private theorem exponentSumGrowthExponent_le_self (α : ℝ≥0) :
+/-- The triangle inequality bounds the growth exponent by the scale exponent. -/
+theorem exponentSumGrowthExponent_le_self (α : ℝ≥0) :
     exponentSumGrowthExponent α ≤ (α : ℝ) :=
   exponentSumGrowthExponent_le_iff.mpr (isExponentSumBound_self α)
 

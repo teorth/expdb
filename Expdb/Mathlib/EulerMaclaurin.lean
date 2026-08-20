@@ -3,7 +3,7 @@ module
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 public import Mathlib.NumberTheory.ZetaValues
 
-import Mathlib.MeasureTheory.Integral.DivergenceTheorem
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Module
@@ -104,42 +104,38 @@ private lemma saw_one {x : ℝ} : saw 1 x = Int.fract x - 1 / 2 := by
 @[simp] private lemma saw_one_zero : saw 1 0 = -2⁻¹ := by
   simp only [saw_one, Int.fract_zero, one_div, zero_sub]
 
-/-! ## Non-explicit bounds -/
+/-! ## Explicit bounds -/
 
-private lemma exists_max_bernoulli (s : ℕ) :
-    ∃ x ∈ Icc 0 1, IsMaxOn (fun x ↦ |bernoulliFun s x|) (Icc 0 1) x := by
-  apply isCompact_Icc.exists_isMaxOn
-  · exact nonempty_Icc.mpr zero_le_one
-  · exact (continuous_bernoulliFun s).abs.continuousOn
-
-private def bernoulliBound (s : ℕ) : ℝ :=
-  |bernoulliFun s (exists_max_bernoulli s).choose|
-
-private lemma abs_bernoulliFun_le (s : ℕ) (x : ℝ) (m : x ∈ Icc 0 1) :
-    |bernoulliFun s x| ≤ bernoulliBound s := by
-  simp only [bernoulliBound]
-  obtain ⟨_, hmax⟩ := (exists_max_bernoulli s).choose_spec
-  exact hmax m
-
-private lemma bddAbove_range_abs_saw (s : ℕ) :
-    BddAbove (range fun x ↦ |saw s x|) := by
-  refine ⟨(s.factorial : ℝ)⁻¹ * bernoulliBound s, ?_⟩
-  rintro _ ⟨x, rfl⟩
-  have sp : 0 < (s.factorial : ℝ)⁻¹ := inv_pos.mpr (Nat.cast_pos.mpr (Nat.factorial_pos _))
-  simp only [saw_eq_bernoulliFun_fract, abs_mul, abs_of_pos sp]
-  refine mul_le_mul_of_nonneg_left ?_ sp.le
-  exact abs_bernoulliFun_le _ _ (unitInterval.fract_mem x)
-
-/-- A uniform bound for the absolute value of `saw s`. -/
+/-- An explicit uniform bound for the absolute value of `saw s`, obtained by summing the
+absolute values of the coefficients of the `s`th Bernoulli polynomial. -/
 def sawBound (s : ℕ) : ℝ :=
-  sSup (range fun x ↦ |saw s x|)
+  (s.factorial : ℝ)⁻¹ * ∑ i ∈ Finset.range (s + 1),
+    |(_root_.bernoulli (s - i) : ℝ) * (s.choose i : ℝ)|
 
-private lemma abs_saw_le (s : ℕ) (x : ℝ) : |saw s x| ≤ sawBound s := by
-  exact le_csSup (bddAbove_range_abs_saw s) (mem_range_self x)
+private lemma abs_bernoulliFun_le (s : ℕ) (x : ℝ) (hx : x ∈ Icc 0 1) :
+    |bernoulliFun s x| ≤ ∑ i ∈ Finset.range (s + 1),
+      |(_root_.bernoulli (s - i) : ℝ) * (s.choose i : ℝ)| := by
+  rw [bernoulliFun, Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
+  simp only [Polynomial.map_monomial, Polynomial.eval_monomial, map_mul, map_natCast]
+  refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+  apply Finset.sum_le_sum
+  intro i hi
+  rw [abs_mul]
+  apply mul_le_of_le_one_right (abs_nonneg _)
+  rw [abs_pow]
+  exact pow_le_one₀ (abs_nonneg x) (abs_le.mpr ⟨by linarith [hx.1], hx.2⟩)
+
+/-- The absolute value of `saw s` is bounded by the explicit constant `sawBound s`. -/
+lemma abs_saw_le (s : ℕ) (x : ℝ) : |saw s x| ≤ sawBound s := by
+  have hs : 0 ≤ (s.factorial : ℝ)⁻¹ := by positivity
+  rw [saw_eq_bernoulliFun_fract, sawBound, abs_mul, abs_of_nonneg hs]
+  exact mul_le_mul_of_nonneg_left
+    (abs_bernoulliFun_le s _ (unitInterval.fract_mem x)) hs
 
 /-- The uniform bound for `saw` is nonnegative. -/
 @[simp] lemma sawBound_nonneg {s : ℕ} : 0 ≤ sawBound s := by
-  exact (abs_nonneg (saw s 0)).trans (abs_saw_le s 0)
+  simp only [sawBound]
+  positivity
 
 /-! ## Euler--Maclaurin on one unit interval -/
 
@@ -181,29 +177,30 @@ private lemma presaw_smul_iteratedDeriv_by_parts [CompleteSpace E]
   have i1 : IntervalIntegrable (fun x ↦ presaw (s + 1) c x •
       iteratedDerivWithin (s + 1) f t x) volume (a : ℝ) (a + 1) :=
     intervalIntegrable_presaw_smul (s := s + 1) (c := c) fc (by linarith) u abt
+  have ha : (a : ℝ) ≤ a + 1 := by norm_num
   rw [eq_sub_iff_add_eq, ← intervalIntegral.integral_add i0 i1]
-  set g := fun x ↦ presaw (s + 1) c x • iteratedDerivWithin s f t x
-  set g' := fun x ↦ presaw s c x • iteratedDerivWithin s f t x +
-    presaw (s + 1) c x • iteratedDerivWithin (s + 1) f t x
-  have df : ∀ x ∈ Ioo (a : ℝ) (a + 1) \ ∅, HasDerivAt g (g' x) x := by
-    intro x m
-    simp only [sdiff_empty] at m
-    simp only [g, g', add_comm (presaw s c _ • _) _]
-    apply HasDerivAt.smul
-    · exact hasDerivAt_presaw
-    · have mt := abt (Ioo_subset_Icc_self m)
-      apply HasDerivWithinAt.hasDerivAt
-      · rw [iteratedDerivWithin_succ, hasDerivWithinAt_derivWithin_iff]
-        apply (fc.contDiffWithinAt mt).differentiableWithinAt_iteratedDerivWithin
-        · simp only [← Nat.cast_add_one, Nat.cast_lt, Nat.lt_add_one]
-        · simp only [mt, insert_eq_of_mem, u]
-      · exact Filter.monotone_mem (subset_trans Ioo_subset_Icc_self abt) (isOpen_Ioo.mem_nhds m)
-  refine Eq.trans (MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le
-    (f := g) (f' := g') (Hd := df) (by linarith) countable_empty ?_ ?_) ?_
-  · apply contDiff_presaw.continuous.continuousOn.smul
-    exact (fc.continuousOn_iteratedDerivWithin le_self_add u).mono abt
-  · exact i0.add i1
-  · simp only [g]
+  apply intervalIntegral.integral_deriv_smul_eq_sub_of_hasDeriv_right
+  · exact contDiff_presaw.continuous.continuousOn
+  · simpa only [uIcc_of_le ha] using
+      (fc.continuousOn_iteratedDerivWithin le_self_add u).mono abt
+  · intro x _
+    exact hasDerivAt_presaw.hasDerivWithinAt
+  · intro x hx
+    have hx' : x ∈ Ioo (a : ℝ) (a + 1) := by
+      simpa [min_eq_left ha, max_eq_right ha] using hx
+    have mt := abt (Ioo_subset_Icc_self hx')
+    apply HasDerivAt.hasDerivWithinAt
+    apply HasDerivWithinAt.hasDerivAt
+    · rw [iteratedDerivWithin_succ, hasDerivWithinAt_derivWithin_iff]
+      apply (fc.contDiffWithinAt mt).differentiableWithinAt_iteratedDerivWithin
+      · simp only [← Nat.cast_add_one, Nat.cast_lt, Nat.lt_add_one]
+      · simp only [mt, insert_eq_of_mem, u]
+    · exact Filter.monotone_mem (subset_trans Ioo_subset_Icc_self abt)
+        (isOpen_Ioo.mem_nhds hx')
+  · exact contDiff_presaw.continuous.intervalIntegrable _ _
+  · apply ContinuousOn.intervalIntegrable
+    simpa only [uIcc_of_le ha] using
+      (fc.continuousOn_iteratedDerivWithin le_rfl u).mono abt
 
 private lemma presaw_iterated_by_parts [CompleteSpace E] (fc : ContDiffOn ℝ (s + 1) f t)
     (u : UniqueDiffOn ℝ t) (abt : Icc (a : ℝ) (a + 1) ⊆ t) :
