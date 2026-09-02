@@ -175,7 +175,7 @@ def beta_bounds_to_exponent_pairs(
     """
 
     if not isinstance(hypothesis_set, Hypothesis_Set):
-        raise "hypothesis_set must be of type Hypothesis_Set"
+        raise TypeError("hypothesis_set must be of type Hypothesis_Set")
 
     # Compute the best bound on beta - (imported bound_beta.py method)
     beta_bound = compute_best_beta_bounds(hypothesis_set)
