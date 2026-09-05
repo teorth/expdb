@@ -114,7 +114,7 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Lou--Yao (1992) \cite{lou-yao-chebychev} & $\frac{6}{11} = 0.5454\dots$\\
     \hline
-    Baker-Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
+    Baker--Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
     \hline
     Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40} = 0.525$ \\
     \hline
@@ -362,10 +362,10 @@ One has
 Note that by \Cref{bhp-thm} it is known that $G(X) \ll X^{0.52}$.
 
 The current best known result concerning \eqref{eqn:small-prime-gaps} is
-\begin{theorem}[Polymath 8b \cite{polymath_variants_2014}]
+\begin{theorem}[OpenAI \cite{OpenAI_186}]
 One has
 \[
-\liminf_{n\to\infty}(p_{n + 1} - p_n) \le 246.
+\liminf_{n\to\infty}(p_{n + 1} - p_n) \le 186.
 \]
 \end{theorem}
 
@@ -407,14 +407,22 @@ Historical progress towards this problem is recorded in \Cref{small-primegap-tab
     \hline
     Polymath 8b (2015) \cite{polymath_variants_2014} & $H_1 \le 246$ & \\
     \hline
+    Stadlmann (2026) \cite{Stadlmann_240} & $H_1 \le 240$ & \\
+    \hline
+    Charton--Hong--Lau--Ono--Remy--Siu--Swaminathan--Thorner--Xie (2026) \cite{AxiomMath_212} & $H_1 \le 212$ & \\
+    \hline
+    Anthropic (2026) & $H_1 \le 188$ & \\
+    \hline
+    OpenAI (2026) \cite{OpenAI_186} & $H_1 \le 186$ & \\
+    \hline
     \end{tabular}
     \end{table}
 
 The current best known lower bound on $G(X)$ is
-\begin{theorem}[Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017}]
+\begin{theorem}[OpenAI (2026) \cite{OpenAI_LargeGap}]
 For unbounded $X$, one has
 \[
-G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}
+G(X) \gg \frac{\log X (\log \log X)^2 \log\log\log \log X}{(\log \log \log X)^2}
 \]
 \end{theorem}
 \begin{table}[ht]
@@ -443,6 +451,10 @@ G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}
     Ford--Green--Konyagin--Tao (2016) \cite{ford_large_2016}, Maynard (2016) \cite{maynard_large_2016} & $\displaystyle G(X) \gg f(X)\log X \frac{\log \log X \log \log \log \log X}{(\log \log \log X)^2}$ for some $f(X) \to \infty$\\
     \hline
     Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017} & $\displaystyle G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}$ \\
+    \hline
+    GPT 5.6 Sol (2026) \cite{GPT56Sol_LargeGap} & $\displaystyle G(X) \gg \frac{\log X \log \log X}{\log \log \log \log X}$ \\
+    \hline
+    OpenAI (2026) \cite{OpenAI_LargeGap} & $\displaystyle G(X) \gg \frac{\log X (\log \log X)^2 \log\log\log \log X}{(\log \log \log X)^2}$ \\
     \hline
     \end{tabular}
     \end{table}
