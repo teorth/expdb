@@ -147,7 +147,7 @@ def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
 #   - a list of Hypothesis objects, each representing a derived beta bound
 def exponent_pairs_to_beta_bounds(hypothesis_set):
     if not isinstance(hypothesis_set, Hypothesis_Set):
-        raise "hypothesis_set must be of type Hypothesis_Set"
+        raise TypeError("hypothesis_set must be of type Hypothesis_Set")
 
     hypotheses = []
     ephs = hypothesis_set.list_hypotheses(hypothesis_type="Exponent pair")
