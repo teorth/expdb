@@ -1,5 +1,5 @@
 from polytope import Polytope
-from region import Region
+from region import Region, Region_Type
 import random as rd
 
 
@@ -88,3 +88,17 @@ def test_region_accepts_a_tuple_of_children():
 
 test_empty_boolean_combinations_raise()
 test_region_accepts_a_tuple_of_children()
+
+
+def test_lift_preserves_complement():
+    box = Polytope.rect((0, 1), (0, 1))
+    R = Region.complement(Region.from_polytope(box))
+    lifted = R.lift([0, 1, (0, 1)])
+    assert lifted.region_type == Region_Type.COMPLEMENT
+    assert isinstance(lifted.child, Region)
+    # inside the lifted box => outside the complement
+    assert not lifted.contains((0.5, 0.5, 0.5))
+    assert lifted.contains((2, 2, 0.5))
+
+
+test_lift_preserves_complement()
