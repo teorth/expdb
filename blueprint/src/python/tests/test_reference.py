@@ -41,5 +41,5 @@ def test_max_year_unknown_date_is_contagious():
 
 test_find_all_skips_entries_without_an_author()
 test_find_all_matches_year_via_year_method()
-test_max_year_coerces_numeric_strings()
 test_max_year_empty_is_minus_one()
+test_max_year_unknown_date_is_contagious()
