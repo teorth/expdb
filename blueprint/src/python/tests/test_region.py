@@ -1,5 +1,5 @@
 from polytope import Polytope
-from region import Region
+from region import Region, Region_Type
 import random as rd
 
 
@@ -65,3 +65,58 @@ def test_as_disjoint_union():
 test_union()
 test_intersect()
 test_as_disjoint_union()
+
+
+def test_empty_boolean_combinations_raise():
+    try:
+        Region.union([])
+        assert False
+    except ValueError:
+        pass
+    try:
+        Region.intersect(())
+        assert False
+    except ValueError:
+        pass
+    try:
+        Region.disjoint_union([])
+        assert False
+    except ValueError:
+        pass
+
+
+def test_region_accepts_a_tuple_of_children():
+    r = Region.from_polytope(Polytope.rect((0, 1), (0, 1)))
+    u = Region.union((r, r))
+    assert u.contains((0.5, 0.5))
+
+
+test_empty_boolean_combinations_raise()
+test_region_accepts_a_tuple_of_children()
+
+
+def test_lift_preserves_complement():
+    box = Polytope.rect((0, 1), (0, 1))
+    R = Region.complement(Region.from_polytope(box))
+    lifted = R.lift([0, 1, (0, 1)])
+    assert lifted.region_type == Region_Type.COMPLEMENT
+    assert isinstance(lifted.child, Region)
+    # inside the lifted box => outside the complement
+    assert not lifted.contains((0.5, 0.5, 0.5))
+    assert lifted.contains((2, 2, 0.5))
+
+
+test_lift_preserves_complement()
+
+
+def test_scale_all_preserves_complement():
+    box = Polytope.rect((0, 1), (0, 1))
+    R = Region.complement(Region.from_polytope(box))
+    S = R.scale_all([2, 3])
+    assert S.region_type == Region_Type.COMPLEMENT
+    # scaled box is [0,2] x [0,3]; (1,1) is inside it, so not in the complement
+    assert not S.contains((1, 1))
+    assert S.contains((5, 5))
+
+
+test_scale_all_preserves_complement()
