@@ -64,6 +64,13 @@ def test_hypothesis_set_iterates():
     a = _hyp("a")
     hs = Hypothesis_Set([a])
     assert list(hs) == [a]
+    # a second pass must work
+    assert list(hs) == [a]
+    try:
+        next(hs)
+        raise AssertionError("Hypothesis_Set is not an iterator")
+    except TypeError:
+        pass
 
 
 test_proof_depth_on_a_leaf()
