@@ -40,11 +40,11 @@ class Region:
 
         if not isinstance(children, Polytope) and \
             not isinstance(children, Region) and \
-            not isinstance(children, list):
+            not isinstance(children, (list, tuple)):
             raise ValueError("Parameter polytope must either be of type Polytope, Region or list of Polytope/Region")
 
         self.region_type = region_type
-        self.child = children
+        self.child = list(children) if isinstance(children, tuple) else children
 
     def __repr__(self):
         return self.to_str(0)
@@ -135,14 +135,23 @@ class Region:
 
     # Compute the union of regions
     def union(regions):
+        regions = list(regions)
+        if len(regions) == 0:
+            raise ValueError("union requires at least one region")
         return Region(Region_Type.UNION, regions)
 
     # Compute the union of regions, assuming that they are disjoint
     def disjoint_union(regions):
+        regions = list(regions)
+        if len(regions) == 0:
+            raise ValueError("disjoint_union requires at least one region")
         return Region(Region_Type.DISJOINT_UNION, regions)
 
     # Compute the intersection of regions
     def intersect(regions):
+        regions = list(regions)
+        if len(regions) == 0:
+            raise ValueError("intersect requires at least one region")
         return Region(Region_Type.INTERSECT, regions)
 
     # Instance methods -------------------------------------------------------
