@@ -107,3 +107,16 @@ def test_lift_preserves_complement():
 
 
 test_lift_preserves_complement()
+
+
+def test_scale_all_preserves_complement():
+    box = Polytope.rect((0, 1), (0, 1))
+    R = Region.complement(Region.from_polytope(box))
+    S = R.scale_all([2, 3])
+    assert S.region_type == Region_Type.COMPLEMENT
+    # scaled box is [0,2] x [0,3]; (1,1) is inside it, so not in the complement
+    assert not S.contains((1, 1))
+    assert S.contains((5, 5))
+
+
+test_scale_all_preserves_complement()
