@@ -18,6 +18,7 @@ def test_find_all_matches_year_via_year_method():
     mgr = Reference_Manager("/dev/null")
     mgr.refs["a"] = Reference("a", "article", {"author": "Tao", "year": 1999})
     assert mgr.find_all(year=1999) == [mgr.refs["a"]]
+    assert mgr.find_all(year="1999") == [mgr.refs["a"]]
     assert mgr.find_all(year=2000) == []
 
 
@@ -29,6 +30,13 @@ def test_max_year_coerces_numeric_strings():
 
 def test_max_year_empty_is_minus_one():
     assert Reference.max_year(()) == -1
+
+
+def test_max_year_unknown_date_is_contagious():
+    known = Reference.make("A", 1990)
+    unknown = Reference("u", "article", {})
+    assert unknown.year() == "Unknown date"
+    assert Reference.max_year((known, unknown)) == "Unknown date"
 
 
 test_find_all_skips_entries_without_an_author()
