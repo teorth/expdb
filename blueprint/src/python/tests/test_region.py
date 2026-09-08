@@ -65,3 +65,26 @@ def test_as_disjoint_union():
 test_union()
 test_intersect()
 test_as_disjoint_union()
+
+
+def test_empty_boolean_combinations_raise():
+    try:
+        Region.union([])
+        assert False
+    except ValueError:
+        pass
+    try:
+        Region.intersect(())
+        assert False
+    except ValueError:
+        pass
+
+
+def test_region_accepts_a_tuple_of_children():
+    r = Region.from_polytope(Polytope.rect((0, 1), (0, 1)))
+    u = Region.union((r, r))
+    assert u.contains((0.5, 0.5))
+
+
+test_empty_boolean_combinations_raise()
+test_region_accepts_a_tuple_of_children()
