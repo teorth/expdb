@@ -78,6 +78,11 @@ def test_empty_boolean_combinations_raise():
         assert False
     except ValueError:
         pass
+    try:
+        Region.disjoint_union([])
+        assert False
+    except ValueError:
+        pass
 
 
 def test_region_accepts_a_tuple_of_children():
