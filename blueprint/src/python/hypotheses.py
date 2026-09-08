@@ -101,11 +101,13 @@ class Hypothesis:
                 return True
             if self.reference.label == "Conjectured":
                 return False
-            if (
-                self.reference.year() != "Unknown date"
-                and self.reference.year() <= year
-            ):
-                return True
+            y = self.reference.year()
+            if y == "Unknown date":
+                return False
+            try:
+                return int(y) <= int(year)
+            except (TypeError, ValueError):
+                return False
         return False
 
     def proof_complexity(self) -> int:
@@ -132,6 +134,8 @@ class Hypothesis:
             The maximum depth of the tree that represents the dependency
             structure of this hypothesis.
         """
+        if not self.dependencies:
+            return 1
         return 1 + max(d.proof_depth() for d in self.dependencies)
 
     def proof_date(self) -> int:
@@ -145,9 +149,12 @@ class Hypothesis:
         int
             The year of the latest dependency of this hypothesis, or -1 if unknown.
         """
-        year = self.reference.year()
-        if year == "Unknown date":
-            year = -1
+        def as_year(y):
+            if y == "Unknown date" or y is None:
+                return -1
+            return int(y)
+
+        year = as_year(self.reference.year())
         return max([year] + [h.proof_date() for h in self.dependencies])
 
 
@@ -173,7 +180,7 @@ class Hypothesis_Set:
     # Shallow copy, the hypothesis objects are not cloned
     def __copy__(self):
         copy = Hypothesis_Set(self.hypotheses)
-        copy.data = self.data
+        copy.data = dict(self.data)
         copy.data_valid = self.data_valid
         return copy
 
@@ -211,7 +218,7 @@ class Hypothesis_Set:
             self.add_hypothesis(new_hypotheses, invalidate_data)
         elif isinstance(new_hypotheses, Hypothesis_Set):
             self.add_hypotheses(new_hypotheses.hypotheses, invalidate_data)
-        elif isinstance(new_hypotheses, list):
+        elif isinstance(new_hypotheses, list) or isinstance(new_hypotheses, tuple):
             self.add_hypotheses(set(new_hypotheses), invalidate_data)
         else:
             self.hypotheses.update(new_hypotheses)
@@ -265,5 +272,4 @@ class Hypothesis_Set:
                         ):
                             if year == "Any" or h.reference.year() == year:
                                 return h
-        print("ERROR: No matching hypothesis found")
         return None
