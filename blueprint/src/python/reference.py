@@ -1,6 +1,16 @@
 # Code to read and interpret bibtex references
 
 
+def _year_matches(stored, wanted):
+    """Compare a stored year to a query, allowing int vs str."""
+    if stored == wanted:
+        return True
+    try:
+        return int(stored) == int(wanted)
+    except (TypeError, ValueError):
+        return False
+
+
 class Reference:
     def __init__(self, label, reftype, fields):
         self.label = label
@@ -98,7 +108,7 @@ class Reference_Manager:
         for k in self.refs:
             ref = self.refs[k]
             if (author == "Any" or author in ref.entries.get("author", "")) and (
-                year == "Any" or ref.year() == year
+                year == "Any" or _year_matches(ref.year(), year)
             ):
                 refs.append(ref)
         return refs
