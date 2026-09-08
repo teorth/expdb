@@ -80,3 +80,13 @@ test_add_hypotheses_accepts_a_tuple()
 test_find_hypothesis_returns_none_quietly()
 test_is_match_accepts_year_as_string()
 test_hypothesis_set_iterates()
+
+
+def test_list_hypotheses_compares_years_as_ints():
+    h = Hypothesis("x", "Upper bound on mu", type("D", (), {"__repr__": lambda self: "d"})(), "p", Reference.make("X", 1999))
+    hs = Hypothesis_Set([h])
+    assert hs.list_hypotheses(year="1999") == [h]
+    assert hs.list_hypotheses(year="1998") == []
+
+
+test_list_hypotheses_compares_years_as_ints()
