@@ -187,9 +187,6 @@ class Hypothesis_Set:
     def __iter__(self):
         return self.hypotheses.__iter__()
 
-    def __next__(self):
-        return self.hypotheses.__next__()
-
     def __len__(self):
         return len(self.hypotheses)
 

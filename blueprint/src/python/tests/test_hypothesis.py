@@ -60,9 +60,16 @@ def test_is_match_accepts_year_as_string():
     assert not h.is_match(year="1990")
 
 
+def test_hypothesis_set_iterates():
+    a = _hyp("a")
+    hs = Hypothesis_Set([a])
+    assert list(hs) == [a]
+
+
 test_proof_depth_on_a_leaf()
 test_proof_depth_on_a_tree()
 test_hypothesis_set_copy_does_not_share_cached_data()
 test_add_hypotheses_accepts_a_tuple()
 test_find_hypothesis_returns_none_quietly()
 test_is_match_accepts_year_as_string()
+test_hypothesis_set_iterates()
