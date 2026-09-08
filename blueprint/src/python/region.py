@@ -289,8 +289,10 @@ class Region:
                                     Region_Type.DISJOINT_UNION, Region_Type.INTERSECT, Region_Type.COMPLEMENT}:
             raise NotImplementedError(f"lifting operation is not implemented for the region_type {self.region_type}.")
 
-        if self.region_type in {Region_Type.POLYTOPE, Region_Type.COMPLEMENT}:
+        if self.region_type == Region_Type.POLYTOPE:
             return Region(Region_Type.POLYTOPE, self.child.lift(var))
+        if self.region_type == Region_Type.COMPLEMENT:
+            return Region(Region_Type.COMPLEMENT, self.child.lift(var))
 
         return Region(self.region_type, [c.lift(var) for c in self.child])
 
