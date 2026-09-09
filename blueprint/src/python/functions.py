@@ -816,60 +816,61 @@ class RationalFunction:
             track_dependencies=True
         ) -> list:
 
-        # Start with default bound with reference index -1
-        best_bound = [(RationalFunction([default]), domain, -1)]
+        if domain.is_empty():
+            return []
+        x = RationalFunction.x
 
-        for ref1 in range(len(func_and_domains)):
-            (func1, in1) = func_and_domains[ref1]
+        def real_roots(expression):
+            expression = sympy.sympify(expression)
+            if expression.is_constant():
+                return []
+            return sympy.real_roots(expression)
 
-            new_best_bound = []
-            for (func2, in2, ref2) in best_bound:
-                solns = sympy.solve(func1.num / func1.den - func2.num / func2.den)
-                crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
-                crits.update([in1.x0, in1.x1])
-                crits = set(c for c in crits if in2.contains(c))
-                crits.update([in2.x0, in2.x1])
+        # A winner can change at a domain endpoint, an intersection, or a pole.
+        crits = {domain.x0, domain.x1}
+        for i, (func, interval) in enumerate(func_and_domains):
+            crits.update([interval.x0, interval.x1])
+            crits.update(real_roots(func.den))
+            for other, _ in func_and_domains[:i]:
+                crits.update(real_roots(func.num * other.den - other.num * func.den))
+        crits = sorted(c for c in crits if domain.x0 <= c <= domain.x1)
+        cells = []
+        for i, point in enumerate(crits):
+            if domain.contains(point):
+                cells.append(Interval(point, point, True, True))
+            if i + 1 < len(crits):
+                cells.append(Interval(point, crits[i + 1], False, False))
 
-                crits = list(crits)
-                crits.sort()
-                for i in range(1, len(crits)):
-                    inter = Interval(crits[i - 1], crits[i])
-                    mid = inter.midpoint()
-                    if not in1.contains(mid) or comparator(func2.at(mid), func1.at(mid)):
-                        new_best_bound.append((func2, inter, ref2)) # f2 is the better bound
-                    else:
-                        new_best_bound.append((func1, inter, ref1))
-
-            # Simplify
-            best_bound = []
-            i = 0
-            while i < len(new_best_bound):
-                (fi, inti, refi) = new_best_bound[i]
-                left = inti.x0
-                right = inti.x1
-
-                j = i + 1
-                while j < len(new_best_bound):
-                    (fj, intj, refj) = new_best_bound[j]
-                    #print(type(refi), type(refj))
-                    if not (fi == fj and right == intj.x0 and (not track_dependencies or refi == refj)):
-                        break
-                    right = intj.x1
-                    j += 1
-
-                best_bound.append((fi, Interval(left, right), refi))
-                i = j
+        fallback = RationalFunction([default])
+        best_bound = []
+        for cell in cells:
+            mid = cell.midpoint()
+            winner, ref = fallback, -1
+            for i, (func, interval) in enumerate(func_and_domains):
+                if not interval.contains(mid) or sympy.sympify(func.den).subs(x, mid) == 0:
+                    continue
+                if ref == -1 or comparator(func.at(mid), winner.at(mid)):
+                    winner, ref = func, i
+            if best_bound:
+                prev, previous_domain, previous_ref = best_bound[-1]
+                same = (previous_ref == ref if track_dependencies else
+                        previous_ref == ref or (previous_ref != -1 and ref != -1 and prev == winner))
+                if (same and previous_domain.x1 == cell.x0 and
+                        (previous_domain.include_upper or cell.include_lower)):
+                    previous_domain.x1 = cell.x1
+                    previous_domain.include_upper = cell.include_upper
+                    continue
+            best_bound.append((winner, cell, ref))
 
         if track_dependencies:
             return best_bound
-        else:
-            return [(b[0], b[1]) for b in best_bound]
+        return [(f, interval) for f, interval, _ in best_bound]
 
     # Given a list of (RationalFunction, Interval) tuples, compute their (piecewise) minimum.
     # The result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
     # the last element indicates the index of the RationalFunction piece in the original
     # list of functions.
-    # If a function is not defined on an interval, it is treated as -infinity.
+    # If a function is not defined on an interval, it is treated as +infinity.
     def min(func_and_domains: list, domain: Interval, track_dependencies=True) -> list:
         if not isinstance(func_and_domains, list):
             raise ValueError("Parameter piecewise_funcs must be of type list")
@@ -877,7 +878,7 @@ class RationalFunction:
             raise ValueError("Parameter domain must be of type Interval")
 
         return RationalFunction._compute_optimal(
-            func_and_domains, domain, lambda x, y: x < y, 1000000, track_dependencies)
+            func_and_domains, domain, lambda x, y: x < y, sympy.oo, track_dependencies)
 
     # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The
     # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
@@ -890,7 +891,7 @@ class RationalFunction:
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
         return RationalFunction._compute_optimal(
-            func_and_domains, domain, lambda x, y: x > y, -1000000, track_dependencies)
+            func_and_domains, domain, lambda x, y: x > y, -sympy.oo, track_dependencies)
 
     # ------------------------------------------------------------------
 
