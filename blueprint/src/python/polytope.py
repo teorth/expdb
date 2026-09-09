@@ -694,39 +694,47 @@ class Polytope:
     def is_covered_by(self, polys):
         if not isinstance(polys, list):
             raise ValueError("Parameter polys must be of type list.")
+        if any(not isinstance(p, Polytope) or p.dimension() != self.dimension()
+               for p in polys):
+            raise ValueError("Covering polytopes must have the same dimension")
+        if self.is_empty(include_boundary=True):
+            return True
 
-        # Given a list of polytopes Q1, ..., Qn, with q1, ..., qn constraints
-        # respectively, return False if there exist n constraints c1, ..., cn
-        # where ci belongs to qi, such that the region P intersect neg c1, ..., cn
-        # is nonempty (not including boundaries)
-        # Strategy is to try and find this region using DFS.
+        # Keep source constraints weak, even when the source is a face or point.
+        # Only violations of covering constraints are strict. A shared positive
+        # slack tests simultaneous strict feasibility without floating tolerances.
+        def feasible(violations):
+            rows = [list(row) + [0] for row in self.mat]
+            rows += [list(row) + [-1] for row in violations]
+            rows += [[0] * (self.dimension() + 1) + [1],
+                     [1] + [0] * self.dimension() + [-1]]
+            matrix = cdd.Matrix(rows, number_type="fraction")
+            matrix.rep_type = cdd.RepType.INEQUALITY
+            matrix.lin_set = self.mat.lin_set
+            matrix.obj_type = cdd.LPObjType.MAX
+            matrix.obj_func = [0] * (self.dimension() + 1) + [1]
+            lp = cdd.LinProg(matrix)
+            lp.solve()
+            if lp.status == cdd.LPStatusType.INCONSISTENT:
+                return False
+            if lp.status != cdd.LPStatusType.OPTIMAL:
+                raise RuntimeError(f"Coverage LP failed: {lp.status}")
+            return lp.obj_value > 0
 
-        # Terminal condition
-        if len(polys) == 0:
+        def uncovered(index, violations):
+            if index == len(polys):
+                return True
+            poly = polys[index]
+            constraints = Polytope._matrix_as_list(poly.mat, False)
+            for row in Polytope._matrix_as_list(poly.mat, True):
+                constraints.extend([row, tuple(-x for x in row)])
+            for row in constraints:
+                next_violations = violations + [tuple(-x for x in row)]
+                if feasible(next_violations) and uncovered(index + 1, next_violations):
+                    return True
             return False
 
-        # Convert the first polytope Q into a list of inequality constraints
-        # (convert equality constraints to inequality constraints)
-        Q = polys[0]
-        cons = Polytope._matrix_as_list(Q.mat, False)
-        for eq in Polytope._matrix_as_list(Q.mat, True):
-            cons.append(eq)
-            cons.append(tuple(-x for x in eq))
-
-        # Iterate through the constraints of Q, looking for violations
-        for con in cons:
-            # Intersect P with the negation of a constraint
-            mat = self.mat.copy()
-            mat.extend([[-x for x in con]], linear=False)
-            poly = Polytope._from_mat(mat)
-
-            # If there are points in P not in Q, check whether
-            # these points are also not in the other Qi's
-            if not poly.is_empty(include_boundary=False):
-                if not poly.is_covered_by(polys[1:]):
-                    return False
-
-        return True
+        return not uncovered(0, [])
 
     # Given a dictionary "values" of the form {i:v} where i is a non-negative integer and
     # v is a Number, compute a polytope formed by taking i-th variable as v in this Polytope.

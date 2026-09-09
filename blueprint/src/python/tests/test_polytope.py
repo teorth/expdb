@@ -521,6 +521,8 @@ def run_scale_test():
         Polytope.from_V_rep([[0, 0, 0], [2, 0, 0], [0, 3, 0], [0, 0, 4]])
 
 def run_polycover_test():
+    import test_coverage_regression
+
     P = Polytope.rect((0, 1), (0, 1))
     assert P.is_covered_by([Polytope.rect((0, 2), (0, 2)), Polytope.rect((-1, 1), (-1, 1))])
     assert not P.is_covered_by([Polytope.rect((1, 2), (1, 2))])
