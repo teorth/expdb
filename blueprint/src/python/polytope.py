@@ -165,14 +165,32 @@ class Polytope:
         )
 
     def __eq__(self, other):
-        if self.vertices is None:
-            self.compute_V_rep()
-        if other.vertices is None:
-            other.compute_V_rep()
-        # Construct set of vertices from V representation (as tuples which are hashable)
-        return set(tuple(v) for v in self.vertices) == set(
-            tuple(v) for v in other.vertices
-        )
+        if not isinstance(other, Polytope):
+            return NotImplemented
+        if self.dimension() != other.dimension():
+            return False
+        empty = self.is_empty(include_boundary=True)
+        other_empty = other.is_empty(include_boundary=True)
+        if empty or other_empty:
+            return empty and other_empty
+
+        def generators_satisfy(source, target):
+            generators = source.polyhedron.get_generators()
+            rows = list(generators)
+            # cdd omits the origin from homogeneous cones.
+            if not any(row[0] for row in rows):
+                rows.append((1,) + (0,) * source.dimension())
+            for j, generator in enumerate(rows):
+                for i, constraint in enumerate(target.mat):
+                    value = sum(a * b for a, b in zip(constraint, generator))
+                    if i in target.mat.lin_set or j in generators.lin_set:
+                        if value != 0:
+                            return False
+                    elif value < 0:
+                        return False
+            return True
+
+        return generators_satisfy(self, other) and generators_satisfy(other, self)
 
     # -------------------------------------------------------------------------
     # internal/private functions
