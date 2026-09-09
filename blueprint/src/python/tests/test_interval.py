@@ -12,3 +12,5 @@ def run_all():
     assert not i1.intersect(Interval(-1, 0, False, True)).is_empty()
 
 run_all()
+
+import test_affine_envelope_regression

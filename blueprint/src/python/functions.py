@@ -246,7 +246,7 @@ class Affine:
                 x = crits[i]
                 interval = Interval(x, x, True, True)
                 if domain is None or domain.contains(x):
-                    p = self if self.domain.contains(x) else None
+                    p = compare_f(self, None, interval) if self.domain.contains(x) else None
                     for f in f2:
                         if f.domain.contains(x):
                             p = compare_f(p, f, interval)
@@ -258,7 +258,7 @@ class Affine:
             # Consider the interval (crits[i], crits[i + 1])
             interval = Interval(crits[i], crits[i + 1], False, False)
             test_x = interval.midpoint()
-            p = self if self.domain.contains(test_x) else None
+            p = compare_f(self, None, interval) if self.domain.contains(test_x) else None
             for f in f2:
                 if f.domain.contains(test_x):
                     p = compare_f(p, f, interval)
@@ -278,17 +278,7 @@ class Affine:
                 p1.domain.x1 == p2.domain.x0
                 and (p1.domain.include_upper or p2.domain.include_lower)
                 and pieces[j].label == pieces[j + 1].label
-                and (
-                    (
-                        p1.domain.length() == 0
-                        and p1.at(p1.domain.x1) == p2.at(p2.domain.x0)
-                    )
-                    or (
-                        p2.domain.length() == 0
-                        and p1.at(p1.domain.x1) == p2.at(p2.domain.x0)
-                    )
-                    or (p1.function_equals(p2))
-                )
+                and p1.function_equals(p2)
             )
 
             # Extend the interval of p1 to include p2 (no need to update argmin[j])
