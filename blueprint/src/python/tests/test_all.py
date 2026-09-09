@@ -40,4 +40,6 @@ import test_ep_to_zd
 
 print("All ep_to_zd regression test cases passed.")
 
+import test_rational_envelope_regression
+
 print("All test cases passed.")
