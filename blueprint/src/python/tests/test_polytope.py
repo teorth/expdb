@@ -11,6 +11,8 @@ def get_unit_square():
     )
 
 def run_polytope_tests():
+    import test_equality_regression
+
 
     p = get_unit_square()
     assert p.polyhedron.rep_type == cdd.RepType.INEQUALITY
