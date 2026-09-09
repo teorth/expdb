@@ -973,21 +973,21 @@ class RationalFunction:
     # Computes all the intersection points between this RationalFunction and another
     # on an interval
     def intersections(self, other, interval):
-        # Intersections of P/Q = R/S when PS - RQ = 0
-        f = self.num * other.den - self.den * other.num
-        if not f.is_constant():
-            return [
-                SympyHelper.to_frac(r)
-                for r in sympy.real_roots(f)
+        # Cross multiplication supplies candidates, but poles are not intersections.
+        numerator = sympy.sympify(self.num * other.den - self.den * other.num)
+        if numerator.is_constant():
+            return []
+        return [SympyHelper.to_frac(r) for r in sympy.real_roots(numerator)
                 if interval.contains(r)
-            ]
-        return []
+                and sympy.sympify(self.den).subs(self.x, r) != 0
+                and sympy.sympify(other.den).subs(self.x, r) != 0]
 
     def roots(self, interval):
-        f = self.num / self.den
-        if f.is_constant():
+        numerator = sympy.sympify(self.num)
+        if numerator.is_constant():
             return []
-        return [r for r in sympy.real_roots(f) if interval.contains(r)]
+        return [r for r in sympy.real_roots(numerator)
+                if interval.contains(r) and sympy.sympify(self.den).subs(self.x, r) != 0]
 
     # Compute the maximum over an interval of type Interval
     def maximise(self, interval):
