@@ -223,6 +223,8 @@ def run_intersection_test():
     assert p1.intersect(p2).is_empty(include_boundary=True)
 
 def run_V_init_test():
+    import test_unbounded_projection_regression
+
     verts = [[0, 0], [0, 1], [1, 1], [1, 0]]
     p = Polytope.from_V_rep(verts)
     assert set(tuple(v) for v in verts) == set(tuple(v) for v in p.get_vertices())
