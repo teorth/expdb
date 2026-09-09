@@ -426,6 +426,8 @@ def run_setminus_test():
     assert any(p.contains((3, 3)) for p in A_minus_B)
 
 def run_containment_test():
+    import test_subset_regression
+
     p1 = Polytope.rect((0, 1), (0, 1))
     p2 = Polytope.rect((0, 2), (0, 2))
     assert p1.is_subset_of(p1)

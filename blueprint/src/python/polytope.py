@@ -659,6 +659,11 @@ class Polytope:
         if not isinstance(other, Polytope):
             raise ValueError("Parameter other must be of type Polytope")
 
+        if self.dimension() != other.dimension():
+            raise ValueError("Polytopes must have the same dimension")
+        if self.is_empty(include_boundary=True):
+            return True
+
         # Returns the H rep of a polytope as inequalities only (representing
         # equality constraints via two-sided constraints)
         def as_ineq(mat):
@@ -684,6 +689,12 @@ class Polytope:
             mat.obj_func = ab
             lp = cdd.LinProg(mat)
             lp.solve()
+            if lp.status in (cdd.LPStatusType.DUAL_INCONSISTENT,
+                             cdd.LPStatusType.STRUC_DUAL_INCONSISTENT,
+                             cdd.LPStatusType.UNBOUNDED):
+                return False  # The constraint is unbounded below on self.
+            if lp.status != cdd.LPStatusType.OPTIMAL:
+                raise RuntimeError(f"Containment LP failed: {lp.status}")
             if lp.obj_value < 0:
                 return False
         return True
