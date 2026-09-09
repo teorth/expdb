@@ -744,23 +744,32 @@ class Polytope:
         new_mat.lin_set = self.mat.lin_set # copy over the lin set
         return Polytope._from_mat(new_mat)
 
-    # Given a set of integers representing the indices of dimensions, returns a
-    # new Polytope object projected onto those dimensions.
-    #
-    # Note: this method uses the V representation of a polytope so only works
-    # for finite polytopes.
+    # Project all generators, including recession rays and lineality directions.
     def project(self, dims):
         if not isinstance(dims, set):
-            raise ValueError("Parameter dims must of type set.")
+            raise ValueError("Parameter dims must be of type set.")
+        if any(not isinstance(i, int) or i < 0 or i >= self.dimension() for i in dims):
+            raise ValueError("Projection dimensions must be valid coordinate indices")
+        if self.is_empty(include_boundary=True):
+            return None
 
-        if self.vertices is None:
-            self.compute_V_rep()
-
-        projected_verts = []
-        for v in self.vertices:
-            projected_verts.append([v[i] for i in range(len(v)) if i in dims])
-        proj = Polytope.from_V_rep(projected_verts)
-        return proj
+        generators = self.polyhedron.get_generators()
+        rows = []
+        linear = set()
+        for j, row in enumerate(generators):
+            projected = [row[0]] + [row[i + 1] for i in sorted(dims)]
+            if not any(projected):
+                continue  # A ray in the kernel contributes no direction.
+            if j in generators.lin_set:
+                linear.add(len(rows))
+            rows.append(projected)
+        if not any(row[0] for row in rows):
+            rows.append([1] + [0] * len(dims))
+        matrix = cdd.Matrix(rows, number_type="fraction")
+        matrix.rep_type = cdd.RepType.GENERATOR
+        matrix.lin_set = linear
+        inequalities = cdd.Polyhedron(matrix).get_inequalities()
+        return Polytope._from_mat(inequalities)
 
     # Given a list (var) x[0], x[1], ..., x[N - 1], with N > self.dimension(),
     # returns a polytope formed by lifting this polytope to N dimensions.
