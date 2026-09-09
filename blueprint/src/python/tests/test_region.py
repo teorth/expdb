@@ -65,3 +65,5 @@ def test_as_disjoint_union():
 test_union()
 test_intersect()
 test_as_disjoint_union()
+
+import test_region_projection_regression

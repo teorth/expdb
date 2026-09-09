@@ -263,11 +263,30 @@ class Region:
             return Region(Region_Type.UNION, ps)
 
         if self.region_type == Region_Type.INTERSECT:
-            ps = [c.project(dims) for c in self.child]
-            ps = [p for p in ps if p is not None]
-            if len(ps) == 0: return None
-            if len(ps) == 1: return ps[0]
-            return Region(Region_Type.INTERSECT, ps)
+            def convex_parts(region):
+                if region.region_type == Region_Type.POLYTOPE:
+                    return [] if region.child.is_empty(True) else [region.child]
+                if region.region_type in {Region_Type.UNION, Region_Type.DISJOINT_UNION}:
+                    return [p for child in region.child for p in convex_parts(child)]
+                if region.region_type == Region_Type.INTERSECT:
+                    if not region.child:
+                        raise ValueError("Cannot infer the dimension of an empty intersection")
+                    parts = convex_parts(region.child[0])
+                    for child in region.child[1:]:
+                        intersections = [Polytope.intersection([p, q])
+                                         for p in parts for q in convex_parts(child)]
+                        parts = [p for p in intersections if not p.is_empty(True)]
+                    return parts
+                raise NotImplementedError("Projection of complements is not supported")
+
+            projected = [p.project(dims) for p in convex_parts(self)]
+            children = [Region(Region_Type.POLYTOPE, p)
+                        for p in projected if p is not None]
+            if not children:
+                return None
+            if len(children) == 1:
+                return children[0]
+            return Region(Region_Type.UNION, children)
 
         # In particular, complements are not yet supported.
         raise NotImplementedError()
