@@ -33,3 +33,17 @@ def test_edge_case():
             assert m.at([x, y]) == min(f[0] + f[1] * x + f[2] * y for f in fns)
 
 test_edge_case()
+
+
+def test_equal_affine_functions_with_optional_labels():
+    domain = Polytope.rect((0, 1), (0, 1))
+    for left, right, expected in [(None, None, None), (None, 2, 2), (2, None, 2), (2, 1, 1)]:
+        a = Affine2([1, 2, 3], domain, left)
+        b = Affine2([1, 2, 3], domain, right)
+        pieces = a.min_with([b])
+        assert len(pieces) == 1
+        assert pieces[0].label == expected
+        assert pieces[0].at([frac(1, 2), frac(1, 2)]) == frac(7, 2)
+
+
+test_equal_affine_functions_with_optional_labels()

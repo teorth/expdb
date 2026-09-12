@@ -407,7 +407,11 @@ class Affine2:
             # If two functions are identical, then we add the one with a smaller
             # label. This is to establish a replicable order of functions.
             if all(self.a[i] == f.a[i] for i in range(len(self.a))):
-                fn = self if self.label < f.label else f
+                # Labels are optional; use the labelled piece when only one
+                # is labelled, and keep the left piece when neither is.
+                fn = self
+                if f.label is not None and (self.label is None or f.label < self.label):
+                    fn = f
                 pieces.append(Affine2(fn.a, domain, fn.label))  # Shallow copying
                 continue
 
