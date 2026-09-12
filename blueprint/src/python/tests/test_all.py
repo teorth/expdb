@@ -12,6 +12,8 @@ import test_affine2
 
 print("All Affine2 test cases passed.")
 
+import test_beta_reflection
+
 import test_exppair
 
 print("All exponent pair test cases passed.")
