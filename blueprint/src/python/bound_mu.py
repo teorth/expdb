@@ -280,21 +280,31 @@ def best_mu_bound_piecewise(
     if sigma0 > sigma1:
         raise ValueError("sigma0 must be <= sigma1")
 
-    # deal with edge pieces
+    if sigma_interval.is_empty():
+        return []
+
+    # Outside the critical strip the trivial bound is exact. Clip each piece
+    # to the requested interval, including requests wholly outside [0, 1].
+    if sigma1 <= 0:
+        return [Affine(-1, frac(1, 2), sigma_interval.deep_copy())]
+    if sigma0 >= 1:
+        return [Affine(0, 0, sigma_interval.deep_copy())]
     if sigma0 < 0:
-        return [("-x + 1/2", sigma0, 0)] + best_mu_bound_piecewise(
-            Interval(0, sigma1, include_lower=True, include_upper=sigma_interval.include_upper),
-            hypothesis_set
-        )
+        left = Interval(sigma0, 0, sigma_interval.include_lower, False)
+        return [Affine(-1, frac(1, 2), left)] + best_mu_bound_piecewise(
+            Interval(0, sigma1, True, sigma_interval.include_upper), hypothesis_set)
     if sigma1 > 1:
+        right = Interval(1, sigma1, False, sigma_interval.include_upper)
         return best_mu_bound_piecewise(
-            Interval(sigma0, 1, include_lower=sigma_interval.include_lower, include_upper=True),
-            hypothesis_set) + [("0", 1, sigma1)]
+            Interval(sigma0, 1, sigma_interval.include_lower, True), hypothesis_set
+        ) + [Affine(0, 0, right)]
 
     # Computed convex hull is stored within `hypothesis_set` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
     if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
         bounds = get_bounds(hypothesis_set)
+        # As in best_mu_bound, ensure the trivial two-point case has a hull.
+        bounds.append(conjecture_bound_mu(frac(1, 2), 10, "Placeholder"))
         compute_convex_hull(bounds, hypothesis_set)
 
     # The vertices are guaranteed to be in counterclockwise order for 2D hulls
@@ -303,10 +313,10 @@ def best_mu_bound_piecewise(
     for i in range(len(verts)):
         b1 = verts[i].data
         b2 = verts[(i + 1) % len(verts)].data
-        if b2.sigma < sigma0 or b1.sigma > sigma1:
+        if b1.sigma >= b2.sigma:
             continue
-        interval = Interval(max(sigma0, b1.sigma), min(sigma1, b2.sigma))
-        if b1.sigma < b2.sigma and not interval.is_empty():
+        interval = sigma_interval.intersect(Interval(b1.sigma, b2.sigma, True, True))
+        if not interval.is_empty():
             mu_bounds.append(
                 Affine(
                     (b2.mu - b1.mu) / (b2.sigma - b1.sigma),
