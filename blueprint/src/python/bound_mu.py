@@ -220,7 +220,7 @@ def get_bounds(hypothesis_set):
 def compute_convex_hull(bounds, hypothesis_set):
     conv = ConvexHull(np.array([[b.data.sigma, b.data.mu] for b in bounds]))
     vertices = [bounds[v] for v in conv.vertices]
-    hypothesis_set.data["convex_hull"] = vertices
+    hypothesis_set.data['mu_convex_hull'] = vertices
     hypothesis_set.data_valid = True
 
 
@@ -236,7 +236,7 @@ def best_mu_bound(sigma, hypothesis_set):
 
     # Computed convex hull is stored within `hypothesis_list` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
-    if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
+    if not hypothesis_set.data_valid or 'mu_convex_hull' not in hypothesis_set.data:
         # Generate set of bounds on mu implied by hypothesis set
         bounds = get_bounds(hypothesis_set)
         # The convex hull package requires us to provide at least 3 points, while some
@@ -246,7 +246,7 @@ def best_mu_bound(sigma, hypothesis_set):
         compute_convex_hull(pts, hypothesis_set)
 
     # The vertices are guaranteed to be in counterclockwise order for 2D hulls
-    verts = hypothesis_set.data["convex_hull"]
+    verts = hypothesis_set.data['mu_convex_hull']
     for i in range(len(verts)):
         b1 = verts[i]
         b2 = verts[(i + 1) % len(verts)]
@@ -293,12 +293,12 @@ def best_mu_bound_piecewise(
 
     # Computed convex hull is stored within `hypothesis_set` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
-    if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
+    if not hypothesis_set.data_valid or 'mu_convex_hull' not in hypothesis_set.data:
         bounds = get_bounds(hypothesis_set)
         compute_convex_hull(bounds, hypothesis_set)
 
     # The vertices are guaranteed to be in counterclockwise order for 2D hulls
-    verts = hypothesis_set.data["convex_hull"]
+    verts = hypothesis_set.data['mu_convex_hull']
     mu_bounds = []
     for i in range(len(verts)):
         b1 = verts[i].data
