@@ -69,6 +69,20 @@ exponent_pair_conjecture = Hypothesis(
 
 ###############################################################################
 
+def _convex_hull_vertices(pairs):
+    """Return hull vertices, including point and segment hulls unsupported by Qhull."""
+    pairs = list({(p.data.k, p.data.l): p for p in pairs}.values())
+    if len(pairs) <= 2:
+        return pairs
+    ordered = sorted(pairs, key=lambda p: (p.data.k, p.data.l))
+    a, b = ordered[0].data, ordered[-1].data
+    if all((p.data.k - a.k) * (b.l - a.l) ==
+           (p.data.l - a.l) * (b.k - a.k) for p in ordered):
+        return [ordered[0], ordered[-1]]
+    conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
+    return [pairs[v] for v in conv.vertices]
+
+
 def compute_exp_pairs(
         hypothesis_set: Hypothesis_Set,
         search_depth: int = 5,
@@ -112,9 +126,7 @@ def compute_exp_pairs(
         if prune:
             if len(pairs) < 3:
                 continue  # Don't prune if set is too small
-            pairs = [p for p in pairs.values()]
-            conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
-            verts = [pairs[v] for v in conv.vertices]
+            verts = _convex_hull_vertices(pairs.values())
             pairs = {(p.data.k, p.data.l): p for p in verts}
 
     return [p for p in pairs.values()]
@@ -142,13 +154,8 @@ def compute_convex_hull(hypothesis_set: Hypothesis_Set) -> ConvexHull:
     # Computed convex hull is stored within `hypothesis_list` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
     if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
-        if len(pairs) < 3:
-            hypothesis_set.data["convex_hull"] = list(pairs)
-        else:
-            conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
-            vertices = [pairs[v] for v in conv.vertices]
-            hypothesis_set.data["convex_hull"] = vertices
-            hypothesis_set.data_valid = True
+        hypothesis_set.data["convex_hull"] = _convex_hull_vertices(pairs)
+        hypothesis_set.data_valid = True
 
     return hypothesis_set.data["convex_hull"]
 
