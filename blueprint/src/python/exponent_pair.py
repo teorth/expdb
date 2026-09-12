@@ -141,16 +141,16 @@ def compute_convex_hull(hypothesis_set: Hypothesis_Set) -> ConvexHull:
 
     # Computed convex hull is stored within `hypothesis_list` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
-    if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
+    if not hypothesis_set.data_valid or 'exponent_pair_convex_hull' not in hypothesis_set.data:
         if len(pairs) < 3:
-            hypothesis_set.data["convex_hull"] = list(pairs)
+            hypothesis_set.data['exponent_pair_convex_hull'] = list(pairs)
         else:
             conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
             vertices = [pairs[v] for v in conv.vertices]
-            hypothesis_set.data["convex_hull"] = vertices
+            hypothesis_set.data['exponent_pair_convex_hull'] = vertices
             hypothesis_set.data_valid = True
 
-    return hypothesis_set.data["convex_hull"]
+    return hypothesis_set.data['exponent_pair_convex_hull']
 
 def beta_bounds_to_exponent_pairs(
         hypothesis_set: Hypothesis_Set,
