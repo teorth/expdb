@@ -412,6 +412,9 @@ class Polytope:
         if self.vertices is None:
             self.compute_V_rep()
 
+        if len(self.vertices) == 0:
+            raise ValueError("Cannot compute centroid of a polytope with no vertices")
+
         cent = [0] * self.dimension()
         for v in self.vertices:
             for i in range(len(v)):
@@ -444,12 +447,16 @@ class Polytope:
         adj = self.polyhedron.get_adjacency()
 
         edges = []
-        for i in range(len(adj)):
+        n_vert = len(self.vertices)
+        # Adjacency may also index rays (unbounded generators). Those are not
+        # vertices — skip them instead of indexing past self.vertices.
+        for i in range(min(len(adj), n_vert)):
             v1 = self.vertices[i]
             for j in adj[i]:
-                if j >= len(self.vertices):
-                    print(self)
-                    print(self.mat)
+                if j >= n_vert:
+                    continue
+                if j <= i:
+                    continue  # undirected edge once
                 v2 = self.vertices[j]
                 edges.append((v1, v2))
         return edges
