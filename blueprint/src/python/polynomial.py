@@ -23,6 +23,8 @@ class Polynomial:
         return Polynomial(self.coefficients)
 
     def __eq__(self, other):
+        if not isinstance(other, Polynomial):
+            return NotImplemented
         return self.coefficients == other.coefficients
 
     def __add__(self, other):
