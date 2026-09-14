@@ -161,7 +161,7 @@ class Affine:
         return NotImplemented
 
     def deep_copy(self):
-        return Affine(self.m, self.c, self.domain.deep_copy())
+        return Affine(self.m, self.c, self.domain.deep_copy(), self.label)
 
     def to_str(self, variable):
         s3 = f"  ({self.label})" if self.label is not None else ""
@@ -385,7 +385,7 @@ class Affine2:
     # Returns new Affine2 function with dimension i scaled by a factor
     def scale(self, i, factor, additional_constraints):
         return Affine2(
-            self.a.copy(), self.domain.scale(i, factor, additional_constraints)
+            self.a.copy(), self.domain.scale(i, factor, additional_constraints), self.label
         )
 
     # Computes the minimum between this function and a list of 2-d affine functions
