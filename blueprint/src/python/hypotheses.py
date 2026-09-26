@@ -169,10 +169,10 @@ class Hypothesis:
 class Hypothesis_Set:
     def __init__(self, hypotheses=None):
         self.hypotheses = set()
-        if hypotheses is not None:
-            self.add_hypotheses(hypotheses)
         self.data = {}
         self.data_valid = False  # set to false whenever data needs to be recomputed
+        if hypotheses is not None:
+            self.add_hypotheses(hypotheses)
 
     def __repr__(self):
         return f'Set of {len(self.hypotheses)} hypotheses: [{",".join(h.name for h in self.hypotheses)}]'
@@ -181,6 +181,8 @@ class Hypothesis_Set:
     def __copy__(self):
         copy = Hypothesis_Set(self.hypotheses)
         copy.data = dict(self.data)
+
+        copy.data = self.data.copy()
         copy.data_valid = self.data_valid
         return copy
 
@@ -207,6 +209,7 @@ class Hypothesis_Set:
     def add_hypothesis(self, hypothesis, invalidate_data=True):
         self.hypotheses.add(hypothesis)
         if invalidate_data:
+            self.data.clear()
             self.data_valid = False
 
     # Adds a set or list of hypotheses, an individual hypothesis, or a Hypothesis_Set
@@ -220,6 +223,7 @@ class Hypothesis_Set:
         else:
             self.hypotheses.update(new_hypotheses)
             if invalidate_data:
+                self.data.clear()
                 self.data_valid = False
 
     # return all hypotheses of a given type, and (optionally) up to a given year.  Note: is now returning a Hypothesis_Set rather than a list
