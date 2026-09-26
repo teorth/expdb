@@ -118,7 +118,10 @@ def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
         new_x1 = 1 - x0
 
         # Step 3: Build the new Affine bound with reflected interval
-        new_affine = Affine(new_m, new_c, Interval(new_x0, new_x1, True, True))
+        new_affine = Affine(
+            new_m, new_c,
+            Interval(new_x0, new_x1, p.domain.include_upper, p.domain.include_lower),
+        )
 
         # Step 4: Wrap in a derived Hypothesis, preserving the dependency chain
         new_hyp = derived_bound_beta(
