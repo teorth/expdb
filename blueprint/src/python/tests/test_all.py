@@ -14,6 +14,10 @@ print("All Affine2 test cases passed.")
 
 import test_beta_reflection
 
+import test_hypothesis_cache
+
+import test_piecewise_mu
+
 import test_exppair
 
 print("All exponent pair test cases passed.")
@@ -46,5 +50,11 @@ print("All ep_to_zd regression test cases passed.")
 import test_hypothesis
 
 print("All Hypothesis test cases passed.")
+
+import test_reference
+
+print("All Reference test cases passed.")
+
+import test_rational_envelope_regression
 
 print("All test cases passed.")
