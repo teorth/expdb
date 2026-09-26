@@ -52,6 +52,8 @@ class Interval:
         return f"{lower_bracket}{self.x0},{self.x1}{upper_bracket}"
 
     def __eq__(self, other):
+        if not isinstance(other, Interval):
+            return NotImplemented
         # All empty intervals are considered equal
         if self.is_empty() and other.is_empty():
             return True
@@ -64,8 +66,15 @@ class Interval:
 
     # -------------------------------------------------------------------------
     # Public static functions
+    @staticmethod
     def parse(s):
+        if not isinstance(s, str) or len(s) < 5:
+            raise ValueError("Interval string must look like [a, b] or (a, b)")
+        if s[0] not in "[(" or s[-1] not in "])":
+            raise ValueError(f"Interval string {s!r} must start with [ or ( and end with ] or )")
         inner = s[1:-1].split(",")
+        if len(inner) != 2:
+            raise ValueError(f"Interval string {s!r} must contain exactly two endpoints")
         return Interval(
             frac(inner[0].strip()), frac(inner[1].strip()), s[0] == "[", s[-1] == "]"
         )
