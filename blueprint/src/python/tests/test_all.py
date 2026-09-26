@@ -51,4 +51,6 @@ import test_reference
 
 print("All Reference test cases passed.")
 
+import test_rational_envelope_regression
+
 print("All test cases passed.")
