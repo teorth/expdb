@@ -27,3 +27,5 @@ def run_all():
     assert not (Interval(0, 0, False, False) == "empty")
 
 run_all()
+
+import test_affine_envelope_regression
