@@ -47,4 +47,8 @@ import test_hypothesis
 
 print("All Hypothesis test cases passed.")
 
+import test_reference
+
+print("All Reference test cases passed.")
+
 print("All test cases passed.")
