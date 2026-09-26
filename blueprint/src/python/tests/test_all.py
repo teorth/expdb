@@ -16,6 +16,8 @@ import test_beta_reflection
 
 import test_hypothesis_cache
 
+import test_piecewise_mu
+
 import test_exppair
 
 print("All exponent pair test cases passed.")
