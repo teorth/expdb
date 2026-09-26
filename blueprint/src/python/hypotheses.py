@@ -181,8 +181,6 @@ class Hypothesis_Set:
     def __copy__(self):
         copy = Hypothesis_Set(self.hypotheses)
         copy.data = dict(self.data)
-
-        copy.data = self.data.copy()
         copy.data_valid = self.data_valid
         return copy
 
