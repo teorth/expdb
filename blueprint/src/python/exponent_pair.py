@@ -256,10 +256,17 @@ def beta_bounds_to_exponent_pairs(
 # Returns whether point p lies in the triangle with vertices a, b, c (all points
 # two-dimensional)
 def in_triangle(a, b, c, p):
-     d = ((b[1] - c[1])*(a[0] - c[0]) + (c[0] - b[0])*(a[1] - c[1]))
-     x = ((b[1] - c[1])*(p[0] - c[0]) + (c[0] - b[0])*(p[1] - c[1]))
-     y = ((c[1] - a[1])*(p[0] - c[0]) + (a[0] - c[0])*(p[1] - c[1]))
-     return 0 <= x and x <= d and 0 <= y and y <= d and x + y <= d
+    def cross(u, v, w):
+        return (v[0] - u[0]) * (w[1] - u[1]) - (v[1] - u[1]) * (w[0] - u[0])
+
+    area = cross(a, b, c)
+    if area == 0:
+        # Collinearity alone describes the whole line, not the triangle's segment.
+        return (cross(a, b, p) == 0 and cross(a, c, p) == 0
+                and min(a[0], b[0], c[0]) <= p[0] <= max(a[0], b[0], c[0])
+                and min(a[1], b[1], c[1]) <= p[1] <= max(a[1], b[1], c[1]))
+    signs = [cross(a, b, p), cross(b, c, p), cross(c, a, p)]
+    return all(x >= 0 for x in signs) or all(x <= 0 for x in signs)
 
 def construct_proof(
         k: frac,
@@ -316,6 +323,13 @@ def construct_proof(
     # The exponent pair is contained in the convex hull - if reduce_dependencies,
     # is set to false, return the entire hull as dependencies
     if not reduce_dependencies:
+        proof = "Follows from convexity and the exponent pairs " + ", ".join(
+            f"({v.data.k}, {v.data.l})" for v in verts)
+        return derived_exp_pair(k, l, proof, set(verts))
+
+    # A segment hull has no triangle to search. Its two endpoints already
+    # certify every point in the hull, including when dependency reduction is on.
+    if len(verts) <= 2:
         proof = "Follows from convexity and the exponent pairs " + ", ".join(
             f"({v.data.k}, {v.data.l})" for v in verts)
         return derived_exp_pair(k, l, proof, set(verts))
