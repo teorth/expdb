@@ -1282,12 +1282,11 @@ zd.add_zero_density(
     literature, "9/(8 * x - 2)", Itvl(frac(10, 13), 1), rm.get("ivic_zero_1984")
 )
 
-# TODO add reference
 zd.add_zero_density(
     literature,
     "15/(22 * x - 10)",
     Itvl(frac(10, 13), frac(5, 6)),
-    Reference.make("Ivic", 1984),
+    rm.get("ivic_zero_1984"),
 )
 
 # A. Ivic (1984) The Riemann zeta-function (11.76, 11.77)
