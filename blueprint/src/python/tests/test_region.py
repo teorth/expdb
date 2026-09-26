@@ -120,3 +120,5 @@ def test_scale_all_preserves_complement():
 
 
 test_scale_all_preserves_complement()
+
+import test_region_projection_regression
