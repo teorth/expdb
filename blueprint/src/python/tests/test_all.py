@@ -29,6 +29,7 @@ import test_polytope
 print("All Polytope test cases passed.")
 
 import test_rationalfunction
+import test_rational_roots_regression
 
 print("All RationalFunction test cases passed.")
 
