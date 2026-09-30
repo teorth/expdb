@@ -56,6 +56,8 @@ class Constraint:
         return f"{f} = 0"
 
     def __eq__(self, other):
+        if not isinstance(other, Constraint):
+            return NotImplemented
         if (
             len(self.coefficients) != len(other.coefficients)
             or self.inequality_type != other.inequality_type
