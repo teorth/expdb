@@ -785,7 +785,7 @@ class RationalFunction:
         return self.add(other)
 
     def __sub__(self, other):
-        return self.sub(other)
+        return self.subtract(other)
 
     def __mul__(self, other):
         return self.mul(other)
