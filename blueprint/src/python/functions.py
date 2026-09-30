@@ -772,6 +772,8 @@ class RationalFunction:
         return f"{sympy.latex(sympy.simplify(self.num / self.den))}"
 
     def __eq__(self, other):
+        if not isinstance(other, RationalFunction):
+            return NotImplemented
         res = self.num * other.den - self.den * other.num
 
         # Direct test if result is numeric
