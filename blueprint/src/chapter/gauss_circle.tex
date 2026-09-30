@@ -71,7 +71,17 @@ One has $\theta^{\operatorname{Gauss}}_{2} \ge 1/2$ and $\theta^{\operatorname{G
 
 In light of Conjecture \ref{gauss-circle-conj} and \Cref{gauss-circle-lower-23}, in the rest of this section we shall focus on upper bounds on $\theta^{\operatorname{Gauss}}_{k}$ for $k = 2, 3$.
 
-The case $k = 2$ is known classically as Gauss's circle problem. The current sharpest known bound on $\theta_2^{\operatorname{Gauss}}$ is
+The case $k = 2$ is known classically as Gauss's circle problem. The following bound is given in Hu's preprint:
+\begin{theorem}[Hu (2026) \cite{hu_first_spacing_2026}]\label{gauss-circle-hu-2026}
+One has
+\[
+\theta_2^{\operatorname{Gauss}} \le \frac{573}{914} = 0.6269146608\ldots.
+\]
+\end{theorem}
+
+The manuscript uses the squared-radius variable $X=R^2$ and proves an error bound $O_\varepsilon(X^{573/1828+\varepsilon})$ for every $\varepsilon>0$. Substituting $X=R^2$ and rescaling $\varepsilon$ gives the radius exponent $573/914$ used here. An accompanying \href{https://github.com/hxypqr/gauss-circle-divisor-energy/tree/2e2cc1aa2ae937bf7822889fc73b364444aa61b3}{Lean formalization} proves the deduction from explicitly stated external inputs; those inputs remain hypotheses of its final theorem.
+
+Li--Yang obtained the following earlier bound:
 \begin{theorem}[Li--Yang (2023) \cite{li_yang_gauss_2024}]
 One has $\theta_2^{\operatorname{Gauss}} \le 2\alpha$, where $\alpha = 0.31448\ldots$ is the solution to the equation
 \[
@@ -84,7 +94,7 @@ on the interval $[0.3, 0.35]$.
 The value of $\alpha$ is the same as that appearing in \Cref{divisor-2-bound}. Historically, methods used to make progress in the $\alpha_2$ exponent in the Dirichlet divisor problem have led to corresponding improvements in $\theta_2^{\operatorname{Gauss}}$ (and vice versa). This may be unsurprising given that both problems reduce to counting the number of lattice points contained in a curved region with a smooth boundary (with the region being the hyperbola $\{(m,n) \in [0, \infty)^2: mn \le x \}$ in the case of the Dirichlet divisor problem).
 \end{remark}
 
-The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ is recorded in \Cref{gauss-circle-table-2} and \Cref{fig:gauss_circle_historical}.
+The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ is recorded in \Cref{gauss-circle-table-2}; \Cref{fig:gauss_circle_historical} illustrates the progression through 2023.
 
 
 \begin{table}[ht]
@@ -117,7 +127,9 @@ The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ 
     \hline
     Huxley (2003) \cite{huxley_exponential_2003} & $131/208 = 0.6298\ldots$\\
     \hline
-    Li--Yang (2023) \cite{li_yang_gauss_2024} & $2\alpha* = 0.6289\ldots$\\
+    Li--Yang (2023) \cite{li_yang_gauss_2024} & $2\alpha = 0.6289\ldots$\\
+    \hline
+    Hu (2026) \cite{hu_first_spacing_2026} & $573/914 = 0.626914\ldots$\\
     \hline
     \end{tabular}
 \label{gauss-circle-table-2}
@@ -126,6 +138,6 @@ The historical progression of upper bounds on $\theta_2^{\operatorname{Gauss}}$ 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{chapter/gauss_circle_historical_bounds.png}
-    \caption{Historical upper bounds on $\theta_2^{\rm Gauss}$}
+    \caption{Historical upper bounds on $\theta_2^{\rm Gauss}$ through 2023}
     \label{fig:gauss_circle_historical}
 \end{figure}
