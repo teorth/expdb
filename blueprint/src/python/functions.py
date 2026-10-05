@@ -686,7 +686,7 @@ class RationalFunction2:
         if self.is_zero():
             return f"0 on {self.domain}"
         if self.is_constant():
-            return f"{self._num_coeffs[0] / self._den_coeffs[0]} on {self.domain}"
+            return f"{self._num_coeffs[-1] / self._den_coeffs[-1]} on {self.domain}"
 
         num = RationalFunction2._poly_str(self._num_coeffs, "x")
         den = RationalFunction2._poly_str(self._den_coeffs, "x")
@@ -732,12 +732,12 @@ class RationalFunction2:
         return all(c == 0 for c in self._num_coeffs)
 
     def is_constant(self):
-        return all(c == 0 for c in self._num_coeffs[1:]) and \
-                all(c == 0 for c in self._den_coeffs[1:])
+        return all(c == 0 for c in self._num_coeffs[:-1]) and \
+                all(c == 0 for c in self._den_coeffs[:-1])
 
     def is_affine(self):
-        return all(c == 0 for c in self._num_coeffs[2:]) and \
-                all(c == 0 for c in self._den_coeffs[1:])
+        return all(c == 0 for c in self._num_coeffs[:-2]) and \
+                all(c == 0 for c in self._den_coeffs[:-1])
 
 
 # Represents the univariate function P(x)/Q(x) where P, Q are polynomials. Currently
