@@ -672,7 +672,7 @@ class RationalFunction2:
         if len(coeffs) == 0:
             raise ValueError("Parameter coeffs must have at least 1 element")
 
-        if len(coeffs) == 1:
+        if isinstance(coeffs, list) or len(coeffs) == 1:
             self._num_coeffs = tuple(coeffs)
             self._den_coeffs = tuple([1])
         else:
