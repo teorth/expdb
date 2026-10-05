@@ -16,7 +16,7 @@ class Region_Helper:
 
         # Remove all empty polytopes
         for i in range(len(polys)):
-            if polys[i].is_empty(include_boundary=False):
+            if polys[i].is_empty(include_boundary=True):
                 index.remove(i)
 
         # Keep track of the tuples (int, int) of indexes which do not form a pairwise
