@@ -28,7 +28,7 @@ namespace Expdb
 
 open L2Bump
 
-/-! ### The exponential sum -/
+/-! ## The exponential sum -/
 
 /-- The exponential sum with coefficients `a` and frequencies `ξ`, evaluated at `t`. -/
 def expSum {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℂ :=
@@ -37,12 +37,12 @@ def expSum {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ
 private def expSumSq {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) : ℝ :=
   ‖expSum a ξ t‖ ^ 2
 
-private lemma expSumSq_nonneg {ι : Type*} [Fintype ι]
+private theorem expSumSq_nonneg {ι : Type*} [Fintype ι]
     (a : ι → ℂ) (ξ : ι → ℝ) (t : ℝ) :
     0 ≤ expSumSq a ξ t :=
   sq_nonneg _
 
-private lemma coeff_eq_zero_of_sum_norm_sq_eq_zero
+private theorem coeff_eq_zero_of_sum_norm_sq_eq_zero
     {ι : Type*} [Fintype ι] {a : ι → ℂ}
     (h : ∑ r, ‖a r‖ ^ 2 = 0) : ∀ r, a r = 0 := by
   intro r
@@ -59,13 +59,13 @@ lemma expSum_continuous {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → 
   unfold expSum
   fun_prop
 
-private lemma expSumSq_continuous {ι : Type*} [Fintype ι]
+private theorem expSumSq_continuous {ι : Type*} [Fintype ι]
     (a : ι → ℂ) (ξ : ι → ℝ) :
     Continuous (expSumSq a ξ) := by
   unfold expSumSq
   fun_prop
 
-private lemma weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private theorem weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N) (t₀ : ℝ)
     (hsep : IsSeparatedFamily (1 / N) ξ) :
     ∫ t : ℝ, expSumSq a ξ t * ‖bumpFourier ((t - t₀) / N)‖ ^ 2 =
@@ -172,9 +172,9 @@ private lemma weighted_l2_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (�
     simpa only [H] using (SchwartzMap.integral_norm_sq_fourier G).trans hG_l2]
   simp [abs_of_pos hN]
 
-/-! ### Local `L²` bound -/
+/-! ## Local `L²` bound -/
 
-private lemma local_l2_bound :
+private theorem local_l2_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →
@@ -255,14 +255,14 @@ private lemma local_l2_bound :
   apply (le_div_iff₀ hc).2
   nlinarith
 
-/-! ### Smoothing identity -/
+/-! ## Smoothing identity -/
 
 -- E(t) = 1/N ∫_I |bump̂((t-t₀)/N)|² dt₀ - 1_I(t)
 private def smoothingKernel (N : ℝ) (left right : ℝ) (t : ℝ) : ℝ :=
   (1 / N) * (∫ t₀ in Set.Icc left right, ‖bumpFourier ((t - t₀) / N)‖ ^ 2) -
   Set.indicator (Set.Icc left right) (fun _ => (1 : ℝ)) t
 
-private lemma smoothingKernelAverage_eq_intervalIntegral (N : ℝ) (hN : 0 < N)
+private theorem smoothingKernelAverage_eq_intervalIntegral (N : ℝ) (hN : 0 < N)
     (left right : ℝ) (hleft_right : left ≤ right) (t : ℝ) :
     (1 / N) * (∫ t₀ in Set.Icc left right, ‖bumpFourier ((t - t₀) / N)‖ ^ 2) =
     ∫ u in (t - right) / N..(t - left) / N, ‖bumpFourier u‖ ^ 2 := by
@@ -277,7 +277,7 @@ private lemma smoothingKernelAverage_eq_intervalIntegral (N : ℝ) (hN : 0 < N)
       (f := fun u : ℝ => ‖bumpFourier u‖ ^ 2) (a := left) (b := right) N (t / N)).trans (by
         congr 1 <;> field_simp)
 
-private lemma smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
+private theorem smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ)
     (N : ℝ) (hN : 0 < N)
     (hsep : IsSeparatedFamily (1 / N) ξ)
     (left right : ℝ) (T : ℝ) (hT : T = right - left) (hleft_right : left ≤ right) :
@@ -381,9 +381,9 @@ private lemma smoothing_identity {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ 
   field_simp
   ring
 
-/-! ### Decay of the smoothing error -/
+/-! ## Decay of the smoothing error -/
 
-private lemma smoothing_kernel_decay :
+private theorem smoothing_kernel_decay :
     ∃ C : ℝ, 0 < C ∧
     ∀ N : ℝ, 0 < N →
     ∀ left right : ℝ, left ≤ right →
@@ -536,7 +536,7 @@ private lemma smoothing_kernel_decay :
     exact (setIntegral_mono_set hf_int.integrableOn (ae_of_all _ hf_nonneg)
       (ae_of_all _ hsubset)).trans (htail d hd)
 
-private lemma smoothingKernelAverage_continuous (N : ℝ) (hN : 0 < N)
+private theorem smoothingKernelAverage_continuous (N : ℝ) (hN : 0 < N)
     (left right : ℝ) (hleft_right : left ≤ right) :
     Continuous (fun t : ℝ =>
       (1 / N) * (∫ t₀ in Set.Icc left right, ‖bumpFourier ((t - t₀) / N)‖ ^ 2)) := by
@@ -558,7 +558,7 @@ private lemma smoothingKernelAverage_continuous (N : ℝ) (hN : 0 < N)
   exact (hP_cont.comp ((continuous_id.sub continuous_const).div_const N)).sub
     (hP_cont.comp ((continuous_id.sub continuous_const).div_const N))
 
-private lemma smoothingKernel_aestronglyMeasurable (N : ℝ) (hN : 0 < N)
+private theorem smoothingKernel_aestronglyMeasurable (N : ℝ) (hN : 0 < N)
     (left right : ℝ) (hleft_right : left ≤ right) :
     AEStronglyMeasurable (smoothingKernel N left right) := by
   have hind_meas : AEStronglyMeasurable
@@ -567,9 +567,9 @@ private lemma smoothingKernel_aestronglyMeasurable (N : ℝ) (hN : 0 < N)
   exact (smoothingKernelAverage_continuous N hN left right hleft_right).aestronglyMeasurable.sub
     hind_meas
 
-/-! ### Integrated smoothing-error bound -/
+/-! ## Integrated smoothing-error bound -/
 
-private lemma smoothing_error_bound :
+private theorem smoothing_error_bound :
     ∃ C : ℝ, 0 < C ∧
     ∀ {ι : Type*} [Fintype ι] (a : ι → ℂ) (ξ : ι → ℝ) (N : ℝ),
     0 < N →
@@ -814,7 +814,7 @@ private lemma smoothing_error_bound :
           mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) (by positivity)
         _ = 2 * C₅ * C₃ * (B + 1) * N * ∑ r, ‖a r‖ ^ 2 := by ring
 
-/-! ### `L²` integral estimate lemma -/
+/-! ## `L²` integral estimate lemma -/
 
 /-- If `ξ` is a finite `1 / N`-separated
   family of real numbers, then over any interval of length `T`,

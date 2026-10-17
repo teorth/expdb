@@ -10,9 +10,10 @@ import Mathlib.Topology.Semicontinuity.Basic
 /-!
 # Upper semicontinuity of the exponential-sum growth exponent
 
-This file proves the upper semicontinuity assertion in the blueprint.  The main input is scale
+This file proves Lemma `beta-semicts` from the blueprint's Exponential sum growth exponents
+chapter (`beta-chapter`). The main input is scale
 transference: dilation and finite Fourier inversion increase the scale, while decomposition into
-residue classes decreases it.  Both operations preserve the fixed model order of the phase.
+residue classes decreases it. Both operations preserve the fixed model order of the phase.
 -/
 
 @[expose] public section
@@ -134,7 +135,7 @@ theorem exponentSumGrowthExponent_monoOn_Icc :
       convert hk using 1
       ring
     exact hfixed (T i) (M i) _ (q i * a i) (q i * b i)
-      ⟨hiC, hMbounds.1, hMbounds.2, hiG, hinterval.1, hinterval.2⟩
+      hiC hMbounds.1 hMbounds.2 hiG hinterval
   have hdilate := norm_exponentialSumAt_dilate_le (F i) (T i) (N i)
     (a i) (b i) (q i) hqi (ne_of_gt (zero_lt_one.trans_le (hT i)))
       (ne_of_gt (zero_lt_one.trans_le (hN i)))
@@ -348,7 +349,7 @@ theorem exponentSumGrowthExponent_le_add_sub
       _ ≤ 2 * residueScale (N i) (q i) (r i) :=
         Nat.floor_le (by linarith [hiMone])
   have hselected := hfixed (T i) (M i) (G i) (A i (r i)) (B i (r i))
-    ⟨hiC, hMbounds.1, hMbounds.2, hiG, hA, hB⟩
+    hiC hMbounds.1 hMbounds.2 hiG ⟨hA, hB⟩
   have hres := norm_exponentialSumAt_le_sum_residues (F i) (T i) (N i)
     (a i) (b i) (q i) hqi hiqN
       (ne_of_gt (zero_lt_one.trans_le (hN i))) (hab i).1 (hab i).2
@@ -434,7 +435,8 @@ theorem continuousOn_exponentSumGrowthExponent :
     ContinuousOn exponentSumGrowthExponent (Set.Icc 0 1) :=
   lipschitzOnWith_exponentSumGrowthExponent.continuousOn
 
-/-- The exponential-sum growth exponent is upper semicontinuous. -/
+/-- The exponential-sum growth exponent is upper semicontinuous (blueprint Lemma
+`beta-semicts`). -/
 theorem upperSemicontinuous_exponentSumGrowthExponent :
     UpperSemicontinuous exponentSumGrowthExponent := by
   rw [upperSemicontinuous_iff]

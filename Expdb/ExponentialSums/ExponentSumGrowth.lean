@@ -38,6 +38,7 @@ def exponentialSum
     VariableObject ℂ :=
   fun i ↦ exponentialSumAt (F i) (T i) (N i) (a i) (b i)
 
+/-- Evaluate a variable exponential sum at an ambient index. -/
 @[simp] theorem exponentialSum_apply
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ)
     (T N : VariableObject ℝ) (a b : VariableObject ℕ) (i : ℕ) :
@@ -54,13 +55,78 @@ def IsExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
     T.IsUnbounded →
     IsPowerAsymptotic N T (α : ℝ) →
     IsModelPhaseFunction F →
-    (∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i) →
+    (∀ i, IsDyadicSubinterval (N i) (a i) (b i)) →
     IsPowerBounded (exponentialSum F T N a b) T β
+
+/-- An exponential-sum bound applies when its setup conditions hold only eventually. -/
+theorem IsExponentSumBound.isPowerBounded_of_eventually_setup
+    {α : ℝ≥0} {β σ : ℝ} (hβ : IsExponentSumBound α β) (hσ : 0 < σ)
+    {N T : VariableObject ℝ} {F : VariableFunction (VariableObject.fixed ℝ) ℝ}
+    {a b : VariableObject ℕ} (hTtop : Tendsto T atTop atTop)
+    (hNT : IsPowerAsymptotic N T α) (hF : IsModelPhaseFunctionWith F σ)
+    (hsetup : ∀ᶠ i in atTop, 1 ≤ N i ∧ 1 ≤ T i ∧
+      IsDyadicSubinterval (N i) (a i) (b i)) :
+    IsPowerBounded (exponentialSum F T N a b) T β := by
+  obtain ⟨i₀, hi₀⟩ := eventually_atTop.1 hsetup
+  let φ : ℕ → ℕ := fun i ↦ i + i₀
+  have hφ : Tendsto φ atTop atTop := by
+    apply tendsto_atTop.2
+    intro k
+    filter_upwards [eventually_ge_atTop k] with i hi
+    dsimp [φ]
+    omega
+  have hT : ∀ i, 1 ≤ T (φ i) := fun i ↦ (hi₀ _ (by dsimp [φ]; omega)).2.1
+  have hTunbounded : VariableObject.IsUnbounded (T ∘ φ) :=
+    (VariableObject.isUnbounded_iff_tendsto_atTop
+      (fun i ↦ zero_le_one.trans (hT i))).2 (hTtop.comp hφ)
+  have htail := hβ (N ∘ φ) (T ∘ φ) (fun i ↦ F (φ i)) (a ∘ φ) (b ∘ φ)
+    (fun i ↦ (hi₀ _ (by dsimp [φ]; omega)).1) hT hTunbounded
+    (hNT.comp_tendsto hφ) ((hF.comp_tendsto hφ).isModelPhaseFunction hσ)
+    (fun i ↦ (hi₀ _ (by dsimp [φ]; omega)).2.2)
+  let ψ : ℕ → ℕ := fun i ↦ i - i₀
+  have hψ : Tendsto ψ atTop atTop := by
+    apply tendsto_atTop.2
+    intro k
+    filter_upwards [eventually_ge_atTop (k + i₀)] with i hi
+    dsimp [ψ]
+    omega
+  obtain ⟨e, he, hbound⟩ := htail.comp_tendsto hψ
+  refine ⟨e, he, hbound.congr' ?_ ?_⟩
+  · filter_upwards [eventually_ge_atTop i₀] with i hi
+    have hidx : φ (ψ i) = i := Nat.sub_add_cancel hi
+    change exponentialSumAt (F (φ (ψ i))) (T (φ (ψ i))) (N (φ (ψ i)))
+      (a (φ (ψ i))) (b (φ (ψ i))) = exponentialSumAt (F i) (T i) (N i) (a i) (b i)
+    rw [hidx]
+  · filter_upwards [eventually_ge_atTop i₀] with i hi
+    have hidx : φ (ψ i) = i := Nat.sub_add_cancel hi
+    change T (φ (ψ i)) ^ e i = T i ^ e i
+    rw [hidx]
+
+/-- The exponential sum bound obtained by testing only the full interval `[N, 2N]`. -/
+def IsFullIntervalExponentSumBound (α : ℝ≥0) (β : ℝ) : Prop :=
+  ∀ (N T : VariableObject ℝ)
+    (F : VariableFunction (VariableObject.fixed ℝ) ℝ),
+    (∀ i, 1 ≤ N i) →
+    (∀ i, 1 ≤ T i) →
+    T.IsUnbounded →
+    IsPowerAsymptotic N T (α : ℝ) →
+    IsModelPhaseFunction F →
+    IsPowerBounded
+      (exponentialSum F T N (fun i ↦ ⌈N i⌉₊) (fun i ↦ ⌊2 * N i⌋₊)) T β
+
+/-- Every arbitrary-interval bound applies to the full dyadic interval. -/
+theorem IsExponentSumBound.fullInterval {α : ℝ≥0} {β : ℝ}
+    (h : IsExponentSumBound α β) : IsFullIntervalExponentSumBound α β := by
+  intro N T F hN hT hTunbounded hNT hF
+  apply h N T F _ _ hN hT hTunbounded hNT hF
+  intro i
+  exact ⟨Nat.le_ceil _, Nat.floor_le (by linarith [hN i])⟩
 
 /-- The set of admissible exponential-sum growth exponents at scale `α`. -/
 def exponentSumBounds (α : ℝ≥0) : Set ℝ :=
   {β : ℝ | IsExponentSumBound α β}
 
+/-- Membership in the set of admissible exponential sum exponents. -/
 @[simp] theorem mem_exponentSumBounds {α : ℝ≥0} {β : ℝ} :
     β ∈ exponentSumBounds α ↔ IsExponentSumBound α β :=
   Iff.rfl
@@ -83,13 +149,20 @@ theorem IsExponentSumBound.mono {α : ℝ≥0} {β γ : ℝ}
   exact (hβ N T F a b hN hT hTunbounded hNT hF hab).mono
     (Filter.Eventually.of_forall hT) hβγ
 
+/-- Bounds at every strictly larger exponent imply a bound at the limiting exponent. -/
+theorem isExponentSumBound_of_forall_gt {α : ℝ≥0} {β : ℝ}
+    (h : ∀ γ : ℝ, β < γ → IsExponentSumBound α γ) : IsExponentSumBound α β := by
+  intro N T F a b hN hT hTunbounded hNT hF hab
+  exact IsPowerBounded.of_forall_gt hT hTunbounded
+    (fun γ hγ ↦ h γ hγ N T F a b hN hT hTunbounded hNT hF hab)
+
 /-! ### Nonemptiness and lower bound -/
 
-private lemma norm_exponentialSum_le_three_mul
+private theorem norm_exponentialSum_le_three_mul
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ)
     (T N : VariableObject ℝ) (a b : VariableObject ℕ)
     (hN : ∀ i, 1 ≤ N i)
-    (hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i)
+    (hab : ∀ i, IsDyadicSubinterval (N i) (a i) (b i))
     (i : ℕ) :
     ‖exponentialSum F T N a b i‖ ≤ 3 * N i := by
   calc
@@ -115,7 +188,7 @@ theorem isExponentSumBound_self (α : ℝ≥0) :
       rw [Real.norm_eq_abs,
         abs_of_nonneg (Real.rpow_nonneg (le_trans zero_le_one (hT i)) _)]
 
-private lemma exponentSumBounds_nonempty (α : ℝ≥0) :
+private theorem exponentSumBounds_nonempty (α : ℝ≥0) :
     (exponentSumBounds α).Nonempty :=
   ⟨α, isExponentSumBound_self α⟩
 
@@ -151,46 +224,19 @@ theorem IsExponentSumBound.nonneg
     hT hTunbounded hbound zero_lt_one
   exact Filter.Eventually.of_forall fun i ↦ by simp
 
-private lemma exponentSumBounds_bddBelow {α : ℝ≥0} :
+private theorem exponentSumBounds_bddBelow {α : ℝ≥0} :
     BddBelow (exponentSumBounds α) :=
   ⟨0, fun _ hβ ↦ hβ.nonneg⟩
 
 /-! ## The least admissible exponent -/
 
-private lemma exists_isExponentSumBound_lt_add
-    (α : ℝ≥0) {ε : ℝ} (hε : 0 < ε) :
-    ∃ β : ℝ, IsExponentSumBound α β ∧
-      β < exponentSumGrowthExponent α + ε := by
-  let S : Set ℝ := exponentSumBounds α
-  have hS : S.Nonempty := exponentSumBounds_nonempty α
-  have hinf_lt : sInf S < sInf S + ε := by linarith
-  obtain ⟨β, hβ, hβlt⟩ := exists_lt_of_csInf_lt hS hinf_lt
-  change IsExponentSumBound α β at hβ
-  refine ⟨β, hβ, ?_⟩
-  simpa [S, exponentSumGrowthExponent] using hβlt
-
 /-- By underspill, the infimum of the admissible exponents is itself admissible. -/
 theorem isExponentSumBound_exponentSumGrowthExponent (α : ℝ≥0) :
     IsExponentSumBound α (exponentSumGrowthExponent α) := by
-  intro N T F a b hN hT hTunbounded hNT hF hab
-  apply (isPowerBounded_iff_forall_pos
-    (exponentialSum F T N a b) T (exponentSumGrowthExponent α)
-    hT hTunbounded).2
-  intro ε hε
-  -- Choose an admissible exponent within `ε / 2` of the infimum.
-  obtain ⟨β, hβ, hβlt⟩ :=
-    exists_isExponentSumBound_lt_add α (show 0 < ε / 2 by linarith)
-  have hβpower := hβ N T F a b hN hT hTunbounded hNT hF hab
-  have hβbound := (isPowerBounded_iff_forall_pos
-    (exponentialSum F T N a b) T β hT hTunbounded).1
-      hβpower (ε / 2) (by linarith)
-  refine hβbound.trans (Asymptotics.IsBigO.of_bound 1 ?_)
-  exact Filter.Eventually.of_forall fun i ↦ by
-    have hT0 : 0 ≤ T i := le_trans zero_le_one (hT i)
-    rw [one_mul, Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hT0 _),
-      Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hT0 _)]
-    apply Real.rpow_le_rpow_of_exponent_le (hT i)
-    linarith
+  apply isExponentSumBound_of_forall_gt
+  intro γ hγ
+  obtain ⟨β, hβ, hβγ⟩ := exists_lt_of_csInf_lt (exponentSumBounds_nonempty α) hγ
+  exact IsExponentSumBound.mono hβ hβγ.le
 
 /-- The defining universal property of the exponential sum growth exponent. -/
 theorem exponentSumGrowthExponent_le_iff {α : ℝ≥0} {β : ℝ} :
@@ -230,7 +276,7 @@ theorem isPowerBounded_logPhase
     (hT : ∀ i, 1 ≤ T i)
     (hTunbounded : T.IsUnbounded)
     (hNT : IsPowerAsymptotic N T (α : ℝ))
-    (hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i) :
+    (hab : ∀ i, IsDyadicSubinterval (N i) (a i) (b i)) :
     IsPowerBounded (exponentialSum logPhase T N a b) T
       (exponentSumGrowthExponent α) :=
   isExponentSumBound_exponentSumGrowthExponent α
@@ -245,7 +291,7 @@ theorem le_exponentSumGrowthExponent_of_logPhase_lower_bound
     (hT : ∀ i, 1 ≤ T i)
     (hTunbounded : T.IsUnbounded)
     (hNT : IsPowerAsymptotic N T (α : ℝ))
-    (hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i)
+    (hab : ∀ i, IsDyadicSubinterval (N i) (a i) (b i))
     (hc : 0 < c)
     (hlower : ∀ᶠ i in atTop, c * T i ^ γ ≤ ‖exponentialSum logPhase T N a b i‖) :
     γ ≤ exponentSumGrowthExponent α :=

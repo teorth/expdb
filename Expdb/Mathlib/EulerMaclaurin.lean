@@ -11,16 +11,17 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Order
 
 /-!
-# Arbitrary-order Euler--Maclaurin summation
+# Arbitrary-order Euler–Maclaurin summation
 
-This file is adapted from
-`Interval/EulerMaclaurin/Bernoulli.lean` and
+Adapted from `Interval/EulerMaclaurin/Bernoulli.lean` and
 `Interval/EulerMaclaurin/EulerMaclaurin.lean` in
 [`girving/interval`](https://github.com/girving/interval) at commit
 `f4a3231fd735cdf6d5265864d9a9207744a7aca2`, licensed under Apache-2.0.
 
-The source has been modified, namespaced for Expdb, and updated for newer version of Mathlib.
-
+Adaptations for Expdb: combined the Bernoulli and Euler–Maclaurin developments in one
+module, retained the summation identity, and provided an explicit norm bound for sums
+over closed natural-number intervals. Auxiliary declarations are private; namespaces
+and proofs were updated for the current Mathlib API.
 -/
 
 namespace Expdb.EulerMaclaurin
@@ -41,10 +42,10 @@ variable {s : ℕ} {a : ℤ}
 private def presaw (s : ℕ) (a : ℤ) (x : ℝ) : ℝ :=
   (s.factorial : ℝ)⁻¹ • bernoulliFun s (x - a)
 
-private lemma contDiff_presaw : ContDiff ℝ ⊤ (presaw s a) := by
+private theorem contDiff_presaw : ContDiff ℝ ⊤ (presaw s a) := by
   exact ((contDiff_bernoulliFun _).comp (contDiff_id.sub contDiff_const)).const_smul _
 
-private lemma hasDerivAt_presaw {x : ℝ} :
+private theorem hasDerivAt_presaw {x : ℝ} :
     HasDerivAt (presaw (s + 1) a) (presaw s a x) x := by
   have e : presaw (s + 1) a = (fun x ↦ presaw (s + 1) a x) := rfl
   simp only [presaw, Nat.factorial_succ, mul_comm _ s.factorial, Nat.cast_mul,
@@ -64,7 +65,7 @@ private lemma hasDerivAt_presaw {x : ℝ} :
   exact HasDerivAt.comp _ (hasDerivAt_bernoulliFun (s + 1) _) (h := fun x : ℝ ↦ x - a)
     ((hasDerivAt_id' x).sub_const _)
 
-@[simp] private lemma presaw_zero {x : ℝ} : presaw 0 a x = 1 := by
+@[simp] private theorem presaw_zero {x : ℝ} : presaw 0 a x = 1 := by
   simp only [presaw, Nat.factorial_zero, Nat.cast_one, inv_one, bernoulliFun_zero, smul_eq_mul,
     mul_one]
 
@@ -72,36 +73,36 @@ private lemma hasDerivAt_presaw {x : ℝ} :
 def saw (s : ℕ) (x : ℝ) : ℝ :=
   (s.factorial : ℝ)⁻¹ * periodizedBernoulli s (x : AddCircle (1 : ℝ))
 
-private lemma saw_eq_bernoulliFun_fract (s : ℕ) (x : ℝ) :
+private theorem saw_eq_bernoulliFun_fract (s : ℕ) (x : ℝ) :
     saw s x = (s.factorial : ℝ)⁻¹ * bernoulliFun s (Int.fract x) := by
   rw [saw, ← AddCircle.coe_fract x, periodizedBernoulli, AddCircle.liftIco_coe_apply]
   constructor
   · exact Int.fract_nonneg x
   · simpa using Int.fract_lt_one x
 
-private lemma saw_eqOn {a : ℤ} : EqOn (saw s) (presaw s a) (Ico a (a + 1)) := by
+private theorem saw_eqOn {a : ℤ} : EqOn (saw s) (presaw s a) (Ico a (a + 1)) := by
   intro x m
   simp only [mem_Ico, ← Int.floor_eq_iff] at m
   simp only [saw_eq_bernoulliFun_fract, presaw, smul_eq_mul, Int.fract, m]
 
-@[simp] private lemma presaw_coe_same {a : ℤ} : presaw s a a = saw s 0 := by
+@[simp] private theorem presaw_coe_same {a : ℤ} : presaw s a a = saw s 0 := by
   rw [← saw_eqOn (a := a)]
   all_goals simp [saw_eq_bernoulliFun_fract]
 
-@[simp] private lemma presaw_coe_succ {a : ℤ} :
+@[simp] private theorem presaw_coe_succ {a : ℤ} :
     presaw (s + 2) a (a + 1) = saw (s + 2) 0 := by
   simp [presaw, bernoulliFun_endpoints_eq_of_ne_one, saw_eq_bernoulliFun_fract]
 
-@[simp] private lemma presaw_one_coe_succ {a : ℤ} : presaw 1 a (a + 1) = 1 / 2 := by
+@[simp] private theorem presaw_one_coe_succ {a : ℤ} : presaw 1 a (a + 1) = 1 / 2 := by
   simp only [presaw, Nat.factorial_one, Nat.cast_one, inv_one, add_sub_cancel_left,
     bernoulliFun_one, one_div, smul_eq_mul, one_mul]
   norm_num
 
-private lemma saw_one {x : ℝ} : saw 1 x = Int.fract x - 1 / 2 := by
+private theorem saw_one {x : ℝ} : saw 1 x = Int.fract x - 1 / 2 := by
   simp only [saw_eq_bernoulliFun_fract, Nat.factorial_one, Nat.cast_one, inv_one,
     bernoulliFun_one, one_div, one_mul]
 
-@[simp] private lemma saw_one_zero : saw 1 0 = -2⁻¹ := by
+@[simp] private theorem saw_one_zero : saw 1 0 = -2⁻¹ := by
   simp only [saw_one, Int.fract_zero, one_div, zero_sub]
 
 /-! ## Explicit bounds -/
@@ -112,7 +113,7 @@ def sawBound (s : ℕ) : ℝ :=
   (s.factorial : ℝ)⁻¹ * ∑ i ∈ Finset.range (s + 1),
     |(_root_.bernoulli (s - i) : ℝ) * (s.choose i : ℝ)|
 
-private lemma abs_bernoulliFun_le (s : ℕ) (x : ℝ) (hx : x ∈ Icc 0 1) :
+private theorem abs_bernoulliFun_le (s : ℕ) (x : ℝ) (hx : x ∈ Icc 0 1) :
     |bernoulliFun s x| ≤ ∑ i ∈ Finset.range (s + 1),
       |(_root_.bernoulli (s - i) : ℝ) * (s.choose i : ℝ)| := by
   rw [bernoulliFun, Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
@@ -137,12 +138,12 @@ lemma abs_saw_le (s : ℕ) (x : ℝ) : |saw s x| ≤ sawBound s := by
   simp only [sawBound]
   positivity
 
-/-! ## Euler--Maclaurin on one unit interval -/
+/-! ## Euler–Maclaurin on one unit interval -/
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 variable {f : ℝ → E} {t : Set ℝ} {b c : ℤ} {n : ℕ}
 
-private lemma intervalIntegrable_presaw_smul
+private theorem intervalIntegrable_presaw_smul
     (fc : ContDiffOn ℝ n f t) {a b : ℝ} (ab : a ≤ b)
     (u : UniqueDiffOn ℝ t) (abt : Icc a b ⊆ t) {s : ℕ} :
     IntervalIntegrable (fun x ↦ presaw s c x • iteratedDerivWithin n f t x) volume a b := by
@@ -150,7 +151,7 @@ private lemma intervalIntegrable_presaw_smul
   simp only [uIcc_of_le ab]
   exact (fc.continuousOn_iteratedDerivWithin le_rfl u).mono abt
 
-private lemma integral_saw_eq_integral_presaw :
+private theorem integral_saw_eq_integral_presaw :
     ∫ x in a..a + 1, saw s x • iteratedDerivWithin s f t x =
       ∫ x in a..a + 1, presaw s a x • iteratedDerivWithin s f t x := by
   apply intervalIntegral.integral_congr_ae
@@ -166,7 +167,7 @@ private lemma integral_saw_eq_integral_presaw :
   rw [saw_eqOn (a := a)]
   exact Ioo_subset_Ico_self m
 
-private lemma presaw_smul_iteratedDeriv_by_parts [CompleteSpace E]
+private theorem presaw_smul_iteratedDeriv_by_parts [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + 1) ⊆ t) :
     ∫ x in a..a + 1, presaw s c x • iteratedDerivWithin s f t x =
@@ -202,7 +203,7 @@ private lemma presaw_smul_iteratedDeriv_by_parts [CompleteSpace E]
     simpa only [uIcc_of_le ha] using
       (fc.continuousOn_iteratedDerivWithin le_rfl u).mono abt
 
-private lemma presaw_iterated_by_parts [CompleteSpace E] (fc : ContDiffOn ℝ (s + 1) f t)
+private theorem presaw_iterated_by_parts [CompleteSpace E] (fc : ContDiffOn ℝ (s + 1) f t)
     (u : UniqueDiffOn ℝ t) (abt : Icc (a : ℝ) (a + 1) ⊆ t) :
     ∫ x in a..a + 1, f x = (2⁻¹ : ℝ) • (f a + f (a + 1)) -
       ∑ m ∈ Finset.range s, (-1 : ℝ) ^ m • saw (m + 2) 0 •
@@ -233,14 +234,14 @@ private def trapezoid_sum (f : ℝ → E) (a : ℤ) : ℕ → E
   | 0 => 0
   | n + 1 => trapezoid_sum f a n + (2⁻¹ : ℝ) • (f (a + n) + f (a + n + 1))
 
-@[simp] private lemma trapezoid_sum_zero : trapezoid_sum f a 0 = 0 := rfl
+@[simp] private theorem trapezoid_sum_zero : trapezoid_sum f a 0 = 0 := rfl
 
-private lemma trapezoid_sum_succ :
+private theorem trapezoid_sum_succ :
     trapezoid_sum f a (n + 1) =
       trapezoid_sum f a n + (2⁻¹ : ℝ) • (f (a + n) + f (a + n + 1)) := rfl
 
 /-- The trapezoidal sum is the ordinary inclusive sum with half of each endpoint removed. -/
-private lemma trapezoid_sum_eq_sum_Icc_sub (f : ℝ → E) (a : ℤ) (n : ℕ) :
+private theorem trapezoid_sum_eq_sum_Icc_sub (f : ℝ → E) (a : ℤ) (n : ℕ) :
     trapezoid_sum f a n =
       ∑ k ∈ Finset.Icc a (a + n), f k - (2⁻¹ : ℝ) • (f a + f (a + n)) := by
   induction n with
@@ -267,7 +268,7 @@ private lemma trapezoid_sum_eq_sum_Icc_sub (f : ℝ → E) (a : ℤ) (n : ℕ) :
         module
       · simp
 
-private lemma intervalIntegrable_saw_smul
+private theorem intervalIntegrable_saw_smul
     (fc : ContDiffOn ℝ s f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t) :
     IntervalIntegrable (fun x ↦ saw s x • iteratedDerivWithin s f t x) volume a (a + n) := by
@@ -290,8 +291,8 @@ private lemma intervalIntegrable_saw_smul
     simp only [mem_Ioc, ne_eq, Int.cast_add, Int.cast_natCast, mem_Ico] at m ne ⊢
     exact ⟨m.1.le, Ne.lt_of_le ne m.2⟩
 
-/-- The arbitrary-order Euler--Maclaurin formula. -/
-private lemma trapezoid_sum_eq_integral_add [CompleteSpace E]
+/-- The arbitrary-order Euler–Maclaurin formula. -/
+private theorem trapezoid_sum_eq_integral_add [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t) :
     trapezoid_sum f a n = (∫ x in a..a + n, f x) +
@@ -324,7 +325,7 @@ private lemma trapezoid_sum_eq_integral_add [CompleteSpace E]
     · exact (fc.continuousOn.mono (by simpa only [hb'])).intervalIntegrable_of_Icc (by linarith)
     · exact (fc.continuousOn.mono (by simpa only [hb'])).intervalIntegrable_of_Icc (by linarith)
 
-/-- The arbitrary-order Euler--Maclaurin formula for a sum over consecutive integers. -/
+/-- The arbitrary-order Euler–Maclaurin formula for a sum over consecutive integers. -/
 theorem sum_Icc_eq_integral_add [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t) :
@@ -340,7 +341,7 @@ theorem sum_Icc_eq_integral_add [CompleteSpace E]
   rw [h]
   module
 
-private lemma norm_integral_saw_smul_iteratedDerivWithin_le
+private theorem norm_integral_saw_smul_iteratedDerivWithin_le
     {C : ℝ}
     (hderiv : ∀ x ∈ Icc (a : ℝ) (a + n),
       ‖iteratedDerivWithin (s + 1) f t x‖ ≤ C) :
@@ -358,7 +359,7 @@ private lemma norm_integral_saw_smul_iteratedDerivWithin_le
   · simp only [add_sub_cancel_left]
     rw [abs_of_nonneg (Nat.cast_nonneg n)]
 
-private lemma norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
+private theorem norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
     (fc : ContDiffOn ℝ (s + 1) f t) (u : UniqueDiffOn ℝ t)
     (abt : Icc (a : ℝ) (a + n) ⊆ t)
     {C₀ : ℝ} (ha : ‖f a‖ ≤ C₀) (hb : ‖f (a + n)‖ ≤ C₀)
@@ -417,7 +418,7 @@ private lemma norm_sum_Icc_int_sub_integral_le [CompleteSpace E]
   exact (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl) |>.trans <|
     add_le_add (add_le_add hendpoint hcorrection) hremainder
 
-private lemma map_Icc_natCast_int (a b : ℕ) :
+private theorem map_Icc_natCast_int (a b : ℕ) :
     (Finset.Icc a b).map
       ⟨(fun n : ℕ ↦ (n : ℤ)), fun _ _ h ↦ Int.ofNat_inj.mp h⟩ =
       Finset.Icc (a : ℤ) (b : ℤ) := by
@@ -436,14 +437,14 @@ private lemma map_Icc_natCast_int (a b : ℕ) :
     · exact_mod_cast (show (z.toNat : ℤ) ≤ (b : ℤ) by simpa [hzt] using hz.2)
 
 omit [NormedSpace ℝ E] in
-private lemma sum_Icc_int_eq_sum_Icc_nat
+private theorem sum_Icc_int_eq_sum_Icc_nat
     (f : ℝ → E) (a b : ℕ) :
     ∑ z ∈ Finset.Icc (a : ℤ) (b : ℤ), f z =
       ∑ n ∈ Finset.Icc a b, f n := by
   rw [← map_Icc_natCast_int]
   simp
 
-/-- A convenient norm form of Euler--Maclaurin for natural endpoints. Uniform bounds on the
+/-- A convenient norm form of Euler–Maclaurin for natural endpoints. Uniform bounds on the
 function and its derivatives control the difference between the inclusive sum and its integral;
 the right-hand side records the endpoint, correction-term, and remainder contributions. -/
 theorem norm_sum_Icc_nat_sub_integral_le [CompleteSpace E]

@@ -22,10 +22,15 @@ noncomputable section
 
 namespace Expdb
 
+/-- The endpoint conditions for a possibly empty integer interval inside `[N, 2N]`. -/
+abbrev IsDyadicSubinterval (N : ℝ) (a b : ℕ) : Prop :=
+  N ≤ (a : ℝ) ∧ (b : ℝ) ≤ 2 * N
+
 /-- The oscillatory factor `x ↦ e(T F(x / N))`. -/
 def oscillatory (F : ℝ → ℝ) (T N : ℝ) (x : ℝ) : ℂ :=
   𝐞 (T * F (x / N))
 
+/-- The oscillatory factor has norm one. -/
 @[simp] theorem norm_oscillatory (F : ℝ → ℝ) (T N x : ℝ) :
     ‖oscillatory F T N x‖ = 1 := by
   simp [oscillatory]
@@ -49,10 +54,12 @@ theorem norm_exponentialSumAt_le_add_one (F : ℝ → ℝ) (T N : ℝ) (a b : �
       rw [Nat.card_Icc]
       exact_mod_cast Nat.sub_le _ _
 
+/-- The exponential sum over a singleton interval. -/
 @[simp] theorem exponentialSumAt_self (F : ℝ → ℝ) (T N : ℝ) (a : ℕ) :
     exponentialSumAt F T N a a = oscillatory F T N a := by
   simp [exponentialSumAt]
 
+/-- The exponential sum over an empty interval vanishes. -/
 theorem exponentialSumAt_of_lt {a b : ℕ} (hab : b < a) (F : ℝ → ℝ) (T N : ℝ) :
     exponentialSumAt F T N a b = 0 := by
   simp [exponentialSumAt, Finset.Icc_eq_empty (by omega : ¬ a ≤ b)]

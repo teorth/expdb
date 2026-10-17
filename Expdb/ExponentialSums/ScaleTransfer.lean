@@ -25,14 +25,14 @@ namespace Expdb
 
 /-! ## Finite Fourier orthogonality -/
 
-private lemma sum_stdAddChar_mul_eq_ite (q m : ℕ) [NeZero q] :
+private theorem sum_stdAddChar_mul_eq_ite (q m : ℕ) [NeZero q] :
     (∑ h : ZMod q, ZMod.stdAddChar (h * (m : ZMod q))) =
       if q ∣ m then (q : ℂ) else 0 := by
   rw [AddChar.sum_mulShift (m : ZMod q) (ZMod.isPrimitive_stdAddChar q)]
   simp only [ZMod.natCast_eq_zero_iff m q, ZMod.card]
   split_ifs <;> norm_num
 
-private lemma stdAddChar_mul_nat_eq_fourierChar (q m : ℕ) [NeZero q] (h : ZMod q) :
+private theorem stdAddChar_mul_nat_eq_fourierChar (q m : ℕ) [NeZero q] (h : ZMod q) :
     ZMod.stdAddChar (h * (m : ZMod q)) =
       (𝐞 ((h.val : ℝ) * (m : ℝ) / q) : ℂ) := by
   rw [← h.natCast_zmod_val, ← Nat.cast_mul, ZMod.stdAddChar_apply,
@@ -194,7 +194,7 @@ lemma exponentialSumAt_residue (F : ℝ → ℝ) (T N : ℝ) (a b q r : ℕ)
     simp only [oscillatory]
     rw [residuePhase_identity F N q r m hN hrN]
 
-private lemma residue_upper_endpoint_le (N : ℝ) (b q r : ℕ)
+private theorem residue_upper_endpoint_le (N : ℝ) (b q r : ℕ)
     (hq : 0 < q) (hr : r < q) (hb : (b : ℝ) ≤ 2 * N) :
     (b - r) / q ≤ ⌊2 * residueScale N q r⌋₊ + 1 := by
   by_cases hrb : r ≤ b

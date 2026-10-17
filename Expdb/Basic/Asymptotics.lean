@@ -146,7 +146,8 @@ scoped[Expdb] infix:50 " ≤o " => Expdb.IsLEUpToInfinitesimal
 
 open scoped Expdb
 
-private theorem isEqUpToInfinitesimal_iff_tendsto_sub
+/-- Infinitesimal equality means that the difference tends to zero. -/
+theorem isEqUpToInfinitesimal_iff_tendsto_sub
     (X Y : VariableObject E) :
     (X =o Y) ↔ Tendsto (fun i ↦ X i - Y i) atTop (nhds 0) := by
   rw [IsEqUpToInfinitesimal, VariableObject.IsInfinitesimal]
@@ -214,7 +215,138 @@ theorem isEqUpToInfinitesimal_iff_forall_pos
   rw [IsEqUpToInfinitesimal, VariableObject.isInfinitesimal_iff_forall_pos]
   simp only [Pi.sub_apply]
 
+/-- A continuous function on a compact set preserves equality up to an infinitesimal
+for sequences of points in that set. -/
+theorem IsEqUpToInfinitesimal.comp_of_isCompact {s : Set ℝ} {f : ℝ → ℝ}
+    (hs : IsCompact s) (hf : ContinuousOn f s) {x y : VariableObject ℝ}
+    (hxy : x =o y) (hx : ∀ i, x i ∈ s) (hy : ∀ i, y i ∈ s) :
+    (fun i ↦ f (x i)) =o (fun i ↦ f (y i)) := by
+  have hu := hs.uniformContinuousOn_of_continuous hf
+  have hclose := (isEqUpToInfinitesimal_iff_tendsto_sub x y).1 hxy
+  rw [isEqUpToInfinitesimal_iff_tendsto_sub, Metric.tendsto_nhds]
+  rw [Metric.uniformContinuousOn_iff] at hu
+  intro ε hε
+  obtain ⟨δ, hδ, hdist⟩ := hu ε hε
+  filter_upwards [(Metric.tendsto_nhds.1 hclose) δ hδ] with i hi
+  simpa [dist_eq_norm] using hdist (x i) (hx i) (y i) (hy i)
+    (by simpa [Real.dist_eq] using hi)
+
 end InfinitesimalRelations
+
+/-! ## Bounded variable objects -/
+
+namespace VariableObject
+
+/-- Boundedness of a variable object is the usual bound by a constant function. -/
+theorem isBounded_iff_isBigO_one {E : Type*} [SeminormedAddCommGroup E]
+    (X : VariableObject E) : X.IsBounded ↔ X =O[atTop] (fun _ ↦ (1 : ℝ)) := by
+  rw [Asymptotics.isBigO_one_iff ℝ]
+  rfl
+
+/-- A constant variable object is bounded. -/
+theorem IsBounded.const {E : Type*} [SeminormedAddCommGroup E] (c : E) :
+    IsBounded (fixed c) := ⟨‖c‖, Eventually.of_forall fun _ ↦ le_rfl⟩
+
+/-- Subtracting bounded variable objects preserves boundedness. -/
+theorem IsBounded.sub {E : Type*} [SeminormedAddCommGroup E] {X Y : VariableObject E}
+    (hX : X.IsBounded) (hY : Y.IsBounded) : (X - Y).IsBounded := by
+  rw [isBounded_iff_isBigO_one] at hX hY ⊢
+  exact hX.sub hY
+
+/-- Products of bounded real variable objects are bounded. -/
+theorem IsBounded.mul {X Y : VariableObject ℝ} (hX : X.IsBounded) (hY : Y.IsBounded) :
+    (X * Y).IsBounded := by
+  rw [isBounded_iff_isBigO_one] at hX hY ⊢
+  change (fun i ↦ X i * Y i) =O[atTop] (fun _ ↦ (1 : ℝ))
+  simpa only [one_mul] using hX.mul hY
+
+/-- A fixed finite sum of bounded variable objects is bounded. -/
+theorem IsBounded.sum {ι E : Type*} [SeminormedAddCommGroup E] (s : Finset ι)
+    {X : ι → VariableObject E} (hX : ∀ j ∈ s, (X j).IsBounded) :
+    IsBounded (fun i ↦ ∑ j ∈ s, X j i) := by
+  rw [isBounded_iff_isBigO_one]
+  exact Asymptotics.IsBigO.sum fun j hj ↦ (isBounded_iff_isBigO_one _).1 (hX j hj)
+
+/-- Reciprocals are bounded when their denominators stay away from zero. -/
+theorem isBounded_inv_of_norm_ge {X : VariableObject ℝ} {c : ℝ} (hc : 0 < c)
+    (hX : ∀ᶠ i in atTop, c ≤ ‖X i‖) : IsBounded (fun i ↦ (X i)⁻¹) := by
+  refine ⟨c⁻¹, hX.mono fun i hi ↦ ?_⟩
+  rw [norm_inv]
+  exact inv_anti₀ hc hi
+
+end VariableObject
+
+/-- Infinitesimal equality transfers boundedness from the comparison object. -/
+theorem IsEqUpToInfinitesimal.isBounded_left {E : Type*} [SeminormedAddCommGroup E]
+    {X Y : VariableObject E} (h : X =o Y) (hY : Y.IsBounded) : X.IsBounded := by
+  obtain ⟨C, hC⟩ := hY
+  have hsmall := (isEqUpToInfinitesimal_iff_forall_pos X Y).1 h 1 zero_lt_one
+  refine ⟨1 + C, ?_⟩
+  filter_upwards [hsmall, hC] with i hi hYi
+  calc
+    ‖X i‖ = ‖X i - Y i + Y i‖ := by rw [sub_add_cancel]
+    _ ≤ ‖X i - Y i‖ + ‖Y i‖ := norm_add_le _ _
+    _ ≤ 1 + C := add_le_add hi.le hYi
+
+/-- Infinitesimal equality respects eventual equality on either side. -/
+theorem IsEqUpToInfinitesimal.congr {E : Type*} [SeminormedAddCommGroup E]
+    {X Y X' Y' : VariableObject E} (h : X =o Y)
+    (hX : X =ᶠ[atTop] X') (hY : Y =ᶠ[atTop] Y') : X' =o Y' := by
+  rw [isEqUpToInfinitesimal_iff_tendsto_sub] at h ⊢
+  apply h.congr'
+  filter_upwards [hX, hY] with i hiX hiY
+  rw [hiX, hiY]
+
+/-- A fixed finite sum preserves infinitesimal equality. -/
+theorem IsEqUpToInfinitesimal.sum {ι E : Type*} [SeminormedAddCommGroup E] (s : Finset ι)
+    {X Y : ι → VariableObject E} (h : ∀ j ∈ s, X j =o Y j) :
+    (fun i ↦ ∑ j ∈ s, X j i) =o (fun i ↦ ∑ j ∈ s, Y j i) := by
+  rw [isEqUpToInfinitesimal_iff_tendsto_sub]
+  simpa only [Finset.sum_sub_distrib, Finset.sum_const_zero] using
+    tendsto_finsetSum s fun j hj ↦ (isEqUpToInfinitesimal_iff_tendsto_sub _ _).1 (h j hj)
+
+/-- Multiplication preserves infinitesimal equality when the comparison factors are bounded. -/
+theorem IsEqUpToInfinitesimal.mul {X Y X' Y' : VariableObject ℝ}
+    (hX : X =o X') (hY : Y =o Y') (hX' : X'.IsBounded) (hY' : Y'.IsBounded) :
+    X * Y =o X' * Y' := by
+  have hYbdd : IsBoundedUnder (· ≤ ·) atTop (fun i ↦ ‖Y i‖) :=
+    (Asymptotics.isBigO_one_iff ℝ).1
+      ((VariableObject.isBounded_iff_isBigO_one _).1 (hY.isBounded_left hY'))
+  have hX'bdd : IsBoundedUnder (· ≤ ·) atTop (fun i ↦ ‖X' i‖) :=
+    (Asymptotics.isBigO_one_iff ℝ).1 ((VariableObject.isBounded_iff_isBigO_one _).1 hX')
+  rw [isEqUpToInfinitesimal_iff_tendsto_sub] at hX hY ⊢
+  have hsum := (hX.zero_mul_isBoundedUnder_le hYbdd).add
+    (hY.zero_mul_isBoundedUnder_le hX'bdd)
+  convert hsum using 1
+  · ext i
+    simp only [Pi.mul_apply]
+    ring
+  · simp
+
+/-- Reciprocals preserve infinitesimal equality when the comparison stays away from zero. -/
+theorem IsEqUpToInfinitesimal.inv {X Y : VariableObject ℝ} (h : X =o Y) {c : ℝ}
+    (hc : 0 < c) (hY : ∀ᶠ i in atTop, c ≤ ‖Y i‖) :
+    (fun i ↦ (X i)⁻¹) =o (fun i ↦ (Y i)⁻¹) := by
+  have hsmall := (isEqUpToInfinitesimal_iff_forall_pos X Y).1 h (c / 2) (half_pos hc)
+  have hX : ∀ᶠ i in atTop, c / 2 ≤ ‖X i‖ := by
+    filter_upwards [hsmall, hY] with i hi hYi
+    have := norm_sub_norm_le (Y i) (X i)
+    rw [norm_sub_rev] at this
+    linarith
+  have hprod : IsBoundedUnder (· ≤ ·) atTop (fun i ↦ ‖(X i)⁻¹ * (Y i)⁻¹‖) :=
+    (Asymptotics.isBigO_one_iff ℝ).1
+      ((VariableObject.isBounded_iff_isBigO_one _).1
+        ((VariableObject.isBounded_inv_of_norm_ge (half_pos hc) hX).mul
+          (VariableObject.isBounded_inv_of_norm_ge hc hY)))
+  have hneg := ((isEqUpToInfinitesimal_iff_tendsto_sub X Y).1 h).neg
+  rw [isEqUpToInfinitesimal_iff_tendsto_sub]
+  have hzero : Tendsto (fun i ↦ -(X i - Y i)) atTop (𝓝 0) := by simpa using hneg
+  refine (hzero.zero_mul_isBoundedUnder_le hprod).congr' ?_
+  filter_upwards [hX, hY] with i hXi hYi
+  have hXne := norm_pos_iff.1 (lt_of_lt_of_le (half_pos hc) hXi)
+  have hYne := norm_pos_iff.1 (lt_of_lt_of_le hc hYi)
+  rw [inv_sub_inv' hXne hYne]
+  ring
 
 /-- `X ≤o Y` iff `X i ≤ Y i + δ` eventually for every `δ > 0`. -/
 theorem isLEUpToInfinitesimal_iff_forall_pos (X Y : VariableObject ℝ) :
@@ -276,5 +408,6 @@ theorem underspill (X Y : VariableObject ℝ) :
       X (fun i => Y i + ε / 2)).1 (h (ε / 2) hε2) (ε / 2) hε2
     filter_upwards [hbound] with i hi
     linarith
+
 
 end Expdb

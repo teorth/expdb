@@ -21,7 +21,7 @@ since an admissible exponent must bound every model phase.
 Its sum is essentially `∑ n ^ (iT)` and its integral has size comparable to `N / T`,
 while Euler–Maclaurin contributes only a bounded error, giving `β(α) ≥ α - 1`.
 
-For `0 ≤ α ≤ 1`, the triangle inequality gives `β(α) ≤ α`. The `L^2` integral estimate
+For `0 ≤ α ≤ 1`, the triangle inequality gives `β(α) ≤ α`. The `L²` integral estimate
 lemma is applied to the separated values `log(n/N)` to find a parameter for
 which the logarithmic-phase sum has size comparable to `N ^ (1 / 2)`, yielding
 the lower bound `β(α) ≥ α / 2`.
@@ -83,7 +83,7 @@ private noncomputable def oscillatoryScaleParameters
       exponent_mul_order_succ := hqmul
       one_add_half_le_order_mul := hsδ }
 
-private lemma OscillatoryScaleParameters.hasSmallEulerMaclaurinRemainder
+private theorem OscillatoryScaleParameters.hasSmallEulerMaclaurinRemainder
     {δ K T N : ℝ} (params : OscillatoryScaleParameters δ)
     (hT : 1 ≤ T) (hN : 1 ≤ N) (hK : 1 ≤ K)
     (hKpower : K ≤ T ^ params.exponent) (hNlower : T ^ (δ + 1) ≤ N) :
@@ -157,8 +157,7 @@ private theorem exponentSumGrowthExponent_le_sub_one
   let C : ℝ := max 1 (max (2 * M) (K ^ params.exponent⁻¹))
   have hC : 1 ≤ C := le_max_left _ _
   refine ⟨η, hη, params.order, params.one_le_order, C, hC, ?_⟩
-  intro T N F a b hsetup
-  obtain ⟨hTC, hNlower, hNupper, hF, ha, hb⟩ := hsetup
+  intro T N F a b hTC hNlower hNupper hF ⟨ha, hb⟩
   have hTone : 1 ≤ T := hC.trans hTC
   have hTpos : 0 < T := zero_lt_one.trans_le hTone
   have hNone : 1 ≤ N := by
@@ -240,9 +239,10 @@ theorem exists_norm_logPhase_sum_sub_mainTerm_le (s : ℕ) :
   rw [hint] at herr
   exact herr
 
-private theorem sub_one_le_exponentSumGrowthExponent
-    {α : ℝ≥0} (hα : 1 < α) :
-    (α : ℝ) - 1 ≤ exponentSumGrowthExponent α := by
+/-- Full dyadic logarithmic sums force the lower bound above scale one. -/
+theorem IsFullIntervalExponentSumBound.sub_one_le
+    {α : ℝ≥0} {β : ℝ} (hbound : IsFullIntervalExponentSumBound α β) (hα : 1 < α) :
+    (α : ℝ) - 1 ≤ β := by
   have hαR : (1 : ℝ) < α := by exact_mod_cast hα
   let δ : ℝ := (α : ℝ) - 1
   have hδ : 0 < δ := by dsimp [δ]; linarith
@@ -274,11 +274,6 @@ private theorem sub_one_le_exponentSumGrowthExponent
   have hNT : IsPowerAsymptotic N T (α : ℝ) := by
     refine ⟨VariableObject.fixed (α : ℝ), IsEqUpToInfinitesimal.refl _, ?_⟩
     exact Filter.Eventually.of_forall hNTexact
-  have hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i := by
-    intro i
-    dsimp [N, a, b]
-    push_cast
-    exact ⟨le_rfl, le_rfl⟩
   obtain ⟨K, E, hK, hEone, hlogEstimate⟩ :=
     exists_norm_logPhase_sum_sub_mainTerm_le params.order
   have hKpower : ∀ᶠ i in atTop, K ≤ T i ^ params.exponent :=
@@ -329,8 +324,20 @@ private theorem sub_one_le_exponentSumGrowthExponent
         _ ≤ d / 2 * T i ^ ((α : ℝ) - 1) :=
           mul_le_mul_of_nonneg_left hiSmall (by positivity)
     linarith
-  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α hN hT hTunbounded hNT hab
-    (half_pos hd) (by simpa [d] using hlower)
+  have hs := hbound N T logPhase hN hT hTunbounded hNT isModelPhaseFunction_log
+  have ha : (fun i ↦ ⌈N i⌉₊) = a := by
+    funext i
+    dsimp [N, a]
+    rw [show (i : ℝ) + 1 = ((i + 1 : ℕ) : ℝ) by push_cast; rfl]
+    exact Nat.ceil_natCast _
+  have hb : (fun i ↦ ⌊2 * N i⌋₊) = b := by
+    funext i
+    dsimp [N, b]
+    rw [show (2 : ℝ) * ((i : ℝ) + 1) = ((2 * (i + 1) : ℕ) : ℝ) by push_cast; ring]
+    exact Nat.floor_natCast _
+  rw [ha, hb] at hs
+  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow hT hTunbounded
+    hs (half_pos hd) (by simpa [d] using hlower)
 
 /-! ## The `L²` lower bound for `0 < α ≤ 1` -/
 
@@ -361,9 +368,10 @@ private theorem exists_logPhase_sum_norm_sq_ge :
   rw [exponentialSumAt, Finset.sum_subtype (Finset.Icc a b) (fun _ ↦ Iff.rfl)]
   simpa only [expSum, oscillatory, coeff, ξ, one_mul, mul_comm] using htlarge
 
-private theorem half_le_exponentSumGrowthExponent
-    {α : ℝ≥0} (hα : 0 < α) (hαone : α ≤ 1) :
-    (α : ℝ) / 2 ≤ exponentSumGrowthExponent α := by
+/-- Full dyadic logarithmic sums force the square-root lower bound up to scale one. -/
+theorem IsFullIntervalExponentSumBound.half_le
+    {α : ℝ≥0} {β : ℝ} (hbound : IsFullIntervalExponentSumBound α β)
+    (hα : 0 < α) (hαone : α ≤ 1) : (α : ℝ) / 2 ≤ β := by
   have hαR : 0 < (α : ℝ) := by exact_mod_cast hα
   have hαoneR : (α : ℝ) ≤ 1 := by exact_mod_cast hαone
   obtain ⟨C, hC, hlarge⟩ := exists_logPhase_sum_norm_sq_ge
@@ -431,11 +439,6 @@ private theorem half_le_exponentSumGrowthExponent
       (zero_lt_one.trans_le hD) (mul_pos (by norm_num) (zero_lt_one.trans_le hD)) hNtop
       (Filter.Eventually.of_forall fun i ↦ by
         simpa only [mul_assoc] using hTbounds i)
-  have hab : ∀ i, N i ≤ (a i : ℝ) ∧ (b i : ℝ) ≤ 2 * N i := by
-    intro i
-    dsimp [N, a, b, n]
-    push_cast
-    exact ⟨le_rfl, le_rfl⟩
   let L : ℝ := (2 * D) ^ ((α : ℝ) / 2)
   have hL : 0 < L := Real.rpow_pos_of_pos (mul_pos (by norm_num) hDpos) _
   have hlower : ∀ᶠ i in atTop,
@@ -480,8 +483,19 @@ private theorem half_le_exponentSumGrowthExponent
             (1 / (2 * L)) * (L * N i ^ (1 / 2 : ℝ)) := by gcongr
         _ = N i ^ (1 / 2 : ℝ) / 2 := by field_simp [hL.ne']
         _ ≤ ‖exponentialSum logPhase T N a b i‖ := hroot
-  exact le_exponentSumGrowthExponent_of_logPhase_lower_bound α
-    (fun i ↦ (hN i).trans' one_le_two) hT hTunbounded hNT hab (by positivity) hlower
+  have hs := hbound N T logPhase (fun i ↦ (hN i).trans' one_le_two)
+    hT hTunbounded hNT isModelPhaseFunction_log
+  have ha : (fun i ↦ ⌈N i⌉₊) = a := by
+    funext i
+    simp [N, a]
+  have hb : (fun i ↦ ⌊2 * N i⌋₊) = b := by
+    funext i
+    dsimp [N, b]
+    rw [show (2 : ℝ) * (n i : ℝ) = ((2 * n i : ℕ) : ℝ) by push_cast; ring]
+    exact Nat.floor_natCast _
+  rw [ha, hb] at hs
+  exact exponent_le_of_isPowerBounded_of_eventually_norm_ge_rpow hT hTunbounded
+    hs (by positivity) hlower
 
 /-! ## Trivial bounds -/
 
@@ -501,7 +515,7 @@ theorem exponentSumGrowthExponent_eq_sub_one
     exponentSumGrowthExponent α = (α : ℝ) - 1 := by
   exact le_antisymm
     (exponentSumGrowthExponent_le_sub_one hα)
-    (sub_one_le_exponentSumGrowthExponent hα)
+    ((isExponentSumBound_exponentSumGrowthExponent _).fullInterval.sub_one_le hα)
 
 /-- For `0 ≤ α ≤ 1`, the exponential sum growth exponent lies in
 the interval `[α / 2, α]`. -/
@@ -513,7 +527,7 @@ theorem exponentSumGrowthExponent_mem_Icc
   · subst α
     simpa using exponentSumGrowthExponent_nonneg 0
   · have hαpos : 0 < α := lt_of_le_of_ne (zero_le : (0 : ℝ≥0) ≤ α) (Ne.symm hαzero)
-    exact half_le_exponentSumGrowthExponent hαpos hα
+    exact (isExponentSumBound_exponentSumGrowthExponent _).fullInterval.half_le hαpos hα
 
 /-- The exponential sum growth exponent vanishes at scale zero. -/
 @[simp] theorem exponentSumGrowthExponent_zero :

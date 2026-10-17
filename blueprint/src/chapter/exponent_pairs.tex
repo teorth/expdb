@@ -1,6 +1,9 @@
 \chapter{Exponent pairs}\label{exponent-pairs-chapter}
 
-\begin{definition}[Exponent pair]\label{exp-pair-def}\uses{phase-def}  An exponent pair is a (fixed) element $(k,\ell)$ of the triangle
+\begin{definition}[Exponent pair]\label{exp-pair-def}\uses{phase-def}
+\lean{Expdb.IsExponentPair, Expdb.IsExponentPairBound}
+\leanok
+An exponent pair is a (fixed) element $(k,\ell)$ of the triangle
 \begin{equation}\label{exp-pair-triangle}
     \{ (k,\ell) \in \R^2: 0 \leq k \leq 1/2 \leq \ell \leq 1, k+\ell \leq 1 \}
 \end{equation}
@@ -8,7 +11,6 @@ with the following property: for all model phase functions $F$, all $T \geq N \g
 \begin{equation}\label{ntf}
  \sum_{n \in I} e(T F(n/N)) \ll (T/N)^{k+o(1)} N^{\ell+o(1)}
 \end{equation}
-whenever $T \geq N \geq 1$, $I$ is an interval in $[N,2N]$, and $F \in {\mathcal U}$.
 \end{definition}
 
 \python{exponent_pair}
@@ -19,7 +21,7 @@ One can formulate the notion of an exponent pair without recourse to asymptotic 
 \begin{lemma}[Non-asymptotic definition of exponent pair]\uses{exp-pair-def}  Let $(k,\ell)$ be a fixed element of \eqref{exp-pair-triangle}.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(k,\ell)$ is an exponent pair.
-    \item[(ii)] For every (fixed) $\eps>0$ there exist (fixed) $C, P > 0$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
+    \item[(ii)] For every (fixed) $\eps>0$ and $\sigma>0$ there exist (fixed) $\delta>0$, $P \geq 1$, and $C \geq 1$ such that, whenever $T \geq N \geq 1$, $I \subset [N,2N]$, and $F$ is a phase function obeying \eqref{fpu-bound} for all (fixed) $0 \leq p \leq P$ and $u \in [1,2]$, then
     $$ |\sum_{n \in I} e(T F(n/N))| \leq C (T/N)^{k+\eps} N^{\ell+\eps}.$$
    \end{itemize}
 \end{lemma}
@@ -28,7 +30,10 @@ The proof of this lemma is similar to that of Lemma \ref{beta-asymp} and is omit
 
 Exponent pairs are closely related to the function $\beta$ from the previous chapter:
 
-\begin{lemma}[Duality between exponent pairs and $\beta$]\label{beta-duality}\uses{beta-def, exp-pair-def}  Let $(k,\ell)$ be in the triangle \eqref{exp-pair-triangle}.  Then the following are equivalent:
+\begin{lemma}[Duality between exponent pairs and $\beta$]\label{beta-duality}\uses{beta-def, exp-pair-def}
+\lean{Expdb.isExponentPair_iff_forall_exponentSumGrowthExponent_le}
+\leanok
+Let $(k,\ell)$ be in the triangle \eqref{exp-pair-triangle}.  Then the following are equivalent:
     \begin{itemize}
     \item[(i)] $(k,\ell)$ is an exponent pair.
     \item[(ii)] $\beta(\alpha) \leq k + (\ell-k)\alpha$ for all $0 \leq \alpha \leq 1$.
@@ -57,13 +62,18 @@ giving the claim.
 \end{proof}
 
 
-\begin{corollary}[Exponent pairs closed and convex]\label{exp-pair-closed}\uses{exp-pair-def} The set of exponent pairs is closed and convex.
+\begin{corollary}[Exponent pairs closed and convex]\label{exp-pair-closed}\uses{exp-pair-def}
+\lean{Expdb.exponentPairs, Expdb.isClosed_exponentPairs, Expdb.convex_exponentPairs}
+\leanok
+The set of exponent pairs is closed and convex.
 \end{corollary}
 
 \begin{proof}\uses{beta-duality} Immediate from Lemma \ref{beta-duality}.
 \end{proof}
 
-\begin{proposition}[Trivial exponent pairs]\label{exp-pair-trivial}\uses{exp-pair-def}  $(0,1)$ and $(1/2,1/2)$ are exponent pairs.
+\begin{proposition}[Trivial exponent pairs]\label{exp-pair-trivial}\uses{exp-pair-def}
+\lean{Expdb.isExponentPair_zero_one, Expdb.isExponentPair_half_half}
+$(0,1)$ and $(1/2,1/2)$ are exponent pairs.
 \end{proposition}
 
 \python{exponent_pair}
@@ -72,37 +82,46 @@ giving the claim.
 \begin{proof}\uses{beta-duality, beta-triv} Immediate from Lemma \ref{beta-duality} and Lemma \ref{beta-triv}.
 \end{proof}
 
-\begin{conjecture}[Exponent pairs conjecture]\label{exp-pair-conj}\uses{exp-pair-def, exp-pair-closed, exp-pair-trivial}  $(0,1/2)$ is an exponent pair.  (Equivalently, by Corollary \ref{exp-pair-closed} and Proposition \ref{exp-pair-trivial}, every point in the triangle \eqref{exp-pair-triangle} is an exponent pair.)
+\begin{conjecture}[Exponent pairs conjecture]\label{exp-pair-conj}\uses{exp-pair-def, exp-pair-closed, exp-pair-trivial}
+\lean{Expdb.ExponentPairConjecture, Expdb.exponentPairConjecture_iff_triangle}
+$(0,1/2)$ is an exponent pair.  (Equivalently, by Corollary \ref{exp-pair-closed} and Proposition \ref{exp-pair-trivial}, every point in the triangle \eqref{exp-pair-triangle} is an exponent pair.)
 \end{conjecture}
 
 \python{exponent_pair}
 \code{exponent_pair_conjecture}
 
 
-\begin{lemma}\label{exp-pair-conj-beta}\uses{exp-pair-conj}  The exponent pair conjecture is equivalent to $\beta(\alpha)=\alpha/2$ holding true for all $0 \leq \alpha \leq 1$.
+\begin{lemma}\label{exp-pair-conj-beta}\uses{exp-pair-conj}
+\lean{Expdb.exponentPairConjecture_iff_beta}
+\leanok
+The exponent pair conjecture is equivalent to $\beta(\alpha)=\alpha/2$ holding true for all $0 \leq \alpha \leq 1$.
 \end{lemma}
 
 \begin{proof}\uses{beta-duality, beta-triv} Clear from Lemma \ref{beta-duality} and Lemma \ref{beta-triv}.
 \end{proof}
 
-\begin{proposition}[Van der Corput $A$-process]\label{vdc-a}  If $(k,\ell)$ is an exponent pair, then so is
+\begin{proposition}[Van der Corput $A$-process]\label{vdc-a}
+\lean{Expdb.vanDerCorputA, Expdb.IsExponentPair.vanDerCorputA}\leanok
+If $(k,\ell)$ is an exponent pair, then so is
     $$A(k,\ell) := \left(\frac{k}{2k+2}, \frac{\ell}{2k+2} + \frac{1}{2}\right).$$
 \end{proposition}
 
 \literature
 \code{A_transform_hypothesis}
 
-\begin{proof}\uses{vdca-beta, beta-duality} See \cite[Lemma 2.8]{ivic}. It can also be deduced from Lemma \ref{vdca-beta} and Lemma \ref{beta-duality}.
+\begin{proof}\uses{vdca-beta, beta-duality}\leanok See \cite[Lemma 2.8]{ivic}. It can also be deduced from Lemma \ref{vdca-beta} and Lemma \ref{beta-duality}.
 \end{proof}
 
-\begin{proposition}[Van der Corput $B$-process]\label{vdc-b}  If $(k,\ell)$ is an exponent pair, then so is
+\begin{proposition}[Van der Corput $B$-process]\label{vdc-b}
+\lean{Expdb.vanDerCorputB, Expdb.IsExponentPair.vanDerCorputB}\leanok
+If $(k,\ell)$ is an exponent pair, then so is
     $$B(k,\ell) := \left(\ell-\frac{1}{2}, k+\frac{1}{2}\right).$$
 \end{proposition}
 
 \literature
 \code{B_transform_hypothesis}
 
-\begin{proof}\uses{beta-reflect, beta-duality}  See \cite[Lemma 2.9]{ivic}.  Alternatively, this can be derived from Lemma \ref{beta-reflect} and Lemma \ref{beta-duality}.
+\begin{proof}\uses{beta-reflect, beta-duality}\leanok See \cite[Lemma 2.9]{ivic}.  Alternatively, this can be derived from Lemma \ref{beta-reflect} and Lemma \ref{beta-duality}.
 \end{proof}
 
 

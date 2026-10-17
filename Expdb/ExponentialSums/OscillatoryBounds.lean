@@ -63,7 +63,7 @@ theorem iteratedDeriv_fourierChar (n : ℕ) (x : ℝ) :
   rw [iteratedDeriv_fourierChar, norm_mul, norm_pow]
   simp [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg Real.pi_pos.le]
 
-private lemma norm_iteratedDeriv_fourierChar_le
+private theorem norm_iteratedDeriv_fourierChar_le
     {n k : ℕ} (hk : k ≤ n) (x : ℝ) :
     ‖iteratedDeriv k (𝐞 · : ℝ → ℂ) x‖ ≤ (2 * Real.pi + 1) ^ n := by
   rw [norm_iteratedDeriv_fourierChar]
@@ -372,7 +372,7 @@ private def oscillatoryErrorConstant (s : ℕ) : ℝ :=
     EulerMaclaurin.sawBound (s + 1) *
       (((s + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (s + 1))
 
-private lemma one_le_oscillatoryErrorConstant (s : ℕ) :
+private theorem one_le_oscillatoryErrorConstant (s : ℕ) :
     1 ≤ oscillatoryErrorConstant s := by
   have hsum : 0 ≤ ∑ m ∈ Finset.range s, |EulerMaclaurin.saw (m + 2) 0| *
       (2 * (((m + 1).factorial : ℝ) * (2 * Real.pi + 1) ^ (m + 1))) :=
@@ -383,7 +383,7 @@ private lemma one_le_oscillatoryErrorConstant (s : ℕ) :
   dsimp only [oscillatoryErrorConstant]
   linarith
 
-private lemma norm_oscillatory_sum_sub_integral_le
+private theorem norm_oscillatory_sum_sub_integral_le
     (s : ℕ) {F : ℝ → ℝ} {T N K : ℝ} {a b : ℕ}
     (hab : a < b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K)
     (hF : ContDiffOn ℝ ∞ F phaseInterval)
@@ -487,7 +487,7 @@ theorem exists_norm_oscillatory_sum_sub_integral_le (s : ℕ) :
 private def oscillatorySumConstant (s : ℕ) (K c : ℝ) : ℝ :=
   oscillatoryErrorConstant s + (2 / c + K / c ^ 2)
 
-private lemma one_le_oscillatorySumConstant
+private theorem one_le_oscillatorySumConstant
     (s : ℕ) {K c : ℝ} (hK : 1 ≤ K) (hc : 0 < c) :
     1 ≤ oscillatorySumConstant s K c := by
   dsimp only [oscillatorySumConstant]
@@ -495,7 +495,7 @@ private lemma one_le_oscillatorySumConstant
   have hD : 0 ≤ 2 / c + K / c ^ 2 := by positivity
   linarith
 
-private lemma norm_oscillatory_sum_le
+private theorem norm_oscillatory_sum_le
     (s : ℕ) {F : ℝ → ℝ} {T N K c : ℝ} {a b : ℕ}
     (hs : 1 ≤ s) (hab : a ≤ b) (hN : 1 ≤ N) (hT : 1 ≤ T) (hK : 1 ≤ K) (hc : 0 < c)
     (hF : ContDiffOn ℝ ∞ F phaseInterval)

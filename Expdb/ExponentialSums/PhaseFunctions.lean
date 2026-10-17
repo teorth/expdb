@@ -48,6 +48,7 @@ def modelPhaseError
     VariableFunction (VariableObject.fixed phaseInterval) ℝ :=
   fun i u ↦ modelPhaseErrorAt (F i) σ p u
 
+/-- Evaluate the variable model phase error at an ambient index. -/
 @[simp] theorem modelPhaseError_apply
     (F : VariableFunction (VariableObject.fixed ℝ) ℝ) (σ : ℝ) (p i : ℕ)
     (u : phaseInterval) :
@@ -154,6 +155,22 @@ theorem IsModelPhaseFunction.exists_with
   rcases hF with ⟨hphase, σ, hσ, herror⟩
   exact ⟨σ, hσ, ⟨hphase, herror⟩⟩
 
+/-- Model phases remain model phases after restricting the ambient sequence. -/
+theorem IsModelPhaseFunctionWith.comp_tendsto
+    {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
+    (hF : IsModelPhaseFunctionWith F σ) {φ : ℕ → ℕ} (hφ : Tendsto φ atTop atTop) :
+    IsModelPhaseFunctionWith (fun i ↦ F (φ i)) σ := by
+  refine ⟨fun i ↦ hF.isPhaseFunction (φ i), ?_⟩
+  intro p u
+  apply (VariableObject.isInfinitesimal_iff_forall_pos _).2
+  intro ε hε
+  have hsmall :=
+    (VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
+      (VariableObject.fixed phaseInterval)
+      (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
+      (modelPhaseError F σ p)).1 (hF.error_isChoicewiseInfinitesimal p) ε hε
+  exact (hφ.eventually hsmall).mono fun i hi ↦ hi (u i)
+
 /-- Adding a linear function changes only the zeroth model-phase error. -/
 theorem modelPhaseErrorAt_add_linear
     {F : ℝ → ℝ} {σ c u : ℝ} {p : ℕ}
@@ -255,20 +272,13 @@ theorem IsModelPhaseFunctionWith.comp_affine_tendsto_id
   have hcpow : Tendsto (fun i ↦ c i ^ (p + 1)) atTop (𝓝 1) := by
     simpa using hc.pow (p + 1)
   have href := continuousOn_iteratedDerivWithin_modelPhase σ p
-  have hrefUniform := isCompact_Icc.uniformContinuousOn_of_continuous href
   have hrefclose : Tendsto (fun i ↦
       iteratedDerivWithin p (modelPhase σ) phaseInterval (v i) -
-        iteratedDerivWithin p (modelPhase σ) phaseInterval (u i)) atTop (𝓝 0) := by
-    rw [Metric.uniformContinuousOn_iff] at hrefUniform
-    rw [Metric.tendsto_nhds]
-    intro ε hε
-    obtain ⟨δ, hδ, hclose⟩ := hrefUniform ε hε
-    have hevent : ∀ᶠ i in atTop, ‖(v i : ℝ) - (u i : ℝ)‖ < δ := by
-      simpa [Real.dist_eq] using (Metric.tendsto_nhds.1 hvsub) δ hδ
-    filter_upwards [hevent] with i hi
-    simpa [dist_eq_norm] using
-      hclose (v i) (v i).property (u i) (u i).property
-        (by simpa [Real.dist_eq] using hi)
+        iteratedDerivWithin p (modelPhase σ) phaseInterval (u i)) atTop (𝓝 0) :=
+    (isEqUpToInfinitesimal_iff_tendsto_sub _ _).1
+      (IsEqUpToInfinitesimal.comp_of_isCompact isCompact_Icc href
+        ((isEqUpToInfinitesimal_iff_tendsto_sub _ _).2 hvsub)
+        (fun i ↦ (v i).property) (fun i ↦ (u i).property))
   have hzero : Tendsto (fun i ↦ c i ^ (p + 1) - 1) atTop (𝓝 0) := by
     simpa using hcpow.sub
       (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ (1 : ℝ)) atTop (𝓝 1))
@@ -355,7 +365,32 @@ theorem IsModelPhaseFunctionWith.eventually_isApproximate
   intro p hp' u
   exact (hi p (Finset.mem_range.mpr (by omega)) u).le
 
-private lemma modelPhaseError_sum_isChoicewiseInfinitesimal
+/-- Finite-order approximate model phases form a model-phase family when their derivative
+cutoffs tend to infinity and their errors tend to zero, with a fixed positive reference exponent. -/
+theorem isModelPhaseFunction_of_approximations
+    {F : VariableFunction (VariableObject.fixed ℝ) ℝ}
+    {σ : ℝ} {P : VariableObject ℕ} {δ : VariableObject ℝ}
+    (hσ : 0 < σ)
+    (hP : ∀ p : ℕ, ∀ᶠ i in atTop, p ≤ P i)
+    (hδ : δ.IsInfinitesimal)
+    (happrox : ∀ i, IsApproximateModelPhaseFunction (F i) σ (P i) (δ i)) :
+    IsModelPhaseFunction F := by
+  refine ⟨fun i ↦ (happrox i).1, σ, hσ, ?_⟩
+  intro p
+  apply (VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
+    (VariableObject.fixed phaseInterval)
+    (fun _ ↦ ⟨1, by simp [phaseInterval]⟩)
+    (modelPhaseError F σ p)).2
+  intro ε hε
+  have hδsmall :=
+    (VariableObject.isInfinitesimal_iff_forall_pos δ).1 hδ ε hε
+  filter_upwards [hP p, hδsmall] with i hip hiδ
+  intro u
+  have herror := (happrox i).2 p hip u
+  rw [Real.norm_eq_abs] at hiδ
+  exact lt_of_le_of_lt herror ((le_abs_self (δ i)).trans_lt hiδ)
+
+private theorem modelPhaseError_sum_isChoicewiseInfinitesimal
     {F : VariableFunction (VariableObject.fixed ℝ) ℝ} {σ : ℝ}
     (herror : ∀ p : ℕ, (modelPhaseError F σ p).IsChoicewiseInfinitesimal)
     (P : ℕ) :

@@ -17,13 +17,13 @@ open Filter Topology
 
 namespace Expdb
 
-variable {α : Type*} [SeminormedAddCommGroup α]
+variable {ι α : Type*} [SeminormedAddCommGroup α]
 
-/-! ### Auxiliary lemmas for subsequence extraction -/
+/-! ## Auxiliary lemmas for subsequence extraction -/
 
 /-- From a property holding arbitrarily late, extract a strictly
     increasing sequence on which it holds. -/
-private lemma extract_strictMono_subseq {P : ℕ → Prop}
+private theorem extract_strictMono_subseq {P : ℕ → Prop}
     (h : ∀ j, ∃ i ≥ j, P i) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∀ n, P (φ n) := by
   have step : ∀ prev, ∃ i > prev, P i :=
@@ -37,8 +37,8 @@ private lemma extract_strictMono_subseq {P : ℕ → Prop}
 /-- Extract a strictly increasing φ and bad elements x(n) ∈ E(φ n)
     with |f(φ n)(x n)| > n. Used in the proof of the Automatic uniformity result (`auto`),
     case (i). -/
-private lemma extract_bad_seq_i
-    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
+private theorem extract_bad_seq_i
+    (E : VariableObject (Set ι)) (f : VariableFunction (fun i ↦ E i) α)
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j : ℝ) < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ x : ∀ n, E (φ n), ∀ n, n < ‖f (φ n) (x n)‖ := by
@@ -59,8 +59,8 @@ private lemma extract_bad_seq_i
 /-- For a fixed threshold ε, extract a strictly increasing φ and bad elements
     x(n) ∈ E(φ n) with |f(φ n)(x n)| > ε. Used in the Automatic uniformity result (`auto`),
     case (ii). -/
-private lemma extract_bad_seq_ii
-    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
+private theorem extract_bad_seq_ii
+    (E : VariableObject (Set ι)) (f : VariableFunction (fun i ↦ E i) α)
     {ε : ℝ}
     (bad : ∀ j, ∃ i ≥ j, ∃ x : E i, ε < ‖f i x‖) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -72,8 +72,8 @@ private lemma extract_bad_seq_ii
 
 /-- Build a strictly increasing threshold sequence φ such that
     |f(φ n)(x)| ≤ 1/(n+1) for all x ∈ E(φ n). -/
-private lemma build_increasing_thresholds
-    (E : VariableObject (Set ℝ)) (f : VariableFunction (fun i ↦ E i) α)
+private theorem build_increasing_thresholds
+    (E : VariableObject (Set ι)) (f : VariableFunction (fun i ↦ E i) α)
     (scale : ∀ n : ℕ, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : E i,
              ‖f i x‖ ≤ 1/n) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -91,19 +91,19 @@ private lemma build_increasing_thresholds
   have hb := hi_seq n (φ n) hge x
   rwa [Nat.cast_add, Nat.cast_one] at hb
 
-/-! ### Automatic uniformity (`auto`) -/
+/-! ## Automatic uniformity (`auto`) -/
 
 open Classical in
 private noncomputable def extend_subsequence
-    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ι)) (hE : ∀ i, (E i).Nonempty)
     (φ : ℕ → ℕ) (x : ∀ n, E (φ n)) : ∀ j, E j :=
   fun j =>
     if h : ∃ n, φ n = j then
       (show E (φ h.choose) = E j by rw [h.choose_spec]) ▸ x h.choose
     else ⟨(hE j).choose, (hE j).choose_spec⟩
 
-private lemma norm_extend_subsequence_apply
-    {E : VariableObject (Set ℝ)} (hE : ∀ i, (E i).Nonempty)
+private theorem norm_extend_subsequence_apply
+    {E : VariableObject (Set ι)} (hE : ∀ i, (E i).Nonempty)
     {f : VariableFunction (fun i ↦ E i) α} {φ : ℕ → ℕ} (hφ : StrictMono φ)
     (x : ∀ n, E (φ n)) (m : ℕ) :
     ‖f (φ m) (extend_subsequence E hE φ x (φ m))‖ = ‖f (φ m) (x m)‖ := by
@@ -122,7 +122,7 @@ private lemma norm_extend_subsequence_apply
     If f(x) = O(1) for every variable x ∈ E, then after passing to a
     subsequence there exists a *fixed* C with |f(x)| ≤ C for all x ∈ E. -/
 theorem automatic_uniformity_of_choicewise_bounded
-    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ι)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
     (hf : f.IsChoicewiseBounded) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -133,22 +133,19 @@ theorem automatic_uniformity_of_choicewise_bounded
       ∃ C : ℝ, ∀ᶠ i in atTop, ∀ x : E (φ i), ‖f (φ i) x‖ ≤ C := by
     by_contra h_fail
     push Not at h_fail
-    -- Build a bad sequence: for each j find i ≥ j and x with |f i x| > j
+    -- Failure of uniformity gives a choice whose norm grows along a subsequence.
     have bad : ∀ j, ∃ i ≥ j, ∃ x : E i, (j:ℝ) < ‖f i x‖ := fun j => by
       rcases Filter.frequently_atTop.mp (h_fail id strictMono_id j) j with ⟨i, hi, x, hx⟩
       exact ⟨i, hi, x, hx⟩
     obtain ⟨φ, hφ, x_bad, hx_bad⟩ := extract_bad_seq_i E f bad
     let y : ∀ j, E j := extend_subsequence E hE φ x_bad
-    -- Apply the choicewise bound to y
     obtain ⟨C_y, hC_y⟩ := hf y
     rw [Filter.eventually_atTop] at hC_y
     obtain ⟨j₀, hj₀⟩ := hC_y
     obtain ⟨n₁, hn₁⟩ := exists_nat_gt C_y
-    -- Find m with φ(m) ≥ j₀ and m > n₁
     obtain ⟨m, hm_ge, hm_large⟩ : ∃ m, φ m ≥ j₀ ∧ m > n₁ := by
       obtain ⟨m, hm⟩ := (hφ.tendsto_atTop).eventually (eventually_ge_atTop j₀) |>.exists
       exact ⟨max m (n₁+1), le_trans hm (hφ.monotone (le_max_left _ _)), by omega⟩
-    -- Derive contradiction
     have heq := norm_extend_subsequence_apply hE (f := f) hφ x_bad m
     linarith [hj₀ (φ m) hm_ge,
               hx_bad m,
@@ -168,14 +165,14 @@ theorem automatic_uniformity_of_choicewise_bounded
     If f(x) = o(1) for every variable x ∈ E, then after passing to a
     subsequence there exists an *infinitesimal* c with |f(x)| ≤ c for all x ∈ E. -/
 theorem automatic_uniformity_of_choicewise_infinitesimal
-    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ι)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α)
     (hf : f.IsChoicewiseInfinitesimal) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
     ∃ c : VariableObject ℝ, c.IsInfinitesimal ∧
     ∀ i, ∀ x : E (φ i),
     ‖f (φ i) x‖ ≤ c i := by
-  -- Step 1: for each n ≥ 1, the bound 1/n eventually holds uniformly
+  -- Failure at a fixed scale contradicts choicewise infinitesimality along a subsequence.
   have scale : ∀ n : ℕ, 0 < n → ∃ i_n, ∀ i ≥ i_n, ∀ x : E i,
       ‖f i x‖ ≤ 1/n := by
     intro n hn
@@ -198,7 +195,7 @@ theorem automatic_uniformity_of_choicewise_infinitesimal
               show (1:ℝ)/(2*n) < 1/n by
                 have hn : (0 : ℝ) < n := by positivity
                 exact one_div_lt_one_div_of_lt hn (by nlinarith)]
-  -- Step 2: build strictly increasing thresholds and conclude
+  -- Diagonalize the uniform thresholds into an infinitesimal majorant.
   obtain ⟨φ, hφ, hφ_bd⟩ := build_increasing_thresholds E f scale
   refine ⟨φ, hφ, fun n => 1/(↑n+1), ?_, hφ_bd⟩
   rw [VariableObject.IsInfinitesimal]
@@ -206,12 +203,12 @@ theorem automatic_uniformity_of_choicewise_infinitesimal
     tendsto_one_div_add_atTop_nhds_zero_nat
   simpa using hc.norm
 
-/-! ### Full-tail uniformity -/
+/-! ## Full-tail uniformity -/
 
 /-- Boundedness along every variable choice is equivalent to an eventual bound uniform over
 the original variable sets. This strengthens `automatic_uniformity_of_choicewise_bounded`. -/
 theorem VariableFunction.isChoicewiseBounded_iff_eventually_uniform
-    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ι)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
     f.IsChoicewiseBounded ↔
       ∃ C : ℝ, ∀ᶠ i in atTop, ∀ x : E i, ‖f i x‖ ≤ C := by
@@ -243,7 +240,7 @@ theorem VariableFunction.isChoicewiseBounded_iff_eventually_uniform
 uniform over the original variable sets. This strengthens
 `automatic_uniformity_of_choicewise_infinitesimal`. -/
 theorem VariableFunction.isChoicewiseInfinitesimal_iff_forall_pos_uniform
-    (E : VariableObject (Set ℝ)) (hE : ∀ i, (E i).Nonempty)
+    (E : VariableObject (Set ι)) (hE : ∀ i, (E i).Nonempty)
     (f : VariableFunction (fun i ↦ E i) α) :
     f.IsChoicewiseInfinitesimal ↔
       ∀ ε : ℝ, 0 < ε →

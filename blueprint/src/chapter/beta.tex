@@ -119,26 +119,29 @@ Routine from the definition.
 
 We record the classical bounds on $\beta$:
 
-\begin{lemma}[Van der Corput $A$ process for $\beta$]\label{vdca-beta}\uses{beta-def} If $0 \leq \alpha \leq 2/3$ and $h \geq 0$ then
+\begin{lemma}[Van der Corput $A$ process for $\beta$]\label{vdca-beta}\uses{beta-def}
+\lean{Expdb.vanDerCorputA_exponentSumGrowthExponent}\leanok
+If $0 \leq \alpha \leq 2/3$ and $h \geq 0$ then
 $$ 2\beta(\alpha) \leq \max\left( 2\alpha - h, 2h, \alpha - h + \sup_{2\alpha-1 \leq h' \leq h} \left((h'+1-\alpha)\beta\left(\frac{\alpha}{h'+1-\alpha}\right)+h'\right)\right).$$
 \end{lemma}
 \python{bound_beta}
 \code{apply_van_der_corput_process_for_beta(bounds)}
 
-\begin{proof}  By definition, there exists an unbounded $T$, $N = T^{\alpha+o(1)}$, $F$ a model phase function, and $I \subset [N,2N]$ such that
-    $$ \sum_{n \in I} e(T F(n/N)) = T^{\beta(\alpha)+o(1)}.$$
-Applying \cite[(2.54)]{ivic} with $H := T^h$, as well as the ensuing computations to dispose of the $j \ll T/N^2$ terms, one then has
-$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{T/N^2 \ll j \ll H} |\sum_{n \in I \cap I-j} e(T (F((n+j)/N) - F(n/N)))|$$
+\begin{proof}\leanok
+The cases $h=0$ and $h\geq\alpha$ follow from $\beta(\alpha)\leq\alpha$, so assume $0<h<\alpha$. By definition, there exists an unbounded $T$, $N = T^{\alpha+o(1)}$, $F$ a model phase function, and $I \subset [N,2N]$ such that
+    $$ \left|\sum_{n \in I} e(T F(n/N))\right| = T^{\beta(\alpha)+o(1)}.$$
+Applying \cite[(2.54)]{ivic} with $H := T^h$, as well as the ensuing computations to dispose of the $j \ll N^2/T$ terms, one then has
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + N H^{-1} \sum_{N^2/T \ll j \ll H} |\sum_{n \in I \cap (I-j)} e(T (F((n+j)/N) - F(n/N)))|$$
 and hence by the pigeonhole principle
-$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N)))|$$
-for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  One can verify that $-\frac{1}{\sigma} \frac{N}{j} (F(u+j/N)-F(u/N))$ is a model phase function.  Thus, by Definition \ref{beta-def}, one has
-$$ \sum_{n \in I \cap I-h} e(T (F((n+j)/N) - F(n/N))) \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
+$$ T^{2\beta(\alpha)+o(1)} \ll N^2 H^{-1} + H^2 + T^{o(1)} N H^{-1} \sum_{j = T^{h'+o(1)}} |\sum_{n \in I \cap (I-j)} e(T (F((n+j)/N) - F(n/N)))|$$
+for some $2\alpha-1 \leq h' \leq h$ (one can delete this term if $h < 2\alpha-1$).  One can verify that $-\frac{1}{\sigma r}(F((1-r)u+2r)-F((1-r)u+r))$, where $r=j/N=o(1)$, is a model phase function.  Thus, by Definition \ref{beta-def}, one has
+$$ \left|\sum_{n \in I \cap (I-j)} e(T (F((n+j)/N) - F(n/N)))\right| \ll (T^{1+h'+o(1)}/N)^{\beta(\alpha/(h'+1-\alpha))+o(1)},$$
 and the claim follows after evaluating all terms as powers of $T$.
 \end{proof}
 
 
-\begin{proposition}[Van der Corput inequality]\label{beta-vdc}\uses{beta-def} For any natural number $k \geq 2$ and any $\alpha>0$, one has
-    $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-k\alpha}{2^k-2}, (1 - 2^{2-k})\alpha - \frac{1-\alpha}{2^k-2}\right).$$
+\begin{proposition}[Van der Corput inequality]\label{beta-vdc}\uses{beta-def}\lean{Expdb.exponentSumGrowthExponent_le_vanDerCorput}\leanok For any natural number $k \geq 2$ and any $\alpha>0$, one has
+    $$ \beta(\alpha) \leq \max\left( \alpha + \frac{1-k\alpha}{2^k-2}, (1 - 2^{2-k})\alpha - \frac{1-k\alpha}{2^k-2}\right).$$
     Thus for instance when $k=2$ we have
     $$ \beta(\alpha) \leq \max\left( \frac{1}{2}, \frac{2\alpha-1}{2} \right),$$
     so in particular
@@ -147,34 +150,34 @@ and the claim follows after evaluating all terms as powers of $T$.
     \end{equation}
         by Lemma \ref{beta-triv},
     when $k=3$ one has
-    $$ \beta(\alpha) \leq \max\left( \frac{1+3\alpha}{6}, \frac{6\alpha-1}{3} \right),$$
+    $$ \beta(\alpha) \leq \max\left( \frac{1+3\alpha}{6}, \frac{6\alpha-1}{6} \right),$$
     and when $k=4$ one has
     $$ \beta(\alpha) \leq \max\left( \frac{10\alpha+1}{14}, \frac{29\alpha-2}{28} \right).$$
 \end{proposition}
 
 This form of upper bound of $\beta(\alpha)$ - as the maximum of a finite number of linear functions of $\alpha$ - is extremely common in the literature.
 
-\begin{proof}\uses{vdca-beta} Follows from \cite[Theorem 8.20]{ik}. It is also possible to prove this by induction on $k$ using Lemma \ref{vdca-beta}.
+\begin{proof}\uses{vdca-beta}\leanok Follows from \cite[Theorem 8.20]{ik}. It is also possible to prove this by induction on $k$ using Lemma \ref{vdca-beta}.
 \end{proof}
 
-    \begin{corollary}[Optimizing the van der Corput inequality]\label{vdc-opt}\uses{beta-def}  For any $\alpha > 0$ one has
+    \begin{corollary}[Optimizing the van der Corput inequality]\label{vdc-opt}\uses{beta-def}\lean{Expdb.exponentSumGrowthExponent_le_vanDerCorput_sInf}\leanok  For any $0 < \alpha \leq 1$ one has
     $$\beta(\alpha) \leq \inf_{k \in \N: k \geq 2} \alpha + \frac{1-k\alpha}{2^k-2}.$$
     Thus for instance
     $$ \beta(\alpha) \leq \min\left( \frac{1}{2}, \frac{1+3\alpha}{6}, \frac{10\alpha+1}{14}\right).$$
     \end{corollary}
 
-\begin{proof}\uses{beta-vdc}
+\begin{proof}\uses{beta-vdc}\leanok
 Let $\beta_k(\alpha) = \alpha + (1 - k\alpha)/(2^k - 2)$ and
 \[
 \alpha_k = \frac{2^k}{(k - 1)2^k + 2}.
 \]
-Via a routine computation, $\beta_k(\alpha) \le \beta_{k+1}(\alpha)$ for $\alpha \ge \alpha_k$ and any $k \ge 2$. Thus, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 \le \alpha \le 1/2$, it suffices to just show that the same result holds for $0 \le \alpha \le \alpha_{k}$. However, for $0 \le \alpha \le \alpha_k$ and $k \ge 2$, we have
+For $k=2$, the claim follows from Proposition \ref{beta-vdc} for $0 < \alpha \leq 1$. We proceed by induction on $k$. Via a routine computation, $\beta_{k-1}(\alpha) \le \beta_k(\alpha)$ for $\alpha \ge \alpha_{k-1}$ and any $k \ge 3$. Thus, by the induction hypothesis, to verify that $\beta(\alpha) \le \beta_k(\alpha)$ for $0 < \alpha \leq 1$, it suffices to just show that the same result holds for $0 < \alpha \le \alpha_{k-1}$. However, for $0 < \alpha \le \alpha_{k-1}$ and $k \ge 3$, we have
 \[
-0 \le \alpha \le \alpha_k \le \frac{2^{k + 1}}{(k - 3)2^k + 8}
+0 < \alpha \le \alpha_{k-1} = \frac{2^k}{(k - 2)2^k + 4}
 \]
 which rearranges to give
 \[
-\alpha + \frac{1-k\alpha}{2^k-2}\geq (1 - 2^{2-k})\alpha - \frac{1-\alpha}{2^k-2},\qquad (0 \le \alpha \le \alpha_k, k \ge 2)
+\alpha + \frac{1-k\alpha}{2^k-2}\geq (1 - 2^{2-k})\alpha - \frac{1-k\alpha}{2^k-2},\qquad (0 < \alpha \le \alpha_{k-1}, k \ge 3)
 \]
 which completes the proof in view of Proposition \ref{beta-vdc}.  See Figure \ref{fig:vdc}.
 \end{proof}
@@ -182,31 +185,31 @@ which completes the proof in view of Proposition \ref{beta-vdc}.  See Figure \re
 
 We can remove the role of $I$ in the definition of $\beta$:
 
-\begin{lemma}\label{interval-set}\uses{beta-def}  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
+\begin{lemma}\label{interval-set}\uses{beta-def}\lean{Expdb.isExponentSumBound_iff_fullInterval}\leanok  In Definition \ref{beta-def}, one can take the interval $I$ to be $[N,2N]$.
 \end{lemma}
 
-\begin{proof}\uses{beta-vdc}  Suppose that $\alpha, \overline{\beta}$ are fixed quantities such that the bounds in Definition \ref{beta-def} hold just for $I  = [N,2N]$, thus whenever $T>1$ is unbounded, $N = T^{\alpha+o(1)}$, and $F$ is a model phase function one has
+\begin{proof}\uses{beta-vdc,beta-triv}\leanok  Suppose that $\alpha, \overline{\beta}$ are fixed quantities such that the bounds in Definition \ref{beta-def} hold just for $I  = [N,2N]$, thus whenever $T>1$ is unbounded, $N = T^{\alpha+o(1)}$, and $F$ is a model phase function one has
 \begin{equation}\label{three}
      \sum_{N \leq n \leq 2N} e(T F(n/N)) \ll T^{\overline{\beta}+o(1)}.
 \end{equation}
 Our task is then to show that
-$$ \sum_{n \in I} e(T fF(n/N)) \ll T^{\overline{\beta}+o(1)}$$
-under the same hypotheses. Similarly with $\alpha=1$ we can use the proof of Lemma \ref{beta-vdc} to obtain $\overline{\beta} \geq 1/2$, and we are again done.  Thus we may assume that $\alpha < 1$.
+$$ \sum_{n \in I} e(T F(n/N)) \ll T^{\overline{\beta}+o(1)}$$
+under the same hypotheses. For $\alpha>1$, the proof of Lemma \ref{beta-triv} gives $\overline{\beta} \geq \alpha-1$, and we are done by that lemma. Similarly with $\alpha=1$ we can use the $L^2$ argument in the proof of Lemma \ref{beta-triv} to obtain $\overline{\beta} \geq 1/2$, and we are again done by Proposition \ref{beta-vdc}.  Thus we may assume that $\alpha < 1$.
 
     For $n \in [N,2N]$, the constraint $n \in I$ is equivalent to restricting $F(n/N)$ to an interval $J$ of length $O(1)$, which we can also smooth out by $O(1/N)$ without affecting the sum.  Applying a Fourier expansion and the triangle inequality, we can thus bound the left-hand side by
 $$ \ll T^{o(1)} + \int_{-N^{1+o(1)}}^{N^{1+o(1)}} \left|\sum_{n \in [N,2N]} e(T F(n/N) - t F(n/N)) \right| \frac{dt}{1+|t|}.$$
-Since $\alpha > 1$, we have $|t-T| \leq T/2$ for all $t$ in the integral if $T$ is large enough.
+Since $\alpha < 1$, we have $|t| \leq T/2$ for all $t$ in the integral if $T$ is large enough.
 From hypothesis \eqref{three} (with $T$ replaced by $T-t$)we have
 $$ \left|\sum_{n \in [N,2N]} e(T F(n/N) - t F(n/N)) \right| \ll T^{\overline{\beta}+o(1)}$$
 for all such $t$, and the claim follows. See also Sargos \cite[p 310]{sargos_points_1995}.
 \end{proof}
 
-\begin{lemma}[Reflection]\label{beta-reflect}\uses{beta-def}  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
+\begin{lemma}[Reflection]\label{beta-reflect}\uses{beta-def}\lean{Expdb.exponentSumGrowthExponent_reflection}\leanok  For any $0 < \alpha < 1$, we have $\beta(\alpha) - \frac{\alpha}{2} = \beta(1-\alpha) - \frac{1-\alpha}{2}$, or equivalently $\beta(1-\alpha) = \frac{1}{2} - \alpha + \beta(\alpha)$.
 \end{lemma}
 \python{bound_beta}
 \code{apply_reflection_beta(bounds)}
 
-\begin{proof}  This is the van der Corput $B$-process. See e.g., \cite[p 370]{huxley_area_1996}.
+\begin{proof}\leanok  This is the van der Corput $B$-process. See e.g., \cite[p 370]{huxley_area_1996}.
 \end{proof}
 
 \section{Known bounds on \texorpdfstring{$\beta$}{beta}}
