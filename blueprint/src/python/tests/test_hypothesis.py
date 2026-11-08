@@ -90,3 +90,43 @@ def test_list_hypotheses_compares_years_as_ints():
 
 
 test_list_hypotheses_compares_years_as_ints()
+
+
+def test_derived_hypothesis_respects_the_requested_year():
+    data = type("D", (), {"__repr__": lambda self: "d"})()
+    derived = Hypothesis("late", "Upper bound on mu", data, "p", Reference.derived(2020))
+    classical = Hypothesis("old", "Upper bound on mu", data, "p", Reference.classical())
+    hs = Hypothesis_Set([derived, classical])
+    assert derived.is_match(year=1990) is False
+    assert classical.is_match(year=1990) is True
+    assert [h.name for h in hs.list_hypotheses(year=1990)] == ["old"]
+
+
+def test_find_hypothesis_matches_year_as_text_or_int():
+    h = Hypothesis(
+        "named",
+        "Upper bound on mu",
+        type("D", (), {"__repr__": lambda self: "d"})(),
+        "p",
+        Reference.make("X", 1999),
+    )
+    hs = Hypothesis_Set([h])
+    assert hs.find_hypothesis(year=1999) is h
+    assert hs.find_hypothesis(year="1999") is h
+    assert hs.find_hypothesis(year=1998) is None
+
+
+def test_proof_date_of_a_conjecture_is_unknown():
+    h = Hypothesis(
+        "conj",
+        "Upper bound on mu",
+        type("D", (), {"__repr__": lambda self: "d"})(),
+        "p",
+        Reference.conjectured(),
+    )
+    assert h.proof_date() == -1
+
+
+test_derived_hypothesis_respects_the_requested_year()
+test_find_hypothesis_matches_year_as_text_or_int()
+test_proof_date_of_a_conjecture_is_unknown()
