@@ -29,10 +29,14 @@ class Constraint:
 
     def __repr__(self):
 
-        # Get symbols
-        ch_set = list("xyzwu")
-        if len(self.coefficients) > 5:
-            ch_set = [f"x_{i}" for i in range(1, len(self.coefficients) - 1)]
+        # coefficients is [constant, x, y, ...]. "xyzwu" covers five variables.
+        # The old cutoff used len(coefficients) > 5, so five variables already
+        # left the short alphabet and the generated x_i list was one name short.
+        nvars = len(self.coefficients) - 1
+        if nvars > 5:
+            ch_set = [f"x_{i}" for i in range(1, nvars + 1)]
+        else:
+            ch_set = list("xyzwu")
 
         f = ""
         if self.coefficients[0] != 0:
@@ -42,12 +46,16 @@ class Constraint:
             c = self.coefficients[i]
             if c == 0:
                 continue
-            if len(f) != 0:
-                f += " + " if c > 0 else " - "
-            if c == 1 or c == -1:
+            if c < 0:
+                f += " - " if f else "-"
+            elif f:
+                f += " + "
+            if abs(c) == 1:
                 f += v
             else:
                 f += str(abs(c)) + v
+        if not f:
+            f = "0"
 
         if self.inequality_type == Constraint.GREATER_EQUALS:
             return f"{f} >= 0"
@@ -56,6 +64,8 @@ class Constraint:
         return f"{f} = 0"
 
     def __eq__(self, other):
+        if not isinstance(other, Constraint):
+            return NotImplemented
         if (
             len(self.coefficients) != len(other.coefficients)
             or self.inequality_type != other.inequality_type
