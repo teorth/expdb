@@ -1,4 +1,4 @@
-from functions import RationalFunction2
+from functions import RationalFunction
 
 # Basic univariate dense polynomial implementation with rational coefficients
 class Polynomial:
@@ -35,6 +35,9 @@ class Polynomial:
 
     def __mul__(self, other):
         return self.multiply(other)
+
+    def __truediv__(self, other):
+        return self.divide(other)
 
     # Returns the string representation of this polynomial, with a specified
     # variable name.
@@ -132,5 +135,6 @@ class Polynomial:
         if other.is_zero():
             raise ValueError("Division by zero")
 
-        # Returns
-        return RationalFunction2(self, other)
+        # Coefficients here are stored lowest degree first. RationalFunction
+        # reads them highest degree first.
+        return RationalFunction(self.coefficients[::-1], other.coefficients[::-1])
