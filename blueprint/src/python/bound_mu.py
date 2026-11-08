@@ -123,7 +123,7 @@ def apply_functional_equation(bound):
 # Apply the convexity of mu to two bounds on mu to obtain another bound on mu
 def apply_mu_convexity(b1, b2, theta):
     if theta < 0 or theta > 1:
-        print(f"FAILED: the parameter theta={theta} is not between 0 and 1.")
+        raise ValueError(f"theta={theta} is not between 0 and 1")
     mu = (1 - theta) * b1.data.mu + theta * b2.data.mu
     sigma = (1 - theta) * b1.data.sigma + theta * b2.data.sigma
     return derived_bound_mu(
