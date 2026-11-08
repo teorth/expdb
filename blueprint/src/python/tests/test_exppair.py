@@ -2,6 +2,8 @@ from functions import *
 from hypotheses import *
 from literature import *
 from exponent_pair import *
+from transform import Transform
+from constants import Proof_Optimization_Method
 from reference import *
 
 
@@ -68,3 +70,25 @@ def test_collinear_and_duplicate_exponent_pair_hulls():
 
 
 test_collinear_and_duplicate_exponent_pair_hulls()
+
+
+def test_none_proof_uses_pairs_produced_by_transforms():
+    def shift(h):
+        return derived_exp_pair(h.data.k + frac(1, 2), h.data.l, "shift", {h})
+
+    transform = Hypothesis(
+        "shift transform",
+        "Exponent pair transform",
+        Transform("shift transform", shift),
+        "test",
+        Reference.make("Test", 2000),
+    )
+    hypotheses = Hypothesis_Set([trivial_exp_pair, transform])
+    # Five applications of k -> k + 1/2, which is what NONE's default depth does.
+    # Pruning keeps the far endpoint and drops the points in between.
+    found = find_best_proof(frac(5, 2), frac(1), hypotheses, Proof_Optimization_Method.NONE)
+    assert found is not None
+    assert (found.data.k, found.data.l) == (frac(5, 2), frac(1))
+
+
+test_none_proof_uses_pairs_produced_by_transforms()

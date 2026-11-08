@@ -478,6 +478,9 @@ def find_best_proof(
         hyps = copy.copy(hypotheses)
         hyps.add_hypotheses(beta_bounds_to_exponent_pairs(hyps))
         hyps.add_hypotheses(compute_exp_pairs(hyps, prune=True))
-        return construct_proof(k, l, hypotheses, deep_search=False, reduce_dependencies=False)
+        # The expanded set is what the two lines above just built. Searching
+        # the caller's original set drops every pair that only exists after a
+        # transform or a beta bound.
+        return construct_proof(k, l, hyps, deep_search=False, reduce_dependencies=False)
     else:
         raise NotImplementedError()
