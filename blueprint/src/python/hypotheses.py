@@ -1,5 +1,7 @@
 from typing import Optional
 
+from reference import _year_matches
+
 # Basic code for handling hypotheses in the exponent database.  The code here is
 # intended to be as flexible and general as possible, anticipating that different
 # types of hypotheses will be manipulated in different ways.
@@ -92,23 +94,23 @@ class Hypothesis:
 
     # Returns True if the hypothesis is of the given type and was established by the given year.
     def is_match(self, hypothesis_type="Any", year="Any"):
-        if hypothesis_type == "Any" or hypothesis_type == self.hypothesis_type:
-            if (
-                year == "Any"
-                or self.reference.label == "Derived"
-                or self.reference.label == "Classical"
-            ):
-                return True
-            if self.reference.label == "Conjectured":
-                return False
-            y = self.reference.year()
-            if y == "Unknown date":
-                return False
-            try:
-                return int(y) <= int(year)
-            except (TypeError, ValueError):
-                return False
-        return False
+        if hypothesis_type != "Any" and hypothesis_type != self.hypothesis_type:
+            return False
+        if year == "Any":
+            return True
+        # Conjectures are not established results, whatever year is asked for.
+        if self.reference.label == "Conjectured":
+            return False
+        y = self.reference.year()
+        if y == "Unknown date":
+            return False
+        try:
+            # Classical entries are stored at year -1, so they stay visible
+            # in every historical query. Derived entries use the year they
+            # were actually derived, not a free pass.
+            return int(y) <= int(year)
+        except (TypeError, ValueError, OverflowError):
+            return False
 
     def proof_complexity(self) -> int:
         """
@@ -152,7 +154,10 @@ class Hypothesis:
         def as_year(y):
             if y == "Unknown date" or y is None:
                 return -1
-            return int(y)
+            try:
+                return int(y)
+            except (TypeError, ValueError, OverflowError):
+                return -1
 
         year = as_year(self.reference.year())
         return max([year] + [h.proof_date() for h in self.dependencies])
@@ -269,6 +274,6 @@ class Hypothesis_Set:
                         if keywords == "Any" or all(
                             k.strip() in h.name for k in keywords.split(",")
                         ):
-                            if year == "Any" or h.reference.year() == year:
+                            if year == "Any" or _year_matches(h.reference.year(), year):
                                 return h
         return None
