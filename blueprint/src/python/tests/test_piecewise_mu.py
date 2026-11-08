@@ -21,3 +21,17 @@ def test_piecewise_mu_domains_and_pointwise_values():
 
 
 test_piecewise_mu_domains_and_pointwise_values()
+
+
+def test_mu_convexity_rejects_theta_outside_the_segment():
+    from bound_mu import apply_mu_convexity
+    left = classical_bound_mu(0, 1)
+    right = classical_bound_mu(1, 0)
+    try:
+        apply_mu_convexity(left, right, 2)
+    except ValueError:
+        return
+    raise AssertionError("theta outside [0, 1] still produced a bound")
+
+
+test_mu_convexity_rejects_theta_outside_the_segment()
