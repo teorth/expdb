@@ -1,5 +1,21 @@
 from functions import *
 
+
+def test_constraint_printing():
+    assert str(Constraint([0, -2])) == "-2x >= 0"
+    assert str(Constraint([0, -1, 2])) == "-x + 2y >= 0"
+    assert str(Constraint([1, 2])) == "1 + 2x >= 0"
+    assert str(Constraint([0, 0])) == "0 >= 0"
+    # six variables: the old name list was one short and raised IndexError
+    coeffs = [0, 1, 1, 1, 1, 1, 1]
+    text = str(Constraint(coeffs))
+    assert "x_6" in text
+    assert Constraint([1, 0]) != 0
+    assert Constraint([1, 0]) == Constraint([1, 0])
+
+
+test_constraint_printing()
+
 def get_unit_square():
     return Polytope(
         [
