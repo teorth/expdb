@@ -32,4 +32,4 @@ class Str_Helper:
                 f += v
             else:
                 f += str(abs(c)) + v
-        return f
+        return f if f else "0"
