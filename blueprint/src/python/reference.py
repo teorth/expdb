@@ -40,7 +40,12 @@ class Reference:
         return self.label == "Trivial"
 
     def is_literature(self):
-        return not (self.is_classical() or self.is_derived() or self.is_conjectured())
+        return not (
+            self.is_classical()
+            or self.is_derived()
+            or self.is_conjectured()
+            or self.is_trivial()
+        )
 
     # Static functions --------------------------------------------------------
     # Constructor for a (author, year) reference
@@ -75,7 +80,12 @@ class Reference:
             y = r.year()
             if y == "Unknown date":
                 return "Unknown date"
-            years.append(int(y))
+            try:
+                years.append(int(y))
+            except (TypeError, ValueError, OverflowError):
+                # A conjecture carries year +inf. int() overflows, and a
+                # derivation that depends on it has no finite date.
+                return "Unknown date"
         return max(years)
 
 
@@ -97,7 +107,7 @@ class Reference_Manager:
         items = s.split("@")
 
         for item in items:
-            if len(item) == 0:
+            if "{" not in item:
                 continue
             ref = self._parse(item)
             if len(ref.label) > 0:
@@ -156,8 +166,22 @@ class Reference_Manager:
             split.append("".join(chs))
         return split
 
+    def _field_value(self, raw):
+        """BibTeX field body. Braces win, then quotes, then a bare token.
+
+        ``year = 2016`` and ``year = "2019"`` are both legal. The brace
+        extractor returns nothing for those, which used to drop the field.
+        """
+        raw = raw.strip()
+        braced = self._extract(raw, "{", "}")
+        if braced:
+            return braced
+        if len(raw) >= 2 and raw[0] == '"' and raw[-1] == '"':
+            return raw[1:-1]
+        return raw
+
     def _parse_year(self, s):
-        return int(s.split("/")[0])  # year is (hopefully) stored as an integer
+        return int(str(s).split("/")[0])  # year is (hopefully) stored as an integer
 
     def _parse_authors(self, s):
         authors = [p.strip() for p in s.split(" and ")]
@@ -185,7 +209,7 @@ class Reference_Manager:
             kvp = self._split_level(e, "{", "}", "=", 0)
             if len(kvp) >= 2:
                 key = kvp[0].strip().lower()
-                value = self._extract(kvp[1].strip(), "{", "}")
+                value = self._field_value(kvp[1])
                 if len(key) == 0 or len(value) == 0:
                     continue
                 if key == "year":
