@@ -29,10 +29,25 @@ def test_multiply():
     assert P((1,)) * P((1, 2, 3, 4)) == P((1, 2, 3, 4))
     assert P((-1, 4, 5)) * P((3, 0, -1)) == P((-3, 12, 16, -4, -5))
 
+def test_divide():
+    from functions import RationalFunction
+    quotient = P((1, 1)).divide(P((1, 0, 1)))
+    assert quotient.num.equals(1 + RationalFunction.x)
+    assert quotient.den.equals(1 + RationalFunction.x ** 2)
+    same = P((1, 1)) / P((1,))
+    assert same.num.equals(1 + RationalFunction.x)
+    assert same.den == 1
+    try:
+        P((1,)).divide(P(()))
+        raise AssertionError("division by zero should fail")
+    except ValueError:
+        pass
+
 test_degree()
 test_repr()
 test_addition()
 test_subtract()
 test_multiply()
+test_divide()
 
 print("All test cases passed")
