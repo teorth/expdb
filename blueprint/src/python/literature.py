@@ -1157,6 +1157,13 @@ def add_zero_density_ingham_1940():
     )
 add_zero_density_ingham_1940()
 
+# H. L. Montgomery (1969) Zeros of L-functions, Invent. Math. 8, pages 346--354
+def add_zero_density_montgomery_1969():
+    zd.add_zero_density(
+        literature, "2", Itvl(frac(4, 5), 1), rm.get("montgomery_1969")
+    )
+add_zero_density_montgomery_1969()
+
 # Montgomery (1971) Topics in Multiplicative Number Theory
 def add_zero_density_montgomery_1971():
     zd.add_zero_density(
@@ -1173,6 +1180,13 @@ def add_zero_density_huxley_1972():
         literature, "3/(3 * x - 1)", Itvl(frac(1, 2), 1), rm.get("Huxley")
     )
 add_zero_density_huxley_1972()
+
+# Forti--Viola (1972 symposium, published 1973) On large sieve type estimates for the Dirichlet series operator
+def add_zero_density_forti_viola_1972():
+    zd.add_zero_density(
+        literature, "2", Itvl(frac("0.8080"), 1), rm.get("forti-viola")
+    )
+add_zero_density_forti_viola_1972()
 
 # M. N. Huxley (1973) Large values of Dirichlet polynomials, Acta Arithmetica Volume: 24, pages 329--346
 zd.add_zero_density(
@@ -1390,6 +1404,17 @@ def add_zero_density_pintz_2023():
             rm.get("pintz_density_2023"),
         )
 add_zero_density_pintz_2023()
+
+# J. Pintz (2023): A(sigma) <= 3*sqrt(2)*(1-sigma)^(1/2) + 18*(1-sigma), 17/18 <= sigma <= 1
+# 3*sqrt(2) = 4.242640..., so 4.2427 is rounded up and the bound stays valid
+def add_zero_density_pintz_2023_sqrt():
+    zd.add_zero_density(
+        literature,
+        "4.2427 * (1 - x) ** (1/2) + 18 * (1 - x)",
+        Itvl(frac(17, 18), 1),
+        rm.get("pintz_density_2023"),
+    )
+add_zero_density_pintz_2023_sqrt()
 
 # B. Chen, G. Debruyne and J. Vindas (2024) On the density hypothesis for L-functions associated with holomorphic cusp forms. Revista Matematica Iberoamericana
 def add_zero_density_chen_debruyne_vindas_2024():
