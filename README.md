@@ -23,7 +23,7 @@ This is intended to be a living database; additional corrections, updates, and c
 - [Mathbases](https://github.com/MathBases/MathBases) - A directory of math databases (including this one)
 
 ## Python database and proof automation
-Each theorem and conjecture in the database is represented both in [natural language](https://teorth.github.io/expdb/blueprint/intro-chapter.html) and also in Python using the `Hypothesis` object. Each `Hypothesis` may either contain a reference to a result from the literature or depend on one or more other `Hypothesis` objects. The special predefined set `literature` contains all hypotheses of the first kind. For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function 
+Each theorem and conjecture in the database is represented both in [natural language](https://teorth.github.io/expdb/blueprint/intro-chapter.html) and also in Python using the `Hypothesis` object. Each `Hypothesis` may either contain a reference to a result from the literature or depend on one or more other `Hypothesis` objects. The special predefined set `literature` contains all hypotheses of the first kind. For example, Ingham's 1940 [zero-density estimate](https://teorth.github.io/expdb/blueprint/zero-density-chapter.html) for the Riemann zeta function
 ```math
 N(\sigma, T) \ll T^{3(1-\sigma)/(2-\sigma) + o(1)}\qquad (1/2 \le \sigma \le 1, T \to \infty)
 ```
@@ -36,7 +36,7 @@ print("Hypothesis name:", h)
 print("Hypothesis data:", h.data)
 print("Hypothesis reference:", h.reference.title(), h.reference.author(), h.reference.year())
 print("Hypothesis dependencies:", h.dependencies)
-``` 
+```
 Console output
 ```
 Hypothesis name: Ingham (1940) zero density estimate
@@ -44,13 +44,13 @@ Hypothesis data: A(x) \leq 3/(2 - x) on [1/2,1)
 Hypothesis reference: {On} the estimation of ${N}(\sigma, T)$ Ingham 1940
 Hypothesis dependencies: set()
 ```
-There are no dependencies because this `Hypothesis` object directly references the literature. Alternatively, theorems may also be represented as a `Hypothesis` that (recursively) depend on other hypotheses. The dependency structure is a tree whose root is the theorem and whose leaves are other known theorems (either trivial or proved in the literature). This tree also represents a proof of the `Hypothesis`. For instance, we may also derive Ingham's estimate using other hypotheses in the database, such as [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object containing the same result but also containing a proof of the estimate represented as a dependency tree. 
+There are no dependencies because this `Hypothesis` object directly references the literature. Alternatively, theorems may also be represented as a `Hypothesis` that (recursively) depend on other hypotheses. The dependency structure is a tree whose root is the theorem and whose leaves are other known theorems (either trivial or proved in the literature). This tree also represents a proof of the `Hypothesis`. For instance, we may also derive Ingham's estimate using other hypotheses in the database, such as [large value estimates](https://teorth.github.io/expdb/blueprint/largevalue-chapter.html). This returns a `Hypothesis` object containing the same result but also containing a proof of the estimate represented as a dependency tree.
 ```
 import derived
 
 h = prove_zero_density_ingham_1940_v2()
 h.recursively_list_proofs()
-``` 
+```
 Console output
 ```
 - [Derived zero density estimate]  i.e. A(x) \leq \frac{3 \left(x - 1\right)}{x - 2} on [1/2,1). Follows from computed large value estimates and zeta large value estimates with τ0 = 2 - σ for σ \in [1/2,1)). Dependencies:
@@ -69,7 +69,7 @@ h.recursively_list_proofs()
 Console output
 ```
 - [Derived exponent pair (2/9, 11/18)]  i.e. The exponent pair (2/9, 11/18). Follows from "Derived exponent pair (1/9, 13/18)" and taking the van der Corput B transform. Dependencies:
-        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920]. 
+        - [van der Corput B transform]  i.e. van der Corput B transform. See [van der Corput, 1920].
         - [Derived exponent pair (1/9, 13/18)]  i.e. The exponent pair (1/9, 13/18). Follows from "Derived exponent pair (2/7, 4/7)" and taking the van der Corput A transform. Dependencies:
                 - [van der Corput A transform]  i.e. van der Corput A transform. See [van der Corput, 1920].
                 - [Derived exponent pair (2/7, 4/7)]  i.e. The exponent pair (2/7, 4/7). Follows from "Derived exponent pair (1/14, 11/14)" and taking the van der Corput B transform. Dependencies:

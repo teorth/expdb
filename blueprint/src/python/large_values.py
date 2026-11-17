@@ -20,12 +20,12 @@ class Large_Value_Estimate:
     """
     Class representing a large value estimate ρ \\le LV(σ, τ).
 
-    Internally a large value estimate is stored as a 3-dimensional Region 
-    representing the set of feasible tuples of (σ, τ, ρ). 
+    Internally a large value estimate is stored as a 3-dimensional Region
+    representing the set of feasible tuples of (σ, τ, ρ).
     """
 
     def __init__(self, region:Region, repr:str=None):
-        
+
         """
         Constructs a large value estimate.
 
@@ -33,23 +33,23 @@ class Large_Value_Estimate:
         ----------
         region : Region
             The 3-dimensional region representing a set of feasible (σ, τ, ρ)
-            values 
+            values
         repr : str, optional
-            The string representation for this object. Defaults to None. 
+            The string representation for this object. Defaults to None.
         """
 
         if not isinstance(region, Region):
             raise ValueError("Parameter region must be of type Region")
-        
+
         self.region = region
         self.repr = repr
 
     def __repr__(self):
-        # If there is a specified string representation for this object, 
+        # If there is a specified string representation for this object,
         # return it
         if self.repr is not None:
             return self.repr
-        
+
         # Otherwise: use specially formatted Region object
         s = self.region.to_str(use_indentation=False, variables="στρ")
         return f"(σ,τ,ρ) in {s}"
@@ -58,7 +58,7 @@ class Large_Value_Estimate:
 class Large_Value_Estimate_Transform:
 
     """
-    Class representing a large value estimate transform 
+    Class representing a large value estimate transform
     """
 
     def __init__(self, transform):
@@ -71,7 +71,7 @@ class Large_Value_Estimate_Transform:
 
 def convert_bounds(bounds: list) -> Large_Value_Estimate:
     """
-    Given a list of upper bounds for rho, generate the associated 
+    Given a list of upper bounds for rho, generate the associated
     Large_Value_Estimate object.
 
     Parameters
@@ -83,7 +83,7 @@ def convert_bounds(bounds: list) -> Large_Value_Estimate:
     Returns
     -------
     Large_Value_Estimate
-        The correponding Large_Value_Estimate object
+        The corresponding Large_Value_Estimate object
     """
 
     # The default domain of definition in (sigma, tau, rho) space
@@ -95,21 +95,21 @@ def convert_bounds(bounds: list) -> Large_Value_Estimate:
         [0, 0, 0, 1],                               # rho >= 0
         [Constants.LV_DEFAULT_UPPER_BOUND, 0, 0, -1]# rho <= RHO_UPPER_LIMIT
     ]
-    # Convert bounds from 'bounds', of the form 
-    # rho <= f(sigma, tau) 
-    # into a region in R^3 of the form 
+    # Convert bounds from 'bounds', of the form
+    # rho <= f(sigma, tau)
+    # into a region in R^3 of the form
     # f(sigma, tau, rho) >= 0.
     region = Region.from_union_of_halfplanes(
         [b + [-1] for b in bounds],
         box
     )
 
-    # Compute a string representation of the bounds 
+    # Compute a string representation of the bounds
     if len(bounds) > 1:
         repr = f"ρ <= max({', '.join(Str_Helper.format(b, ['σ','τ']) for b in bounds)})"
     else:
         repr = "ρ <= " + Str_Helper.format(bounds[0], ['σ','τ'])
-    
+
     return Large_Value_Estimate(region, repr=repr)
 
 def literature_bound_LV_max(bounds, ref, params=""):
@@ -164,9 +164,9 @@ montgomery_conjecture = conjectured_LV_estimate([[2, -2, 0]], "Montgomery conjec
 ###############################################################################
 
 def combine_large_value_estimates(
-        hypotheses: Hypothesis_Set, 
+        hypotheses: Hypothesis_Set,
         domain: Region = None,
-        simplify: bool = False, 
+        simplify: bool = False,
         verbose: bool = False) -> Hypothesis:
     """
     Given a hypothesis set, find all Hypothesis of type 'Large value estimate'
@@ -178,12 +178,12 @@ def combine_large_value_estimates(
     hypotheses : Hypothesis_Set
         The set of hypotheses containing large value estimates.
     domain : Region, optional
-        A 3-dimensional polytope with dimensions (σ, τ, ρ) to which the resulting 
-        large value region will be restricted to. If None, then the large value 
-        region will not be restricted to any domain. This parameter is helpful if 
+        A 3-dimensional polytope with dimensions (σ, τ, ρ) to which the resulting
+        large value region will be restricted to. If None, then the large value
+        region will not be restricted to any domain. This parameter is helpful if
         we are only interested in large value estimates for certain σ and τ, and will
-        speed up computations by avoiding unnecessary calculations. The default 
-        value is None. 
+        speed up computations by avoiding unnecessary calculations. The default
+        value is None.
     simplify : bool, optional
         If True, the large value estimate will be simplified (default is False).
 
@@ -204,7 +204,7 @@ def combine_large_value_estimates(
         lv_region.simplify()
 
     return derived_bound_LV(
-        lv_region, 
+        lv_region,
         f"Follows from combining {len(hyps)} large value estimates.",
         set(hyps)
     )
@@ -237,10 +237,10 @@ def raise_to_power_hypothesis(k):
 def optimize_bourgain_large_value_estimate():
     """
     Finds the optimal choice of alpha_1, alpha_2 in Bourgain's large values theorem
-    (Corollary 10.30 in the web blueprint) by solving a series of linear programs. 
+    (Corollary 10.30 in the web blueprint) by solving a series of linear programs.
 
     The optimal choice of alpha_1, alpha_2 is a piecewise-defined function of sigma
-    and tau. 
+    and tau.
     """
 
     # Variables are (in order)
@@ -260,7 +260,7 @@ def optimize_bourgain_large_value_estimate():
     ]
 
     box = Polytope.rect(
-        (frac(1,2), frac(1)), 
+        (frac(1,2), frac(1)),
         (frac(1), frac(3)),
         (0, Constants.LV_DEFAULT_UPPER_BOUND)
     )
@@ -352,7 +352,7 @@ def optimize_bourgain_large_value_estimate():
 # Check the literature Hypothesis object against a linear program computing the numerical
 # solution for fixed (sigma, tau)
 def check_bourgain_large_value_estimate(hypothesis):
-    
+
     sigma_range = (frac(1,2), 1)
     tau_range = (frac("1.001"), 5) # do not include 1
 
@@ -360,7 +360,7 @@ def check_bourgain_large_value_estimate(hypothesis):
     N = 1000
     max_A = 0
     for i in range(N + 1):
-        # for each sigma, compute the tau limits 
+        # for each sigma, compute the tau limits
         sigma = sigma_range[0] + (sigma_range[1] - sigma_range[0]) * i / N
         #tau_lower = min(frac(3,2), (24 * sigma - 18) / (2 * sigma - 1))
         # tau_lower = min(frac(3,2), 48 * (8 * sigma ** 2 - 10 * sigma + 3) / (25 * sigma - 17))
@@ -368,25 +368,25 @@ def check_bourgain_large_value_estimate(hypothesis):
         for j in range(N + 1):
             tau = tau_range[0] + (tau_range[1] - tau_range[0]) * j / N
 
-            # In this region, we cannot guarantee that rho \leq 1 using Jutila's k = 3 
+            # In this region, we cannot guarantee that rho \leq 1 using Jutila's k = 3
             # estimate - for now just ignore the region
-            if max(2 - 2 * sigma, tau + 18 - 24 * sigma) > min(1, 4 - 2 * tau): 
+            if max(2 - 2 * sigma, tau + 18 - 24 * sigma) > min(1, 4 - 2 * tau):
                 continue
-            
+
             # Treating sigma, tau as fixed, solve the LP
             # min (a1, a2)
-            #       max {f1(a1,a2), f2(a1,a2), ... , f5(a1,a2)} 
-            # s.t. 
-            #       a1 >= 0, 
+            #       max {f1(a1,a2), f2(a1,a2), ... , f5(a1,a2)}
+            # s.t.
+            #       a1 >= 0,
             #       a2 >= 0
-            # 
-            # which is equivalent to the LP 
-            # 
-            # min (a1, a2, M) 
+            #
+            # which is equivalent to the LP
+            #
+            # min (a1, a2, M)
             #       M
-            # s.t. 
+            # s.t.
             #       M >= f1(a1,a2), ..., M >= f5(a1,a2),
-            #       a1 >= 0, 
+            #       a1 >= 0,
             #       a2 >= 0
 
             # objective function is u(a1, a2, M) := M
@@ -402,7 +402,7 @@ def check_bourgain_large_value_estimate(hypothesis):
                 ([0, -1, 0], 0)                             # a2 >= 0
             ]
             A = [r[0] for r in Ab]
-            b = [r[1] for r in Ab] 
+            b = [r[1] for r in Ab]
 
             res = scipy.optimize.linprog(obj_func, A_ub=A, b_ub=b)
             if not res.success:
@@ -414,8 +414,8 @@ def check_bourgain_large_value_estimate(hypothesis):
 
 # Given a large-value estimate as a Hypothesis, apply Huxley subdivison (see Basic
 # properties (ii) of Large value estimates section) to obtain a better large
-# value estimate. The domain of the transformed hypothesis will be the same as 
-# the original hypothesis. 
+# value estimate. The domain of the transformed hypothesis will be the same as
+# the original hypothesis.
 #
 # If the large value estimate is unchanged, returns None. Otherwise, the new
 # large value estimate is returned as a Hypothesis
@@ -538,4 +538,3 @@ def apply_reflection_lv(hypothesis: Hypothesis) -> Hypothesis:
     )
 
     return derived_bound_LV(reflected_region, proof_str, {hypothesis})
-

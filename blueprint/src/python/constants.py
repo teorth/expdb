@@ -22,8 +22,8 @@ class Constants:
     # The default upper bound on LV(sigma, tau), representing no upper bound
     LV_DEFAULT_UPPER_BOUND = frac(1000000)
 
-    # In the calculation of zero-density theorems, only those estimates holding on an 
-    # an interval [A, B] with A <= ZERO_DENSITY_SIGMA_LIMIT are considered. 
+    # In the calculation of zero-density theorems, only those estimates holding on an
+    # an interval [A, B] with A <= ZERO_DENSITY_SIGMA_LIMIT are considered.
     ZERO_DENSITY_SIGMA_LIMIT = frac("0.999")
 
 

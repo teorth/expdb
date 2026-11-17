@@ -1,0 +1,53 @@
+name: Python tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'blueprint/src/python/**'
+      - '.github/workflows/python-tests.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'blueprint/src/python/**'
+      - '.github/workflows/python-tests.yml'
+  workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
+
+# Cancel previous runs if a new commit is pushed to the same PR or branch
+concurrency:
+  group: python-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Run Python tests
+    timeout-minutes: 45
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      # pycddlib is pinned to 2.x (see requirements.txt) and publishes no wheel
+      # for recent Python versions, so it is built from source against the
+      # system cddlib and GMP headers.
+      - name: Install cddlib and GMP headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcdd-dev libgmp-dev
+
+      - name: Install Python dependencies
+        run: pip install -r blueprint/src/python/requirements.txt
+
+      - name: Run the test suite
+        working-directory: blueprint/src/python
+        run: python tests/test_all.py

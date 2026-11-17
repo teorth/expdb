@@ -12,6 +12,7 @@ on:
       - 'lean-toolchain'
       - 'lakefile.toml'
       - 'lake-manifest.json'
+      - 'scripts/lean_declarations.txt'
   pull_request:
     branches:
       - main
@@ -23,6 +24,7 @@ on:
       - 'lean-toolchain'
       - 'lakefile.toml'
       - 'lake-manifest.json'
+      - 'scripts/lean_declarations.txt'
   workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
 
 # Cancel previous runs if a new commit is pushed to the same PR or branch
@@ -55,19 +57,23 @@ jobs:
           swap-storage: false
 
       - name: Checkout project
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
 
       - name: Build and lint project
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # 2025-07-02
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # 2025-07-02
         with:
           build: true
           lint: false
           mk_all-check: false
 
+      - name: Check public Lean declarations
+        run: lake exe checkdecls scripts/lean_declarations.txt
+
       - name: Compile blueprint and documentation
-        uses: leanprover-community/docgen-action@deed0cdc44dd8e5de07a300773eb751d33e32fc8 # 2025-10-26
+        uses: leanprover-community/docgen-action@56023ee2a4b3630c1071825be5bafdb43f540bbd # supports ruby-version and PR homepage builds
         with:
           blueprint: true
           homepage: home_page
+          ruby-version: "3.3"

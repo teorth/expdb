@@ -1,8 +1,8 @@
-from ..functions import *
-from ..hypotheses import *
-from ..literature import *
-from ..exponent_pair import *
-from ..reference import *
+from functions import *
+from hypotheses import *
+from literature import *
+from exponent_pair import *
+from reference import *
 
 
 def run_exp_pair_transform_tests():
@@ -21,3 +21,50 @@ def run_exp_pair_transform_tests():
     assert AE.data.k == frac(1, 14) and AE.data.l == frac(11, 14)
 
 run_exp_pair_transform_tests()
+
+
+def test_prove_convex_combination_of_two_pairs():
+    left = trivial_exp_pair
+    right = literature_exp_pair(frac(1, 2), frac(1, 2), Reference.make("Test", 2024))
+    hypotheses = Hypothesis_Set([left, right])
+    for deep_search in (False, True):
+        result = construct_proof(frac(1, 4), frac(3, 4), hypotheses,
+                                     reduce_dependencies=True, deep_search=deep_search)
+        assert result.data == Exp_pair(frac(1, 4), frac(3, 4))
+        assert result.dependencies == {left, right}
+    assert construct_proof(frac(1, 4), frac(1, 2), hypotheses) is None
+    assert construct_proof(0, 1, Hypothesis_Set([left])) is left
+
+
+test_prove_convex_combination_of_two_pairs()
+
+
+def test_triangle_containment_is_independent_of_vertex_order():
+    import itertools
+    for vertices in itertools.permutations([(0, 0), (1, 0), (0, 1)]):
+        assert in_triangle(*vertices, (frac(1, 4), frac(1, 4)))
+        assert in_triangle(*vertices, (frac(1, 2), frac(1, 2)))
+        assert not in_triangle(*vertices, (1, 1))
+    assert in_triangle((0, 0), (1, 0), (2, 0), (frac(1, 2), 0))
+    assert not in_triangle((0, 0), (1, 0), (2, 0), (3, 0))
+    assert not in_triangle((0, 0), (0, 0), (0, 0), (1, 1))
+
+
+test_triangle_containment_is_independent_of_vertex_order()
+
+def test_collinear_and_duplicate_exponent_pair_hulls():
+    for coordinates in ([(0, 1), (frac(1, 4), frac(3, 4)), (frac(1, 2), frac(1, 2))],
+                        [(0, 1), (0, 1), (0, 1)],
+                        [(0, frac(1, 2)), (0, frac(3, 4)), (0, 1)]):
+        pairs = [literature_exp_pair(k, l, Reference.make(str(i), 2024))
+                 for i, (k, l) in enumerate(coordinates)]
+        hypotheses = Hypothesis_Set(pairs)
+        expected = {min(coordinates), max(coordinates)}
+        hull = compute_convex_hull(hypotheses)
+        assert {(p.data.k, p.data.l) for p in hull} == expected
+        expanded = compute_exp_pairs(hypotheses, search_depth=2, prune=True)
+        # Duplicate coordinates are collapsed even when no pruning is needed.
+        assert {(p.data.k, p.data.l) for p in expanded} == expected
+
+
+test_collinear_and_duplicate_exponent_pair_hulls()

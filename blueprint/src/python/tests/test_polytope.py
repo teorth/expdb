@@ -1,4 +1,4 @@
-from ..functions import *
+from functions import *
 
 def get_unit_square():
     return Polytope(
@@ -11,6 +11,8 @@ def get_unit_square():
     )
 
 def run_polytope_tests():
+    import test_equality_regression
+
 
     p = get_unit_square()
     assert p.polyhedron.rep_type == cdd.RepType.INEQUALITY
@@ -155,7 +157,7 @@ def run_emptiness_tests():
     assert not p8.is_empty(include_boundary=True)
     assert p8.is_empty(include_boundary=False)
 
-    # Region reprsenting a 2-d line
+    # Region representing a 2-d line
     p9 = Polytope([
         [12, -12, -1],
         [frac(15,2), -frac(21,2), frac(1,2)],
@@ -223,6 +225,8 @@ def run_intersection_test():
     assert p1.intersect(p2).is_empty(include_boundary=True)
 
 def run_V_init_test():
+    import test_unbounded_projection_regression
+
     verts = [[0, 0], [0, 1], [1, 1], [1, 0]]
     p = Polytope.from_V_rep(verts)
     assert set(tuple(v) for v in verts) == set(tuple(v) for v in p.get_vertices())
@@ -259,7 +263,10 @@ def run_union_test():
         ])
     assert Polytope.try_union([p1, p2]) == union
 
-    # Another test case - with a vertex at infinity (this fails)
+    # Another test case - with a vertex at infinity.  try_union decides
+    # containment from the vertices alone, so it cannot see extreme rays and
+    # reports an unbounded input as unmergeable rather than returning a wrong
+    # envelope.
     p1 = Polytope([
         [18, -22, 0],
         [12, -12, -1],
@@ -274,7 +281,7 @@ def run_union_test():
         [12, -12, -1],
         [3, 0, -1]
         ])
-    U = Polytope.try_union([p1, p2])
+    assert Polytope.try_union([p1, p2]) is None
 
     p1 = Polytope([
         [-3, 0, 2],
@@ -306,6 +313,15 @@ def run_union_test():
     # Test unsuccessful union
     long_line = Polytope.rect((frac(1,2), frac(1,2)), (-1, 2))
     assert Polytope.try_union([square, long_line]) is None
+
+    # Unbounded inputs are unmergeable: the union algorithm only inspects
+    # vertices, so extreme rays would otherwise yield a wrong envelope.
+    half_strip = Polytope([
+        [0, 1, 0],   # x >= 0
+        [0, 0, 1],   # y >= 0
+        [-1, 0, 1],  # y <= 1
+    ])
+    assert Polytope.try_union([half_strip, square]) is None
 
 def run_union_3d_test():
     # Higher dimensional polytope test
@@ -414,6 +430,8 @@ def run_setminus_test():
     assert any(p.contains((3, 3)) for p in A_minus_B)
 
 def run_containment_test():
+    import test_subset_regression
+
     p1 = Polytope.rect((0, 1), (0, 1))
     p2 = Polytope.rect((0, 2), (0, 2))
     assert p1.is_subset_of(p1)
@@ -509,6 +527,8 @@ def run_scale_test():
         Polytope.from_V_rep([[0, 0, 0], [2, 0, 0], [0, 3, 0], [0, 0, 4]])
 
 def run_polycover_test():
+    import test_coverage_regression
+
     P = Polytope.rect((0, 1), (0, 1))
     assert P.is_covered_by([Polytope.rect((0, 2), (0, 2)), Polytope.rect((-1, 1), (-1, 1))])
     assert not P.is_covered_by([Polytope.rect((1, 2), (1, 2))])

@@ -617,6 +617,9 @@ def add_literature_bounds_mu():
     literature.add_hypotheses(
         [
             # Bounds on the critical line
+            literature_bound_mu(
+                frac(1, 2), frac(1, 6), rm.get("hardy_littlewood_1923")
+            ),
             literature_bound_mu(frac(1, 2), frac(193, 988), rm.get("walfisz_1924")),
             literature_bound_mu(
                 frac(1, 2), frac(27, 164), rm.get("titchmarsh_van_1931")
@@ -640,7 +643,7 @@ def add_literature_bounds_mu():
             literature_bound_mu(
                 frac(1, 2), frac(139, 858), Reference.make("Kolesnik", 1985)
             ),
-            
+
             # Bounds off the critical line
             literature_bound_mu(
                 frac(1934, 3655), frac(6299, 43860), rm.get("huxley_area_1996")
@@ -708,7 +711,7 @@ literature.add_hypotheses(
         1 - frac(1, pow(2, n - 1)),
         frac(1, (n + 1) * pow(2, n - 1)),
         Reference.make("Hardy--Littlewood",1922),
-    )  
+    )
     for n in range(4, Constants.EXP_PAIR_TRUNCATION)
 )
 
@@ -766,7 +769,7 @@ def add_jutila_large_values_estimate(K):
 # Given in Table 7.1 of the LaTeX blueprint
 def add_bourgain_large_values_estimate():
     polys = [
-        # For now - assume that we can't say anthing about LV estimates
+        # For now - assume that we can't say anything about LV estimates
         # for tau <= 1
         Polytope.rect(
             (frac(1,2), frac(1)),                       # 1/2 <= σ <= 1
@@ -819,7 +822,7 @@ def add_bourgain_large_values_estimate():
             [0, 0, 0, 1],               # ρ >= 0
             [1, -1, 0, 0],              # σ <= 1
             [-frac(1,2), 1, 0, 0],      # σ >= 1/2
-            [-10, 14, -1, 0],           
+            [-10, 14, -1, 0],
             [-1, 0, 1, 0],              # τ >= 1
             [Constants.TAU_UPPER_LIMIT, 0, -1, 0], # τ <= large
             [-2, 6, -2, 0]
@@ -839,7 +842,7 @@ def add_bourgain_large_values_estimate():
         Region_Type.DISJOINT_UNION,
         [Region.from_polytope(p) for p in polys]
     )
-    
+
     ref = rm.get("bourgain_large_2000")
     literature.add_hypothesis(
         Hypothesis(
@@ -963,7 +966,7 @@ def add_lver_heath_brown_1979b1():
 
             # ρ* <= 1 - 2σ + (ρ/2 + 1/2) + (3ρ*/8 + ρ/2 + τ/4) = 3/2 - 2σ + τ/4 + ρ + 3ρ*/8
             [frac(3,2), -2, frac(1,4), 1, -frac(5,8), 0],       # 3/2 - 2σ + τ/4 + ρ - 5ρ*/8 >= 0
-            
+
             # ρ* <= 1 - 2σ + (ρ) + (3ρ*/8 + ρ/2 + τ/4) = 1 - 2σ + τ/4 + 3ρ/2 + 3ρ*/8
             [1, -2, frac(1,4), frac(3,2), -frac(5,8), 0],       # 1 - 2σ + τ/4 + 3ρ/2 - 5ρ*/8 >= 0
 
@@ -1039,14 +1042,14 @@ def add_lver_guth_maynard_2024a(K):
 
             # Bounds arising from rho <= 1 - 2sigma + S_1/3
             # S_1 <= -10
-            [-frac(7,3), -2, 0, -1, 0, 0],   
+            [-frac(7,3), -2, 0, -1, 0, 0],
 
             # Bounds arising from rho <= 1 - 2sigma + S_2/3
-            # S_2 <= 2 + 2rho, 
+            # S_2 <= 2 + 2rho,
             # i.e. 5 - 6sigma - rho >= 0
             [5, -6, 0, -1, 0, 0],
 
-            # S_2 <= tau + 1 + (2 - 1/k)rho 
+            # S_2 <= tau + 1 + (2 - 1/k)rho
             # i.e. 4 - 6sigma + tau - (1 + 1/k)rho >= 0
             [4, -6, 1, -frac(k + 1, k), 0, 0],
 
@@ -1062,7 +1065,7 @@ def add_lver_guth_maynard_2024a(K):
             ],
             rect
         )
-        # Second region arising from 
+        # Second region arising from
         # S_3 <= max(2tau + 3rho/2, tau + 1 + rho/2 + rho*/2)
         reg2 = Region.from_union_of_halfplanes(
             common + [
@@ -1082,7 +1085,7 @@ add_lver_guth_maynard_2024a(4)
 
 # Lemma 10.18 from Guth--Maynard
 def add_lver_guth_maynard_2024b():
-    
+
     # First region: tau <= 3/2
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(3,2), 0, -1, 0, 0, 0])
@@ -1093,7 +1096,7 @@ def add_lver_guth_maynard_2024b():
         ],
         rect1
     )
-    
+
     # Second region: tau >= 3/2: no new bounds in this region
     rect2 = ad.Large_Value_Energy_Region.default_constraints()
     rect2.append([-frac(3,2), 0, 1, 0, 0, 0])
@@ -1111,11 +1114,11 @@ add_lver_guth_maynard_2024b()
 def add_lver_guth_maynard_2024c():
     rect1 = ad.Large_Value_Energy_Region.default_constraints()
     rect1.append([frac(4,3), 0, -1, 0, 0, 0]) # 1 <= tau <= 4/3
-    rect1.append([-1, 0, 1, 0, 0, 0]) 
+    rect1.append([-1, 0, 1, 0, 0, 0])
     region = Region.from_union_of_halfplanes(
         [
             [4, -4, 0, 1, -1, 0],                   # 4 - 4sigma + rho - rho* >= 0
-            [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0 
+            [1, -2, frac(1,4), frac(21,8), -1, 0],  # 1 - 2sigma + tau/4 + 21/8 rho - rho* >= 0
             [1, -2, 0, 3, -1, 0]                    # 1 - 2sigma + 3rho - rho* >= 0
         ],
         rect1
@@ -1127,7 +1130,7 @@ def add_lver_guth_maynard_2024c():
     rect3 = ad.Large_Value_Energy_Region.default_constraints()
     rect3.append([1, 0, -1, 0, 0, 0]) # tau <= 1
     region.child.append(Region(Region_Type.POLYTOPE, Polytope(rect3)))
-    
+
     literature.add_hypothesis(
         ad.literature_large_value_energy_region(
             region,
@@ -1170,6 +1173,20 @@ def add_zero_density_huxley_1972():
         literature, "3/(3 * x - 1)", Itvl(frac(1, 2), 1), rm.get("Huxley")
     )
 add_zero_density_huxley_1972()
+
+# H. L. Montgomery (1969) Zeros of L-functions, Invent. Math. 8, pages 346--354
+def add_zero_density_montgomery_1969():
+    zd.add_zero_density(
+        literature, "2", Itvl(frac(4, 5), 1), rm.get("montgomery_1969")
+    )
+add_zero_density_montgomery_1969()
+
+# Forti--Viola (1972 symposium, published 1973) On large sieve type estimates for the Dirichlet series operator
+def add_zero_density_forti_viola_1972():
+    zd.add_zero_density(
+        literature, "2", Itvl(frac("0.8080"), 1), rm.get("forti-viola")
+    )
+add_zero_density_forti_viola_1972()
 
 # M. N. Huxley (1973) Large values of Dirichlet polynomials, Acta Arithmetica Volume: 24, pages 329--346
 zd.add_zero_density(
@@ -1279,20 +1296,19 @@ zd.add_zero_density(
     literature, "9/(8 * x - 2)", Itvl(frac(10, 13), 1), rm.get("ivic_zero_1984")
 )
 
-# TODO add reference
 zd.add_zero_density(
     literature,
     "15/(22 * x - 10)",
     Itvl(frac(10, 13), frac(5, 6)),
-    Reference.make("Ivic", 1984),
+    rm.get("ivic_zero_1984"),
 )
 
 # A. Ivic (1984) The Riemann zeta-function (11.76, 11.77)
-# For k = 2, the estimate is already contained in 
+# For k = 2, the estimate is already contained in
 # (A. Ivic (1980) Exponent pairs and the zeta function of Riemann, Studia Sci. Math. Hung. Volume: 15, pages 157--181)
-# For k > 2, the result depends on our choice of exponent pair. Based on 
-# our current knowledge, in the case of k = 3 the lower limit on sigma is 41/53, 
-# and for all higher k the lower limit is given by 
+# For k > 2, the result depends on our choice of exponent pair. Based on
+# our current knowledge, in the case of k = 3 the lower limit on sigma is 41/53,
+# and for all higher k the lower limit is given by
 # (9 * k**2 - 4 * k + 2)/(12 * k**2 - 6 * k + 2)
 def add_zero_density_ivic_1984():
     for k in range(3, 100):
@@ -1388,6 +1404,17 @@ def add_zero_density_pintz_2023():
             rm.get("pintz_density_2023"),
         )
 add_zero_density_pintz_2023()
+
+# J. Pintz (2023): A(sigma) <= 3*sqrt(2)*(1-sigma)^(1/2) + 18*(1-sigma), 17/18 <= sigma <= 1
+# 3*sqrt(2) = 4.242640..., so 4.2427 is rounded up and the bound stays valid
+def add_zero_density_pintz_2023_sqrt():
+    zd.add_zero_density(
+        literature,
+        "4.2427 * (1 - x) ** (1/2) + 18 * (1 - x)",
+        Itvl(frac(17, 18), 1),
+        rm.get("pintz_density_2023"),
+    )
+add_zero_density_pintz_2023_sqrt()
 
 # B. Chen, G. Debruyne and J. Vindas (2024) On the density hypothesis for L-functions associated with holomorphic cusp forms. Revista Matematica Iberoamericana
 def add_zero_density_chen_debruyne_vindas_2024():

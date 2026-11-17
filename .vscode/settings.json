@@ -21,8 +21,5 @@
   "files.trimFinalNewlines": true,
 
   // Remove any trailing whitespace on save
-  "files.trimTrailingWhitespace": true,
-
-  // Automatically format strings in Python files
-  "python.analysis.autoFormatStrings": true
+  "files.trimTrailingWhitespace": true
 }

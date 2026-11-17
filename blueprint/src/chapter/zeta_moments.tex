@@ -38,19 +38,19 @@ $$ \mu(\sigma+\eps/2) \leq \mu(\sigma)-\delta/2 + O(1/A).$$
 Sending $A$ to infinity and $\eps$ to zero, we obtain a contradiction.
 \end{proof}
 
-\begin{corollary}[Relationship with Lindel\"of hypothesis]\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindel\"of hypothesis holds, then $M(\sigma,A) = 1 + \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$. Conversely, if $M(1/2, A) = 1$ for arbitrarily large $A \ge 0$, then the Lindel\"of hypothesis is true. 
+\begin{corollary}[Relationship with Lindel\"of hypothesis]\label{moment_from_lindelof}\uses{zeta-moment-def, zeta-moment-basic,LH} If the Lindel\"of hypothesis holds, then $M(\sigma,A) = 1 + \max(1/2-\sigma,0) A$ for all $\sigma \in \R$ and $A \geq 0$. Conversely, if $M(1/2, A) = 1$ for arbitrarily large $A \ge 0$, then the Lindel\"of hypothesis is true.
 \end{corollary}
 
-Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq 1 + \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds. Compared to the pointwise estimates $\mu(\sigma)$ of $\zeta(\sigma + it)$, which are currently open for all $0 < \sigma < 1$, more are known about moment estimates $M(\sigma, A)$. In particular, 
+Note from Lemma \ref{zeta-moment-basic} that we always have the lower bound $M(\sigma,A) \geq 1 + \max(1/2-\sigma,0) A$.  Thus there are not expected to be any further lower bound results for $M(\sigma,A)$, and we focus now on upper bounds. Compared to the pointwise estimates $\mu(\sigma)$ of $\zeta(\sigma + it)$, which are currently open for all $0 < \sigma < 1$, more are known about moment estimates $M(\sigma, A)$. In particular,
 
 \begin{lemma}\label{mad_known_est}One has $M(1/2,A)=1$ for all $0 \leq A \leq 4$.
 \end{lemma}
 \begin{proof}
 Follows from H\"older's inequality and the standard estimates
 $$ \int_T^{2T} |\zeta(1/2+it)|^2\ dt = T^{1+o(1)}$$
-and 
+and
 $$ \int_T^{2T} |\zeta(1/2+it)|^4\ dt = T^{1+o(1)}$$
-for any unbounded $T>1$, due to \cite{hardy_contributions_1916} and \cite{hardy_littlewood_approximate_1923} respectively. 
+for any unbounded $T>1$, due to \cite{hardy_contributions_1916} and \cite{hardy_littlewood_approximate_1923} respectively.
 \end{proof}
 
 From \Cref{zeta-moment-basic} and \Cref{mad_known_est} we may restrict attention to the region $1/2 \leq \sigma \leq 1$ and $A \geq 4$.
@@ -94,7 +94,7 @@ for some $I \subset [N,2N]$ and $1 \leq N \ll T^{1/2}$, and all $t \in W$.  In e
 $$ |\sum_{n \in I'} n^{-it}|\gg T^{-o(1)} V N^{\sigma_0}$$
 or
 $$ |\sum_{n \in I'} n^{-it}|\gg T^{-o(1)} V N^{1-\sigma_0} T^{\sigma_0-1/2}$$
-for some $I'$ in $[N,2N]$ and all $t \in W$.  As $\sigma_0 \geq 1/2$, the letter hypothesis is stronger than the former, so we may assume the former.  If $N = T^{o(1)}$ then this would imply that $V \ll T^{o(1)}$, and we would be done from the trivial bound $R \ll T$ since $M \geq 1$.
+for some $I'$ in $[N,2N]$ and all $t \in W$.  As $\sigma_0 \geq 1/2$, the latter hypothesis is stronger than the former, so we may assume the former.  If $N = T^{o(1)}$ then this would imply that $V \ll T^{o(1)}$, and we would be done from the trivial bound $R \ll T$ since $M \geq 1$.
 Hence, after passing to a subsequence, we can assume that $N = T^{1/\tau+o(1)}$ for some $2 < \tau < \infty$.  We can also assume that $V = N^{\sigma-\sigma_0+o(1)}$ for some $\sigma \in \R$. If $\sigma \leq \sigma_0$ then $V \ll T^{o(1)}$ and we are done as before, so we may assume $\sigma > \sigma_0$; in particular, $\sigma \geq 1/2$.  From Lemma \ref{lvz-asymp} we have
 $$ |W| \ll N^{\LV_\zeta(\sigma,\tau)+o(1)}$$
 and hence by definition of $M$

@@ -1,0 +1,7 @@
+# Revisions listed here are skipped by `git blame` (bulk formatting changes
+# that would otherwise obscure authorship). Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub applies this file automatically.
+
+# Normalize trailing whitespace and final newlines across the repo
+ceb4bdc2366facd4a9ff6d67ac3b6ce4de32b6ea

@@ -1,15 +1,15 @@
-# Contains some helper functions to format expressions 
+# Contains some helper functions to format expressions
 
 class Str_Helper:
 
     def format(coefficients, variables):
 
         """
-        
-        Returns a formatted string representing the expression 
+
+        Returns a formatted string representing the expression
         c_0 + c_1 * x_1 + c_2 * x_2 + ... + c_n * x_n
-        where (c_0, c_1, ..., c_n) is the coefficients vector and 
-        (x_1, x_2, ..., x_n) is the variables vector. 
+        where (c_0, c_1, ..., c_n) is the coefficients vector and
+        (x_1, x_2, ..., x_n) is the variables vector.
 
         """
 
@@ -33,4 +33,3 @@ class Str_Helper:
             else:
                 f += str(abs(c)) + v
         return f
-    

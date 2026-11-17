@@ -183,20 +183,20 @@ def exp_pair_plot():
     for i in range(n):
         p = exp_pairs[n - i - 1]
         exp_pairs.append((p[1] - 1/2, p[0] + 1/2))
-    
+
     fig, ax = plt.subplots()
     fig.set_size_inches(10, 10)
     ax.add_patch(Polygon(exp_pairs, color=[0.7, 0.7, 0.7]))
     ax.set_xlim([0, 1/2])
     ax.set_ylim([1/2, 1])
     ax.scatter([p[0] for p in exp_pairs], [p[1] for p in exp_pairs], color="k")
-    
+
     plt.ylabel(r"$\ell$")
     plt.xlabel(r"$k$")
     plt.title(r"Convex hull of known exponent pairs $(k, \ell)$")
     plt.show()
 
-# Compare the best literature zero-density estimates against the 
+# Compare the best literature zero-density estimates against the
 # best-known zero-density estimate
 def zero_density_plot():
     # plot zero-density estimate
@@ -205,16 +205,16 @@ def zero_density_plot():
     literature_zd = []
     best_zd = []
     lindelof_zd = []
-    
+
     hs = Hypothesis_Set()
     hs.add_hypotheses(literature)
-    
+
     # Add the new zero-density estimates (not part of the literature yet!)
     zd.add_zero_density(hs, "2/(9*x - 6)", Interval("[17/22, 38/49]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "9/(8*(2*x - 1))", Interval("[38/49, 4/5]"), Reference.make("Tao--Trudgian--Yang", 2024))
     zd.add_zero_density(hs, "3/(10 * x - 7)", Interval("[701/1000, 1]"), Reference.make("Tao--Trudgian--Yang", 2024))
     hs.add_hypotheses(zd.bourgain_ep_to_zd())
-    
+
     def best_zd_at(hypotheses, sigma):
         min_ = 1000000
         for h in hypotheses:
@@ -224,17 +224,17 @@ def zero_density_plot():
                     if q.is_real and math.isfinite(q) and min_ > q:
                         min_ = q
         return min_
-    
+
     for i in range(N):
         sigma = 1 / 2 + 1 / 2 * i / N
         sigmas.append(sigma)
         literature_zd.append(best_zd_at(literature, sigma))
         best_zd.append(best_zd_at(hs, sigma))
         lindelof_zd.append(2 if sigma <= 3/4 else 0)
-    
+
     for i in range(len(sigmas)):
         print(sigmas[i], literature_zd[i], best_zd[i])
-        
+
     plt.figure(figsize=(10, 6))
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A(\sigma)$")
@@ -246,7 +246,7 @@ def zero_density_plot():
     plt.grid(True)
     plt.show()
 
-# Plot the best zero-density energy estimates known trivially, in the literature, and under the 
+# Plot the best zero-density energy estimates known trivially, in the literature, and under the
 # Lindelof hypothesis
 def zero_density_energy_plot():
     hypotheses = Hypothesis_Set()
@@ -255,11 +255,14 @@ def zero_density_energy_plot():
 
     # add trivial bounds - this uses literature zero-density estimates
     ze.add_trivial_zero_density_energy_estimates(hypotheses)
-    
+
     # List of new derived estimates so far. TODO: replace with actual derivations
+    crossover = (626 - math.sqrt(3301)) / 785
     energy_estimates = [
             (RF.parse("1000000"), Interval(frac(1,2), 1)), # default
-            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(frac(7,10), 0.7255)),
+            (RF.parse("(10 - 11 * x) / ((2 - x) * (1 - x))"), Interval(frac(2,3), frac(5,7))),
+            (RF.parse("3 * (25 - 27 * x) / (8 * (2 - x) * (1 - x))"), Interval(frac(5,7), crossover)),
+            (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(crossover, 0.7255)),
             (RF.parse("2 * (45 - 44 * x) / ((2 * x + 15) * (1 - x))"), Interval(0.7255, 0.73)),
             (RF.parse("(457 - 546 * x) / (2 * (61 - 58 * x) * (1 - x))"), Interval(0.73, 0.7373)),
             (RF.parse("5 * (18 - 19 * x) / (2 * (5 * x + 3) * (1 - x))"), Interval(0.7373, frac(42,55))),
@@ -270,7 +273,7 @@ def zero_density_energy_plot():
             (RF.parse("(18 - 19 * x) / (9 * (3 * x - 2) * (1 - x))"), Interval(frac(33,43), 0.7721)),
             (RF.parse("4 * (10 - 9 * x) / (5 * (4 * x - 1) * (1 - x))"), Interval(0.7721, frac(5, 6))),
         ]
-    # as an example, plot the trivial bound and the literature bound 
+    # as an example, plot the trivial bound and the literature bound
     sigmas = np.linspace(1/2, 0.999, 1000)
     trivial_bound = []
     lit_bound = []
@@ -278,31 +281,31 @@ def zero_density_energy_plot():
     lindelof_bound = []
     for sigma in sigmas:
         trivial = min(
-                    h.data.at(sigma) 
-                    for h in hypotheses 
+                    h.data.at(sigma)
+                    for h in hypotheses
                     if h.name == "Trivial zero density energy estimate" and h.data.interval.contains(sigma)
                 )
         trivial_bound.append(trivial)
-        
+
         lit = min(
                 h.data.at(sigma)
                 for h in literature
                 if h.hypothesis_type == "Zero density energy estimate" and h.data.interval.contains(sigma)
             )
         lit_bound.append(min(lit, trivial))
-        
+
         best = min(
                 bound.at(sigma)
                 for (bound, interval) in energy_estimates
                 if interval.contains(sigma)
             )
         best_bound.append(min(best, lit, trivial))
-        
+
         if sigma > 3/4:
             lindelof_bound.append(0)
         else:
             lindelof_bound.append(8 - 4 * sigma)
-    
+
     plt.figure(figsize=(10, 6))
     plt.xlabel(r"$\sigma$")
     plt.ylabel(r"$A^*(\sigma)$")
@@ -326,7 +329,7 @@ def dep_graph_plot(hypothesis: Hypothesis):
             vertices.append((hypothesis, xoffset, yoffset, has_child))
             xoffset += 1
             yoffset += 1
-        
+
         root_id = len(vertices) - 1
         for h in hypothesis.dependencies:
             has_child = len(h.dependencies) > 0
@@ -335,7 +338,7 @@ def dep_graph_plot(hypothesis: Hypothesis):
             edges.append((root_id, child_id))
             yoffset += 1
             _extract_dep_graph(h, vertices, edges, xoffset+1, yoffset)
-    
+
     edges = []
     vertices = []
     _extract_dep_graph(hypothesis, vertices, edges, 0, 0)
@@ -346,7 +349,7 @@ def dep_graph_plot(hypothesis: Hypothesis):
         plt.plot([x1, x2], [y1, y2], color="grey")
 
     for v in vertices:
-        color = "grey" if v[3] else "black" 
+        color = "grey" if v[3] else "black"
         plt.scatter(v[1], v[2], color=color)
         print(v)
 
@@ -375,8 +378,8 @@ def mu_bounds_plot():
 
 def gauss_circle_error_plot(k: int = 2):
     """
-    Given an integer k, plots the error term in the estimation of the number of 
-    integer lattice points inside a ball of dimension k for various radii r. 
+    Given an integer k, plots the error term in the estimation of the number of
+    integer lattice points inside a ball of dimension k for various radii r.
     """
 
     def N(k: int, r: int):
@@ -394,7 +397,7 @@ def gauss_circle_error_plot(k: int = 2):
                     y2 = y * y
                     count += 2 * int(math.sqrt(r2 - x2 - y2)) + 1
             return count
-    
+
     def E(k, r):
         """
         Computes the error term in the Gauss circle problem for a given k and radius r.
@@ -405,7 +408,7 @@ def gauss_circle_error_plot(k: int = 2):
             return abs(N(k, r) - (4/3) * math.pi * r**3)
         else:
             raise NotImplementedError("Currently only k=2 is supported.")
-    
+
     rs = range(0, 1000)
     errors = [E(k, r) for r in rs]
 
@@ -418,7 +421,7 @@ def gauss_circle_error_plot(k: int = 2):
     plt.ylabel(r"$|S_2(R) - \pi R^2|$" if k == 2 else r"$|S_3(R) - \frac{4}{3} \pi R^3|$")
     plt.grid(True, linestyle="dotted")
     plt.tight_layout()
-    plt.show()  
+    plt.show()
 
 def plot_historical_gauss_circle_estimates():
     """

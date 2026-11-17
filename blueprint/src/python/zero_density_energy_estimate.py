@@ -2,10 +2,10 @@
 #
 # N*(\sigma - \delta, T) \ll T^{A*(\sigma)(1 - \sigma) + o(1)}
 #
-# for all \delta > 0, where N(\sigma, T) is the additive energy of 
-# the imaginary parts of the zeroes \rho of the Riemann zeta-function 
-# satisfying with real part \in [\sigma, 1] and imaginary part \in 
-# [-T, T]. 
+# for all \delta > 0, where N(\sigma, T) is the additive energy of
+# the imaginary parts of the zeroes \rho of the Riemann zeta-function
+# satisfying with real part \in [\sigma, 1] and imaginary part \in
+# [-T, T].
 
 import additive_energy as ad
 from fractions import Fraction as frac
@@ -19,19 +19,19 @@ from region import Region
 class Zero_Density_Energy_Estimate:
 
     """
-    Class representing a zero-density energy estimate 
+    Class representing a zero-density energy estimate
 
-    For now, this is identical to the Zero_Density_Estimate class 
+    For now, this is identical to the Zero_Density_Estimate class
     TODO: set up an inheritance structure for these classes
     """
-    
+
     def __init__(self, expr: str, interval: Interval):
         """
         Parameters
         ----------
         expr : str
             An expression that represents a function of x.
-        interval : Interval 
+        interval : Interval
             The Interval object representing the range of validity of the
             bound.
         """
@@ -49,11 +49,11 @@ class Zero_Density_Energy_Estimate:
         """
         Returns a string representation of the zero density energy estimate.
         """
-        return f"A*(x) \leq {self.expr} on {self.interval}"
+        return f"A*(x) \\leq {self.expr} on {self.interval}"
 
     def _ensure_bound_is_computed(self):
         """
-        Internal method to ensure that the self.bound object is computed 
+        Internal method to ensure that the self.bound object is computed
         (by default, this bound is not computed at instantiation time).
         """
         if self.bound is None:
@@ -65,12 +65,12 @@ class Zero_Density_Energy_Estimate:
 
         Parameters
         ----------
-        sigma : Number 
+        sigma : Number
             The value of sigma to evaluate the bound on A^*(\\sigma).
 
         Returns
         -------
-        Number 
+        Number
             The value of the bound on A^*(\\sigma).
         """
         if not self.interval.contains(sigma):
@@ -83,11 +83,11 @@ class Zero_Density_Energy_Estimate:
     # Static methods
 
     def from_rational_func(
-            rf: RF, 
+            rf: RF,
             interval: Interval
         ) -> 'Zero_Density_Energy_Estimate':
         """
-        Constructs an instance of Zero_Density_Energy_Estimate from a bound on 
+        Constructs an instance of Zero_Density_Energy_Estimate from a bound on
         A^*(\\sigma) represented as a RationalFunction and a domain for \\sigma.
 
         Parameters
@@ -95,8 +95,8 @@ class Zero_Density_Energy_Estimate:
         rf : RationalFunction
             A univariate function of sigma representing the bound on A^*(\\sigma).
         interval : Interval
-            The interval of \\sigma on which the bound holds. 
-        
+            The interval of \\sigma on which the bound holds.
+
         Returns
         -------
         Zero_Density_Energy_Estimate
@@ -112,14 +112,14 @@ class Zero_Density_Energy_Estimate:
 #############################################################################
 
 def literature_zero_density_energy_estimate(
-        estimate: str, 
+        estimate: str,
         interval: Interval,
-        ref: Reference, 
+        ref: Reference,
         params: str = ""
     ) -> Hypothesis:
 
     """
-    Returns a Hypothesis object representing a zero density energy theorem from 
+    Returns a Hypothesis object representing a zero density energy theorem from
     the literature
 
     Parameters
@@ -127,18 +127,18 @@ def literature_zero_density_energy_estimate(
     estimate: str
         A univarate function of x representing a bound on A*(x)
     interval: Interval
-        The range of sigma on which the bound is valid. 
+        The range of sigma on which the bound is valid.
     ref: Reference
         The literature reference for this bound.
     params: str, optional
-        Additional parameters to include in the name of this Hypothesis object. 
-        (Default is "").  
-    
+        Additional parameters to include in the name of this Hypothesis object.
+        (Default is "").
+
     Returns
     -------
     Hypothesis
-        A Hypothesis object representing a zero density energy estimate from 
-        the literature. 
+        A Hypothesis object representing a zero density energy estimate from
+        the literature.
     """
 
     return Hypothesis(
@@ -150,13 +150,13 @@ def literature_zero_density_energy_estimate(
         )
 
 def derived_zero_density_energy_estimate(
-        data: Zero_Density_Energy_Estimate, 
-        proof: str, 
+        data: Zero_Density_Energy_Estimate,
+        proof: str,
         deps: set[Hypothesis]
     ) -> Hypothesis:
     """
-    Constructs a Hypothesis object representing a zero density energy estimate 
-    that is derived from other hypotheses. 
+    Constructs a Hypothesis object representing a zero density energy estimate
+    that is derived from other hypotheses.
 
     Parameters
     ----------
@@ -165,12 +165,12 @@ def derived_zero_density_energy_estimate(
     proof : str
         A string describing the proof of this bound on A^*(\\sigma).
     deps : set of Hypothesis
-        The hypotheses on which this derived estimate of A^*(\\sigma) depends. 
-    
+        The hypotheses on which this derived estimate of A^*(\\sigma) depends.
+
     Returns
     -------
     Hypothesis
-        An object representing a derived zero density energy estimate. 
+        An object representing a derived zero density energy estimate.
     """
     year = Reference.max_year(tuple(d.reference for d in deps))
     bound = Hypothesis(
@@ -187,14 +187,14 @@ def trivial_zero_density_energy_estimate(
         data: Zero_Density_Energy_Estimate
     ) -> Hypothesis:
     """
-    Constructs a Hypothesis object representing a trivial zero density energy 
-    estimate that does not contain any dependencies. 
+    Constructs a Hypothesis object representing a trivial zero density energy
+    estimate that does not contain any dependencies.
 
     Parameters
     ----------
     data : Zero_Density_Energy_Estimate
         An object representing the bound on A^*(\\sigma).
-    
+
     Returns
     -------
     Hypothesis
@@ -210,18 +210,18 @@ def trivial_zero_density_energy_estimate(
     return bound
 
 #############################################################################
-# Methods for converting between zero density energy theorems and theorems 
+# Methods for converting between zero density energy theorems and theorems
 # on other mathematical objects.
 
 def add_trivial_zero_density_energy_estimates(hypotheses: Hypothesis_Set):
 
     """
-    Computes the "trivial" additive energy estimates implied by zero density 
+    Computes the "trivial" additive energy estimates implied by zero density
     estimates from a set of hypothesis, and add them to the hypothesis set.
 
-    For example, one has the trivial zero density energy estimate 
-    A^*(\\sigma) \leq 3A(\\sigma)
-    where A(\\sigma) is a zero density estimate. 
+    For example, one has the trivial zero density energy estimate
+    A^*(\\sigma) \\leq 3A(\\sigma)
+    where A(\\sigma) is a zero density estimate.
 
     Parameters
     ----------
@@ -238,7 +238,7 @@ def add_trivial_zero_density_energy_estimates(hypotheses: Hypothesis_Set):
                 Zero_Density_Energy_Estimate(f"3 * ({zde.data.expr})", zde.data.interval)
             )
         )
-    
+
     # add zero density energy estimates arising from A*(1/2) = 6 and non-increasingness
     # of (1 - \sigma) A*(\sigma), which implies A*(\sigma) \leq 3/(1-\sigma) for \sigma
     # \geq 1/2
@@ -253,7 +253,7 @@ def lver_to_energy_bound(
         tau0: Affine,
         debug: bool = False
     ) -> list[Hypothesis]:
-    
+
     """
     Given a set of hypotheses, compute the best large value energy region
     then computes the best bound on the additive energy A^*(\\sigma).
@@ -261,7 +261,7 @@ def lver_to_energy_bound(
     Parameters
     ----------
     hypotheses : Hypothesis_Set
-        The set of hypothesis from which to construct the large value 
+        The set of hypothesis from which to construct the large value
         energy region.
     debug : bool, optional
         If True, additional debugging information will be logged to console
@@ -270,15 +270,15 @@ def lver_to_energy_bound(
     Returns
     -------
     list of Hypothesis
-        A list of bounds on A^*(\\sigma), each represented as a Hypothesis 
+        A list of bounds on A^*(\\sigma), each represented as a Hypothesis
         of type 'Zero density energy estimate'.
     """
-    
+
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
     if not isinstance(tau0, Affine):
         raise ValueError("Parameter tau0 must be of type Affine.")
-    
+
     fns = []
     deps = set()
 
@@ -301,7 +301,7 @@ def lver_to_energy_bound(
         if debug:
             for s in sup:
                 print(s)
-    
+
     # domain representing 2 <= tau <= tau0
     LVER_zeta_domain = Region.from_polytope(
         Polytope([
@@ -320,10 +320,14 @@ def lver_to_energy_bound(
         if debug:
             for s in sup:
                 print(s)
-    
+
     # Take maximum
     bounds = [(f[0], f[1]) for f in fns]
-    sup = RF.max(bounds, sigma_interval)
+    sup = RF.max(
+        bounds,
+        sigma_interval,
+        track_dependencies=False
+    )
     return [
         derived_zero_density_energy_estimate(
             # Remember to divide by (1 - \\sigma)
@@ -336,13 +340,13 @@ def lver_to_energy_bound(
         ]
 
 def compute_sup_LV_on_tau(
-        LV_region: Region, 
+        LV_region: Region,
         sigma_interval: Interval
     ) -> list[tuple[RF, Interval, int]]:
-    
+
     """
     Given a set of (sigma, tau, rho) values, compute the supremum of (rho / tau)
-    as sigma ranges in an interval. 
+    as sigma ranges in an interval.
 
     The result is expressed as a function of sigma.
 
@@ -352,20 +356,20 @@ def compute_sup_LV_on_tau(
         The region of feasible (sigma, tau, rho) values. This region must be a
         union or disjoint union of Polytope objects.
     sigma_interval : Interval
-        The range of sigma values to consider. 
+        The range of sigma values to consider.
 
     Returns
     -------
     list of tuple of RationalFunction, Interval and int
-        A list of piecewise-defined univariate functions of sigma. 
+        A list of piecewise-defined univariate functions of sigma.
     """
     # assume that LV_region is a union of polytopes and that the (sigma-tau) domain
     # is already correct
     polys = [r.child for r in LV_region.child]
 
-    # each polytope is 3-dimensional. Find all edges and project them onto the 
-    # sigma dimension. For those with a non-zero projection, compute rho / tau along 
-    # the edge as a function of sigma 
+    # each polytope is 3-dimensional. Find all edges and project them onto the
+    # sigma dimension. For those with a non-zero projection, compute rho / tau along
+    # the edge as a function of sigma
     fns = []
     visited = set() # Keep track of the edges we have already visited to prevent duplication
     for p in polys:
@@ -374,7 +378,7 @@ def compute_sup_LV_on_tau(
             # Vertices on either side of the edge
             v1 = tuple(edge[0])
             v2 = tuple(edge[1])
-            if v1 + v2 in visited or v2 + v1 in visited: 
+            if v1 + v2 in visited or v2 + v1 in visited:
                 continue
             visited.add(v1 + v2)
 
@@ -386,45 +390,45 @@ def compute_sup_LV_on_tau(
 
             # tau as a (linear) function of sigma along this edge
             tau = RF([
-                (tau1 - tau2) / (sigma1 - sigma2), 
+                (tau1 - tau2) / (sigma1 - sigma2),
                 (sigma1 * tau2 - sigma2 * tau1) / (sigma1 - sigma2)
             ])
             # rho as a linear function of sigma along this edge
             rho = RF([
-                (rho1 - rho2) / (sigma1 - sigma2), 
+                (rho1 - rho2) / (sigma1 - sigma2),
                 (sigma1 * rho2 - sigma2 * rho1) / (sigma1 - sigma2)
             ])
 
             fns.append((rho.div(tau), Interval(min(sigma1, sigma2), max(sigma1, sigma2))))
-    
+
     # Take the maximum of the functions
     return RF.max(fns, sigma_interval)
 
 def compute_best_energy_bound(hypotheses: Hypothesis_Set) -> list:
 
     """
-    Given a Hypothesis_Set, compute a piecewise function representing the best bound 
+    Given a Hypothesis_Set, compute a piecewise function representing the best bound
     on A*(\\sigma).
 
-    TODO: this function is quite similar to compute_best_density_estimate in 
+    TODO: this function is quite similar to compute_best_density_estimate in
     zero_density_estimate.py Combine/merge them?
 
     Parameters
     ----------
-    hypotheses : Hypothesis_Set 
+    hypotheses : Hypothesis_Set
         The set of hypotheses to assume in computing the best estimate on A^*(\\sigma).
-    
+
     Returns
     -------
     list of Hypothesis
-        A list of Hypothesis of type 'Zero density energy estimate', each representing 
-        a bound on A^*(\\sigma). The domains of each A^*(\\sigma) bound will be 
-        guaranteed to be non-overlapping. 
+        A list of Hypothesis of type 'Zero density energy estimate', each representing
+        a bound on A^*(\\sigma). The domains of each A^*(\\sigma) bound will be
+        guaranteed to be non-overlapping.
     """
 
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set")
-    
+
     hs = hypotheses.list_hypotheses(hypothesis_type="Zero density energy estimate")
 
     # Ensure bound is computed (i.e any RationalFunction objects that use lazy initialization

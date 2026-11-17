@@ -101,53 +101,60 @@ class Hypothesis:
                 return True
             if self.reference.label == "Conjectured":
                 return False
-            if (
-                self.reference.year() != "Unknown date"
-                and self.reference.year() <= year
-            ):
-                return True
+            y = self.reference.year()
+            if y == "Unknown date":
+                return False
+            try:
+                return int(y) <= int(year)
+            except (TypeError, ValueError):
+                return False
         return False
 
     def proof_complexity(self) -> int:
         """
-        Returns the complexity of the proof of this hypothesis. The proof 
-        complexity is the total number of Hypothesis objects 
-        in the dependency tree of a Hypothesis (including itself). 
+        Returns the complexity of the proof of this hypothesis. The proof
+        complexity is the total number of Hypothesis objects
+        in the dependency tree of a Hypothesis (including itself).
 
         Returns
         -------
-        int 
+        int
             The proof complexity of this hypothesis.
         """
         return sum(h.proof_complexity() for h in self.dependencies) + 1
 
     def proof_depth(self) -> int:
         """
-        Returns the height of the dependency-tree representation of this 
+        Returns the height of the dependency-tree representation of this
         hypothesis (including the root and leaves).
 
         Returns
         -------
-        int 
-            The maximum depth of the tree that represents the dependency 
-            structure of this hypothesis. 
+        int
+            The maximum depth of the tree that represents the dependency
+            structure of this hypothesis.
         """
+        if not self.dependencies:
+            return 1
         return 1 + max(d.proof_depth() for d in self.dependencies)
 
     def proof_date(self) -> int:
         """
-        Returns the date of the last dependency, or -1 if unknown. This is the 
-        date as of which the result is "effectively proved", even if 
+        Returns the date of the last dependency, or -1 if unknown. This is the
+        date as of which the result is "effectively proved", even if
         it does not appear anywhere in the literature as a claimed result.
 
-        Returns 
+        Returns
         -------
-        int 
+        int
             The year of the latest dependency of this hypothesis, or -1 if unknown.
         """
-        year = self.reference.year()
-        if year == "Unknown date":
-            year = -1
+        def as_year(y):
+            if y == "Unknown date" or y is None:
+                return -1
+            return int(y)
+
+        year = as_year(self.reference.year())
         return max([year] + [h.proof_date() for h in self.dependencies])
 
 
@@ -160,11 +167,12 @@ class Hypothesis:
 
 
 class Hypothesis_Set:
-    def __init__(self, hypotheses=set()):
+    def __init__(self, hypotheses=None):
         self.hypotheses = set()
-        self.add_hypotheses(hypotheses)
         self.data = {}
         self.data_valid = False  # set to false whenever data needs to be recomputed
+        if hypotheses is not None:
+            self.add_hypotheses(hypotheses)
 
     def __repr__(self):
         return f'Set of {len(self.hypotheses)} hypotheses: [{",".join(h.name for h in self.hypotheses)}]'
@@ -172,15 +180,12 @@ class Hypothesis_Set:
     # Shallow copy, the hypothesis objects are not cloned
     def __copy__(self):
         copy = Hypothesis_Set(self.hypotheses)
-        copy.data = self.data
+        copy.data = dict(self.data)
         copy.data_valid = self.data_valid
         return copy
 
     def __iter__(self):
         return self.hypotheses.__iter__()
-
-    def __next__(self):
-        return self.hypotheses.__next__()
 
     def __len__(self):
         return len(self.hypotheses)
@@ -202,6 +207,7 @@ class Hypothesis_Set:
     def add_hypothesis(self, hypothesis, invalidate_data=True):
         self.hypotheses.add(hypothesis)
         if invalidate_data:
+            self.data.clear()
             self.data_valid = False
 
     # Adds a set or list of hypotheses, an individual hypothesis, or a Hypothesis_Set
@@ -210,11 +216,12 @@ class Hypothesis_Set:
             self.add_hypothesis(new_hypotheses, invalidate_data)
         elif isinstance(new_hypotheses, Hypothesis_Set):
             self.add_hypotheses(new_hypotheses.hypotheses, invalidate_data)
-        elif isinstance(new_hypotheses, list):
+        elif isinstance(new_hypotheses, list) or isinstance(new_hypotheses, tuple):
             self.add_hypotheses(set(new_hypotheses), invalidate_data)
         else:
             self.hypotheses.update(new_hypotheses)
             if invalidate_data:
+                self.data.clear()
                 self.data_valid = False
 
     # return all hypotheses of a given type, and (optionally) up to a given year.  Note: is now returning a Hypothesis_Set rather than a list
@@ -225,12 +232,12 @@ class Hypothesis_Set:
             if hypothesis.is_match(hypothesis_type, year)
         ]
 
-    
+
     def find_hypothesis(
         self, hypothesis_type="Any", data="Any", name="Any", keywords="Any", year="Any"
     ) -> Optional[Hypothesis]:
         """
-        Returns the first instance of a Hypothesis in the set that matches the 
+        Returns the first instance of a Hypothesis in the set that matches the
         specified requirements.
 
         Parameters
@@ -244,16 +251,16 @@ class Hypothesis_Set:
             The full name of the hypothesis, e.g. "Jutila large value theorem with k = 3"
             (default is "Any").
         keywords : str, optional
-            A comma-separated list of keywords to search for in the name of the 
+            A comma-separated list of keywords to search for in the name of the
             hypothesis (default is "Any").
         year : str or int, optional
             The year of the hypothesis (default is "Any").
-        
+
         Returns
         -------
         Hypothesis or None
-            The first hypothesis that matches all conditions, or None if no such 
-            hypothesis exists. 
+            The first hypothesis that matches all conditions, or None if no such
+            hypothesis exists.
         """
         for h in self:
             if hypothesis_type == "Any" or h.hypothesis_type == hypothesis_type:
@@ -264,5 +271,4 @@ class Hypothesis_Set:
                         ):
                             if year == "Any" or h.reference.year() == year:
                                 return h
-        print("ERROR: No matching hypothesis found")
         return None

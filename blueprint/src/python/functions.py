@@ -52,6 +52,8 @@ class Interval:
         return f"{lower_bracket}{self.x0},{self.x1}{upper_bracket}"
 
     def __eq__(self, other):
+        if not isinstance(other, Interval):
+            return NotImplemented
         # All empty intervals are considered equal
         if self.is_empty() and other.is_empty():
             return True
@@ -64,8 +66,15 @@ class Interval:
 
     # -------------------------------------------------------------------------
     # Public static functions
+    @staticmethod
     def parse(s):
+        if not isinstance(s, str) or len(s) < 5:
+            raise ValueError("Interval string must look like [a, b] or (a, b)")
+        if s[0] not in "[(" or s[-1] not in "])":
+            raise ValueError(f"Interval string {s!r} must start with [ or ( and end with ] or )")
         inner = s[1:-1].split(",")
+        if len(inner) != 2:
+            raise ValueError(f"Interval string {s!r} must contain exactly two endpoints")
         return Interval(
             frac(inner[0].strip()), frac(inner[1].strip()), s[0] == "[", s[-1] == "]"
         )
@@ -161,7 +170,7 @@ class Affine:
         return NotImplemented
 
     def deep_copy(self):
-        return Affine(self.m, self.c, self.domain.deep_copy())
+        return Affine(self.m, self.c, self.domain.deep_copy(), self.label)
 
     def to_str(self, variable):
         s3 = f"  ({self.label})" if self.label is not None else ""
@@ -246,7 +255,7 @@ class Affine:
                 x = crits[i]
                 interval = Interval(x, x, True, True)
                 if domain is None or domain.contains(x):
-                    p = self if self.domain.contains(x) else None
+                    p = compare_f(self, None, interval) if self.domain.contains(x) else None
                     for f in f2:
                         if f.domain.contains(x):
                             p = compare_f(p, f, interval)
@@ -258,7 +267,7 @@ class Affine:
             # Consider the interval (crits[i], crits[i + 1])
             interval = Interval(crits[i], crits[i + 1], False, False)
             test_x = interval.midpoint()
-            p = self if self.domain.contains(test_x) else None
+            p = compare_f(self, None, interval) if self.domain.contains(test_x) else None
             for f in f2:
                 if f.domain.contains(test_x):
                     p = compare_f(p, f, interval)
@@ -278,17 +287,7 @@ class Affine:
                 p1.domain.x1 == p2.domain.x0
                 and (p1.domain.include_upper or p2.domain.include_lower)
                 and pieces[j].label == pieces[j + 1].label
-                and (
-                    (
-                        p1.domain.length() == 0
-                        and p1.at(p1.domain.x1) == p2.at(p2.domain.x0)
-                    )
-                    or (
-                        p2.domain.length() == 0
-                        and p1.at(p1.domain.x1) == p2.at(p2.domain.x0)
-                    )
-                    or (p1.function_equals(p2))
-                )
+                and p1.function_equals(p2)
             )
 
             # Extend the interval of p1 to include p2 (no need to update argmin[j])
@@ -385,7 +384,7 @@ class Affine2:
     # Returns new Affine2 function with dimension i scaled by a factor
     def scale(self, i, factor, additional_constraints):
         return Affine2(
-            self.a.copy(), self.domain.scale(i, factor, additional_constraints)
+            self.a.copy(), self.domain.scale(i, factor, additional_constraints), self.label
         )
 
     # Computes the minimum between this function and a list of 2-d affine functions
@@ -407,7 +406,11 @@ class Affine2:
             # If two functions are identical, then we add the one with a smaller
             # label. This is to establish a replicable order of functions.
             if all(self.a[i] == f.a[i] for i in range(len(self.a))):
-                fn = self if self.label < f.label else f
+                # Labels are optional; use the labelled piece when only one
+                # is labelled, and keep the left piece when neither is.
+                fn = self
+                if f.label is not None and (self.label is None or f.label < self.label):
+                    fn = f
                 pieces.append(Affine2(fn.a, domain, fn.label))  # Shallow copying
                 continue
 
@@ -748,7 +751,7 @@ class RationalFunction:
     # from highest degree to lowest degree) for both the numerator and denominator
     def __init__(self, num_coeffs, den_coeffs=None):
 
-        if den_coeffs == None:
+        if den_coeffs is None:
             den_coeffs = [1]
 
         num = 0
@@ -774,7 +777,7 @@ class RationalFunction:
         # Direct test if result is numeric
         if isinstance(res, numbers.Number):
             return res == 0
-        
+
         # Symbolic test otherwise
         return res.equals(0)
 
@@ -816,60 +819,61 @@ class RationalFunction:
             track_dependencies=True
         ) -> list:
 
-        # Start with default bound with reference index -1
-        best_bound = [(RationalFunction([default]), domain, -1)]
+        if domain.is_empty():
+            return []
+        x = RationalFunction.x
 
-        for ref1 in range(len(func_and_domains)):
-            (func1, in1) = func_and_domains[ref1]
+        def real_roots(expression):
+            expression = sympy.sympify(expression)
+            if expression.is_constant():
+                return []
+            return sympy.real_roots(expression)
 
-            new_best_bound = []
-            for (func2, in2, ref2) in best_bound:
-                solns = sympy.solve(func1.num / func1.den - func2.num / func2.den)
-                crits = set(SympyHelper.to_frac(soln) for soln in solns if soln.is_real)
-                crits.update([in1.x0, in1.x1])
-                crits = set(c for c in crits if in2.contains(c))
-                crits.update([in2.x0, in2.x1])
+        # A winner can change at a domain endpoint, an intersection, or a pole.
+        crits = {domain.x0, domain.x1}
+        for i, (func, interval) in enumerate(func_and_domains):
+            crits.update([interval.x0, interval.x1])
+            crits.update(real_roots(func.den))
+            for other, _ in func_and_domains[:i]:
+                crits.update(real_roots(func.num * other.den - other.num * func.den))
+        crits = sorted(c for c in crits if domain.x0 <= c <= domain.x1)
+        cells = []
+        for i, point in enumerate(crits):
+            if domain.contains(point):
+                cells.append(Interval(point, point, True, True))
+            if i + 1 < len(crits):
+                cells.append(Interval(point, crits[i + 1], False, False))
 
-                crits = list(crits)
-                crits.sort()
-                for i in range(1, len(crits)):
-                    inter = Interval(crits[i - 1], crits[i])
-                    mid = inter.midpoint()
-                    if not in1.contains(mid) or comparator(func2.at(mid), func1.at(mid)):
-                        new_best_bound.append((func2, inter, ref2)) # f2 is the better bound
-                    else:
-                        new_best_bound.append((func1, inter, ref1))
-
-            # Simplify
-            best_bound = []
-            i = 0
-            while i < len(new_best_bound):
-                (fi, inti, refi) = new_best_bound[i]
-                left = inti.x0
-                right = inti.x1
-
-                j = i + 1
-                while j < len(new_best_bound):
-                    (fj, intj, refj) = new_best_bound[j]
-                    #print(type(refi), type(refj))
-                    if not (fi == fj and right == intj.x0 and (not track_dependencies or refi == refj)):
-                        break
-                    right = intj.x1
-                    j += 1
-
-                best_bound.append((fi, Interval(left, right), refi))
-                i = j
+        fallback = RationalFunction([default])
+        best_bound = []
+        for cell in cells:
+            mid = cell.midpoint()
+            winner, ref = fallback, -1
+            for i, (func, interval) in enumerate(func_and_domains):
+                if not interval.contains(mid) or sympy.sympify(func.den).subs(x, mid) == 0:
+                    continue
+                if ref == -1 or comparator(func.at(mid), winner.at(mid)):
+                    winner, ref = func, i
+            if best_bound:
+                prev, previous_domain, previous_ref = best_bound[-1]
+                same = (previous_ref == ref if track_dependencies else
+                        previous_ref == ref or (previous_ref != -1 and ref != -1 and prev == winner))
+                if (same and previous_domain.x1 == cell.x0 and
+                        (previous_domain.include_upper or cell.include_lower)):
+                    previous_domain.x1 = cell.x1
+                    previous_domain.include_upper = cell.include_upper
+                    continue
+            best_bound.append((winner, cell, ref))
 
         if track_dependencies:
             return best_bound
-        else:
-            return [(b[0], b[1]) for b in best_bound]
+        return [(f, interval) for f, interval, _ in best_bound]
 
     # Given a list of (RationalFunction, Interval) tuples, compute their (piecewise) minimum.
     # The result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
     # the last element indicates the index of the RationalFunction piece in the original
     # list of functions.
-    # If a function is not defined on an interval, it is treated as -infinity.
+    # If a function is not defined on an interval, it is treated as +infinity.
     def min(func_and_domains: list, domain: Interval, track_dependencies=True) -> list:
         if not isinstance(func_and_domains, list):
             raise ValueError("Parameter piecewise_funcs must be of type list")
@@ -877,7 +881,7 @@ class RationalFunction:
             raise ValueError("Parameter domain must be of type Interval")
 
         return RationalFunction._compute_optimal(
-            func_and_domains, domain, lambda x, y: x < y, 1000000, track_dependencies)
+            func_and_domains, domain, lambda x, y: x < y, sympy.oo, track_dependencies)
 
     # Given a list of (RationalFunction, Interval) tuples, compute their maximum. The
     # result is returned as a list of (RationalFunction, Interval, Integer) tuples, where
@@ -890,7 +894,7 @@ class RationalFunction:
         if not isinstance(domain, Interval):
             raise ValueError("Parameter domain must be of type Interval")
         return RationalFunction._compute_optimal(
-            func_and_domains, domain, lambda x, y: x > y, -1000000, track_dependencies)
+            func_and_domains, domain, lambda x, y: x > y, -sympy.oo, track_dependencies)
 
     # ------------------------------------------------------------------
 
@@ -911,7 +915,7 @@ class RationalFunction:
             r.num = self.num * other.den + self.den * other.num
             r.den = self.den * other.den
             return r
-        return NotImplementedError()
+        raise NotImplementedError()
 
     def subtract(self, other):
         r = RationalFunction([])
@@ -941,8 +945,8 @@ class RationalFunction:
     def div(self, other):
         r = RationalFunction([])
         if isinstance(other, numbers.Number):
-            r.num = self.num * other
-            r.den = self.den
+            r.num = self.num
+            r.den = self.den * other
             return r
         if isinstance(other, RationalFunction):
             r.num = self.num * other.den
@@ -973,21 +977,21 @@ class RationalFunction:
     # Computes all the intersection points between this RationalFunction and another
     # on an interval
     def intersections(self, other, interval):
-        # Intersections of P/Q = R/S when PS - RQ = 0
-        f = self.num * other.den - self.den * other.num
-        if not f.is_constant():
-            return [
-                SympyHelper.to_frac(r)
-                for r in sympy.real_roots(f)
+        # Cross multiplication supplies candidates, but poles are not intersections.
+        numerator = sympy.sympify(self.num * other.den - self.den * other.num)
+        if numerator.is_constant():
+            return []
+        return [SympyHelper.to_frac(r) for r in sympy.real_roots(numerator)
                 if interval.contains(r)
-            ]
-        return []
+                and sympy.sympify(self.den).subs(self.x, r) != 0
+                and sympy.sympify(other.den).subs(self.x, r) != 0]
 
     def roots(self, interval):
-        f = self.num / self.den
-        if f.is_constant():
+        numerator = sympy.sympify(self.num)
+        if numerator.is_constant():
             return []
-        return [r for r in sympy.real_roots(f) if interval.contains(r)]
+        return [r for r in sympy.real_roots(numerator)
+                if interval.contains(r) and sympy.sympify(self.den).subs(self.x, r) != 0]
 
     # Compute the maximum over an interval of type Interval
     def maximise(self, interval):

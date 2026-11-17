@@ -83,16 +83,16 @@ trivial_beta_bound_2 = classical_bound_beta(
 def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
     """
     Implements Lemma 4.10 (van der Corput B-process for beta):
-    
+
         beta(1 - alpha) = 1/2 - alpha + beta(alpha),  for 0 < alpha < 1
-    
+
     Mathematical transformation:
         If beta(alpha) <= m*alpha + c  for alpha in [x0, x1]
         Then beta(alpha) <= (1-m)*alpha + (c + m - 1/2)  for alpha in [1-x1, 1-x0]
-    
+
     Parameters:
         bounds: list of Hypothesis objects of type "Upper bound on beta"
-    
+
     Returns:
         list of new Hypothesis objects representing the reflected bounds
     """
@@ -118,7 +118,10 @@ def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
         new_x1 = 1 - x0
 
         # Step 3: Build the new Affine bound with reflected interval
-        new_affine = Affine(new_m, new_c, Interval(new_x0, new_x1, True, True))
+        new_affine = Affine(
+            new_m, new_c,
+            Interval(new_x0, new_x1, p.domain.include_upper, p.domain.include_lower),
+        )
 
         # Step 4: Wrap in a derived Hypothesis, preserving the dependency chain
         new_hyp = derived_bound_beta(
@@ -147,7 +150,7 @@ def apply_reflection_beta(bounds: list[Hypothesis]) -> list[Hypothesis]:
 #   - a list of Hypothesis objects, each representing a derived beta bound
 def exponent_pairs_to_beta_bounds(hypothesis_set):
     if not isinstance(hypothesis_set, Hypothesis_Set):
-        raise "hypothesis_set must be of type Hypothesis_Set"
+        raise TypeError("hypothesis_set must be of type Hypothesis_Set")
 
     hypotheses = []
     ephs = hypothesis_set.list_hypotheses(hypothesis_type="Exponent pair")
@@ -289,14 +292,14 @@ def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypo
         f1_eq_f2_bounds = apply_van_der_corput_f1_eq_f2([bd])
         newBounds.extend(f1_eq_f2_bounds)
 
-    if len(newBounds) > 0:      
+    if len(newBounds) > 0:
         # Merge the same bound that appears over multiple intervals
         newBounds1 = [nb.deep_copy() for nb in newBounds]
         newBounds2 = []
         while len(newBounds1) > 0:
             f1 = newBounds1[0].deep_copy()
             fm = f1.m
-            fc = f1.c 
+            fc = f1.c
             sameFs0 = [ nb for nb in newBounds1 if (nb.m == fm) and (nb.c == fc) ]
             sameFs0.sort(  key=lambda f: f.domain.x0 )
             sameFs = []
@@ -322,7 +325,7 @@ def apply_van_der_corput_process_for_beta(bounds: list[Hypothesis]) -> list[Hypo
     return []
 def apply_van_der_corput_f1_eq_f2(bounds: list[Hypothesis]) -> list[Affine]:
     """
-    Implements the optimized van der Corput process from Lemma 4.6 
+    Implements the optimized van der Corput process from Lemma 4.6
     by picking h(alpha) such that f1(alpha) = f2(alpha).
     """
     if not bounds:
@@ -374,15 +377,15 @@ def apply_van_der_corput_f1_eq_f2(bounds: list[Hypothesis]) -> list[Affine]:
                     disc = B_val * B_val + 4 * A_val * C_val
                     if disc < 0:
                         return None
-                    
+
                     import math
                     num, den = disc.numerator, disc.denominator
                     sqrt_num, sqrt_den = math.isqrt(num), math.isqrt(den)
-                    
+
                     # Ensure perfect square to maintain exact fraction arithmetic
                     if sqrt_num * sqrt_num != num or sqrt_den * sqrt_den != den:
-                        return None  
-                    
+                        return None
+
                     sqrt_disc = frac(sqrt_num, sqrt_den)
                     t = frac(-B_val + sqrt_disc, 2 * A_val)
                     if t < 0:
@@ -420,7 +423,7 @@ def apply_van_der_corput_f1_eq_f2(bounds: list[Hypothesis]) -> list[Affine]:
             new_c = b0 - new_m * a0
 
             if new_m == m1 and new_c >= c1:
-                continue  
+                continue
 
             # Find sub-interval where this new bound actually improves the current one
             u0, u1 = v0, v1
@@ -521,7 +524,7 @@ def display_two_sets_of_beta_bounds(hypotheses, newhypotheses):
     plt.ylabel(r"$\beta(\alpha)$")
     plt.title(r"Best bound on $\beta(\alpha)$")
     plt.show()
-    
+
 def combine_beta_bounds(hypotheses: list) -> list:
     """Compute the pointwise minimum and return a non-redundant list of Hypothesis."""
     if not hypotheses:
@@ -530,7 +533,7 @@ def combine_beta_bounds(hypotheses: list) -> list:
     # 1. Collect all domain endpoints and intersection points
     breakpoints = set()
     bounds_data = []
-    
+
     for hyp in hypotheses:
         aff = hyp.data.bound
         x0, x1, m, c = aff.domain.x0, aff.domain.x1, aff.m, aff.c

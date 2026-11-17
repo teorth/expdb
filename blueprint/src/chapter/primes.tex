@@ -114,7 +114,7 @@ Historical bounds on $\GAPMAX$ are summarized in the following table:
     \hline
     Lou--Yao (1992) \cite{lou-yao-chebychev} & $\frac{6}{11} = 0.5454\dots$\\
     \hline
-    Baker-Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
+    Baker--Harman (1996) \cite{baker-harman} & $\frac{107}{200} = 0.535$\\
     \hline
     Baker--Harman--Pintz (2001) \cite{baker-harman-pintz} & $\frac{21}{40} = 0.525$ \\
     \hline
@@ -154,7 +154,7 @@ Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
     \hline
     H. Li (1997) \cite{li_short_1997} & $\frac{1}{15}=0.0666\dots$ \\
     \hline
-    Baker--Harman--Pintz (1997) \cite{baker-harman-pintz_goldbach_1997} & $\frac{1}{16} = 0.625$ \\
+    Baker--Harman--Pintz (1997) \cite{baker-harman-pintz_goldbach_1997} & $\frac{1}{16} = 0.0625$ \\
     \hline
     Wong (1996) \cite{wong_thesis_1996}, Jia (1996) \cite{jia_exceptional_1996}, Harman (2007) \cite{harman-book} & $\frac{1}{18} = 0.0555\dots$ \\
     \hline
@@ -171,6 +171,7 @@ Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
 
     \begin{table}[ht]
         \caption{Historical upper bounds on $\GAPSQUARE$.}
+        \label{gapsquare-table}
         \centering
         \renewcommand{\arraystretch}{1.2}
         \begin{tabular}{|c|c|}
@@ -194,7 +195,7 @@ Bounds on $\GAPAA$ are recorded in Table \ref{gapaa-table}.
         Stadlmann (2022) \cite{stadlmann_mean_2022} & $\frac{123}{100} = 1.23$ \\
         \hline
     \end{tabular}
-    \end{table}\label{gapsquare-table}
+    \end{table}
 
 The following general bound on $\GAPSQUARE$ is known:
 
@@ -246,6 +247,7 @@ The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are re
 
 \begin{table}[ht]
     \caption{Historical upper bounds on $\GAPLARGE$ and $\GAPLARGEEQ$.}
+    \label{gaplarge-table}
     \centering
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{|c|c|c|}
@@ -277,7 +279,7 @@ The proofs are routine and are omitted.  Historical bounds on $\GAPLARGE$ are re
     J\"{a}rviniemi (2022) \cite{jarviniemi_large_2022} & & $\frac{57}{100} = 0.57$\\
     \hline
     \end{tabular}
-\end{table}\label{gaplarge-table}
+\end{table}
 
 For any $0 < \theta < 1$, let $\PNTEXCEP(\theta)$ denote the least exponent $\mu$ such that for all unbounded $X$, one has $\sum_{x \leq n < x + x^\theta} \Lambda(n) = (1+o(1)) x^\theta$ for all $x \in [X,2X]$ outside of an exceptional set of measure $O(X^{\mu+o(1)})$.  Thus for instance $\PNTEXCEP(\theta)=-\infty$ for $\theta > \PNTALL$ (and $\PNTEXCEP(\theta) \geq 0$ for $\theta < \PNTALL$), and $\PNTEXCEP(\theta) < 1$ implies $\theta \geq \PNTAA$. The quantity $\PNTEXCEP(\theta)$ is clearly non-decreasing in $\theta$.
 
@@ -360,10 +362,10 @@ One has
 Note that by \Cref{bhp-thm} it is known that $G(X) \ll X^{0.52}$.
 
 The current best known result concerning \eqref{eqn:small-prime-gaps} is
-\begin{theorem}[Polymath 8b \cite{polymath_variants_2014}]
+\begin{theorem}[OpenAI \cite{OpenAI_186}]
 One has
 \[
-\liminf_{n\to\infty}(p_{n + 1} - p_n) \le 246.
+\liminf_{n\to\infty}(p_{n + 1} - p_n) \le 186.
 \]
 \end{theorem}
 
@@ -384,6 +386,7 @@ Historical progress towards this problem is recorded in \Cref{small-primegap-tab
 
 \begin{table}[ht]
     \caption{Historical progression of bounds related to \eqref{eqn:small-prime-gaps}.}
+    \label{small-primegap-table}
     \centering
     \renewcommand{\arraystretch}{2.2}
     \begin{tabular}{|c|c|c|}
@@ -404,18 +407,25 @@ Historical progress towards this problem is recorded in \Cref{small-primegap-tab
     \hline
     Polymath 8b (2015) \cite{polymath_variants_2014} & $H_1 \le 246$ & \\
     \hline
+    Stadlmann (2026) \cite{Stadlmann_240} & $H_1 \le 240$ & \\
+    \hline
+    Charton--Hong--Lau--Ono--Remy--Siu--Swaminathan--Thorner--Xie (2026) \cite{AxiomMath_212} & $H_1 \le 212$ & \\
+    \hline
+    OpenAI (2026) \cite{OpenAI_186} & $H_1 \le 186$ & \\
+    \hline
     \end{tabular}
-\end{table}\label{small-primegap-table}
+    \end{table}
 
 The current best known lower bound on $G(X)$ is
-\begin{theorem}[Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017}]
+\begin{theorem}[OpenAI (2026) \cite{OpenAI_LargeGap}]
 For unbounded $X$, one has
 \[
-G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}
+G(X) \gg \frac{\log X (\log \log X)^2 \log\log\log \log X}{(\log \log \log X)^2}
 \]
 \end{theorem}
 \begin{table}[ht]
     \caption{Historical progression of bounds related to \eqref{eqn:large-prime-gaps}.}
+    \label{small-primegap-table2}
     \centering
     \renewcommand{\arraystretch}{2.2}
     \begin{tabular}{|c|c|c|}
@@ -440,5 +450,9 @@ G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}
     \hline
     Ford--Green--Konyagin--Maynard--Tao (2017) \cite{ford_long_2017} & $\displaystyle G(X) \gg \frac{\log X \log \log X \log\log\log \log X}{\log \log \log X}$ \\
     \hline
-\end{tabular}
-\end{table}\label{small-primegap-table2}
+    GPT 5.6 Sol (2026) \cite{GPT56Sol_LargeGap} & $\displaystyle G(X) \gg \frac{\log X \log \log X}{\log \log \log \log X}$ \\
+    \hline
+    OpenAI (2026) \cite{OpenAI_LargeGap} & $\displaystyle G(X) \gg \frac{\log X (\log \log X)^2 \log\log\log \log X}{(\log \log \log X)^2}$ \\
+    \hline
+    \end{tabular}
+    \end{table}

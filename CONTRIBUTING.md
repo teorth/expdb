@@ -26,7 +26,11 @@ Python code is stored in [this directory](https://github.com/teorth/expdb/tree/m
 
 ## Contributing to Lean code
 
-At present we do not have any Lean code in this database, although we have structured it to allow for future expansion in this direction.  If you have some ideas for such an expansion, please do not hesitate to discuss them with the maintainers of the ANTEDB, or raise a suitable [issue on the Github repository](https://github.com/teorth/expdb/issues); if there is sufficient interest, we may start a broader discussion to take more steps in this direction.
+Lean code is stored in [this directory](https://github.com/teorth/expdb/tree/main/Expdb).  A formalization effort is underway, but at present it covers only a small portion of the blueprint (the basic notation, $L^2$ integral estimate, and exponential sum growth exponent chapters); contributions extending it to further chapters are very welcome.  If you would like to work on a substantial piece of formalization, please do not hesitate to discuss it with the maintainers of the ANTEDB first, or raise a suitable [issue on the Github repository](https://github.com/teorth/expdb/issues), in order to coordinate with any other contributors.
+
+When a blueprint result is formalized, annotate its statement in the blueprint with the `\lean{}` macro, listing the names of the corresponding Lean declarations, together with the `\leanok` macro.  Every declaration named in a `\lean{}` macro must also be listed in [lean_declarations.txt](https://github.com/teorth/expdb/blob/main/scripts/lean_declarations.txt), which is checked against the compiled Lean code by continuous integration; a renamed declaration therefore has to be updated in all three places.
+
+Where a blueprint convention already has a standard Mathlib representation, please use that representation rather than introducing a new one.  Lean docstrings should refer to blueprint results by their label (for instance `beta-def`) rather than by their number, as the numbering is liable to change.
 
 ## A note on notational conventions
 
@@ -38,6 +42,6 @@ The focus on the ANTEDB is on the exponent bounds in the literature, rather than
 
 ## Creating a similar database
 
-If you wish to create a database similar to the ANTEDB, but with a different scope, you may wish to set up a Lean Project with a Blueprint by following [these instructions](https://github.com/pitmonticone/LeanProject).  (The ANTEDB currently contains no actual Lean code; nevertheless, the Blueprint-based structure of a Lean project is quite convenient for such a database even without such code.)
+If you wish to create a database similar to the ANTEDB, but with a different scope, you may wish to set up a Lean Project with a Blueprint by following [these instructions](https://github.com/pitmonticone/LeanProject).  (The ANTEDB only formalizes a small portion of its blueprint in Lean; nevertheless, the Blueprint-based structure of a Lean project is quite convenient for such a database, even for the portions that have no accompanying Lean code.)
 
 If you do create a new mathematical database, consider registering it at [Mathbases](https://github.com/MathBases/MathBases).

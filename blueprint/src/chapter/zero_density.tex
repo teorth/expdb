@@ -31,7 +31,7 @@ The quantity $\|\A\|_\infty := \sup_{1/2 \leq \sigma < 1} \A(\sigma)$ is of part
 \begin{conjecture}[Density hypothesis]\label{density-hypothesis}\uses{zero-def}  One has $\|\A\|_\infty=2$.  Equivalently, $\A(\sigma) \leq 2$ for all $1/2 \leq \sigma < 1$.
 \end{conjecture}
 
-Indeed, the Riemann hypothesis implies the stronger assertion that $\A(\sigma) = -\infty$ for all $12 < \sigma < 1$.  However, for many applications to the prime numbers in short intervals, the density hypothesis is almost as powerful; see Section \ref{primes-sec}.
+Indeed, the Riemann hypothesis implies the stronger assertion that $\A(\sigma) = -\infty$ for all $1/2 < \sigma < 1$.  However, for many applications to the prime numbers in short intervals, the density hypothesis is almost as powerful; see Section \ref{primes-sec}.
 
 Upper bounds on $\A(\sigma)$ can be obtained from large value theorems via the following relation.
 
@@ -631,7 +631,7 @@ whenever
 
 \begin{proof}\uses{hb-12, a-ivt-1, zero-large-cor2} With the hypothesis on $\sigma$, one sees from Lemma \ref{a-ivt-1} that
 $$ \LV(\sigma,\tau) \leq \max( 2 - 2 \sigma, \tau - \frac{(4m-2)\sigma + 2-2m}{m} + 2-2\sigma)$$
-for $0 \leq \tau < \frac{(4m-2)\sigma + 2-2m}{m}$, and hence for all $\tau \geq 0$ by by Lemma \ref{lv-basic}(ii).  Meanwhile, from Theorem \ref{hb-12} one has
+for $0 \leq \tau < \frac{(4m-2)\sigma + 2-2m}{m}$, and hence for all $\tau \geq 0$ by Lemma \ref{lv-basic}(ii).  Meanwhile, from Theorem \ref{hb-12} one has
 $$\LV_\zeta(\sigma,\tau) \leq 2\tau - 12 (\sigma-1/2)$$
 for all $\tau \geq 2$.  The claim then follows from Corollary
 \ref{zero-large-cor2} with $\tau_0 := \frac{(3m-2)\sigma+2-m}{m}$ after a routine calculation.
@@ -956,9 +956,9 @@ In Table \ref{zero_density_heuristic} we list some examples in which the heurist
     \end{table}
 
     One consequence of Heuristic \ref{lv-heuristic} is that, in the regimes where the heuristic is accurate, combining multiple large values theorems together are unlikely to achieve new zero density theorems that could not be accomplished with each large value theorem separately.
-    
+
 \section{Explicit results}
-A number of explicit versions of the above zero-density estimates have been established, which are particularly relevant when $\sigma$ is close to $1/2$ or $1$, where factors of $T^{o(1)}$ become significant. 
+A number of explicit versions of the above zero-density estimates have been established, which are particularly relevant when $\sigma$ is close to $1/2$ or $1$, where factors of $T^{o(1)}$ become significant.
 
 \begin{theorem}[\cite{simonic}]
 For $T \ge 3$ and $1/2 \le \sigma \le 0.778$, one has
@@ -1048,6 +1048,3 @@ Note that \cref{th:explicitkvbel} implies the following log-free zero-density bo
 \begin{corollary}[\cite{bellotti_2024}]\label{th:kvaslokgfreebel}
 For every $T\ge \exp(6.7\cdot 10^{12})$ and $\sigma\in[0.98,1]$, one has$$N(\sigma, T) \leq 4.45 \cdot 10^{12} \cdot T^{11.3(1-\sigma)}.$$
 \end{corollary}
-
-
-

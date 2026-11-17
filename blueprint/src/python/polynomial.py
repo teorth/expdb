@@ -3,9 +3,9 @@ from functions import RationalFunction2
 # Basic univariate dense polynomial implementation with rational coefficients
 class Polynomial:
 
-    # Initialize with coefficients as a list, ordered from 
+    # Initialize with coefficients as a list, ordered from
     # lowest degree to highest degree. If len(coefficients) = 0
-    # then the polynomial is initialized to 0. 
+    # then the polynomial is initialized to 0.
     def __init__(self, coefficients):
         if coefficients is None or not isinstance(coefficients, tuple):
             raise ValueError("Parameter coefficients must be of type tuple")
@@ -13,7 +13,7 @@ class Polynomial:
         # leading coefficient must be non-zero
         if len(coefficients) > 0 and coefficients[-1] == 0:
             raise ValueError("Leading coefficient must be non-zero")
-        
+
         self.coefficients = coefficients
 
     def __repr__(self):
@@ -23,6 +23,8 @@ class Polynomial:
         return Polynomial(self.coefficients)
 
     def __eq__(self, other):
+        if not isinstance(other, Polynomial):
+            return NotImplemented
         return self.coefficients == other.coefficients
 
     def __add__(self, other):
@@ -34,14 +36,14 @@ class Polynomial:
     def __mul__(self, other):
         return self.multiply(other)
 
-    # Returns the string representation of this polynomial, with a specified 
-    # variable name. 
+    # Returns the string representation of this polynomial, with a specified
+    # variable name.
     def to_str(self, var):
         deg = 0
         s = []
         front = True
         for c in self.coefficients:
-            if front: 
+            if front:
                 if c < 0: s.append("-")
             else:
                 s.append("-" if c < 0 else "+")
@@ -55,7 +57,7 @@ class Polynomial:
         if len(s) == 0: return "0"
         return " ".join(s)
 
-    # Returns a string representation of a monomial 
+    # Returns a string representation of a monomial
     def _monomial_str(c, var, deg):
         if c == 0: return ""
         if deg == 0: return f"{abs(c)}"
@@ -93,7 +95,7 @@ class Polynomial:
         else:
             c = tuple(p[i] + q[i] for i in range(m)) + q[m:n]
         return Polynomial(Polynomial._trim_trailing_zeroes(c))
-    
+
     # Returns a new polynomial equal to this polynomial subtract another
     def subtract(self, other):
         if not isinstance(other, Polynomial):
@@ -107,7 +109,7 @@ class Polynomial:
         else:
             c = tuple(p[i] - q[i] for i in range(m)) + tuple(-a for a in q[m:n])
         return Polynomial(Polynomial._trim_trailing_zeroes(c))
-    
+
     # Returns a new polynomial equal to this polynomial multiplied by another
     def multiply(self, other):
         if not isinstance(other, Polynomial):
@@ -123,12 +125,12 @@ class Polynomial:
                 c[i + j] += p[i] * q[j]
         return Polynomial(Polynomial._trim_trailing_zeroes(tuple(c)))
 
-    # Returns this polynomial divided by another 
+    # Returns this polynomial divided by another
     def divide(self, other):
         if not isinstance(other, Polynomial):
             raise ValueError("Parameter other must be of type Polynomial.")
         if other.is_zero():
             raise ValueError("Division by zero")
 
-        # Returns 
+        # Returns
         return RationalFunction2(self, other)

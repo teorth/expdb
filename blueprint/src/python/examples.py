@@ -201,18 +201,19 @@ def beta_bound_examples():
 def beta_bound_examples2():
     # Compute best known beta bounds
     hypotheses_types = [
-        "Upper bound on beta", "Exponent pair", 
+        "Upper bound on beta", "Exponent pair",
         "Exponent pair transform", "Exponent pair to beta bound transform"
     ]
     hs = Hypothesis_Set()
     hs.add_hypothesis(trivial_exp_pair)
     for ht in hypotheses_types:
         hs.add_hypotheses(literature.list_hypotheses(hypothesis_type=ht))
-    
+
     hs.add_hypotheses(compute_exp_pairs(hs, search_depth=1, prune=True))
     hs.add_hypotheses(exponent_pairs_to_beta_bounds(hs))
     hs.add_hypotheses(compute_best_beta_bounds(hs))
-    hs.add_hypotheses(beta_bounds_to_exponent_pairs(hs))
+    exp_pairs = beta_bounds_to_exponent_pairs(hs)
+    hs.add_hypotheses(exp_pairs)
     old_bounds = compute_best_beta_bounds(hs)
 
     # Apply Lemma 4.6
@@ -220,7 +221,6 @@ def beta_bound_examples2():
     add_beta_bound(hs, newBounds, Reference.make("ANTEDB Lemma 4.6", 2025))
 
     hs.add_hypotheses(compute_best_beta_bounds(hs))
-    new_exp_pairs = beta_bounds_to_exponent_pairs(hs)
     new_exp_pairs = [newPair for newPair in beta_bounds_to_exponent_pairs(hs) if not(newPair in exp_pairs)]
 
     if len(new_exp_pairs) > 0:
@@ -239,6 +239,7 @@ def beta_bound_examples2():
     for P in Ps:
         print(P)
 
+    bounds = compute_best_beta_bounds(hs)
     #display_beta_bounds(bounds)
     display_two_sets_of_beta_bounds(old_bounds, bounds)
 
@@ -498,37 +499,13 @@ def zero_density_energy_examples():
     # Convert all zeta large value estimates -> zeta large value energy region
     hypotheses.add_hypotheses(ad.lv_to_lver(hypotheses, zeta=True))
 
-    # tau_0 as a piecewise affine function
+    # tau_0 as an affine function.  lver_to_energy_bound computes the
+    # LV* and LV_zeta* regions over the tau0 <= tau <= 2 tau0 and
+    # 2 <= tau <= tau0 domains itself.
     tau0 = Affine(0, 5, Interval(frac(3,4), 1))
-    sigma_interval = tau0.domain
-
-    # domain representing tau0 <= tau <= 2 tau0
-    LVER_domain = Region.from_polytope(
-        Polytope([
-            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
-            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
-            [-tau0.c, -tau0.m, 1],       # tau >= tau0 = m sigma + c
-            [2 * tau0.c, 2 * tau0.m, -1] # tau <= 2 tau0 = 2 m sigma + 2 c
-        ])
-    )
-
-    # Compute the feasible region for LV*(s, t) as a 3-dimensional
-    # polytope for a range of sigma
-    LV_star_hyp = ad.compute_LV_star(hypotheses, LVER_domain, zeta=False)
-
-    # domain representing 2 <= tau <= tau0
-    LVER_zeta_domain = Region.from_polytope(
-        Polytope([
-            [-tau0.domain.x0, 1, 0],     # sigma >= sigma_interval.x0
-            [tau0.domain.x1, -1, 0],     # sigma <= sigma_interval.x1
-            [-2, 0, 1],                  # tau0 >= 2
-            [tau0.c, tau0.m, -1],        # tau <= tau0 = m sigma + c
-        ])
-    )
-
-    # Compute the feasible region for LV_{\zeta}*(s, t) as a 3-dimensional polytope
-    LVZ_star_hyp = ad.compute_LV_star(hypotheses, LVER_zeta_domain, zeta=True)
-    bounds = ze.lver_to_energy_bound(LV_star_hyp, LVZ_star_hyp, sigma_interval)
+    bounds = ze.lver_to_energy_bound(hypotheses, tau0)
+    for b in bounds:
+        print(b.data)
 
 # example using Lemma 6.7
 def beta_to_mu_example():
@@ -618,4 +595,3 @@ def all_examples():
     # prove_exponent_pair(frac(89,3478), frac(15327,17390))
 
 #all_examples()
-beta_bound_examples2()

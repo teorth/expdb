@@ -3,6 +3,8 @@
 \section{Phase functions}
 
 \begin{definition}[Phase function]\label{phase-def}
+\lean{Expdb.IsPhaseFunction, Expdb.IsModelPhaseFunction}
+\leanok
 A \emph{phase function} is a (variable) smooth function $F \colon [1,2] \to \R$.  A phase function $F$ will be called a \emph{model phase function} if there exists a fixed exponent $\sigma > 0$ with the property that
 \begin{equation}\label{fpu}
 F^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma} = o(1)
@@ -18,7 +20,10 @@ Note from Proposition \ref{auto} that the $o(1)$ decay rate in \eqref{fpu} can b
 
 The main purpose of this chapter is to introduce and establish the basic properties of the following exponent function.
 
-\begin{definition}[Exponent sum growth exponent]\label{beta-def}\uses{phase-def}  For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
+\begin{definition}[Exponent sum growth exponent]\label{beta-def}\uses{phase-def}
+\lean{Expdb.exponentSumGrowthExponent, Expdb.IsExponentSumBound}
+\leanok
+For any fixed $\alpha \geq 0$, let $\beta(\alpha) \in \R$ denote the least possible (fixed) exponent for which the following claim holds: whenever $N, T \geq 1$ are (variable) quantities with $T$ unbounded and $N = T^{\alpha+o(1)}$, $F$ is a model phase function, and $I \subset [N, 2N]$ is an interval, then
 $$ \sum_{n \in I} e(T F(n/N)) \ll T^{\beta(\alpha)+o(1)}.$$
 \end{definition}
 
@@ -34,7 +39,10 @@ whenever $T$ is unbounded, $N = T^{\alpha+o(1)}$, and $I$ is an interval in $[N,
 
 The quantity $\beta(\alpha)$ can also be formulated without asymptotic notation, but at the cost of introducing some ``epsilon and delta'' parameters:
 
-\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}  Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
+\begin{lemma}[Non-asymptotic definition of $\beta$]\label{beta-asymp}\uses{beta-def}
+\lean{Expdb.exponentSumGrowthExponent_le_iff_nonAsymptotic, Expdb.IsExponentSumBoundNonAsymptotic}
+\leanok
+Let $\alpha \geq 0$ and $\overline{\beta} \in \R$ be fixed.  Then the following are equivalent:
 \begin{itemize}
 \item[(i)] $\beta(\alpha) \leq \overline{\beta}$.
 \item[(ii)] For every (fixed) $\eps>0$ and $\sigma > 0$ there exists (fixed) $\delta>0$, $P \geq 1$, $C \geq 1$ with the following property: if $T \geq C$, $T^{\alpha-\delta} \leq N \leq T^{\alpha+\delta}$ are (fixed) real numbers, $I \subset [N,2N]$ is a (fixed) interval, and $F$ is a (fixed) phase function such that
@@ -46,7 +54,7 @@ $$ |\sum_{n \in I} e(T F(n/N))| \leq C T^{\overline{\beta}+\eps}.$$
 \end{itemize}
 \end{lemma}
 
-\begin{proof}\uses{auto}  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\ii$, one can find real numbers $T = T_{\ii} \geq \ii$, $T^{\alpha-1/\ii} \leq N = N_{\ii} \leq T^{\alpha+1/\ii}$, an interval $I = I_{\ii} \subset [N_\ii, 2N_\ii]$, and a phase function $F = F_{\ii}$ such that
+\begin{proof}\uses{auto}\leanok  It is easy to see that (ii) implies (i) by expanding out all the definitions (and using Proposition \ref{auto} to resolve any uniformity issues).  Conversely, suppose that (ii) fails.  Carefully negating all the quantifiers, we conclude that there exists a fixed $\eps, \sigma > 0$ such that for any (fixed) natural number $\ii$, one can find real numbers $T = T_{\ii} \geq \ii$, $T^{\alpha-1/\ii} \leq N = N_{\ii} \leq T^{\alpha+1/\ii}$, an interval $I = I_{\ii} \subset [N_\ii, 2N_\ii]$, and a phase function $F = F_{\ii}$ such that
 $$ |F_\ii^{(p+1)}(u) - \frac{d^p}{du^p} u^{-\sigma}| \leq 1/\ii$$
 for all (fixed) $0 \leq p \leq \ii$ and $u \in [1,2]$, but that
 $$ |\sum_{n \in I} e(T F(n/N))| \geq \ii T^{\overline{\beta}+\eps}.$$
@@ -57,7 +65,10 @@ We will however work with the asymptotic formulation of $\beta$ throughout this 
 
 We record the trivial bounds on $\beta$:
 
-\begin{lemma}[Trivial bounds on $\beta$]\label{beta-triv}\uses{beta-def}  For any fixed $\alpha > 1$, we have
+\begin{lemma}[Trivial bounds on $\beta$]\label{beta-triv}\uses{beta-def}
+\lean{Expdb.exponentSumGrowthExponent_eq_sub_one, Expdb.exponentSumGrowthExponent_mem_Icc, Expdb.exponentSumGrowthExponent_zero}
+\leanok
+For any fixed $\alpha > 1$, we have
     $$ \beta(\alpha) = \alpha-1.$$
     For fixed $0 \leq \alpha \leq 1$, we have
     $$ \frac{\alpha}{2} \leq \beta(\alpha) \leq \alpha.$$
@@ -71,7 +82,7 @@ We record the trivial bounds on $\beta$:
 \code{trivial_beta_bound_1}
 \code{trivial_beta_bound_2}
 
-    \begin{proof}\uses{l2-int}  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
+    \begin{proof}\uses{l2-int}\leanok  Let $T > 1$ be unbounded, $N = T^{\alpha+o(1)}$, $I \subset [N,2N]$ an interval, and $F$ a model phase function.
 
         For $\alpha > 1$, the Euler--Maclaurin formula (see e.g. \cite[(2.1.2)]{titchmarsh_theory_1986}) gives
         \begin{equation}\label{nit}
@@ -82,9 +93,9 @@ We record the trivial bounds on $\beta$:
         The triangle inequality bound
         $$ \sum_{n \in I} e(T F(n/N)) \ll N$$
         gives the upper bound $\beta(\alpha) \leq \alpha$.  Next, if $0 \leq \alpha \leq 1$, then from Lemma \ref{l2-int} (and the $\gg 1/N$-separated nature of the $F(n/N)$ for model phase functions $F$, after passing to a subsequence if necessary) that
-        $$ \int_{T^{2T}} \left|\sum_{n \in [N,2N]} e(t F(n/N)) \right|^2\ dt \asymp T N$$
+        $$ \int_T^{2T} \left|\sum_{n \in [N,2N]} e(t F(n/N)) \right|^2\, dt \asymp T N$$
     for $N = cT^\alpha$ for $c$ a fixed small enough constant, which by the pigeonhole principle implies that
-    $$\left| \sum_{n \in [N,2N]}e(t F(n/N)) \right|^2\ dt \gg N^{1/2} = T^{\alpha/2}$$
+    $$\left| \sum_{n \in [N,2N]}e(t F(n/N)) \right| \gg N^{1/2} = T^{\alpha/2}$$
     for at least one $t \asymp T$, giving the claim.
 \end{proof}
 
@@ -97,10 +108,13 @@ As we shall see, the exponent pair conjecture is equivalent to the lower bound h
 \]
 Note the discontinuity at $1$.  Despite this, we have:
 
-\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv} $\beta$ is an upper semicontinuous function.
+\begin{lemma}[Upper semicontinuity]\label{beta-semicts}\uses{beta-triv}
+\lean{Expdb.upperSemicontinuous_exponentSumGrowthExponent}\leanok
+$\beta$ is an upper semicontinuous function.
 \end{lemma}
 
-\begin{proof} Routine from the definition.
+\begin{proof}\leanok
+Routine from the definition.
 \end{proof}
 
 We record the classical bounds on $\beta$:
@@ -317,7 +331,7 @@ $$ \beta(\alpha) \leq \max\left(\alpha + \frac{1-4\alpha}{14}, \frac{5}{6} \alph
     \hline
     $\frac{13+21\alpha}{60}$ & $\frac{356}{873}$ & $\frac{5}{12} = 0.4166\dots$ \\
     \hline
-    $\frac{4+103\alpha}{128}$ & $\frac{12}{31}$ & $\frac{356}{873} = 0.4546\dots$ \\
+    $\frac{4+103\alpha}{128}$ & $\frac{12}{31}$ & $\frac{356}{873} = 0.4077\dots$ \\
     \hline
     $\frac{29+173\alpha}{280}$ & $\frac{227}{601}$ & $\frac{12}{31} = 0.3870\dots$ \\
     \hline

@@ -1,0 +1,29 @@
+name: Check whitespace
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering from the GitHub Actions interface
+
+# Cancel previous runs if a new commit is pushed to the same PR or branch
+concurrency:
+  group: whitespace-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check_whitespace:
+    runs-on: ubuntu-latest
+    name: Check trailing whitespace and final newlines
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check whitespace
+        run: python scripts/check_whitespace.py

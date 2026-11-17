@@ -69,9 +69,23 @@ exponent_pair_conjecture = Hypothesis(
 
 ###############################################################################
 
+def _convex_hull_vertices(pairs):
+    """Return hull vertices, including point and segment hulls unsupported by Qhull."""
+    pairs = list({(p.data.k, p.data.l): p for p in pairs}.values())
+    if len(pairs) <= 2:
+        return pairs
+    ordered = sorted(pairs, key=lambda p: (p.data.k, p.data.l))
+    a, b = ordered[0].data, ordered[-1].data
+    if all((p.data.k - a.k) * (b.l - a.l) ==
+           (p.data.l - a.l) * (b.k - a.k) for p in ordered):
+        return [ordered[0], ordered[-1]]
+    conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
+    return [pairs[v] for v in conv.vertices]
+
+
 def compute_exp_pairs(
-        hypothesis_set: Hypothesis_Set, 
-        search_depth: int = 5, 
+        hypothesis_set: Hypothesis_Set,
+        search_depth: int = 5,
         prune: bool = True
     ) -> list:
 
@@ -82,20 +96,20 @@ def compute_exp_pairs(
     Parameters
     ----------
     hypothesis_set : Hypothesis_Set
-        The set of hypothesis to assume. 
+        The set of hypothesis to assume.
     search_depth : int, optional
         The maximum number of times we apply a transform (default is 5)
-    prune : bool, optional 
+    prune : bool, optional
         If true, the set of exponent pairs is pruned at each iteration.
         Based on our current knowledge of exponent pairs, this should allow us to
         compute the convex hull faster with no loss of exponent pairs, however future
         additions to the set of exponent pair transforms may mean
         that pruning leads to suboptimal exponent pairs. Default is True.
-    
-    Returns 
+
+    Returns
     -------
     list of Hypothesis
-        A list of exponent pairs implied by the hypothesis set. 
+        A list of exponent pairs implied by the hypothesis set.
     """
     pairs = hypothesis_set.list_hypotheses("Exponent pair")
     transforms = hypothesis_set.list_hypotheses("Exponent pair transform")
@@ -112,9 +126,7 @@ def compute_exp_pairs(
         if prune:
             if len(pairs) < 3:
                 continue  # Don't prune if set is too small
-            pairs = [p for p in pairs.values()]
-            conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
-            verts = [pairs[v] for v in conv.vertices]
+            verts = _convex_hull_vertices(pairs.values())
             pairs = {(p.data.k, p.data.l): p for p in verts}
 
     return [p for p in pairs.values()]
@@ -122,35 +134,30 @@ def compute_exp_pairs(
 def compute_convex_hull(hypothesis_set: Hypothesis_Set) -> ConvexHull:
     """
     Compute the convex hull of exponent pairs from the literature. This method
-    only uses exponent pairs that are already part of the hypothesis set 
-    (it does not expand the set of exponent pairs e.g. via transformations or 
+    only uses exponent pairs that are already part of the hypothesis set
+    (it does not expand the set of exponent pairs e.g. via transformations or
     those implied by bounds on beta).
 
     Parameters
     ----------
     hypothesis_set: Hypothesis_Set
-        The set of hypotheses to assume. May contain any type of hypothesis, 
+        The set of hypotheses to assume. May contain any type of hypothesis,
         however it must contain hypotheses of type "Exponent pair".
-    
+
     Returns
     -------
     ConvexHull
-        A convex hull object representing the convex hull of exponent pairs. 
+        A convex hull object representing the convex hull of exponent pairs.
     """
     pairs = hypothesis_set.list_hypotheses("Exponent pair")
 
     # Computed convex hull is stored within `hypothesis_list` the first time
     # to avoid repeatedly computing it for multiple values of sigma.
-    if not hypothesis_set.data_valid or "convex_hull" not in hypothesis_set.data:
-        if len(pairs) < 3:
-            hypothesis_set.data["convex_hull"] = list(pairs)
-        else:
-            conv = ConvexHull(np.array([[p.data.k, p.data.l] for p in pairs]))
-            vertices = [pairs[v] for v in conv.vertices]
-            hypothesis_set.data["convex_hull"] = vertices
-            hypothesis_set.data_valid = True
+    if not hypothesis_set.data_valid or 'exponent_pair_convex_hull' not in hypothesis_set.data:
+        hypothesis_set.data['exponent_pair_convex_hull'] = _convex_hull_vertices(pairs)
+        hypothesis_set.data_valid = True
 
-    return hypothesis_set.data["convex_hull"]
+    return hypothesis_set.data['exponent_pair_convex_hull']
 
 def beta_bounds_to_exponent_pairs(
         hypothesis_set: Hypothesis_Set,
@@ -158,7 +165,7 @@ def beta_bounds_to_exponent_pairs(
     ) -> list[Hypothesis]:
     """
     Computes the set of exponent pairs implied by a set of hypothesis, by converting
-    bounds on the beta function into exponent pairs. 
+    bounds on the beta function into exponent pairs.
 
     Parameters
     ----------
@@ -166,20 +173,20 @@ def beta_bounds_to_exponent_pairs(
         The set of hypothesis to assume.
     reduce_dependencies : bool, optional
         If True, then the set of dependencies will be pruned to the minimal dependency
-        set. This simplifies the proof, however will take longer to run. 
-    
-    Returns 
+        set. This simplifies the proof, however will take longer to run.
+
+    Returns
     -------
     list of Hypothesis
-        A list of exponent pairs, each represented as a Hypothesis object. 
+        A list of exponent pairs, each represented as a Hypothesis object.
     """
 
     if not isinstance(hypothesis_set, Hypothesis_Set):
-        raise "hypothesis_set must be of type Hypothesis_Set"
+        raise TypeError("hypothesis_set must be of type Hypothesis_Set")
 
     # Compute the best bound on beta - (imported bound_beta.py method)
     beta_bound = compute_best_beta_bounds(hypothesis_set)
-    
+
     # If there are no beta bounds, or it does not cover the entire [0, 1/2]
     # interval, then there are no exponent pairs generated
     if len(beta_bound) == 0 or (
@@ -215,7 +222,7 @@ def beta_bounds_to_exponent_pairs(
     known_ephs = hypothesis_set.list_hypotheses("Exponent pair")
     known_eps = {(p.data.k, p.data.l):p for p in known_ephs}
     all_eps = [e for e in known_ephs]
-    
+
     for i in range(len(conv.vertices)):
         p1 = points[conv.vertices[i]]
         p2 = points[conv.vertices[(i + 1) % len(conv.vertices)]]
@@ -253,61 +260,68 @@ def beta_bounds_to_exponent_pairs(
             all_eps.append(Bh)
     return all_eps
 
-# Returns whether point p lies in the triangle with vertices a, b, c (all points 
+# Returns whether point p lies in the triangle with vertices a, b, c (all points
 # two-dimensional)
 def in_triangle(a, b, c, p):
-     d = ((b[1] - c[1])*(a[0] - c[0]) + (c[0] - b[0])*(a[1] - c[1]))
-     x = ((b[1] - c[1])*(p[0] - c[0]) + (c[0] - b[0])*(p[1] - c[1]))
-     y = ((c[1] - a[1])*(p[0] - c[0]) + (a[0] - c[0])*(p[1] - c[1]))
-     return 0 <= x and x <= d and 0 <= y and y <= d and x + y <= d
+    def cross(u, v, w):
+        return (v[0] - u[0]) * (w[1] - u[1]) - (v[1] - u[1]) * (w[0] - u[0])
+
+    area = cross(a, b, c)
+    if area == 0:
+        # Collinearity alone describes the whole line, not the triangle's segment.
+        return (cross(a, b, p) == 0 and cross(a, c, p) == 0
+                and min(a[0], b[0], c[0]) <= p[0] <= max(a[0], b[0], c[0])
+                and min(a[1], b[1], c[1]) <= p[1] <= max(a[1], b[1], c[1]))
+    signs = [cross(a, b, p), cross(b, c, p), cross(c, a, p)]
+    return all(x >= 0 for x in signs) or all(x <= 0 for x in signs)
 
 def construct_proof(
-        k: frac, 
-        l: frac, 
-        hypotheses: Hypothesis_Set, 
-        reduce_dependencies: bool = True, 
+        k: frac,
+        l: frac,
+        hypotheses: Hypothesis_Set,
+        reduce_dependencies: bool = True,
         deep_search: bool = True
     ) -> Hypothesis:
-    
+
     """
-    Find a proof of the exponent pair (k, l), assuming a set of hypotheses. 
+    Find a proof of the exponent pair (k, l), assuming a set of hypotheses.
 
     Parameters
     ----------
-    k : Fraction 
+    k : Fraction
         The first value of the exponent pair (k, l) to prove.
     l : Fraction
         The second value of the exponent pair (k, l) to prove.
     hypotheses : Hypothesis_Set
         The set of hypotheses to assume.
     reduce_dependencies : bool, optional
-        If True, then only the dependencies crucial to the proof are returned. 
-        This method uses greedy pruning. Defaults to True. 
+        If True, then only the dependencies crucial to the proof are returned.
+        This method uses greedy pruning. Defaults to True.
     deep_search : bool, optional
-        If True, then all points inside the convex hull (not just the vertices 
-        on the boundary) are searched. This tends to return the least complex 
-        proof (measured in terms of the size of the dependency tree). 
+        If True, then all points inside the convex hull (not just the vertices
+        on the boundary) are searched. This tends to return the least complex
+        proof (measured in terms of the size of the dependency tree).
         Unfortunately, this can be slow for large hypothesis sets. Defaults to
         True.
-    
-    Returns 
+
+    Returns
     -------
     Hypothesis
-        The derived exponent pair represented as a hypothesis object. 
+        The derived exponent pair represented as a hypothesis object.
     """
 
     if not isinstance(hypotheses, Hypothesis_Set):
         raise ValueError("Parameter hypotheses must be of type Hypothesis_Set.")
-        
+
     ephs = hypotheses.list_hypotheses(hypothesis_type="Exponent pair")
     if len(ephs) == 0: return None
-    
-    # First check if the exact exponent pair is in the set, since that 
+
+    # First check if the exact exponent pair is in the set, since that
     # only takes O(n) time
     hyp = next((h for h in ephs if (h.data.k, h.data.l) == (k, l)), None)
     if hyp is not None: return hyp
 
-    # Compute the convex hull to check if it contains the desired exponent 
+    # Compute the convex hull to check if it contains the desired exponent
     # If not - exit early
     verts = compute_convex_hull(hypotheses)
     conv = Polytope.from_V_rep([[v.data.k, v.data.l] for v in verts])
@@ -319,16 +333,23 @@ def construct_proof(
         proof = "Follows from convexity and the exponent pairs " + ", ".join(
             f"({v.data.k}, {v.data.l})" for v in verts)
         return derived_exp_pair(k, l, proof, set(verts))
-    
-    # Otherwise, instead of including all vertices of the convex hull, include only 
-    # the three vertices defining a triangle containing the exponent pair. 
+
+    # A segment hull has no triangle to search. Its two endpoints already
+    # certify every point in the hull, including when dependency reduction is on.
+    if len(verts) <= 2:
+        proof = "Follows from convexity and the exponent pairs " + ", ".join(
+            f"({v.data.k}, {v.data.l})" for v in verts)
+        return derived_exp_pair(k, l, proof, set(verts))
+
+    # Otherwise, instead of including all vertices of the convex hull, include only
+    # the three vertices defining a triangle containing the exponent pair.
     # This becomes an optimisation problem: given points p_1, ..., p_N,
-    # and their associated values v_1, ..., v_N, find the triangle with 
-    # vertices (p_a, p_b, p_c) containing (k, l) such that v_a + v_b + v_c is minimal. 
+    # and their associated values v_1, ..., v_N, find the triangle with
+    # vertices (p_a, p_b, p_c) containing (k, l) such that v_a + v_b + v_c is minimal.
     lowest_comp = float("inf")
     best_tri = None
 
-    # If deep search is selected, we need to include all exponent pairs in the 
+    # If deep search is selected, we need to include all exponent pairs in the
     # hypothesis set, not just those on the boundary of the convex hull
     if deep_search: verts = ephs
 
@@ -348,42 +369,42 @@ def construct_proof(
     return derived_exp_pair(k, l, proof, set(best_tri))
 
 def find_best_proof(
-        k: frac, 
-        l: frac, 
-        hypotheses: Hypothesis_Set, 
+        k: frac,
+        l: frac,
+        hypotheses: Hypothesis_Set,
         method = Proof_Optimization_Method.DATE
     ) -> typing.Union[Hypothesis, None]:
     """
-    This method attempts to find the best proof of the exponent pair (k, l) 
-    using a set of hypotheses containing other exponent pairs and exponent pair 
-    transforms. The "best" proof is determined relative to the "method" 
+    This method attempts to find the best proof of the exponent pair (k, l)
+    using a set of hypotheses containing other exponent pairs and exponent pair
+    transforms. The "best" proof is determined relative to the "method"
     parameter e.g. shortest proof length or the earliest date of the proof's
-    dependencies. 
-    
+    dependencies.
+
     If successful, it returns the new bound as a Hypothesis object
     otherwise, None is returned.
 
-    Importantly, this method does not make use of the duality of beta bounds 
-    and exponent pairs to generate new exponent pairs. 
+    Importantly, this method does not make use of the duality of beta bounds
+    and exponent pairs to generate new exponent pairs.
 
     Parameters
     ----------
     k : frac
         The first value of an exponent pair (k, l) to prove.
     l : frac
-        The second value of an exponent pair (k, l) to prove. 
+        The second value of an exponent pair (k, l) to prove.
     hypotheses: Hypothesis_Set
         The set of hypotheses we may assume when constructing the proof.
     method: int, optional
         An integer specifying which objective function to use when determining
         how favourable a proof is. Default is Proof_Optimization_Method.DATE.
-    
-    Returns 
+
+    Returns
     -------
     Hypothesis or None
-        If a proof of the exponent pair (k, l) is bound, it is returned as 
+        If a proof of the exponent pair (k, l) is bound, it is returned as
         a Hypothesis object with the proof represented as a dependency tree
-        of Hypothesis. If a proof is not found, None is returned. 
+        of Hypothesis. If a proof is not found, None is returned.
 
     """
     if not isinstance(hypotheses, Hypothesis_Set):
@@ -426,13 +447,13 @@ def find_best_proof(
     # Generate a proof of the exponent pair (k, l) by minimising the complexity
     # of dependencies
     elif method == Proof_Optimization_Method.COMPLEXITY:
-        # In general, this optimisation is difficult, and the optimal solution 
-        # is not guaranteed. The current (heuristic) method is to try two approaches. 
-        # 1. First, start with all known exponent pairs, and iteratively apply 
+        # In general, this optimisation is difficult, and the optimal solution
+        # is not guaranteed. The current (heuristic) method is to try two approaches.
+        # 1. First, start with all known exponent pairs, and iteratively apply
         # transformations until their convex hull contains the desired exponent pair
-        # In particular, no beta bounds are considered at this stage. There is also 
-        # no pruning at each stage, since there may be low-complexity exponent pairs 
-        # lying away from the boundary of the convex hull at any time. 
+        # In particular, no beta bounds are considered at this stage. There is also
+        # no pruning at each stage, since there may be low-complexity exponent pairs
+        # lying away from the boundary of the convex hull at any time.
         MAX_ITERATIONS = 10
         hyps = copy.copy(hypotheses)
         for i in range(MAX_ITERATIONS):
@@ -441,9 +462,9 @@ def find_best_proof(
             if eph is not None:
                 return eph
 
-        # 2. If that above approach fails, then start with all baseline 
-        # hypotheses (i.e. those hypothesis with complexity 1), including beta bounds 
-        # and their implied exponent pairs. 
+        # 2. If that above approach fails, then start with all baseline
+        # hypotheses (i.e. those hypothesis with complexity 1), including beta bounds
+        # and their implied exponent pairs.
         hyps = copy.copy(hypotheses)
         hyps.add_hypotheses(beta_bounds_to_exponent_pairs(hyps))
         for i in range(MAX_ITERATIONS):

@@ -1,4 +1,4 @@
-from ..polynomial import Polynomial as P
+from polynomial import Polynomial as P
 
 def test_degree():
     assert P(()).degree() == float("-inf")
