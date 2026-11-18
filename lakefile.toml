@@ -1,11 +1,10 @@
 name = "expdb"
-defaultTargets = ["Expdb"]
+defaultTargets = ["expdb"]
 
 [leanOptions]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
-weak.linter.mathlibStandardSet = true
 
 [[require]]
 name = "mathlib"
@@ -16,4 +15,4 @@ name = "checkdecls"
 git = "https://github.com/PatrickMassot/checkdecls.git"
 
 [[lean_lib]]
-name = "Expdb"
+name = "expdb"
