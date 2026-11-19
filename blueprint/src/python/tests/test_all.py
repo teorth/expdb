@@ -44,6 +44,7 @@ import test_region
 print("All Region test cases passed.")
 
 import test_ep_to_zd
+import test_zero_density_tau_domain
 
 print("All ep_to_zd regression test cases passed.")
 
