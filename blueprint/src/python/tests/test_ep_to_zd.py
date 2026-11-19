@@ -1,5 +1,9 @@
 from fractions import Fraction as frac
 
+from constants import Constants
+from functions import Affine, Interval
+from polytope import Polytope
+from region import Region
 from hypotheses import *
 from literature import *
 import exponent_pair as ep
@@ -45,4 +49,86 @@ def run_ep_to_zd_regression_tests():
         h.data._ensure_bound_is_computed()
 
 
+def run_density_normalization_regression_tests():
+    import additive_energy as ad
+    import derived
+    import examples
+    import large_values as lv
+    from unittest.mock import patch
+
+    def check_values(bounds, expected, samples):
+        assert bounds
+        for sigma in samples:
+            values = [h.data.at(sigma) for h in bounds if h.data.interval.contains(sigma)]
+            assert values == [expected(sigma)], (sigma, values, expected(sigma))
+        assert not any(h.data.interval.contains(1) for h in bounds)
+
+    # The named derivation must use the same A(sigma) convention as the
+    # literature entry, not return the exponent (1-sigma) A(sigma).
+    samples = [frac(1, 2), frac(3, 5), frac(2, 3), frac(7, 10)]
+    ingham = literature.find_hypothesis(name="Ingham (1940) zero density estimate")
+    bounds = derived.prove_zero_density_ingham_1940(verbose=False)
+    check_values(bounds, ingham.data.at, samples)
+    assert not any(h.data.interval.contains(frac(3, 4)) for h in bounds)
+    best = zd.best_zero_density_estimate(Hypothesis_Set(bounds))
+    check_values(best, ingham.data.at, samples)
+
+    # The plotting caller previously compensated for the incorrect convention.
+    # Capture its data without creating a figure; normalization must occur once.
+    with patch.object(derived.np, "linspace", return_value=samples), \
+            patch.object(derived, "plt") as plotting:
+        derived.prove_zero_density(
+            [], False, Interval(frac(1, 2), frac(3, 4)), "Ingham", plot=True
+        )
+    plotting.plot.assert_called_once_with(samples, [ingham.data.at(s) for s in samples])
+
+    with patch.object(examples, "plt") as plotting:
+        examples.plot([ingham], [ingham])
+    assert plotting.plot.call_count == 2
+    assert plotting.plot.call_args_list[0].args[:2] == plotting.plot.call_args_list[1].args[:2]
+
+    # L2 alone gives B(sigma) = (7-2*sigma)/6 on the tau range [3,6].
+    # Request a closed upper endpoint to ensure sigma=1 is not divided by zero.
+    interval = Interval(frac(1, 2), 1, True, True)
+    samples = [frac(1, 2), frac(2, 3), frac(3, 4), frac(9, 10)]
+    expected = lambda s: (7 - 2 * s) / (6 * (1 - s))
+    hypotheses = Hypothesis_Set([lv.large_value_estimate_L2])
+    bounds = zd.lv_zlv_to_zd(hypotheses, interval, tau0=frac(3))
+    check_values(bounds, expected, samples)
+
+    # Exercise the affine-tau0 converter with the trivial estimate rho <= tau,
+    # whose supremum rho/tau is identically 1.
+    hypotheses = Hypothesis_Set([lv.classical_LV_estimate([[0, 0, 1]])])
+    bounds = zd.lv_zlv_to_zd2(hypotheses, interval, Affine(0, frac(3), interval))
+    check_values(bounds, lambda s: 1 / (1 - s), samples)
+
+    # Lift the same L2 estimate to five dimensions, restrict its two tau ranges,
+    # and exercise the energy-region converter through its real projection path.
+    base = ad.lv_to_lver(Hypothesis_Set([lv.large_value_estimate_L2]))[0]
+
+    def restrict_lver(tau_range, zeta=False):
+        domain = Region.from_polytope(
+            Polytope.rect((frac(1, 2), frac(1)), tau_range)
+        ).lift([0, 1] + [(0, Constants.LV_DEFAULT_UPPER_BOUND)] * 3)
+        data = ad.Large_Value_Energy_Region(Region.intersect([base.data.region, domain]))
+        constructor = (ad.derived_zeta_large_value_energy_region if zeta else
+                       ad.derived_large_value_energy_region)
+        return constructor(data, "Restrict L2 to the tau range", {base})
+
+    bounds = zd.lver_to_zd(
+        restrict_lver((frac(3), frac(6))),
+        restrict_lver((frac(2), frac(3)), zeta=True),
+        interval,
+    )
+    check_values(bounds, expected, samples)
+
+    for empty in (Interval(1, 1, True, True), Interval(frac(2, 3), frac(2, 3))):
+        hypotheses = Hypothesis_Set([lv.large_value_estimate_L2])
+        assert zd.lv_zlv_to_zd(hypotheses, empty, tau0=frac(3)) == []
+        assert zd.lv_zlv_to_zd2(hypotheses, empty, Affine(0, frac(3), empty)) == []
+        assert zd.lver_to_zd(None, None, empty) == []
+
+
+run_density_normalization_regression_tests()
+print("All zero-density normalization regression test cases passed.")
 run_ep_to_zd_regression_tests()

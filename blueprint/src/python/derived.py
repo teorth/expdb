@@ -638,7 +638,7 @@ def prove_zero_density(
         for x in xs:
             zs = [z for z in zdes if z.data.interval.contains(x)]
             if len(zs) > 0:
-                ys.append(min(z.data.at(x) / (1 - x) for z in zs))
+                ys.append(min(z.data.at(x) for z in zs))
             else:
                 ys.append(None)
         plt.plot(xs, ys)
