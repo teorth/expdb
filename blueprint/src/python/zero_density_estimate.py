@@ -437,22 +437,27 @@ def lv_zlv_to_zd2(
     )
     sup1 = compute_sup_rho_on_tau([r.child for r in lvr.data.region.child], sigma_interval)
 
-    # Get zeta large value bounds in the interval 2 <= tau <= 4/3 tau0
-    hypotheses.add_hypotheses(zlv.compute_large_value_estimate(hypotheses))
-    zlvr = compute_large_value_region(
-        hypotheses,
-        Region.from_polytope(
-            Polytope([
-                [-2, 0, 1, 0], # tau >= 2
-                [frac(4,3) * tau0.c, frac(4,3) * tau0.m, 1, 0] # tau <= 4/3 * tau0
-            ])
-        ),
-        zeta = True
-    )
-    sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.data.region.child], sigma_interval)
-
     bounds = [(s[0], s[1]) for s in sup1]
-    bounds.extend((s[0], s[1]) for s in sup2)
+    deps = {lvr}
+
+    # Get zeta large value bounds in the interval 2 <= tau <= 4/3 tau0
+    zeta_domain = Polytope([
+        [-2, 0, 1, 0], # tau >= 2
+        [frac(4,3) * tau0.c, frac(4,3) * tau0.m, -1, 0] # tau <= 4/3 * tau0
+    ] + sigma_rho_constraints)
+    # The corollary's zeta range is empty when 4/3 tau0 <= 2 throughout
+    # sigma_interval. Do not try to compute a supremum on an empty interior.
+    if not zeta_domain.is_empty(include_boundary=False):
+        hypotheses.add_hypotheses(zlv.compute_large_value_estimate(hypotheses))
+        zlvr = compute_large_value_region(
+            hypotheses,
+            Region.from_polytope(zeta_domain),
+            zeta = True
+        )
+        sup2 = compute_sup_rho_on_tau([r.child for r in zlvr.data.region.child], sigma_interval)
+        bounds.extend((s[0], s[1]) for s in sup2)
+        deps.add(zlvr)
+
     sup = RF.max(bounds, sigma_interval, track_dependencies=False)
 
     # pack into Hypothesis
@@ -460,7 +465,6 @@ def lv_zlv_to_zd2(
     for s in sup:
         proof = "Follows from computed large value estimates and zeta large " + \
                 f"value estimates with τ0 = {tau0.to_str('σ')})"
-        deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
             Zero_Density_Estimate.from_rational_func(s[0], s[1]),
             proof,
