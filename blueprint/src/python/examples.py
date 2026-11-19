@@ -310,7 +310,7 @@ def plot(zdt, hypotheses, title=None):
         sigma = 1 / 2 + 1 / 2 * i / N
         A = next((p.data.at(sigma) for p in zdt if p.data.interval.contains(sigma)), 0)
         xs.append(sigma)
-        computed_zdt.append(A / (1 - sigma))
+        computed_zdt.append(A)
         literature_zdt.append(min(h.data.at(sigma) for h in hypotheses if h.data.interval.contains(sigma)))
 
     plt.figure(dpi=1200)
@@ -354,7 +354,7 @@ def zero_density_estimates_examples():
     )
     zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(5))
     print("Best-known vs computed zero-density estimate")
-    print("A(x)(1-x) \\leq")
+    print("A(x) \\leq")
     for h in zdt:
         h.recursively_list_proofs()
     plot(
@@ -413,7 +413,7 @@ def zero_density_estimates_examples3():
 
     zdt = zd.lv_zlv_to_zd(hypotheses, Interval(frac(1, 2), 1), tau0=frac(3))
     print("Best-known vs computed zero-density estimate")
-    print("A(x)(1-x) \\leq")
+    print("A(x) \\leq")
     for h in zdt:
         print(h.data)
     plot(

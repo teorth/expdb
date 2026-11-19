@@ -349,6 +349,12 @@ def lv_zlv_to_zd(
     if sigma_interval.x0 < frac(1,2) or sigma_interval.x1 > 1:
         raise ValueError(f"Parameter sigma_interval must be a subset of [1/2, 1]")
 
+    # The suprema bound (1 - sigma) A(sigma), so exclude sigma = 1
+    # before computing them and normalizing to a bound on A(sigma).
+    sigma_interval = sigma_interval.intersect(Interval(frac(1, 2), 1))
+    if sigma_interval.is_empty():
+        return []
+
     sigma_lim = (sigma_interval.x0, sigma_interval.x1)
     rho_lim = (0, Constants.LV_DEFAULT_UPPER_BOUND)
 
@@ -384,7 +390,7 @@ def lv_zlv_to_zd(
                 f'τ in [{tau0},{2 * tau0}]) and zeta large value estimates (for σ in {sigma_interval}, τ in [{2},{tau0}])'
         deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
-            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+            Zero_Density_Estimate.from_rational_func(s[0] / RF([-1, 1]), s[1]),
             proof,
             deps
         ))
@@ -416,6 +422,10 @@ def lv_zlv_to_zd2(
         raise ValueError("Parameter sigma_interval must be of type Interval.")
     if not isinstance(tau0, Affine):
         raise ValueError("Parameter tau0 must be of type Affine.")
+
+    sigma_interval = sigma_interval.intersect(Interval(frac(1, 2), 1))
+    if sigma_interval.is_empty():
+        return []
 
     sigma_rho_constraints = [
         [-sigma_interval.x0, 1, 0, 0],              # sigma >= x0
@@ -462,7 +472,7 @@ def lv_zlv_to_zd2(
                 f"value estimates with τ0 = {tau0.to_str('σ')})"
         deps = {lvr, zlvr}
         hyps.append(derived_zero_density_estimate(
-            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+            Zero_Density_Estimate.from_rational_func(s[0] / RF([-1, 1]), s[1]),
             proof,
             deps
         ))
@@ -492,6 +502,10 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
         raise ValueError("Parameter LVER_zeta must be a Hypothesis of type 'Zeta large value energy region'.")
     if not isinstance(sigma_interval, Interval):
         raise ValueError("Parameter sigma_interval must be of type Interval.")
+
+    sigma_interval = sigma_interval.intersect(Interval(frac(1, 2), 1))
+    if sigma_interval.is_empty():
+        return []
 
     fns = []
     deps = set()
@@ -523,7 +537,7 @@ def lver_to_zd(LVER, LVER_zeta, sigma_interval):
 
     return [
         derived_zero_density_estimate(
-            Zero_Density_Estimate.from_rational_func(s[0], s[1]),
+            Zero_Density_Estimate.from_rational_func(s[0] / RF([-1, 1]), s[1]),
             f"Follows from combining {depcount[0]} large value energy regions " + \
             "and {depcount[1]} zeta large value energy regions",
             deps
