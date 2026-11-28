@@ -1259,7 +1259,7 @@ def add_zero_density_ivic_1980():
         literature, "4/(2 * x + 1)", Itvl(frac(17, 18), 1), Reference.make("Ivic", 1980)
     )
     zd.add_zero_density(
-        literature, "24/(30 * x - 11)", Itvl(frac(155, 174), 1), Reference.make("Ivic", 1980),
+        literature, "24/(30 * x - 11)", Itvl(frac(155, 174), frac(17,18)), Reference.make("Ivic", 1980),
     )
 add_zero_density_ivic_1980()
 
