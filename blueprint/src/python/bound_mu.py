@@ -85,8 +85,6 @@ bound_mu_trivial = classical_bound_mu(1, 0)
 
 Lindelof_hypothesis = conjecture_bound_mu(frac(1, 2), 0, "The Lindelof hypothesis")
 
-# TODO: a method to clean up a list of mu bounds by removing any bound in the convex hull of existing bounds (including the trivial ones)
-
 
 ########################################################################################
 # Methods for computing upper bounds on mu from a given list of hypotheses
@@ -108,6 +106,87 @@ def apply_trivial_mu_bound(sigma):
         "This is the convexity bound on the Riemann zeta function",
         set(),
     )
+
+# ---------------------------------------------------------------------------
+# Cleaning up a list of mu bounds
+#
+# A bound mu(sigma) <= m is a point (sigma, m).  Since mu is convex, the bound is
+# *redundant* if the point lies in the convex hull of the other points, i.e. on or
+# above the lower convex envelope of the others.  The trivial (convexity) bound
+# mu(sigma) <= trivial_mu_bound(sigma) is always available, so it is included.
+# ---------------------------------------------------------------------------
+
+def _lower_hull(points):
+    """Lower convex hull (exact arithmetic) of (sigma, mu) pairs, sorted by sigma.
+    Collinear points are dropped."""
+    pts = sorted(set(points))
+    hull = []
+    for p in pts:
+        while len(hull) >= 2:
+            (x1, y1), (x2, y2) = hull[-2], hull[-1]
+            # pop if hull[-1] lies on or above the segment hull[-2] -> p
+            if (x2 - x1) * (p[1] - y1) - (y2 - y1) * (p[0] - x1) <= 0:
+                hull.pop()
+            else:
+                break
+        hull.append(p)
+    # points sharing the same sigma: keep only the smallest mu
+    cleaned = []
+    for p in hull:
+        if cleaned and cleaned[-1][0] == p[0]:
+            continue
+        cleaned.append(p)
+    return cleaned
+
+
+def _envelope_at(hull, sigma):
+    """Value of the piecewise linear lower envelope at sigma, or None if sigma
+    lies outside the range of the hull (then convexity gives no information)."""
+    if not hull or sigma < hull[0][0] or sigma > hull[-1][0]:
+        return None
+    for (x1, y1), (x2, y2) in zip(hull, hull[1:]):
+        if x1 <= sigma <= x2:
+            return y1 + (y2 - y1) * (sigma - x1) / (x2 - x1)
+    return hull[0][1]  # single-point hull, sigma == hull[0][0]
+
+
+def _reflect(sigma, mu):
+    # functional equation: mu(1 - s) = mu(s) + s - 1/2
+    return (1 - sigma, mu + sigma - frac(1, 2))
+
+
+def remove_redundant_mu_bounds(bounds, use_functional_equation=True):
+    """
+    Return a sub-list of `bounds` (Hypotheses of type "Upper bound on mu") with every
+    redundant bound removed, i.e. every bound already implied by the trivial bound,
+    convexity of mu, and (optionally) the functional equation applied to the *other* bounds.
+
+    Removing a redundant bound never changes the best bound obtainable at any sigma.
+    Bounds are tested one at a time against the bounds that are still kept, so for
+    duplicates exactly one copy survives, and no bound is removed because of its
+    own functional-equation reflection.
+    """
+    kept = list(bounds)
+    i = 0
+    while i < len(kept):
+        s, m = kept[i].data.sigma, kept[i].data.mu
+        redundant = m >= trivial_mu_bound(s)
+        if not redundant:
+            pts = [(frac(0), frac(1, 2)), (frac(1), frac(0))]  # trivial bounds
+            for j, b in enumerate(kept):
+                if j == i:
+                    continue
+                pts.append((b.data.sigma, b.data.mu))
+                if use_functional_equation:
+                    pts.append(_reflect(b.data.sigma, b.data.mu))
+            v = _envelope_at(_lower_hull(pts), s)
+            redundant = v is not None and v <= m
+        if redundant:
+            kept.pop(i)
+        else:
+            i += 1
+    return kept
+
 
 # Apply the functional equation to a bound on mu to obtain another bound on mu
 def apply_functional_equation(bound):
